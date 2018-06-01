@@ -15,6 +15,8 @@ from tinymce.models import HTMLField
 
 # Create your models here.
 
+from site_settings.constants import TAXES_CHOICES, CURRENCY, UNIT
+from site_settings.models import PaymentOrders, PaymentMethod
 
 
 class Category(models.Model):
@@ -97,10 +99,10 @@ class Vendor(models.Model):
         return reverse('reports:vendor_detail', args={'dk': self.id})
 
     def template_tag_remaining_deposit(self):
-        return ("{0:.2f}".format(round(self.remaining_deposit, 2))) + ' %s'%(CURRENCY)
+        return ("{0:.2f}".format(round(self.remaining_deposit, 2))) + ' %s' % (CURRENCY)
 
     def tag_balance(self):
-        return ("{0:.2f}".format(round(self.balance, 2))) + ' %s'%(CURRENCY)
+        return ("{0:.2f}".format(round(self.balance, 2))) + ' %s' % (CURRENCY)
 
     def tag_deposit(self):
         return "%s %s" % (self.remaining_deposit, CURRENCY)

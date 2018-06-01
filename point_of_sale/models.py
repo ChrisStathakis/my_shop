@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.fields import GenericRelation
@@ -10,12 +11,14 @@ import datetime
 from decimal import Decimal
 
 from accounts.models import CostumerAccount
-from app_settings.constants import CURRENCY, TAXES_CHOICES
-from app_settings.default_models.orders import DefaultOrderModel
-from app_settings.models import PaymentMethod, PaymentOrders
-from app_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
+from products.models import  Product
+from site_settings.constants import CURRENCY, TAXES_CHOICES
+from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
+from site_settings.models import PaymentMethod, PaymentOrders
+from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons
 from my_site.models import Shipping
+
 
 def order_transcation(order_type, instance, qty, substact,): #  substact can be add or minus, change
     product = instance.title
@@ -289,11 +292,10 @@ def update_on_delete_retail_order(sender, instance, *args, **kwargs):
 class RetailOrderItem(DefaultOrderItemModel):
     order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE)
     cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
+    title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     #  warehouse_management
     is_find = models.BooleanField(default=False)
     is_return = models.BooleanField(default=False)
-    tracker = FieldTracker()
 
     my_query = RetailOrderItemManager()
     objects = models.Manager()

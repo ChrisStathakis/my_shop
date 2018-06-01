@@ -35,7 +35,7 @@ class CostumerAccount(models.Model):
     is_retail = models.BooleanField(default=True)
     is_eshop = models.BooleanField(default=True)
     afm = models.CharField(max_length=9, blank=True, verbose_name="ΑΦΜ")
-    DOY = models.ForeignKey(TaxesCity, verbose_name='Εφορία', blank=True, null=True, on_delete=models.CASCADE)
+    DOY = models.CharField(max_length=100, blank=True, null=True)
     balance = models.DecimalField(max_digits=20, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
     my_query = CostumerAccountManager()
     objects = models.Manager()

@@ -1,0 +1,32 @@
+{% extends 'dash_ware/index.html' %}
+
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <h4 class="text-center">{{ page_title }}</h4>
+                        <div class="content">
+                            <form method='post' enctype="multipart/form-data" >{% csrf_token %}
+                                {{ form.errors }}
+                                {{ form }}
+                                <button type='sumbit' class="btn btn-success">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="content">
+                            <a href="{{ back_url }}" class="btn btn-warning">Back</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

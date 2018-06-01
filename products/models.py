@@ -8,14 +8,11 @@ import os, datetime
 from decimal import Decimal
 from tinymce.models import HTMLField
 
-from app_settings.default_models.basic import DefaultBasicModel
+from site_settings.models import DefaultBasicModel
 from my_site.models import CategorySite, Brands
-from inventory_manager.models import Category, Vendor
+from inventory_manager.models import Vendor, Category
 
-
-CURRENCY = settings.CURRENCY
-MEDIA_URL = 'media'
-#MEDIAURL = 'https://monastiraki.s3.amazonaws.com/media/'
+from site_settings.constants import MEDIA_URL, CURRENCY, UNIT
 
 
 def product_directory_path(instance, filename):
@@ -102,7 +99,7 @@ class ProductManager(models.Manager):
         return self.active_warehouse().filter(site_active=True)
 
 
-class Product(models.Model):
+class Product(DefaultBasicModel):
     site_active = models.BooleanField(default=True, verbose_name='Active for Site')
     wholesale_active = models.BooleanField(default=False, verbose_name="Active for WholeSale")
     is_service = models.BooleanField(default=False, verbose_name='Service')
@@ -239,20 +236,20 @@ class Product(models.Model):
 
     def image_tag(self):
         if self.image:
-            return mark_safe('<img src="%s%s" class="img-responsive">'%(MEDIAURL, self.image))
+            return mark_safe('<img src="%s%s" class="img-responsive">'%(MEDIA_URL, self.image))
         return mark_safe('<img src="%s" class="img-responsive">' % "{% static 'home/no_image.png' %}")
 
     def image_back_tag(self):
         if self.image_back:
-            return mark_safe('<img src="%s%s" width="200px" height="200px">'%(MEDIAURL, self.image_back))
+            return mark_safe('<img src="%s%s" width="200px" height="200px">'%(MEDIA_URL, self.image_back))
 
     def image_tag_tiny(self):
         if self.image:
-            return mark_safe('<img src="%s%s" width="100px" height="100px">'%(MEDIAURL, self.image))
+            return mark_safe('<img src="%s%s" width="100px" height="100px">' % (MEDIA_URL, self.image))
 
     def image_back_tag_tiny(self):
         if self.image_back:
-            return mark_safe('<img src="%s%s" width="200px" height="200px">'%(MEDIAURL, self.image_back))
+            return mark_safe('<img src="%s%s" width="200px" height="200px">' % (MEDIA_URL, self.image))
 
     def show_warehouse_remain(self):
         return self.qty * self.qty_kilo
@@ -274,7 +271,6 @@ class Product(models.Model):
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
         return queryset
 
-
     
 class SizeAttributeManager(models.Manager):
     def active_for_site(self):
@@ -289,7 +285,7 @@ class SizeAttribute(models.Model):
     product_related = models.ForeignKey(Product, null=True, on_delete=models.CASCADE, verbose_name='Προϊόν')
     qty = models.DecimalField(default=0, decimal_places=2, max_digits=6, verbose_name='Ποσότητα')
     order_discount = models.IntegerField(null=True, blank=True, default=0,verbose_name="'Εκπτωση Τιμολογίου σε %")
-    price_buy = models.DecimalField(decimal_places=2,max_digits=6,default=0,verbose_name="Τιμή Αγοράς") # the price which you buy the product
+    price_buy = models.DecimalField(decimal_places=2,max_digits=6,default=0,verbose_name="Τιμή Αγοράς")
     my_query = SizeAttributeManager()
     objects = models.Manager()
 
@@ -318,7 +314,6 @@ class SizeAttribute(models.Model):
         final_price = self.product_related.final_price if not self.product_related.price_buy == self.price_buy else self.price_buy
         return '%s %s' % (final_price, CURRENCY)
     tag_final_price.short_description = 'Τιμή Αγοράς'
-
 
 
 class ProductPhotos(models.Model):

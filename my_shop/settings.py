@@ -37,6 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'site_settings',
+    'accounts',
+    'products',
+    'my_site',
+    'inventory_manager',
+    'carts',
+    'point_of_sale',
+
+
 ]
 
 MIDDLEWARE = [
@@ -54,7 +64,7 @@ ROOT_URLCONF = 'my_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,3 +128,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+CURRENCY = '€'
+WAREHOUSE_ORDERS_TRANSCATIONS = True
+RETAIL_TRANSCATIONS = True
+PRODUCT_ATTRITUBE_TRANSCATION = True
+
+USE_WAREHOUSE = False
+USE_REPORTS = False

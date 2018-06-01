@@ -3,18 +3,15 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 
-from app_settings.default_models.basic import DefaultBasicModel
-from app_settings.models import Country
+from site_settings.models import DefaultBasicModel
+from site_settings.models import Country
+from site_settings.constants import MEDIA_URL, CURRENCY
 
 
 def validate_positive_decimal(value):
     if value < 0:
         return ValidationError('This number is negative!')
     return value
-
-
-MEDIA_URL = 'media'
-#MEDIAURL = 'https://monastiraki.s3.amazonaws.com/media/'
 
 
 def category_site_directory_path(instance, filename):
@@ -101,10 +98,10 @@ class Brands(models.Model):
         return self.title
 
     def image_tag(self):
-        return mark_safe('<img scr="%s/%s" width="400px" height="400px" />'%(MEDIAURL, self.image))
+        return mark_safe('<img scr="%s/%s" width="400px" height="400px" />'%(MEDIA_URL, self.image))
 
     def image_tag_tiny(self):
-        return mark_safe('<img scr="%s/%s" width="100px" height="100px" />'%(MEDIAURL, self.image))
+        return mark_safe('<img scr="%s/%s" width="100px" height="100px" />'%(MEDIA_URL, self.image))
     image_tag.short_description = 'Είκονα'
 
     def get_absolute_url(self):

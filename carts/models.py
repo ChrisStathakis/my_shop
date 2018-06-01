@@ -11,12 +11,11 @@ from decimal import Decimal
 import datetime
 # Create your models here.
 
-from app_settings.constants import CURRENCY
-from app_settings.default_models.orders import DefaultOrderModel
-from app_settings.models import PaymentMethod
+from site_settings.constants import CURRENCY
+from site_settings.models import DefaultOrderModel
+from site_settings.models import PaymentMethod
 from my_site.models import Shipping, validate_positive_decimal, CategorySite
 from products.models import Product, SizeAttribute
-
 
 
 class CouponManager(models.Manager):
@@ -62,8 +61,6 @@ class Coupons(models.Model):
             if order_type == 'eshop':
                 order.discount += self.discount_value if self.discount_value else \
                     (self.discount_percent/100)*order.value if self.discount_percent else 0
-
-
 
 
 class CartManager(models.Manager):
