@@ -1,0 +1,6 @@
+
+{% if not request.COOKIES.kolos %}
+<div id='gdpr' class="footer">Συνεχίζοντας να χρησιμοποιείτε αυτό το site αποδέχεστε τα cookies που χρησιμοποιούμε! </strong><a class="btn btn-danger" href="{% url 'throw_cookie'%}">Αποδοχή</a>
+<a href='{% url "cookies_policy" %}'>Περισσότερες πληροφορίες</a></div>
+{% endif %}
+    

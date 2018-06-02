@@ -46,6 +46,12 @@ INSTALLED_APPS = [
     'carts',
     'point_of_sale',
 
+    'gdpr',
+
+
+    # third parties
+    'tinymce',
+
 
 ]
 
