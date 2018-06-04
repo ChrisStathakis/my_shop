@@ -124,18 +124,18 @@ def add_edit_order_item(request, dk, pk, qty):
     exists = RetailOrderItem.objects.filter(title=product, order=order)
     if exists.exists():
         new_order_item = exists.last()
-        new_qty = new_order_item.qty + qty
-        new_order_item.add_item(qty)
         new_order_item.remove_item()
+        new_qty = new_order_item.qty + qty
         new_order_item.qty = new_qty
         new_order_item.save()
+        new_order_item.add_item(new_qty)
     else:
         new_order_item = RetailOrderItem.objects.create(title=product,
                                                         order=order,
                                                         cost=product.price_buy,
-                                                        price=product.price,
+                                                        value=product.price,
                                                         qty=qty,
-                                                        price_discount=product.price_discount,
+                                                        discount_value=product.price_discount,
                                                         )
         new_order_item.add_item(qty)
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(dk,)))
@@ -144,9 +144,13 @@ def add_edit_order_item(request, dk, pk, qty):
 @login_required()
 def edit_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
-    form_order = EshopOrderItemForm(request.POST or None, instance=instance)
+    old_instance = get_object_or_404(RetailOrderItem, id=dk)
+    form_order = EshopOrderItemForm(request.POST or None, instance=instance) 
     if form_order.is_valid():
+        old_instance.remove_item()
         form_order.save()
+        instance.refresh_from_db()
+        instance.add_item(qty=instance.qty)
         return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(instance.order.id,)))
     context = locals()
     return render(request, 'dashboard/order_section/edit_order_item.html', context)
@@ -155,6 +159,7 @@ def edit_order_item(request, dk):
 @login_required()
 def delete_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
+    instance.remove_item()
     order = instance.order
     instance.delete()
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(order.id,)))

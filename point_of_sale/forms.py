@@ -130,8 +130,8 @@ class EshopOrderItemForm(forms.ModelForm):
     class Meta:
         model = RetailOrderItem
         fields = ['qty',
-                  'price',
-                  'price_discount'
+                  'value',
+                  'discount_value'
                   ]
 
     def __init__(self, *args, **kwargs):

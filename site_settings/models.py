@@ -89,8 +89,8 @@ class DefaultOrderItemModel(models.Model):
     edited = models.DateTimeField(auto_now=True)
 
     qty = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    price_discount = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    discount_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
 
     class Meta:

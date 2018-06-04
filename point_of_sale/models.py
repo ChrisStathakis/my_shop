@@ -123,7 +123,7 @@ class RetailOrder(DefaultOrderModel):
         self.discount = total_value
 
     def save(self, *args, **kwargs):
-        get_all_items = self.retailorderitem_set.all().values('cost', 'final_value', 'qty')
+        get_all_items = self.retailorderitem_set.all()
         self.count_items = get_all_items.count()
         try:
             self.check_coupons()
@@ -286,6 +286,10 @@ class RetailOrderItem(DefaultOrderItemModel):
             self.title.save()
             if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
                 self.size.qty -= qty
+        if self.order.costumer_account:
+            costumer = self.order.costumer_account
+            costumer.balance += get_total_cost
+            costumer.save() 
 
     def remove_item(self):
         get_total_value = self.final_value * self.qty
@@ -298,24 +302,18 @@ class RetailOrderItem(DefaultOrderItemModel):
             self.title.save()
             if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
                 self.size.qty += self.qty
+        if self.order.costumer_account:
+            costumer = self.order.costumer_account
+            costumer.balance -= get_total_cost
+            costumer.save()
 
     def save(self, *args, **kwargs):
-        if self.order.order_type in ['r', 'b', 'b', 'e']:
-            self.price = self.title.price
-            self.price_discount = self.title.price_discount
-            self.cost = 0
-            self.final_value = self.price_discount if self.price_discount > 0 else self.price
-        else:
-            self.price = 0
-            self.price_discount = 0
-            self.price = 0
-            self.cost = 0
-            self.final_value = 0
+        self.final_value = self.discount_value if self.discount_value > 0 else self.value
         super(RetailOrderItem, self).save(*args, **kwargs)
         
 
     def get_clean_value(self):
-        return self.price * (100-self.order.taxes/100) * (100-Decimal(self.discount)/100)
+        return self.final_value * (100-self.order.taxes/100)
 
     @property
     def get_total_value(self):
@@ -328,16 +326,16 @@ class RetailOrderItem(DefaultOrderItemModel):
     def tag_clean_value(self):
         return '%s %s' % (self.get_clean_value(), CURRENCY)
 
-    def tag_total_price(self):
+    def tag_total_value(self):
         return '%s %s' % (self.get_total_value, CURRENCY)
-    tag_total_price.short_description = 'Συνολική Αξία'
+    tag_total_value.short_description = 'Συνολική Αξία'
 
-    def tag_final_price(self):
+    def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
-    tag_final_price.short_description = 'Αξία Μονάδας'
+    tag_final_value.short_description = 'Αξία Μονάδας'
 
-    def tag_price(self):
-        return '%s %s' % (self.price, CURRENCY)
+    def tag_value(self):
+        return '%s %s' % (self.value, CURRENCY)
 
     def tag_total_taxes(self):
         return '%s %s' %(round(self.price*self.qty*(Decimal(self.order.taxes)/100), 2), CURRENCY)
@@ -359,20 +357,6 @@ class RetailOrderItem(DefaultOrderItemModel):
     def check_if_exists(order, product):
         exists = RetailOrderItem.objects.filter(title=product, order=order)
         return exists.first() if exists else None
-
-
-@receiver(post_delete, sender=RetailOrderItem)
-def update_order_on_delete(sender, instance, *args, **kwargs):
-    order = instance.order
-    get_all_items = RetailOrderItem.objects.filter(order=order).values('cost', 'final_price', 'qty')
-    order.count_items = get_all_items.count()
-    order.value -= instance.get_total_value
-    order.total_cost -= instance.get_total_cost_value
-    order.save()
-    if QTY_TRANSACTIONS:
-        order_transcation(order_type=order.order_type, instance=instance, qty=instance.qty, substact='minus')
-    instance.title.save()
-
 
 
 def create_destroy_title():
