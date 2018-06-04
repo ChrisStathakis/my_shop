@@ -21,12 +21,23 @@
                     <p>Site Settings</p>
                 </a>
             </li>
+            {% comment warehouse urls %}
             <li {% if dashboard %}class="active" {% endif %}>
                 <a href="{% url 'dashboard:warehouse_home' %}">
                     <i class="ti-panel"></i>
                     <p>Warehouse Home</p>
                 </a>
             </li>
+            {% endcomment %}
+
+            {% comment reports %}
+            <li {% if dashboard %}class="active" {% endif %}>
+                <a href="{% url 'dashboard:warehouse_home' %}">
+                    <i class="ti-panel"></i>
+                    <p>Warehouse Home</p>
+                </a>
+            </li>
+            {% endcomment %}
         </ul>
     </div>
 </div>

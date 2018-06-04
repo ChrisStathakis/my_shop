@@ -3,21 +3,26 @@ from django.urls import reverse
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.fields import GenericRelation
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Q
 from django.contrib import messages
 from django.contrib.auth.models import User
-
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 import datetime
 from decimal import Decimal
 
+from .managers import RetailOrderManager
 from accounts.models import CostumerAccount
-from products.models import  Product
+from products.models import  Product, SizeAttribute
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod, PaymentOrders
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons
 from my_site.models import Shipping
+
+
+RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIONS, settings.PRODUCT_ATTRITUBE_TRANSCATION 
 
 
 def order_transcation(order_type, instance, qty, substact,): #  substact can be add or minus, change
@@ -53,40 +58,6 @@ def order_transcation(order_type, instance, qty, substact,): #  substact can be 
 def payment_method_default():
     exists = PaymentMethod.objects.exists()
     return PaymentMethod.objects.first() if exists else None
-
-
-class RetailOrderManager(models.Manager):
-    def all_orders_by_date_filter(self, date_start, date_end):
-        return super(RetailOrderManager, self).filter(date_created__range=[date_start, date_end]).order_by('-date_created')
-
-    def sells_orders(self, date_start, date_end):
-        return self.all_orders_by_date_filter(date_start, date_end).filter(order_type__in=['r', 'e']).exclude(status__in=['5', '6'])
-
-    def sellings_done(self):
-        return super(RetailOrderManager, self).filter(status__id__in=[7,8]).exclude(order_type='b').order_by('-date_created')
-
-    def sellings_not_done(self):
-        return super(RetailOrderManager, self).exclude(status__id__in=[7,8], order_type='b')
-
-    def eshop_orders(self):
-        return super(RetailOrderManager, self).filter(order_type='e')
-
-    def eshop_new_orders(self):
-        return super(RetailOrderManager, self).filter(order_type='e', status_id=1).order_by('-id')
-
-    def eshop_done_orders(self, date_start, date_end):
-        return super(RetailOrderManager, self).filter(order_type__in=['e','r'], status__id=7, date_created__range=[date_start, date_end])
-
-    def eshop_orders_on_progress(self):
-        return super(RetailOrderManager, self).filter(order_type='e', status__id__in=[2, 3, 4, 5])
-
-    def eshop_orders_in_warehouse(self):
-        return super(RetailOrderManager, self).filter(order_type='e', status__id__in=[1, 2, 3, 4, 5])
-
-    def retail_orders(self, date_start=None, date_end=None):
-        if date_start and date_end:
-            return super(RetailOrderManager, self).filter(order_type='r', date_created__range=[date_start, date_end]).order_by('-date_created')
-        return super(RetailOrderManager, self).filter(order_type='r').order_by('-date_created')
 
 
 class RetailOrderItemManager(models.Manager):
@@ -126,7 +97,6 @@ class RetailOrder(DefaultOrderModel):
     costumer_submit = models.BooleanField(default=True, verbose_name='Επιβεβαίωση')
     eshop_order_id = models.CharField(max_length=10, blank=True, null=True)
     eshop_session_id = models.CharField(max_length=50, blank=True, null=True)
-    
 
     my_query = RetailOrderManager()
     objects = models.Manager()
@@ -153,10 +123,8 @@ class RetailOrder(DefaultOrderModel):
         self.discount = total_value
 
     def save(self, *args, **kwargs):
-        get_all_items = self.retailorderitem_set.all().values('cost', 'final_price', 'qty')
+        get_all_items = self.retailorderitem_set.all().values('cost', 'final_value', 'qty')
         self.count_items = get_all_items.count()
-        self.value = get_all_items.aggregate(total=Sum(F('qty') * F('final_price')))['total'] if get_all_items else 0
-        self.total_cost = get_all_items.aggregate(total=Sum(F('qty') * F('cost')))['total'] if get_all_items else 0
         try:
             self.check_coupons()
         except:
@@ -190,7 +158,7 @@ class RetailOrder(DefaultOrderModel):
         return '%s %s' % (self.value, CURRENCY)
 
     def tag_final_price(self):
-        return '%s %s' % (self.final_price, CURRENCY)
+        return '%s %s' % (self.final_value, CURRENCY)
     tag_final_price.short_description = 'Τελική Αξία'
 
     def tag_paid_value(self):
@@ -249,13 +217,14 @@ class RetailOrder(DefaultOrderModel):
     def tag_full_address(self):
         return f'{self.address}, City: {self.city}'
 
+
     @staticmethod
     def eshop_orders_filtering(request, queryset):
-        search_name=request.GET.get('search_name', None)
-        paid_name=request.GET.getlist('paid_name', None)
-        printed_name=request.GET.get('printed_name', None)
-        status_name=request.GET.getlist('status_name', None)
-        payment_name=request.GET.getlist('payment_name', None)
+        search_name = request.GET.get('search_name', None)
+        paid_name = request.GET.getlist('paid_name', None)
+        printed_name = request.GET.get('printed_name', None)
+        status_name = request.GET.getlist('status_name', None)
+        payment_name = request.GET.getlist('payment_name', None)
         queryset = queryset.filter(printed=False) if printed_name else queryset
         queryset = queryset.filter(payment_method__id__in=payment_name) if payment_name else queryset
         queryset = queryset.filter(status__in=status_name) if status_name else queryset
@@ -296,7 +265,7 @@ class RetailOrderItem(DefaultOrderItemModel):
     #  warehouse_management
     is_find = models.BooleanField(default=False)
     is_return = models.BooleanField(default=False)
-
+    size = models.ForeignKey(SizeAttribute, blank=True, null=True, on_delete=models.SET_NULL)
     my_query = RetailOrderItemManager()
     objects = models.Manager()
 
@@ -306,28 +275,51 @@ class RetailOrderItem(DefaultOrderItemModel):
     def __str__(self):
         return self.title.title
 
+    def add_item(self, qty):
+        get_total_value = self.final_value * qty
+        get_total_cost = self.cost * qty
+        self.order.value += get_total_value
+        self.order.total_cost += get_total_cost
+        self.order.save()
+        if RETAIL_TRANSCATIONS:
+            self.title.qty -= qty
+            self.title.save()
+            if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
+                self.size.qty -= qty
+
+    def remove_item(self):
+        get_total_value = self.final_value * self.qty
+        get_total_cost = self.cost * self.qty
+        self.order.value -= get_total_value
+        self.order.total_cost -= get_total_cost
+        self.order.save()
+        if RETAIL_TRANSCATIONS:
+            self.title.qty += self.qty
+            self.title.save()
+            if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
+                self.size.qty += self.qty
+
     def save(self, *args, **kwargs):
         if self.order.order_type in ['r', 'b', 'b', 'e']:
             self.price = self.title.price
-            self.discount = self.title.price_discount
+            self.price_discount = self.title.price_discount
             self.cost = 0
-            self.final_price = self.discount if self.discount > 0 else self.price
+            self.final_value = self.price_discount if self.price_discount > 0 else self.price
         else:
             self.price = 0
-            self.discount = 0
-            self.final_price = 0
+            self.price_discount = 0
+            self.price = 0
             self.cost = 0
-            self.final_price = 0
+            self.final_value = 0
         super(RetailOrderItem, self).save(*args, **kwargs)
-        self.order.save()
-        self.title.save()
+        
 
     def get_clean_value(self):
         return self.price * (100-self.order.taxes/100) * (100-Decimal(self.discount)/100)
 
     @property
     def get_total_value(self):
-        return round(self.final_price*self.qty, 2)
+        return round(self.final_value*self.qty, 2)
 
     @property
     def get_total_cost_value(self):
@@ -341,7 +333,7 @@ class RetailOrderItem(DefaultOrderItemModel):
     tag_total_price.short_description = 'Συνολική Αξία'
 
     def tag_final_price(self):
-        return '%s %s' % (self.final_price, CURRENCY)
+        return f'{self.final_value} {CURRENCY}'
     tag_final_price.short_description = 'Αξία Μονάδας'
 
     def tag_price(self):
@@ -381,10 +373,6 @@ def update_order_on_delete(sender, instance, *args, **kwargs):
         order_transcation(order_type=order.order_type, instance=instance, qty=instance.qty, substact='minus')
     instance.title.save()
 
-
-@receiver(post_save, sender=RetailOrderItem)
-def update_product_qty(sender, instance, *args, **kwargs):
-    order_transcation(instance.order.order_type, instance, instance.qty, 'add')
 
 
 def create_destroy_title():

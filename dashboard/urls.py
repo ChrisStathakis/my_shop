@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from .views import *
-
+from .view_sells import *
+from .views_ajax import *
 
 app_name = 'dashboard'
 
@@ -23,6 +24,18 @@ urlpatterns = [
     # path('products/popup/get_brand_id/', view=get_brand_id, name='get_brand_id'),
     # path('products/popup/create-color/', view=create_color_popup, name='color_popup'),
 
+
+    path('category/', CategoryPage.as_view(), name='categories'),
+    path('categories-site/', CategorySitePage.as_view(), name='categories_site'),
+    path('brands/', BrandPage.as_view(), name='brands'),
+    path('colors/', ColorPage.as_view(), name='colors'),
+    path('sizes/', SizePage.as_view(), name='sizes'),
+
+    # popup and ajax calls
+    path('products/popup/create-brand/', view=createBrandPopup, name='brand_popup'),
+    path('products/popup/create-category/', view=createCategoryPopup, name='category_popup'),
+    path('products/popup/get_brand_id/', view=get_brand_id, name='get_brand_id'),
+    path('products/popup/create-color/', view=create_color_popup, name='color_popup'),
 
     path('category/', CategoryPage.as_view(), name='categories'),
     path('categories-site/', CategorySitePage.as_view(), name='categories_site'),
@@ -57,5 +70,31 @@ urlpatterns = [
 
     path('warehouse/home/', view=create_copy_item, name='warehouse_home'),
 
+    # order section
+    path('eshop-orders/', EshopOrdersPage.as_view(), name='eshop_orders_page'),
+    path('eshop-orders/create/', view=create_eshop_order, name='eshop_order_create'),
+    path('eshop-orders/edit/<int:pk>/', view=eshop_order_edit, name='eshop_order_edit'),
+    path('eshop-orders/add-or-edit/<int:dk>/<int:pk>/<int:qty>/', view=add_edit_order_item, name='add_or_create'),
+    path('eshop-orders/edit-order-item/<int:dk>/', view=edit_order_item, name='edit_order_item'),
+    path('eshop-orders/delete-order-item/<int:dk>/', view=delete_order_item, name='delete_order_item'),
+    path('eshop-orders/print/<int:pk>/', view=print_invoice, name='print_invoice'),
+
+    path('warehouse/order/shipping/', ShippingPage.as_view(), name='shipping_view'),
+    path('warehouse/order/shipping/detail/<int:pk>/', ShippingEditPage.as_view(), name='shipping_edit_view'),
+    path('warehouse/order/shipping/delete/<int:pk>/', view=delete_shipping, name='shipping_delete_view'),
+    path('warehouse/order/shipping/create/', ShippingCreatePage.as_view(), name='shipping_create_view'),
+
+    path('warehouse/order/payment-method/', PaymentMethodPage.as_view(), name='payment_view'),
+    path('warehouse/order/payment-method/detail/<int:pk>/', PaymentMethodEditPage.as_view(), name='payment_edit_view'),
+    path('warehouse/order/payment-method/delete/<int:pk>/', view=delete_payment_method, name='payment_delete_view'),
+    path('warehouse/order/payment-method/create/', PaymentMethodCreatePage.as_view(), name='payment_create_view'),
+
+    path('eshop-order/fast-change-status/', view=order_choices, name='order_choices'),
+
+
+    # ajax calls
+    #  ajax calls
+    path('category/ajax/create/', view=category_create, name='ajax_create_category'),
+    path('category/ajax/get_category_id', view=get_category_id, name="ajax_category_id"),
 ]
 

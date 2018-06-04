@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.forms import formset_factory, inlineformset_factory
+from django.conf import settings
 from dateutil.relativedelta import relativedelta
 
 from point_of_sale.models import RetailOrder, RetailOrderItem
@@ -17,6 +18,8 @@ from products.models import Product, Color, ProductCharacteristics, SizeAttribut
 from products.forms import (SizeAttributeForm, UpdateProductForm, ProductPhotoForm,
                             CreateProductForm, CategorySiteForm, BrandForm, SizeForm, ColorForm
                             )
+
+from carts.models import Cart                            
 from products.forms_popup import ProductPhotoUploadForm
 from site_settings.constants import CURRENCY
 from inventory_manager.models import Vendor, Category
@@ -31,6 +34,9 @@ class DashBoard(TemplateView):
         context = super(DashBoard, self).get_context_data(**kwargs)
         new_orders = RetailOrder.objects.filter(status='1')
         eshop_orders = new_orders.filter(order_type='e')
+        revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_price'))['final_price__sum'] if RetailOrder.my_query.paid_orders() else 0
+        carts = Cart.my_query.active_carts()
+        currency = CURRENCY
         context.update(locals())
         return context
 
@@ -112,7 +118,7 @@ def product_detail(request, pk):
     products, currency, page_title = True, CURRENCY, '%s' % instance.title
     images = instance.get_all_images()
     sizes = SizeAttribute.objects.filter(product_related=instance) if instance.size else None
-    chars = ProductCharacteristics.objects.filter(product_related=instance)
+    chars = instance.characteristics.all()
     form = UpdateProductForm(request.POST or None, instance=instance)
     SizeAttrFormSet = formset_factory(SizeAttributeForm)
     if sizes:
@@ -449,7 +455,7 @@ class CategorySiteCreate(CreateView):
 @method_decorator(staff_member_required, name='dispatch')
 class BrandsCreate(CreateView):
     form_class = BrandForm
-    template_name = 'dashboard/form_view.html'
+    template_name = 'dashboard/page_create.html'
 
     def get_context_data(self, **kwargs):
         context = super(BrandsCreate, self).get_context_data(**kwargs)

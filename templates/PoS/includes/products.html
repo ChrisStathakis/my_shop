@@ -1,0 +1,25 @@
+
+<table class="ui table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Προϊόν</th>
+        <th>Τιμή</th>
+        <th>Ποσότητα</th>
+        <th>Ενέργιες</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in object_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ product }}</td>
+            <td>{{ product.tag_final_price }}</td>
+            <td><input id="{{ product.id }}" name="product-{{ product.id }}" type="number" min="1" placeholder="1" value="1"></td>
+            <td>
+                <a href="{% url 'pos:add_to_order' object.id product.id 1 %}" class='ui green button' >Add</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

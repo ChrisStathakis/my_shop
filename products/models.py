@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.conf import settings
 from django.utils.safestring import mark_safe
-
+from django.conf import settings
 import os, datetime
 from decimal import Decimal
 from tinymce.models import HTMLField
@@ -150,25 +150,9 @@ class Product(DefaultBasicModel):
         verbose_name_plural = "1. Προϊόντα"
 
     def save(self, *args, **kwargs):
-        '''
         if self.price:
             self.final_price = self.price_discount if self.price_discount > 0 else self.price
         self.is_offer = True if self.price_discount > 0 else False
-        if self.size:
-            self.qty = self.sizeattribute_set.all().aggregate(Sum('qty'))['qty__sum'] if self.sizeattribute_set else 0
-        if settings.PRODUCT_TRANSCATIONS:
-            qty_add = self.orderitem_set.all().aggregate(Sum('qty'))['qty__sum'] if self.orderitem_set.all() else 0
-            qty_minus = 0
-            queryset_retail_order = self.retailorderitem_set.all().values('order__order_type').annotate(new_qty=Sum('qty')).order_by('new_qty')\
-            if self.retailorderitem_set.all() else None
-            if queryset_retail_order:
-                for item in queryset_retail_order:
-                    if item['order__order_type'] in ['r', 'e', 'wr', 'd']:
-                        qty_minus += item['new_qty']
-                    else:
-                        qty_minus -= item['new_qty']
-            self.qty = qty_add - qty_minus
-        '''
         super(Product, self).save(*args, **kwargs)
 
     def __str__(self):

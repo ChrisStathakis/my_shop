@@ -11,6 +11,7 @@ class CookiesModel(models.Model):
     def __str__(self):
         return f'{self.title}'
 
+
 class PolicyModel(models.Model):
     title = models.CharField(max_length=120)
     active = models.BooleanField(default=True)

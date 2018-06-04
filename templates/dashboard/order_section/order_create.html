@@ -45,7 +45,7 @@
                                         <td>{{ product.sku }}</td>
                                         <td>{{ product }}</td>
                                         <td>{{ product.tag_final_price }}</td>
-                                        <td><a href="{% url 'dashboard:add_or_create' object.id product.id 1  %}" class="btn btn-success">Add</a></td>
+                                        <td><a href="{% url 'dashboard:add_or_create' instance.id product.id 1  %}" class="btn btn-success">Add</a></td>
                                     </tr>
                                         {% empty %}
                                         <tr>
@@ -63,7 +63,7 @@
                     <div class="card">
                         <div class="header">
                             <h4 class="title text-center">Order Details</h4>
-                            <a href="{% url 'dashboard:print_invoice' object.id %}" class="btn btn-success"><i class="fa fa-print"></i>Print</a>
+                            <a href="{% url 'dashboard:print_invoice' instance.id %}" class="btn btn-success"><i class="fa fa-print"></i>Print</a>
                             <a href="" class="btn btn-info"><i class="fa fa-credit-card"></i>Paid</a>
 
                         </div>
@@ -78,36 +78,38 @@
                                 <tbody>
                                     <tr>
                                         <td>Title</td>
-                                        <th>{{ object }}</th>
+                                        <th>{{ instance }}</th>
                                         <td>Date Added</td>
-                                        <th>{{ object.date_created|date }}</th>
+                                        <th>{{ instance.date_created|date }}</th>
                                     </tr>
                                     <tr>
                                         <td>Order Items Value</td>
-                                        <th>{{ object.tag_value }}</th>
+                                        <th>{{ instance.tag_value }}</th>
                                         <td>Shipping Cost - Payment Cost</td>
-                                        <th>{{ object.tag_shipping_value }} - {{ object.tag_payment_value }}</th>
+                                        <th>{{ instance.tag_shipping_value }} - {{ instance.tag_payment_value }}</th>
                                     </tr>
                                     <tr>
                                         <td>Costumer Details</td>
-                                        <th>{{ object.first_name }} {{ object.last_name }}</th>
+                                        <th>{{ instance.first_name }} {{ instance.last_name }}</th>
                                         <td>Address Details</td>
-                                        <th>{{ object.address }} {{ object.zip_code }} {{ object.city }}</th>
+                                        <th>{{ instance.address }} {{ instance.zip_code }} {{ instance.city }}</th>
                                     </tr>
                                     <tr>
                                         <td>Shipping Method</td>
-                                        <th>{{ object.shipping }}</th>
+                                        <th>{{ instance.shipping }}</th>
                                         <td>Payment Method</td>
-                                        <th>{{ object.payment_method }}</th>
+                                        <th>{{ instance.payment_method }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Selected Coupons Total Discount {{ object.tag_discount }}</td>
-                                        <td colspan="3">{% for coupon in object.coupons.all %}{{ coupon }}, {% endfor %}</td>
+                                        <td>Selected Coupons Total Discount {{ instance.tag_discount }}</td>
+                                        <th>{% for coupon in instance.coupons.all %}{{ coupon }}, {% endfor %}</th>
+                                        <td>User Created</td>
+                                        <th>{{ instance.user_account }}</th>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td colspan="2">
-                                            <h4 class="title text-center">Total Value {{ object.tag_final_price }}</h4>
+                                            <h4 class="title text-center">Total Value {{ instance.tag_final_price }}</h4>
                                         </td>
                                         <td></td>
                                     </tr>
