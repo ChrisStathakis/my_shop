@@ -158,6 +158,9 @@ class Product(DefaultBasicModel):
     def __str__(self):
         return '%s %s' % (self.title, self.color) if self.color else self.title
 
+    def get_edit_url(self):
+        return reverse('dashboard:product_detail', kwargs={'pk': self.id})
+
     def tag_category(self):
         return self.category.title if self.category else 'No Category'
 

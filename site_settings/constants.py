@@ -5,6 +5,11 @@ MEDIA_URL = 'media'
 #MEDIA_URL = 'https://monastiraki.s3.amazonaws.com/media/'
 
 CURRENCY = settings.CURRENCY
+WAREHOUSE_ORDERS_TRANSCATIONS, RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = [settings.WAREHOUSE_ORDERS_TRANSCATIONS,
+                                                                                      settings.RETAIL_TRANSCATIONS,
+                                                                                      settings.PRODUCT_ATTRITUBE_TRANSCATION,
+                                                                                    ]
+
 FPA = 1.24
 
 

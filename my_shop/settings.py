@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
     # third parties
     'tinymce',
+    'rest_framework',
 
 
 ]

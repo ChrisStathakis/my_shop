@@ -11,8 +11,8 @@ from decimal import Decimal
 import datetime
 # Create your models here.
 
-from site_settings.constants import CURRENCY
-from site_settings.models import DefaultOrderModel
+from site_settings.constants import CURRENCY, RETAIL_TRANSCATIONS
+from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod
 from my_site.models import Shipping, validate_positive_decimal, CategorySite
 from products.models import Product, SizeAttribute
@@ -79,7 +79,6 @@ class Cart(models.Model):
     id_session = models.CharField(max_length=50)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    value = models.DecimalField(default=0, max_digits=10, decimal_places=2, validators=[validate_positive_decimal, ])
     is_complete = models.BooleanField(default=False)
     my_query = CartManager()
     objects = models.Manager()
@@ -88,6 +87,7 @@ class Cart(models.Model):
     coupon = models.ManyToManyField(Coupons)
     coupon_discount = models.DecimalField(decimal_places=2, max_digits=10, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    value = models.DecimalField(default=0, max_digits=10, decimal_places=2, validators=[validate_positive_decimal, ])
 
     class Meta:
         ordering = ['-id']
@@ -241,7 +241,7 @@ class CartItem(models.Model):
             qs_exists = CartItem.objects.filter(order_related=order, product_related=product)
         if qs_exists:
             cart_item = qs_exists.last()
-            if settings.RETAIL_ORDER_TRANSCATIONS:
+            if RETAIL_TRANSCATIONS:
                 cart_qty = cart_item.qty + qty
                 if product_qty >= cart_qty:
                     cart_item.qty += qty
@@ -252,7 +252,7 @@ class CartItem(models.Model):
                 cart_item.qty += qty
                 cart_item.save()
         else:
-            if settings.RETAIL_ORDER_TRANSCATIONS:
+            if settings.RETAIL_TRANSCATIONS:
                 if qty > product_qty:
                     messages.warning(request, 'WE dont have enough qty.')
                 else:
@@ -261,7 +261,6 @@ class CartItem(models.Model):
                                                             qty=qty,
                                                             price=product.price,
                                                             price_discount=product.price_discount,
-                                                            id_session=order.id_session,
                                                             )
                     if size and new_cart_item:
                         new_cart_item.characteristic = size
@@ -272,7 +271,6 @@ class CartItem(models.Model):
                                                         qty=qty,
                                                         price=product.price,
                                                         price_discount=product.price_discount,
-                                                        id_session=order.id_session,
                                                         )
                 if size and new_cart_item:
                     new_cart_item.characteristic = size

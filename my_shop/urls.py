@@ -15,14 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from my_site.views import homepage
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('dashboard.urls', namespace='dashboard', )),
-    path('', view=homepage),
+    path('cart/', include('carts.urls', namespace='cart')),
+    path('', include('my_site.urls')),
 
     path('cookie-gdpr/', include('gdpr.urls')),
+    path('api/', include('products.api.urls')),
 
 ]
+
+
+'''
+path('dashboard/', include('dashboard.urls', namespace='dashboard',)),
+path('dashboard/users/', include('account.urls', namespace='users',)),
+path('reports/', include('reports.urls', namespace='reports',)),
+path('pos/', include('point_of_sale.urls', namespace='pos',)),
+path('billings/', include('transcations.urls', namespace='billings')),
+path('inventory/', include('inventory_manager.urls', namespace='inventory')),
+'''
