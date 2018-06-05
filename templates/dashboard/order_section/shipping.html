@@ -22,19 +22,19 @@
                                                 <th>Ordering</th>
                                                 <th>Title</th>
                                                 <th>Status</th>
-                                                <th>Order Price Limit</th>
-                                                <th>Value</th>
+                                                <th>Cost</th>
+                                                <th>Order Limit</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for order in object_list %}
                                             <tr>
-                                                <td>{{ order.ordering }}</td>
+                                                <td>{{ order.ordering_by }}</td>
                                                 <td>{{ order }}</td>
-                                                <td>{{ order.status }}</td>
-                                                <td>{{ order.value_limit }}</td>
-                                                <td>{{ order.value }}</td>
+                                                <td>{{ order.tag_active }}</td>
+                                                <th>{{ order.tag_active_cost }}</th>
+                                                <td>{{ order.tag_active_minimum_cost }}</td>
                                                 <td><a class="btn btn-primary" href="{% url 'dashboard:shipping_edit_view' order.id %}">Edit</a></td>
                                             </tr>
                                             {% endfor %}

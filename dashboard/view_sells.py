@@ -13,10 +13,11 @@ from products.forms import *
 from carts.models import Cart, Coupons
 from carts.forms import CouponForm
 from point_of_sale.models import *
-from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, ShippingForm
+from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm
 from transcations.models import *
 
 from my_site.models import Shipping
+from my_site.forms import ShippingForm
 from site_settings.models import PaymentMethod
 from site_settings.forms import PaymentMethodForm
 
@@ -181,7 +182,7 @@ class ShippingPage(ListView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class ShippingCreatePage(CreateView):
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/form_view.html'
     model = Shipping
     form_class = ShippingForm
 
@@ -239,7 +240,7 @@ class PaymentMethodPage(ListView):
 @method_decorator(staff_member_required, name='dispatch')
 class PaymentMethodCreatePage(CreateView):
     model = PaymentMethod
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/form_view.html'
     form_class = PaymentMethodForm
 
     def get_context_data(self, **kwargs):
@@ -261,7 +262,7 @@ class PaymentMethodCreatePage(CreateView):
 @method_decorator(staff_member_required, name='dispatch')
 class PaymentMethodEditPage(UpdateView):
     model = PaymentMethod
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/form_view.html'
     form_class = PaymentMethodForm
 
     def get_context_data(self, **kwargs):
