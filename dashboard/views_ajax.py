@@ -54,6 +54,7 @@ def createBrandPopup(request):
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
 
 
+
 @staff_member_required
 def createCategoryPopup(request):
     form = CategoryForm(request.POST or None)

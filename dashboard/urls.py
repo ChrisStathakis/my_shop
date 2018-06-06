@@ -3,6 +3,7 @@ from django.urls import path, include, re_path
 from .views import *
 from .view_sells import *
 from .views_ajax import *
+from .views_site import *
 
 app_name = 'dashboard'
 
@@ -66,7 +67,7 @@ urlpatterns = [
     # redirects
     path('product/copy/<int:pk>/', view=create_copy_item, name='copy_product'),
 
-    path('site-settings', view=create_copy_item, name='site_view'),
+    path('site-settings', SiteView.as_view(), name='site_view'),
 
     path('warehouse/home/', view=create_copy_item, name='warehouse_home'),
 
@@ -92,9 +93,34 @@ urlpatterns = [
     path('eshop-order/fast-change-status/', view=order_choices, name='order_choices'),
 
 
+  
     # ajax calls
-    #  ajax calls
     path('category/ajax/create/', view=category_create, name='ajax_create_category'),
     path('category/ajax/get_category_id', view=get_category_id, name="ajax_category_id"),
+
+    
+    # site pages
+    path('site-settings', SiteView.as_view(), name='site_view'),
+    path('site-settings/banners/', BannerView.as_view(), name='banner_view'),
+    path('site-settings/banners/create', BannerCreateView.as_view(), name='banner_create'),
+    path('site-settings/banners/edit/<int:pk>/', BannerEditView.as_view(), name='banner_edit'),
+    path('site-settings/banners/delete/<int:pk>/', view=banner_delete, name='banner_delete'),
+
+    path('site-settings/coupons', CouponsView.as_view(), name='coupons_view'),
+
+
+    # user urls
+    path('users-list/', UsersPage.as_view(), name='users_list'),
+ 
+
+    # page config urls
+    path('page-config/', PageConfigView.as_view(), name="page_config"),
+    path('page-config/create-banner/', view=create_banner, name='create_banner'),
+    path('page-config/edit-banner/<int:dk>/', view=edit_banner_page, name='edit_banner'),
+    path('page-config/delete-banner/<int:dk>/', view=delete_banner, name='delete_banner'),
+
+    path('page-config/create-first_page/', view=create_first_page, name='create_first_page'),
+    path('page-config/edit-first_page/<int:dk>/', view=edit_first_page, name='edit_first_page'),
+    path('page-config/delete-first_page/<int:dk>/', view=delete_first_page, name='delete_first_page'),
 ]
 

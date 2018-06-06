@@ -28,6 +28,7 @@ from site_settings.models import PaymentMethod
 from site_settings.constants import CURRENCY, PAYMENT_METHOD
 from carts.views import check_if_cart_id, cart_data, check_or_create_cart
 from carts.models import CartItem, Coupons
+from .forms import CheckoutForm
 from accounts.models import CostumerAccount
 from accounts.forms import CostumerAccountForm
 
@@ -276,12 +277,12 @@ class CartPage(SearchMixin, TemplateView):
 
 
 def checkout_page(request):
-    form = PersonalInfoForm(request.POST or None)
+    form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     if user:
         profile = CostumerAccount.objects.get(user=user)
-        form = PersonalInfoForm(initial={'email': profile.user.email,
-                                         'first_name': profile.first_name,
+        form = CheckoutForm(initial={'email': profile.user.email,
+                                         'first_name': profile.user.first_name,
                                          'last_name': profile.user.last_name,
                                          'address': profile.shipping_address_1,
                                          'city': profile.shipping_city,
@@ -301,7 +302,7 @@ def checkout_page(request):
                 cart.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if request.POST:
-        form = PersonalInfoForm(request.POST)
+        form = CheckoutForm(request.POST)
         if form.is_valid():
             cart_items = CartItem.objects.filter(order_related=cart)
             payment_method = request.POST.get('payment_method')

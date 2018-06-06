@@ -187,6 +187,7 @@ class FirstPage(models.Model):
     def active_first_page():
         return FirstPage.objects.filter(active=True).first() if FirstPage.objects.filter(active=True) else None
 
+
 class Banner(models.Model):
     active = models.BooleanField(default=True)
     title = models.CharField(max_length=100, unique=True)

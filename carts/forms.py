@@ -82,3 +82,5 @@ class CartItemCreateWithAttrForm(forms.Form):
         print(instance_related)
         if instance_related:
             self.fields['attribute'].queryset = SizeAttribute.objects.filter(product_related=instance_related)
+
+
