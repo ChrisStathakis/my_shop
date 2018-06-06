@@ -208,7 +208,7 @@ def product_detail(request, slug):
     return render(request, 'my_site/product_page.html', context)
 
 
-class SearchPage(SearchMixin, ListView):
+class SearchPage(ListView):
     model = Product
     template_name = 'my_site/product_list.html'
     paginate_by = 20
@@ -216,8 +216,7 @@ class SearchPage(SearchMixin, ListView):
     def get_queryset(self):
         queryset = Product.my_query.active_for_site()
         queryset = queryset.filter(title__icontains=self.search_name) if self.search_name else queryset
-        brand_name, cate_name, color_name = grab_user_filter_data(self.request)
-        queryset = filter_queryset(queryset, brand_name, cate_name, color_name)
+        queryset = Product.filters_data(self.request, queryset)
         queryset = queryset_ordering(self.request, queryset)
         return queryset
 
@@ -305,45 +304,9 @@ def checkout_page(request):
         form = CheckoutForm(request.POST)
         if form.is_valid():
             cart_items = CartItem.objects.filter(order_related=cart)
-            payment_method = request.POST.get('payment_method')
-            shipping_method = request.POST.get('shipping_method')
-            shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart.final_value,
-                                                                                         Shipping.objects.get(id=shipping_method),
-                                                                                         PaymentMethod.objects.get(id=1),
-                                                                                         )
-            new_order = RetailOrder.objects.create(order_type='e',
-                                                   payment_method=form.cleaned_data.get('payment_method'),
-                                                   shipping=form.cleaned_data.get('shipping_method'),
-                                                   shipping_cost=shipping_cost,
-                                                   payment_cost=payment_cost,
-                                                   email=form.cleaned_data.get('email'),
-                                                   first_name=form.cleaned_data.get('first_name'),
-                                                   last_name=form.cleaned_data.get('last_name'),
-                                                   city=form.cleaned_data.get('city'),
-                                                   address=form.cleaned_data.get('address'),
-                                                   zip_code=form.cleaned_data.get('zip_code'),
-                                                   cellphone=form.cleaned_data.get('cellphone'),
-                                                   phone=form.cleaned_data.get('phone'),
-                                                   costumer_submit=form.cleaned_data.get('agreed'),
-                                                   eshop_session_id=cart.id_session,
-                                                   notes=form.cleaned_data.get('notes'),
-                                                   cart_related=cart,
-                                                   )
-            if cart.user:
-                new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
-            new_order.save()
-            for item in cart_items:
-                order_item = RetailOrderItem.objects.create(title=item.product_related,
-                                                            order=new_order,
-                                                            cost=item.product_related.price_buy,
-                                                            price=item.price,
-                                                            qty=item.qty,
-                                                            discount=item.price_discount,
-                                                            )
+            RetailOrder.create_order_from_cart(form, cart, cart_items)
             messages.success(request, 'Your Order Have Completed!')
             del request.session['cart_id']
-            cart.is_complete = True
-            cart.save()
             return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
     context = locals()
     return render(request, 'my_site/checkout.html', context)
@@ -373,11 +336,35 @@ def user_profile_page(request):
 
 def order_detail_page(request, dk):
     get_order = get_object_or_404(RetailOrder, id=dk)
-
+    print(request.user, get_order.costumer_account)
+    if request.user != get_order.costumer_account.user:
+        return HttpResponseRedirect('/')
     context = locals()
-    return render(request, 'home/order_detail.html', context)
+    return render(request, 'my_site/order_detail.html', context)
 
 
 
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
 
+
+@login_required
+def user_download_page(request):
+    user = request.user
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{user.username}.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    data = ''
+    p.drawString(100, 100, "Hello world.")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+    return response
 

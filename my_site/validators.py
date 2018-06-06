@@ -1,8 +1,18 @@
 from django.core.exceptions import ValidationError
-import types
 
+
+def validate_cellphone(value):
+    if not value.startswith('69'):
+        raise ValidationError('This is not a correct cellphone number')
 
 def validate_number(value):
-    if not isinstance(value, types.IntType):
+    try:
+        value=int(value)
+    except:
+        value=value
+    print(value)
+    if not isinstance(value, int):
+        print('problem')
         msg = 'You have use number'
-        return ValidationError(msg)
+        raise ValidationError(msg)
+    

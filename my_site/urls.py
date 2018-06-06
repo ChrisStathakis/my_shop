@@ -35,6 +35,7 @@ urlpatterns = [
     path('coupon-remove/<int:dk>/', view=delete_coupon, name='remove_coupon'),
     # create database always stay commented if in production
 
+    path('user-data/', view=user_download_page, name='user_data'),
 ] 
 
 

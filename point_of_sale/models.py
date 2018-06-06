@@ -102,7 +102,7 @@ class RetailOrder(DefaultOrderModel):
     objects = models.Manager()
 
     cart_related = models.OneToOneField(Cart, blank=True, null=True, on_delete=models.SET_NULL)
-    coupons = models.ManyToManyField(Coupons)
+    coupons = models.ManyToManyField(Coupons, blank=True)
     order_related = models.ForeignKey('self', blank=True, null=True, on_delete = models.CASCADE)
     payorders = GenericRelation(PaymentOrders)
 
@@ -241,11 +241,55 @@ class RetailOrder(DefaultOrderModel):
         
         return queryset
 
+    
+
     @staticmethod
     def estimate_shipping_and_payment_cost(order_value, shipping, payment):
-        shipping_cost = shipping.value if shipping.value_limit < order_value else 0
+        shipping_cost = shipping.cost if shipping.active_minimum_cost < order_value else 0
         payment_cost = payment.additional_cost if payment.limit_value < order_value else 0
         return [shipping_cost, payment_cost]
+    
+    @staticmethod
+    def create_order_from_cart(form, cart, cart_items):
+        payment_method = form.cleaned_data.get('payment_method', None)
+        shipping_method = form.cleaned_data.get('shipping_method', None)
+        shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart.final_value,
+                                                                                    shipping_method,
+                                                                                    payment_method
+                                                                                    )
+        new_order = RetailOrder.objects.create(order_type='e',
+                                               title = f'EshopOrder1{cart.id}',
+                                               payment_method=form.cleaned_data.get('payment_method'),
+                                               shipping=form.cleaned_data.get('shipping_method'),
+                                               shipping_cost=shipping_cost,
+                                               payment_cost=payment_cost,
+                                               email=form.cleaned_data.get('email'),
+                                               first_name=form.cleaned_data.get('first_name'),
+                                                   last_name=form.cleaned_data.get('last_name'),
+                                                   city=form.cleaned_data.get('city'),
+                                                   address=form.cleaned_data.get('address'),
+                                                   zip_code=form.cleaned_data.get('zip_code'),
+                                                   cellphone=form.cleaned_data.get('cellphone'),
+                                                   phone=form.cleaned_data.get('phone'),
+                                                   costumer_submit=form.cleaned_data.get('agreed'),
+                                                   eshop_session_id=cart.id_session,
+                                                   notes=form.cleaned_data.get('notes'),
+                                                   cart_related=cart,
+                                                )
+        if cart.user:
+            new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
+            new_order.save()
+            for item in cart_items:
+                order_item = RetailOrderItem.objects.create(title=item.product_related,
+                                                            order=new_order,
+                                                            cost=item.product_related.price_buy,
+                                                            value=item.price,
+                                                            qty=item.qty,
+                                                            discount_value=item.price_discount,
+                                                            )
+            
+            cart.is_complete = True
+            cart.save()
 
 
 @receiver(post_delete, sender=RetailOrder)

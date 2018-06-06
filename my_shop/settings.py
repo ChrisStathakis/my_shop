@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'site_settings',
     'accounts',
@@ -52,9 +53,15 @@ INSTALLED_APPS = [
     # third parties
     'tinymce',
     'rest_framework',
-
+    'reportlab',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
 
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -145,3 +152,51 @@ PRODUCT_ATTRITUBE_TRANSCATION = True
 
 USE_WAREHOUSE = False
 USE_REPORTS = False
+
+
+
+
+# third parties
+
+AUTHENTICATION_BACKENDS = (
+  
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+)
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.12',
+    }
+}
+
+
+#facebook
+SOCIAL_AUTH_FACEBOOK_KEY = '399000140475673'  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET ='c8d9025ff7cb0903ee8ca067ffaac45e' #app key
+
+#LOGIN_REDIRECT_URL = "/" 

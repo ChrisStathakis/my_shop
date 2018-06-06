@@ -3,7 +3,7 @@ from .models import *
 
 from site_settings.models import PaymentMethod
 from .models import Shipping
-from .validators import validate_number
+from .validators import validate_cellphone, validate_number
 
 
 class ShippingForm(forms.ModelForm):
@@ -45,16 +45,20 @@ class FirstPageForm(forms.ModelForm):
     
 
 class CheckoutForm(forms.Form):
+    email = forms.EmailField(required=True)
     first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
     last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
     address = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Address'}))
     city = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'City'}))
     zip_code = forms.CharField(required=True, 
                                widget=forms.TextInput(attrs={'placeholder': 'Zip Code'}),
-                               validators=[validate_number, ]
+                               validators=[validate_number]
                                )
     phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
-    cellphone = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'CellPhone'}))
+    cellphone = forms.CharField(required=True,
+                                widget=forms.TextInput(attrs={'placeholder': 'CellPhone'}),
+                                validators=[validate_cellphone]
+                                )
 
     notes = forms.Textarea()
     payment_method = forms.ModelChoiceField(required=True, queryset=PaymentMethod.objects.all())

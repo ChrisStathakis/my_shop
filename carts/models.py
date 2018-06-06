@@ -158,6 +158,7 @@ class Cart(models.Model):
                                                     Shipping.objects.get(id=int(shipping_method))
         self.save()
 
+    
 
 class CartItemManager(models.Manager):
 

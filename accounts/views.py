@@ -38,7 +38,8 @@ def register_or_login(request):
             login(request, user)
             return HttpResponseRedirect(reverse('profile-page'))
     context = locals()
-    return render(request, 'home/login.html', context)
+    return render(request, 'accounts/login.html', context)
+
 
 
 def create_user(request):

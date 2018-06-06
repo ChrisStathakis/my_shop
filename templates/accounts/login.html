@@ -1,8 +1,10 @@
-{% extends 'home/index.html' %} {% load static %}
-{% load socialaccount %}
-{% providers_media_js %}
+{% extends 'my_site/index.html' %} {% load static %}{% load socialaccount %}
+
+
 
 {% block content %}
+
+
     <div class="page-header page-header-small">
         <div class="page-header-image" data-parallax="true"
                      {% if first_page.image %}
@@ -38,6 +40,13 @@
                             <button type="submit" name="login_button" class="btn btn-primary btn-round btn-block btn-lg">Send!</button>
                         </form>
                     </div>
+                    <div class="container">
+                        <p>or</p>
+                        <a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-lg btn-default btn-social btn-facebook">
+                        <i class="fa fa-facebook"></i> Sign in with Facebook
+                        </a>
+                    </div>
+                    <a href="{% provider_login_url "facebook" method="js_sdk" %}">Login Button image</a>
                 </div>
 
                 </div>
@@ -45,4 +54,8 @@
 
             </div>
         </div>
+{% endblock %}
+
+{% block extra_js %}
+{% providers_media_js %}
 {% endblock %}
