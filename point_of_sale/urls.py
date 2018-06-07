@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import *
 from django.urls import path
 from .views_warehouse import *
-
+from .api.views import RetailOrderListApi
 
 app_name = 'pos'
 
@@ -41,8 +41,6 @@ urlpatterns = [
     path('warehouse/order-in/<int:dk>/', view=warehouse_order_in, name='warehouse_in'),
 
 
-    # api
-    # path('api/', RetailOrderListApiView.as_view(), name='api_rest_order'),
-    # path('api/<int:id>/',RetailOrderRetrieveUpdateDestroyApiView.as_view(), name='api_resr_order_detail'),
+   
 
     ]

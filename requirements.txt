@@ -2,3 +2,5 @@ django-allauth
 django==2.0
 django-rest-framework
 django-tinymce
+reportlab
+coreapi

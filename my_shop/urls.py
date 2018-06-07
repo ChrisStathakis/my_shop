@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls import url
+from point_of_sale.api.views import RetailOrderListApi, RetailRenderer
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +32,11 @@ urlpatterns = [
 
     # third parties
     url(r'^accounts/',include('allauth.urls')),
+
+
+    # api
+    path('retail/api/', RetailOrderListApi.as_view()),
+    path('retail/api/detail/<int:pk>/', RetailRenderer.as_view(), name='api_retail_detail'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

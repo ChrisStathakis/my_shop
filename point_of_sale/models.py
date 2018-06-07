@@ -303,7 +303,7 @@ def update_on_delete_retail_order(sender, instance, *args, **kwargs):
 
 
 class RetailOrderItem(DefaultOrderItemModel):
-    order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE)
+    order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_items')
     cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     #  warehouse_management
