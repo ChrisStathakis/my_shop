@@ -18,7 +18,10 @@ class RetailOrderManager(models.Manager):
         return super(RetailOrderManager, self).filter(order_type='e')
 
     def eshop_new_orders(self):
-        return super(RetailOrderManager, self).filter(order_type='e', status_id=1).order_by('-id')
+        return super(RetailOrderManager, self).filter(order_type='e', status=1).order_by('-timestamp')
+
+    def eshop_sent_orders(self):
+        return self.eshop_orders().filter(status__in=[5,7,8])
 
     def paid_orders(self):
         return super(RetailOrderManager, self).filter(is_paid=True)

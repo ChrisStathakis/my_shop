@@ -112,25 +112,15 @@ class RetailOrder(DefaultOrderModel):
     def __str__(self):
         return self.title if self.title else 'order'
 
-    def check_coupons(self):
-        total_value = 0
-        active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
-        for coupon in self.coupons.all():
-            if coupon in active_coupons :
-                if self.value > coupon.cart_total_value:
-                    total_value += coupon.discount_value if coupon.discount_value else \
-                    (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
-        self.discount = total_value
-
     def save(self, *args, **kwargs):
-        get_all_items = self.retailorderitem_set.all()
-        self.count_items = get_all_items.count()
+        get_all_items = self.order_items.all()
+        self.count_items = get_all_items.count() if get_all_items else 0
         try:
             self.check_coupons()
         except:
             self.discount = 0
         self.status = self.status if not self.is_paid else '7'
-        self.final_price = self.shipping_cost + self.payment_cost + self.value - self.discount
+        self.final_value= self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
         if self.status == '7':
@@ -150,6 +140,18 @@ class RetailOrder(DefaultOrderModel):
             self.costumer_account.save()
         if self.order_type in ['b', 'd']:
             self.payorders.all().update(is_expense=True)
+
+    def check_coupons(self):
+        total_value = 0
+        active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
+        for coupon in self.coupons.all():
+            if coupon in active_coupons :
+                if self.value > coupon.cart_total_value:
+                    total_value += coupon.discount_value if coupon.discount_value else \
+                    (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
+        self.discount = total_value
+
+    
 
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False

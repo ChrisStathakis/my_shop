@@ -32,8 +32,9 @@ class DashBoard(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashBoard, self).get_context_data(**kwargs)
-        new_orders = RetailOrder.objects.filter(status='1')
-        eshop_orders = new_orders.filter(order_type='e')
+        eshop_orders = RetailOrder.my_query.eshop_new_orders()
+        sent_orders = RetailOrder.my_query.eshop_sent_orders()
+        last_items = RetailOrderItem.objects.all()[:10]
         revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_price'))['final_price__sum'] if RetailOrder.my_query.paid_orders() else 0
         carts = Cart.my_query.active_carts()
         currency = CURRENCY
