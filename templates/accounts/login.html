@@ -1,4 +1,4 @@
-{% extends 'my_site/index.html' %} {% load static %}{% load socialaccount %}
+{% extends 'my_site/index.html' %} {% load static %}
 
 
 
@@ -42,9 +42,7 @@
                     </div>
                     <div class="container">
                         <p>or</p>
-                        <a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-lg btn-default btn-social btn-facebook">
-                        <i class="fa fa-facebook"></i> Sign in with Facebook
-                        </a>
+                        <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
                     </div>
                     
                 </div>
@@ -57,5 +55,5 @@
 {% endblock %}
 
 {% block extra_js %}
-{% providers_media_js %}
+
 {% endblock %}

@@ -79,6 +79,9 @@ urlpatterns = [
     path('eshop-orders/edit-order-item/<int:dk>/', view=edit_order_item, name='edit_order_item'),
     path('eshop-orders/delete-order-item/<int:dk>/', view=delete_order_item, name='delete_order_item'),
     path('eshop-orders/print/<int:pk>/', view=print_invoice, name='print_invoice'),
+    path('eshop-orders/gifts/', gifts_view, name='gift_view'),
+    path('eshop-orders/gifts/<int:pk>/', gifts_edit, name='gift_detail'),
+    path('eshop-orders/gifts/actions/<int:pk>/<int:dk>/<int:type>/<int:sub>/', gift_edit_products, name='gift_detail_pro'),
 
     path('warehouse/order/shipping/', ShippingPage.as_view(), name='shipping_view'),
     path('warehouse/order/shipping/detail/<int:pk>/', ShippingEditPage.as_view(), name='shipping_edit_view'),

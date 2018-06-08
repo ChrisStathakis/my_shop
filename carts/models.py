@@ -15,7 +15,7 @@ from site_settings.constants import CURRENCY, RETAIL_TRANSCATIONS
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod
 from my_site.models import Shipping, validate_positive_decimal, CategorySite
-from products.models import Product, SizeAttribute
+from products.models import Product, SizeAttribute, Gifts
 
 
 class CouponManager(models.Manager):
@@ -233,6 +233,9 @@ class CartItem(models.Model):
         else:
             self.delete()
 
+   
+                
+
     @staticmethod
     def create_cart_item(request, order, product, qty, size=None):
         product_qty = product.qty
@@ -314,5 +317,25 @@ class CartRules(models.Model):
 
 
 
+class CartGiftItem(models.Model):
+    cart_related = models.ForeignKey(CartItem, on_delete=models.CASCADE)
+    product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    qty = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.cart_related
+
+    @staticmethod
+    def check_gifts(product, order_item, qty):
+        get_gifts = Gifts.objects.filter(product_related=product)
+        if get_gifts:
+            qs_exists = CartGiftItem.objects.filter(cart_related=order_item,
+                                                    product_related=''
+                                                    )
+            for gift in get_gifts:
+                new_item = CartGiftItem.objects.create(cart_related=order_item,
+                                                       product_related=gift.products_gift,
+                                                       qty=qty, 
+                                                    )
 
     

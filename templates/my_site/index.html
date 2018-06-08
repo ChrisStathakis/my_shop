@@ -1,6 +1,4 @@
-<!DOCTYPE html> {% load static %}{% load socialaccount %}
-{% providers_media_js %}
-
+<!DOCTYPE html> {% load static %}
 <html lang="en">
 
 <head>
@@ -29,6 +27,7 @@
                         <h1 class="title">This is our great company.</h1>
                         <div class="text-center">
                             <a href="{% url 'new_products_page' %}" class="btn btn-warning">Παραγγείλτε τώρα!</a>
+                            {% if request.user %}<a href="{% url 'fast_ordering' %}" class="btn btn-default">Γρήγορη Παραγγελία!</a>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -129,7 +128,7 @@
                     </script>, Designed by
                     <a href="http://www.invisionapp.com" target="_blank">Invision</a>. Coded by
                     <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>.
-                    <a href="{% provider_login_url "facebook" method="js_sdk" %}">Login Button image</a>
+                    
                 </div>
             </div>
         </footer>

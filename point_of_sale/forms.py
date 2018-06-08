@@ -171,3 +171,4 @@ class CouponForm(forms.ModelForm):
         model = Coupons
         fields = "__all__"
         
+

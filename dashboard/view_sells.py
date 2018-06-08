@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect, reverse, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, View, CreateView, FormView, TemplateView, UpdateView
 from django.db.models import Q, Sum
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -286,7 +287,49 @@ def delete_payment_method(request, dk):
     pass
 
 
-@method_decorator(staff_member_required, name='dispatch')
-class GiftManagerPage(ListView):
-    template_name = ''
-    model = ''
+@staff_member_required
+def gifts_view(request):
+    object_list = Gifts.objects.all()
+    form = GiftCreateForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        instance.refresh_from_db()
+        return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))
+    context = locals()
+    return render(request, 'dashboard/order_section/gifts.html', context)
+
+
+@staff_member_required
+def gifts_edit(request, pk):
+    instance = get_object_or_404(Gifts, id=pk)
+    related_products = instance.product_related.all()
+    gifts = instance.products_gift.all()
+    form = GiftCreateForm(request.POST, instance=instance)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))        
+    products = Product.my_query.get_site_queryset().active_for_site()
+    context = locals()
+    return render(request, 'dashboard/order_section/gifts_edit.html', context)
+
+
+@staff_member_required
+def gift_edit_products(request, pk, dk, type, sub):
+    print('here')
+    gift = get_object_or_404(Gifts, id=pk)
+    instance = get_object_or_404(Product, id=dk)
+    if type == 1:
+        if sub == 1:
+            gift.products_gift.add(instance)
+            gift.save()
+        else:
+            gift.products_gift.remove(instance)
+            gift.save()
+    if type == 2:
+        if sub == 1:
+            gift.product_related.add(instance)
+            gift.save()
+        else:
+            gift.product_related.remove(instance)
+            gift.save()
+    return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': pk}))

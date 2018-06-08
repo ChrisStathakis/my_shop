@@ -337,7 +337,7 @@ class Gifts(models.Model):
     gift_message = models.CharField(max_length=200, unique=True)
     status = models.BooleanField(default=False)
     product_related = models.ManyToManyField(Product, related_name='product_related')
-    products_gift = models.ManyToManyField(Product, related_name='gifts')
+    products_gift = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title

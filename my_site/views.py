@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import auth, messages
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -330,6 +330,24 @@ def user_profile_page(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     context = locals()
     return render(request, 'my_site/profile_page.html', context)  
+
+
+@method_decorator(login_required, name='dispatch')
+class FastOrdering(ListView):
+    template_name = 'my_site/fast_ordering.html'
+    model = RetailOrderItem
+
+    def get_queryset(self):
+        queryset = RetailOrderItem.objects.filter(order__costumer_account__user=self.request.user)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(FastOrdering, self).get_context_data(**kwargs)
+        products = self.object_list.values('id','title__title', 'size', 'qty', 'title__image').annotate(Sum('qty')).order_by('-qty__sum')
+        
+        context.update(locals())
+        return context
+
 
 
 def order_detail_page(request, dk):

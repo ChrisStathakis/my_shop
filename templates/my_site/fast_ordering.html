@@ -1,0 +1,69 @@
+{% extends 'my_site/index.html' %} {% load static %}
+
+{% block seo %}
+    <title>Demo Ecommerce | {{ seo_title }}</title>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'home/product_page.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-header page-header-small">
+        <div class="page-header-image" data-parallax="true"
+                {% if object.image %}
+                        style="background-image: url('{{ object.image.url }}');">
+                     {% else %}
+                        style="background-image: url('{% static 'home/assets/img/bg6.jpg' %}');">
+                {% endif %}
+        </div>
+        <div class="container">
+            <div class="content-center">
+                <h1 class="title">{{ seo_title }}</h1>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="section section-basic">
+        <div class="container-fluid">
+             <div class="row">
+                 <div class="col-12">
+                     <ol class="breadcrumb">
+                         <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Home</a></li>
+                         <li class="breadcrumb-item active">{{ seo_title }}</li>
+                     </ol>
+                 </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col-md-12 col-12 col-sm-12">
+                    <div class="row">
+                        <h2>Total Products {{ object_list.count }}</h2>
+                    </div>
+                    <div class="row">
+                        <div class="container">
+                            <div class="row">
+                                {% for product in products %}
+                                <div class="col-md-3">
+                                        <div class="card" style="width: 18rem;">
+                                            <img class="card-img-top" src="..." alt="Card image cap">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ product.title__title }}</h5>
+                                                  <p class="card-text">Το παράγγειλες {{ product.qty__sum }} φορές!!</p>
+                                                <a href="#" class="btn btn-primary">Ξαναπάρτο!</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+            
+        </div>
+    </div>
+
+
+{% endblock %}

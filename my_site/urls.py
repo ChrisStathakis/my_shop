@@ -12,6 +12,7 @@ from .views import *
 
 urlpatterns = [
     path('', Homepage.as_view(), name='homepage'),
+    path('fast-ordering/', FastOrdering.as_view(), name='fast_ordering'),
     path('offer/', OffersPage.as_view(), name='offers_page'),
     path('new_products/', NewProductsPage.as_view(), name='new_products_page'),
 

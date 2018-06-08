@@ -176,3 +176,26 @@ SizeAttributeFormSet = modelformset_factory(SizeAttribute,
                                             extra=10,
                                             form=SizeAttributeForm,
                                             )
+
+class GiftCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Gifts
+        fields = ['title', 'status', 'gift_message']
+
+    def __init__(self, *args, **kwargs):
+        super(GiftCreateForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
+class GiftEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Gifts
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(GiftEditForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
