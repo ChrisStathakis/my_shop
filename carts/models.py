@@ -253,7 +253,7 @@ class CartItem(models.Model):
                 cart_item.qty += qty
                 cart_item.save()
         else:
-            if settings.RETAIL_TRANSCATIONS:
+            if RETAIL_TRANSCATIONS:
                 if qty > product_qty:
                     messages.warning(request, 'WE dont have enough qty.')
                 else:
@@ -266,6 +266,7 @@ class CartItem(models.Model):
                     if size and new_cart_item:
                         new_cart_item.characteristic = size
                         new_cart_item.save()
+                    messages.success(request, 'The product %s added in your cart' % (product.title))
             else:
                 new_cart_item = CartItem.objects.create(order_related=order,
                                                         product_related=product,
@@ -276,6 +277,7 @@ class CartItem(models.Model):
                 if size and new_cart_item:
                     new_cart_item.characteristic = size
                     new_cart_item.save()
+                messages.success(request, 'The product %s added in your cart' % (product.title))
 
 
 @receiver(post_delete, sender=CartItem)
@@ -310,3 +312,7 @@ class CartRules(models.Model):
         self.shipping_value = self.estimate_shipping_value()
         super(CartRules, self).save(*args, **kwargs)
 
+
+
+
+    

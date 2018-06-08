@@ -284,3 +284,9 @@ class PaymentMethodEditPage(UpdateView):
 @staff_member_required
 def delete_payment_method(request, dk):
     pass
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class GiftManagerPage(ListView):
+    template_name = ''
+    model = ''

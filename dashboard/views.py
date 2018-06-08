@@ -201,7 +201,7 @@ def delete_product_image(request, pk):
 def product_add_sizechart(request, dk):
     instance = get_object_or_404(Product, id=dk)
     sizes_attr = instance.sizeattribute_set.all()
-    sizes = Size.objects.filter(status=True)
+    sizes = Size.objects.filter(active=True)
     return render(request, 'dashboard/size_chart.html', context=locals())
 
 
@@ -519,7 +519,12 @@ class ColorEditPage(UpdateView):
 class SizeCreate(CreateView):
     model = Size
     form_class = SizeForm
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/form_view.html'
+
+    def get_initial(self):
+        initial = {}
+        initial['user_account'] = self.request.user 
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(SizeCreate, self).get_context_data(**kwargs)

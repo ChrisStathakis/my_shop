@@ -61,10 +61,9 @@
                             <p class="category">Choose Categories</p>
                             {% for category in categories %}
                                 <div class="checkbox">
-                                    <input id="cat{{ category.id }}" name="cate_name" value="{{ category.id }}"
+                                    <input id="cat{{ category.id }}" name="site_cate_name" value="{{ category.id }}"
                                            type="checkbox"
-                                            {% if category.id|stringformat:"s" in cate_name %} checked {% endif %}
-                                    >
+                                            {% if category.id|stringformat:"s" in site_cate_name %} checked {% endif %}>
                                     <label for="cat{{ category.id }}">
                                         {{ category }}
                                     </label>
@@ -104,7 +103,7 @@
                             </div>
                             {% endfor %}
                             <button class="btn btn-success">Submit</button>
-                            <a href="" class="btn btn-warning">Clear</a>
+                            <a href="{{ request.path }}" class="btn btn-warning">Clear</a>
                         </div>
                 </div>
                 <div class="col-md-9 col-9 col-sm-12">

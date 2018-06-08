@@ -60,6 +60,7 @@ class CartItemCreate(forms.Form):
     qty = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={'class': 'form-control',
                                                                             'placeholder': '1',
                                                                             'value': '1',
+                                                                            'min': 1,
                                                                             })
                                                                             )
     # size = forms.ModelChoiceField(re)
@@ -69,6 +70,7 @@ class CartItemCreateWithAttrForm(forms.Form):
     qty = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={'class': 'form-control',
                                                                             'placeholder': "1",
                                                                             'value': '1',
+                                                                            'min': 1,
                                                                             })
                                                                     )
     attribute = forms.ModelChoiceField(required=True,

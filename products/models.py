@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum, Q, F
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.conf import settings
@@ -13,6 +14,7 @@ from my_site.models import CategorySite, Brands
 from inventory_manager.models import Vendor, Category
 
 from site_settings.constants import MEDIA_URL, CURRENCY, UNIT
+from .managers import ProductManager
 
 
 def product_directory_path(instance, filename):
@@ -91,14 +93,6 @@ class Size(DefaultBasicModel):
         return queryset
 
 
-class ProductManager(models.Manager):
-    def active_warehouse(self):
-        return super(ProductManager, self).filter(active=True)
-
-    def active_for_site(self):
-        return self.active_warehouse().filter(site_active=True)
-
-
 class Product(DefaultBasicModel):
     site_active = models.BooleanField(default=True, verbose_name='Active for Site')
     wholesale_active = models.BooleanField(default=False, verbose_name="Active for WholeSale")
@@ -160,6 +154,9 @@ class Product(DefaultBasicModel):
 
     def get_edit_url(self):
         return reverse('dashboard:product_detail', kwargs={'pk': self.id})
+
+    def get_absolute_url(self):
+        return reverse('product_page', kwargs={'slug': self.slug})
 
     def tag_category(self):
         return self.category.title if self.category else 'No Category'
@@ -249,6 +246,8 @@ class Product(DefaultBasicModel):
         brand_name = request.GET.getlist('brand_name', None)
         vendor_name = request.GET.getlist('vendor_name', None)
         color_name = request.GET.getlist('color_name', None)
+        print(site_cate_name)
+        
 
         queryset = queryset.filter(category__id__in=cate_name) if cate_name else queryset
         queryset = queryset.filter(brand__id__in=brand_name) if brand_name else queryset
@@ -331,7 +330,18 @@ class ProductPhotos(models.Model):
 
     def tag_status(self):
         return 'First Picture' if self.is_primary else 'Back Picture' if self.is_back else 'Picture'
-#  --------------------------------------------------------------------------------------------------
+
+
+class Gifts(models.Model):
+    title = models.CharField(max_length=150, unique=True)
+    gift_message = models.CharField(max_length=200, unique=True)
+    status = models.BooleanField(default=False)
+    product_related = models.ManyToManyField(Product, related_name='product_related')
+    products_gift = models.ManyToManyField(Product, related_name='gifts')
+
+    def __str__(self):
+        return self.title
+    
 
 
 

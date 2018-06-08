@@ -1,4 +1,4 @@
-{% extends 'home/index.html' %} {% load static %}
+{% extends 'my_site/index.html' %} {% load static %}
 
 {% block seo %}
     <title>Demo Ecommerce | {{ seo_title }}</title>
@@ -24,7 +24,7 @@
     <div class="main">
         <div class="section">
             <div class="container">
-                    <div class="row">
+                <div class="row">
                             <div class="col-12">
                                 <ol class="breadcrumb">
                                   <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Home</a></li>
@@ -49,44 +49,18 @@
                                     </div>
                                 {% endfor %}
                             {% endif %}
-                        </div>
-                        <br><br>
+                </div>
+                <br><br>
                 <div class="row">
-                        <div class="col-md-7 col-sm-6">
-                            <div id="carousel">
-                                <div id="carousel-example-generic" class="carousel slide" data-interval="false">
-                                    <!-- Indicators -->
-                                    <ol class="carousel-indicators">
-                                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                                    </ol>
-    
-                                    <!-- Wrapper for slides -->
-                                    <div class="carousel-inner">
-                                        <div class="item active">
-                                            <img {% if instance.image %}
-                                            src="{{ instance.image.url }}"
-                                            {% else %} src="{% static 'assets/images/no-photo.jpg' %}" {% endif %}
-                                            alt="Awesome Image">
-                                        </div>
-                                    </div>
-    
-                                    <!-- Controls -->
-                                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                                        <span class="fa fa-angle-left"></span>
-                                    </a>
-                                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                                        <span class="fa fa-angle-right"></span>
-                                    </a>
-                                </div>
-                            </div> <!-- end carousel -->
-    
-                            </div>
-                                <div class="col-md-5 col-sm-6">
-                                    <h2>{{ instance }}</h2>
-                                    <h4 class="price"><strong>{{ instance.tag_price }}</strong></h4>
-                                    <hr />
-                                    <p>{{ instance.site_text|default_if_none:"No description added" }}</p>
-                                    <span class="label label-default shipping">{{ instance.brand|default_if_none:"No Brand added" }}, {{ instance.tag_site_category }}</span>
+                    <div class="col-md-5 col-sm-5">
+                        <img {% if instance.image %} src="{{ instance.image.url }}" {% else %} src="{% static 'assets/images/no-photo.jpg' %}" {% endif %} alt="Awesome Image">
+                    </div>
+                    <div class="col-md-7 col-sm-7">
+                        <h2>{{ instance }}</h2>
+                        <h4 class="price"><strong>{{ instance.tag_price }}</strong></h4>
+                        <hr />
+                        <p>{{ instance.site_text|default_if_none:"No description added" }}</p>
+                        <span class="label label-default shipping">{{ instance.brand|default_if_none:"No Brand added" }}, {{ instance.tag_site_category }}</span>
                                     <form method='post'> {% csrf_token %}
                                         {{ form }}
                                         <hr />

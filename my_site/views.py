@@ -28,6 +28,7 @@ from site_settings.models import PaymentMethod
 from site_settings.constants import CURRENCY, PAYMENT_METHOD
 from carts.views import check_if_cart_id, cart_data, check_or_create_cart
 from carts.models import CartItem, Coupons
+from carts.forms import CartItemCreate, CartItemCreateWithAttrForm
 from .forms import CheckoutForm
 from accounts.models import CostumerAccount
 from accounts.forms import CostumerAccountForm
@@ -51,7 +52,7 @@ class Homepage(SearchMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Homepage, self).get_context_data(**kwargs)
         first_page = FirstPage.active_first_page()
-        featured_products = Product.my_query.active_for_site().filter(is_featured=True)
+        featured_products = Product.my_query.get_site_queryset().featured()
         banners = Banner.objects.filter(active=True)
         menu_categories, cart, cart_items = initial_data(self.request)
         context.update(locals())
@@ -114,7 +115,7 @@ class CategoryPageList(SearchMixin, ListView):
         self.category = get_object_or_404(CategorySite, slug=self.kwargs['slug'])
         self.categories = self.category.get_childrens()
         result_list = self.categories | CategorySite.objects.filter(id=self.category.id)
-        queryset = Product.my_query.active_category_site(categories=result_list)
+        queryset = Product.my_query.get_site_queryset().category_queryset(cate=result_list)
         queryset = Product.filters_data(self.request, queryset)
         queryset = queryset_ordering(self.request, queryset)
         return queryset
@@ -190,10 +191,7 @@ def product_detail(request, slug):
                 attribute = form.cleaned_data.get('attribute')
                 order = check_or_create_cart(request)
                 CartItem.create_cart_item(request, order=order, product=instance, qty=qty, size=attribute)
-                messages.success(request, 'The product %s with the size %s added in your cart' % (instance.title,
-                                                                                                  attribute
-                                                                                                  )
-                                 )
+                
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
         else:
             form = CartItemCreate(request.POST)

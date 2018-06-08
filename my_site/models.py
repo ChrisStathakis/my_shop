@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
@@ -53,11 +54,11 @@ class CategorySite(models.Model):
 
     def image_tag(self):
         if self.image:
-            return mark_safe('<img scr="%s%s" width="400px" height="400px" />'%(MEDIAURL, self.image))
+            return mark_safe('<img scr="%s%s" width="400px" height="400px" />'%(MEDIA_URL, self.image))
 
     def image_tag_tiny(self):
         if self.image:
-            return mark_safe('<img scr="%s%s" width="100px" height="100px" />'%(MEDIAURL, self.image))
+            return mark_safe('<img scr="%s%s" width="100px" height="100px" />'%(MEDIA_URL, self.image))
     image_tag.short_description = 'Είκονα'
 
     def get_edit_url(self):
@@ -73,11 +74,14 @@ class CategorySite(models.Model):
         childrens = CategorySite.objects.filter(parent=self)
         return childrens
     
+    
+    
     @staticmethod
     def filter_data(queryset, search_name, active_name):
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
         queryset = queryset.filter(active=True) if active_name else queryset
         return queryset
+
 
 
 class Brands(models.Model):
