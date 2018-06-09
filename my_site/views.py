@@ -279,15 +279,17 @@ def checkout_page(request):
     user = request.user.is_authenticated
     if user:
         profile = CostumerAccount.objects.get(user=user)
+        print(profile)
         form = CheckoutForm(initial={'email': profile.user.email,
-                                         'first_name': profile.user.first_name,
-                                         'last_name': profile.user.last_name,
-                                         'address': profile.shipping_address_1,
-                                         'city': profile.shipping_city,
-                                         'zip_code': profile.shipping_zip_code,
-                                         'cellphone': profile.phone,
+                                     'first_name': profile.user.first_name,
+                                     'last_name': profile.user.last_name,
+                                     'address': profile.shipping_address_1,
+                                     'city': profile.shipping_city,
+                                     'zip_code': profile.shipping_zip_code,
+                                     'cellphone': profile.cellphone,
+                                     'phone': profile.phone,
                                          
-                                         })
+                                    })
     menu_categories, cart, cart_items = initial_data(request)
     if 'login_button' in request.POST:
         username = request.POST.get('username')
@@ -344,9 +346,13 @@ class FastOrdering(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FastOrdering, self).get_context_data(**kwargs)
-        products = self.object_list.values('id','title__title', 'size', 'qty', ).annotate(Sum('qty')).order_by('-qty__sum')
-        for ele in self.object_list:
-            print(ele.size)
+        products = self.object_list.values('id', 'size__title' ).annotate(Sum('qty')).order_by('-qty__sum')[:5]
+        most_used = []
+        for ele in products:
+            print(ele['id'])
+            
+            most_used.append((RetailOrderItem.objects.get(id=ele['id']), ele['qty__sum']))
+        print(most_used)
         context.update(locals())
         return context
 

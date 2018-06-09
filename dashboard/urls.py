@@ -76,6 +76,7 @@ urlpatterns = [
     path('eshop-orders/create/', view=create_eshop_order, name='eshop_order_create'),
     path('eshop-orders/edit/<int:pk>/', view=eshop_order_edit, name='eshop_order_edit'),
     path('eshop-orders/add-or-edit/<int:dk>/<int:pk>/<int:qty>/', view=add_edit_order_item, name='add_or_create'),
+    path('eshop-orders/add-with-size/<int:pk>/<int:dk>/', CreateOrderItemWithSizePage.as_view(), name='add_with_size'),
     path('eshop-orders/edit-order-item/<int:dk>/', view=edit_order_item, name='edit_order_item'),
     path('eshop-orders/delete-order-item/<int:dk>/', view=delete_order_item, name='delete_order_item'),
     path('eshop-orders/print/<int:pk>/', view=print_invoice, name='print_invoice'),

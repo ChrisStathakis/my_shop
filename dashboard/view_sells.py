@@ -14,7 +14,7 @@ from products.forms import *
 from carts.models import Cart, Coupons
 from carts.forms import CouponForm
 from point_of_sale.models import *
-from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm
+from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm, CreateOrderItemWithSizeForm
 from transcations.models import *
 
 from my_site.models import Shipping
@@ -114,7 +114,7 @@ def eshop_order_edit(request, pk):
 
     search_name = request.GET.get('search_name', None)
     object_list = object_list.filter(title__icontains=search_name) if search_name else object_list
-    paginator = Paginator(object_list, 5)
+    paginator = Paginator(object_list, 20)
     object_list = paginator.get_page(1)
     return render(request, 'dashboard/order_section/order_create.html', context=locals())
 
@@ -143,22 +143,35 @@ def add_edit_order_item(request, dk, pk, qty):
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(dk,)))
 
 
-@login_required()
-class CreateOrderItemWithSize(CreateView):
+@method_decorator(login_required, name='dispatch')
+class CreateOrderItemWithSizePage(CreateView):
     model = RetailOrderItem
-    template_name = ''
-    success_url = reverse_lazy('')
+    template_name = 'dashboard/form_view.html'
+    form_class = CreateOrderItemWithSizeForm
     
     def get_initial(self):
         initial = {}
-        initial['order'] = get_object_or_404(RetailOrder.objects.get(id=self.kwargs.get('pk')))
-        initial['title'] = get_object_or_404(RetailOrder.objects.get(id=self.kwargs.get('dk')))
+        instance = get_object_or_404(Product, id=self.kwargs.get('dk'))
+        initial['order'] = get_object_or_404(RetailOrder, id=self.kwargs.get('pk'))
+        initial['title'] = instance
+        initial['value'] = instance.price
+        initial['discount_value'] = instance.price_discount
         return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateOrderItemWithSizePage, self).get_context_data(**kwargs)
+        instance = get_object_or_404(Product, id=self.kwargs.get('dk'))
+        page_title, back_url = f'Add {instance.title} ', reverse('dashboard:eshop_order_edit', kwargs={'pk': self.kwargs.get('pk')})
+        context.update(locals())
+        return context
 
     def form_valid(self, form):
         form.save()
         messages.success(self.request, 'Added!')
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('dashboard:eshop_order_edit', kwargs={'pk': self.kwargs.get('pk')})
 
 
 @login_required()

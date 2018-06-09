@@ -283,13 +283,24 @@ class RetailOrder(DefaultOrderModel):
             new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
             new_order.save()
             for item in cart_items:
-                order_item = RetailOrderItem.objects.create(title=item.product_related,
-                                                            order=new_order,
-                                                            cost=item.product_related.price_buy,
-                                                            value=item.price,
-                                                            qty=item.qty,
-                                                            discount_value=item.price_discount,
-                                                            )
+                if item.characteristic:
+                    order_item = RetailOrderItem.objects.create(title=item.product_related,
+                                                                order=new_order,
+                                                                cost=item.product_related.price_buy,
+                                                                value=item.price,
+                                                                qty=item.qty,
+                                                                discount_value=item.price_discount,
+                                                                size=item.characteristic,
+                                                                )
+                else:
+                    order_item = RetailOrderItem.objects.create(title=item.product_related,
+                                                                order=new_order,
+                                                                cost=item.product_related.price_buy,
+                                                                value=item.price,
+                                                                qty=item.qty,
+                                                                discount_value=item.price_discount,
+                                                                )
+                
             
             cart.is_complete = True
             cart.save()

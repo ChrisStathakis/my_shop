@@ -22,8 +22,6 @@ class DefaultBasicModel(models.Model):
         abstract = True
 
 
-
-
 class PaymentMethodManager(models.Manager):
 
     def active(self):
