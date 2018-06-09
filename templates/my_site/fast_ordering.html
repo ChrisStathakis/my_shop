@@ -47,9 +47,9 @@
                                 {% for product in products %}
                                 <div class="col-md-3">
                                         <div class="card" style="width: 18rem;">
-                                            <img class="card-img-top" src="..." alt="Card image cap">
+                                        
                                             <div class="card-body">
-                                                <h5 class="card-title">{{ product.title__title }}</h5>
+                                                <h5 class="card-title">{{ product.title__title }} {{ product.size }}</h5>
                                                   <p class="card-text">Το παράγγειλες {{ product.qty__sum }} φορές!!</p>
                                                 <a href="#" class="btn btn-primary">Ξαναπάρτο!</a>
                                             </div>

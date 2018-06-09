@@ -108,6 +108,7 @@ class RetailOrder(DefaultOrderModel):
 
     class Meta:
         verbose_name_plural = '1. Παραστατικά Πωλήσεων'
+        ordering = ['-timestamp']
 
     def __str__(self):
         return self.title if self.title else 'order'
@@ -120,7 +121,7 @@ class RetailOrder(DefaultOrderModel):
         except:
             self.discount = 0
         self.status = self.status if not self.is_paid else '7'
-        self.final_value= self.shipping_cost + self.payment_cost + self.value - self.discount
+        self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
         if self.status == '7':
@@ -159,9 +160,9 @@ class RetailOrder(DefaultOrderModel):
     def tag_value(self):
         return '%s %s' % (self.value, CURRENCY)
 
-    def tag_final_price(self):
+    def tag_final_value(self):
         return '%s %s' % (self.final_value, CURRENCY)
-    tag_final_price.short_description = 'Τελική Αξία'
+    tag_final_value.short_description = 'Τελική Αξία'
 
     def tag_paid_value(self):
         return '%s %s' % (self.paid_value, CURRENCY)
@@ -267,9 +268,9 @@ class RetailOrder(DefaultOrderModel):
                                                payment_cost=payment_cost,
                                                email=form.cleaned_data.get('email'),
                                                first_name=form.cleaned_data.get('first_name'),
-                                                   last_name=form.cleaned_data.get('last_name'),
-                                                   city=form.cleaned_data.get('city'),
-                                                   address=form.cleaned_data.get('address'),
+                                               last_name=form.cleaned_data.get('last_name'),
+                                               city=form.cleaned_data.get('city'),
+                                               address=form.cleaned_data.get('address'),
                                                    zip_code=form.cleaned_data.get('zip_code'),
                                                    cellphone=form.cleaned_data.get('cellphone'),
                                                    phone=form.cleaned_data.get('phone'),
@@ -292,6 +293,7 @@ class RetailOrder(DefaultOrderModel):
             
             cart.is_complete = True
             cart.save()
+        return new_order
 
 
 @receiver(post_delete, sender=RetailOrder)

@@ -38,7 +38,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ order.date_created|date }}</td>
+                                                <td>{{ order.timestamp|date }}</td>
                                                 <td><a href="{% url 'dashboard:eshop_order_edit' order.id  %}">{{ order.tag_fullname }}</a></td>
                                                 <td>{{ order.tag_full_address }}</td>
                                                 <td>{{ order.tag_phones }}</td>
@@ -46,7 +46,7 @@
                                                 <td>{% if order.printed %}{{ order.is_printed }}{% else %}
                                                     <a class="btn btn-default" href='{% url "dashboard:print_invoice" order.id  %}' target="_blank">Print</a> {% endif %}
                                                 </td>
-                                                <td>{{ order.tag_final_price }}</td>
+                                                <td>{{ order.tag_final_value }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>

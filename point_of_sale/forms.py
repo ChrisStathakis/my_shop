@@ -140,6 +140,23 @@ class EshopOrderItemForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
+class EshopOrderItemWithSizeForm(forms.ModelForm):
+
+    class Meta:
+        model = RetailOrderItem
+        fields = ['qty',
+                  'value',
+                  'discount_value',
+                  'size',  
+                  ]
+
+    def __init__(self, *args, **kwargs):
+        super(EshopOrderItemForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
+
 class RetailOrderWarehouseIncomeForm(forms.ModelForm):
 
     class Meta:

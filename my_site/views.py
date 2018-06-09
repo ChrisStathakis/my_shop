@@ -274,6 +274,7 @@ class CartPage(SearchMixin, TemplateView):
 
 
 def checkout_page(request):
+    # del request.session['cart_id']
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     if user:
@@ -302,7 +303,7 @@ def checkout_page(request):
         form = CheckoutForm(request.POST)
         if form.is_valid():
             cart_items = CartItem.objects.filter(order_related=cart)
-            RetailOrder.create_order_from_cart(form, cart, cart_items)
+            new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
             messages.success(request, 'Your Order Have Completed!')
             del request.session['cart_id']
             return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
@@ -343,8 +344,9 @@ class FastOrdering(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FastOrdering, self).get_context_data(**kwargs)
-        products = self.object_list.values('id','title__title', 'size', 'qty', 'title__image').annotate(Sum('qty')).order_by('-qty__sum')
-        
+        products = self.object_list.values('id','title__title', 'size', 'qty', ).annotate(Sum('qty')).order_by('-qty__sum')
+        for ele in self.object_list:
+            print(ele.size)
         context.update(locals())
         return context
 

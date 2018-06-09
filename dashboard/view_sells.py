@@ -14,7 +14,7 @@ from products.forms import *
 from carts.models import Cart, Coupons
 from carts.forms import CouponForm
 from point_of_sale.models import *
-from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm
+from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm
 from transcations.models import *
 
 from my_site.models import Shipping
@@ -32,7 +32,7 @@ class EshopOrdersPage(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        queryset = RetailOrder.objects.filter(order_type='e')
+        queryset = RetailOrder.objects.all()
         queryset = RetailOrder.eshop_orders_filtering(self.request, queryset)
         return queryset
 
@@ -103,7 +103,7 @@ def create_eshop_order(request):
 @staff_member_required()
 def eshop_order_edit(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
-    object_list = Product.my_query.active_for_site()
+    object_list = Product.my_query.get_site_queryset().active_for_site()
     order_items = RetailOrderItem.objects.filter(order=instance)
     form = EshopRetailForm(request.POST or None, instance=instance)
 
@@ -144,10 +144,30 @@ def add_edit_order_item(request, dk, pk, qty):
 
 
 @login_required()
+class CreateOrderItemWithSize(CreateView):
+    model = RetailOrderItem
+    template_name = ''
+    success_url = reverse_lazy('')
+    
+    def get_initial(self):
+        initial = {}
+        initial['order'] = get_object_or_404(RetailOrder.objects.get(id=self.kwargs.get('pk')))
+        initial['title'] = get_object_or_404(RetailOrder.objects.get(id=self.kwargs.get('dk')))
+        return initial
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Added!')
+        return super().form_valid(form)
+
+
+@login_required()
 def edit_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
     old_instance = get_object_or_404(RetailOrderItem, id=dk)
-    form_order = EshopOrderItemForm(request.POST or None, instance=instance) 
+    form_order = EshopOrderItemForm(request.POST or None, instance=instance)
+    if instance.size:
+        form_order = EshopOrderItemWithSizeForm(request.POST or None, instance=instance) 
     if form_order.is_valid():
         old_instance.remove_item()
         form_order.save()
