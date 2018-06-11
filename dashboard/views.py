@@ -59,12 +59,15 @@ class ProductsList(ListView):
                                                                Color.objects.all(), Brands.objects.all(), \
                                                                CategorySite.objects.all()
         # get filters data
+        print(self.request.GET)
         search_name = self.request.GET.get('search_name', None)
         cate_name = self.request.GET.getlist('cate_name', None)
         site_cate_name = self.request.GET.getlist('site_cate_name', None)
         brand_name = self.request.GET.getlist('brand_name', None)
         vendor_name = self.request.GET.getlist('vendor_name', None)
         color_name = self.request.GET.getlist('color_name', None)
+        feat_name = self.request.GET.get('feat_name', None)
+        active_name = self.request.GET.get('active_name', None)
         products, currency = True, CURRENCY
         page_title = 'Product list'
         context.update(locals())

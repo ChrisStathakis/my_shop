@@ -157,6 +157,33 @@
                             </table>
                         </div>
                     </div>
+                    <br><br>
+                    {% if gifts %}
+                    <div class="card">
+                        <div class="card-header"><h4>Gifts</h4></div>
+                            <div class="card-body">
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product</th>
+                                            <th>Qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in gifts %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ item.product_related }}</td>
+                                                <td>{{ item.qty }}</td>
+                                 
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

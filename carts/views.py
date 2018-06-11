@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, reverse
 from django.contrib import messages
 from django.contrib.auth.models import User
+
+from my_site.models import CategorySite
 from .models import Cart, CartItem, CartGiftItem
 from .forms import CouponForm
 from products.models import Product, Gifts
@@ -49,6 +51,11 @@ def cart_data(request):
     return [cart, cart_items]
 
 
+def initial_data(request):
+    menu_categories = CategorySite.objects.filter(show_on_menu=True)
+    cart, cart_items = cart_data(request)
+    return menu_categories, cart, cart_items
+
 def add_to_cart(request, dk, qty=1):
     instance = get_object_or_404(Product, id=dk)
     order = check_or_create_cart(request)
@@ -60,6 +67,8 @@ def add_to_cart(request, dk, qty=1):
 
 def delete_cart_item(request, dk):
     instance = get_object_or_404(CartItem, id=dk)
+    menu_categories, cart, cart_items = initial_data(self.request)
+    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
     messages.warning(request, 'The product %s has deleted' % instance.product_related.title)
     CartGiftItem.gift_delete(cart_item, '')
     instance.delete()

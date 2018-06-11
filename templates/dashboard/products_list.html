@@ -41,14 +41,16 @@
                                     <table class="table table-striped">
                                         <thead>
                                         <tr>
-                                            <th></th>
+                                            <th>#</th>
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Price</th>
                                             <th>Category</th>
                                             <th>Brand</th>
-                                            <th>Qty</th>
                                             <th>Size Chart</th>
+                                            <th>Active</th>
+                                            <th>Featured</th>
+                                            <th>Qty</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -61,11 +63,13 @@
                                                 </td>
                                                 <td>{{ product.id }}</td>
                                                 <td><a href="{% url 'dashboard:product_detail' product.id %}">{{ product }}</a></td>
-                                                <td>{{ product.final_price }}</td>
-                                                <td>{{ product.category }}</td>
-                                                <td>{{ product.brand }}</td>
-                                                <td>{{ product.qty }}</td>
+                                                <td>{{ product.tag_final_price }}</td>
+                                                <td>{{ product.category_site.first|default_if_none:"" }}</td>
+                                                <td>{{ product.brand|default_if_none:"" }}</td>
                                                 <td>{% if product.size|default_if_none:"No sizes" %}{% for size in product.sizeattribute_set.all %}{{ size }}, {% endfor %} {% else %}No size {% endif %}</td>
+                                                {{ product.tag_featured }}
+                                                {{ product.tag_qty_td }}
+                                                {{ product.tag_active }} 
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -151,20 +155,16 @@
                                    />
                                </div>
                                <div class="checkbox">
-                                   <input id="check_active" name="active_name" type="checkbox" value="1">
+                                   <input id="check_active" name="active_name" type="checkbox" value="1" {% if active_name == '1' %} checked {% endif %}>
                                    <label for="check_active">Active</label>
                                </div>
                                <div class="red checkbox">
-                                   <input id="de_check_active" name="active_name" type="checkbox" value="2">
+                                   <input id="de_check_active" name="active_name" type="checkbox" value="2" {% if active_name == '2' %} checked {% endif %}>
                                    <label for="de_check_active">De-Active</label>
                                </div>
                                <div class="checkbox">
-                                   <input id="check_feat" name="feat_name" type="checkbox" value="1">
+                                   <input id="check_feat" name="feat_name" type="checkbox" value="1" {% if feat_name %} checked {% endif %}>
                                    <label for="check_feat">Featured</label>
-                               </div>
-                               <div class="checkbox">
-                                   <input id="de_check_feat" name="feat_name" type="checkbox" value="2">
-                                   <label for="de_check_feat">Non Featured</label>
                                </div>
                                <div id="accordion" role="tablist" aria-multiselectable="true">
                                    <div class="card">

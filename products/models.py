@@ -167,6 +167,12 @@ class Product(DefaultBasicModel):
     def tag_brand(self):
         return self.brand if self.brand else 'Δεν έχει επιλεχτεί Brand'
 
+    def tag_featured(self):
+        return mark_safe('<td style="background-color:#a4e8a4;">Featured</td>') if self.is_featured else mark_safe('<td style="background-color:#d8a0a0;">No Featured</td>')
+
+    def tag_active(self):
+        return mark_safe('<td style="background-color:#a4e8a4;">Active</td>') if self.active and self.site_active else mark_safe('<td style="background-color:#d8a0a0;">No Active</td>')
+
     
     @property
     def tag_final_price(self):
@@ -195,6 +201,9 @@ class Product(DefaultBasicModel):
 
     def tag_qty(self):
         return '%s %s' % (self.qty, self.get_measure_unit_display())
+    
+    def tag_qty_td(self):
+        return mark_safe('<td>%s</td>' % self.tag_qty()) if self.qty > 0 else mark_safe(f'<td style="background-color:#d8a0a0;">{self.tag_qty()}</td>')
 
     @property
     def image(self):
@@ -246,9 +255,11 @@ class Product(DefaultBasicModel):
         brand_name = request.GET.getlist('brand_name', None)
         vendor_name = request.GET.getlist('vendor_name', None)
         color_name = request.GET.getlist('color_name', None)
-        print(site_cate_name)
-        
-
+        feat_name = request.GET.get('feat_name', None)
+        active_name = request.GET.get('active_name', None)
+    
+        queryset = queryset.filter(active=True, site_active=True) if active_name == '1' else queryset.filter(active=False, site_active=False) if active_name == '2' else queryset  
+        queryset = queryset.filter(is_featured=True) if feat_name == '1' else queryset
         queryset = queryset.filter(category__id__in=cate_name) if cate_name else queryset
         queryset = queryset.filter(brand__id__in=brand_name) if brand_name else queryset
         queryset = queryset.filter(vendor__id__in=vendor_name) if vendor_name else queryset

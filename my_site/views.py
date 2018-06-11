@@ -22,11 +22,11 @@ from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
 from .models import FirstPage, Banner, Brands, CategorySite
 from products.models import Product, Color, ProductPhotos, Gifts
-from point_of_sale.models import RetailOrder, RetailOrderItem
+from point_of_sale.models import RetailOrder, RetailOrderItem, GiftRetailItem
 from my_site.models import Shipping
 from site_settings.models import PaymentMethod
 from site_settings.constants import CURRENCY, PAYMENT_METHOD
-from carts.views import check_if_cart_id, cart_data, check_or_create_cart
+from carts.views import check_if_cart_id, cart_data, check_or_create_cart, initial_data
 from carts.models import CartItem, Coupons, CartGiftItem
 from carts.forms import CartItemCreate, CartItemCreateWithAttrForm
 from .forms import CheckoutForm
@@ -38,12 +38,6 @@ from accounts.forms import CostumerAccountForm
 # from carts.forms import CartItemForm, CartItemNoAttrForm, CartItemCreate, CartItemCreateWithAttrForm
 # return custom_redirect('url-name', x, q = 'something')
 # Should redirect to '/my_long_url/x/?q=something'
-
-
-def initial_data(request):
-    menu_categories = CategorySite.objects.filter(show_on_menu=True)
-    cart, cart_items = cart_data(request)
-    return menu_categories, cart, cart_items
 
 
 class Homepage(SearchMixin, TemplateView):
@@ -287,7 +281,7 @@ def checkout_page(request):
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     menu_categories, cart, cart_items = initial_data(request)
-    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
+    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items) if cart_items else None
     if user:
         profile = CostumerAccount.objects.get(user=user)
         print(profile)
@@ -318,6 +312,7 @@ def checkout_page(request):
             cart_items = CartItem.objects.filter(order_related=cart)
             new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
             messages.success(request, 'Your Order Have Completed!')
+            GiftRetailItem.create_gifts(cart, new_order, cart_items, gifts)
             del request.session['cart_id']
             return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
     context = locals()
@@ -370,9 +365,10 @@ class FastOrdering(ListView):
 
 
 def order_detail_page(request, dk):
-    get_order = get_object_or_404(RetailOrder, id=dk)
-    print(request.user, get_order.costumer_account)
-    if request.user != get_order.costumer_account.user:
+    instance = get_object_or_404(RetailOrder, id=dk)
+    order_items = instance.order_items.all()
+    gifts = instance.gifts.all() 
+    if request.user != instance.costumer_account.user:
         return HttpResponseRedirect('/')
     context = locals()
     return render(request, 'my_site/order_detail.html', context)
