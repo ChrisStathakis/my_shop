@@ -82,6 +82,7 @@ class CouponCreate(CreateView):
 
 #  dashboard urls
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class UserListView(ListView):
     template_name = 'accounts/dash_user_list.html'
@@ -108,8 +109,6 @@ class UserUpdateView(UpdateView):
         back_url = self.success_url
         context.update(locals())
         return context
-
-
 
 
 @method_decorator(staff_member_required, name='dispatch')

@@ -233,9 +233,6 @@ class CartItem(models.Model):
         else:
             self.delete()
 
-   
-                
-
     @staticmethod
     def create_cart_item(request, order, product, qty, size=None):
         product_qty = product.qty
@@ -255,6 +252,7 @@ class CartItem(models.Model):
             else:
                 cart_item.qty += qty
                 cart_item.save()
+            return cart_item
         else:
             if RETAIL_TRANSCATIONS:
                 if qty > product_qty:
@@ -270,6 +268,7 @@ class CartItem(models.Model):
                         new_cart_item.characteristic = size
                         new_cart_item.save()
                     messages.success(request, 'The product %s added in your cart' % (product.title))
+                    return new_cart_item
             else:
                 new_cart_item = CartItem.objects.create(order_related=order,
                                                         product_related=product,
@@ -281,7 +280,8 @@ class CartItem(models.Model):
                     new_cart_item.characteristic = size
                     new_cart_item.save()
                 messages.success(request, 'The product %s added in your cart' % (product.title))
-
+                return new_cart_item
+        
 
 @receiver(post_delete, sender=CartItem)
 def update_order_on_delete(sender, instance, *args, **kwargs):
@@ -316,26 +316,29 @@ class CartRules(models.Model):
         super(CartRules, self).save(*args, **kwargs)
 
 
-
 class CartGiftItem(models.Model):
     cart_related = models.ForeignKey(CartItem, on_delete=models.CASCADE)
     product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     qty = models.PositiveIntegerField(default=1)
 
+    class Meta:
+        unique_together = ['cart_related', 'product_related']
+
     def __str__(self):
         return self.cart_related
 
     @staticmethod
-    def check_gifts(product, order_item, qty):
-        get_gifts = Gifts.objects.filter(product_related=product)
+    def check_gifts(request, product, cart_item):
+        get_gifts = Gifts.objects.filter(product_related=product, status=True)
         if get_gifts:
-            qs_exists = CartGiftItem.objects.filter(cart_related=order_item,
-                                                    product_related=''
-                                                    )
             for gift in get_gifts:
-                new_item = CartGiftItem.objects.create(cart_related=order_item,
-                                                       product_related=gift.products_gift,
-                                                       qty=qty, 
-                                                    )
-
-    
+                qs_exists = CartGiftItem.objects.filter(cart_related=cart_item, product_related=product)
+                if qs_exists:
+                    instance = qs_exists.last()
+                    instance.qty = cart_item.qty
+                    instance.save()
+                else:
+                    CartGiftItem.objects.create(cart_related=cart_item,
+                                                product_related=gift.products_gift,
+                                                qty=cart_item.qty)
+                messages.success(request, f'{gift.gift_message}')

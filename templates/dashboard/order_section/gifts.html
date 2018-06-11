@@ -9,11 +9,7 @@
                         <div class="card">
                             <div class="header">
                                 <h4 class="title text-center">Gifts</h4>
-                                <p class="category">
-                                    <a href="{% url 'dashboard:shipping_create_view' %}"
-                                       class="btn btn-success">Create New Gift
-                                    </a>
-                                </p>
+
                             </div>
                             <div class="content table-responsive table-full-width">
                                     <table class="table table-striped">
@@ -35,7 +31,7 @@
                                                 <td>{{ order.tag_active }}</td>
                                                 <th>{{ order.tag_active_cost }}</th>
                                                 <td>{{ order.tag_active_minimum_cost }}</td>
-                                                <td><a class="btn btn-primary" href="{% url 'dashboard:shipping_edit_view' order.id %}">Edit</a></td>
+                                                <td><a class="btn btn-primary" href="{% url 'dashboard:gift_detail' order.id %}">Edit</a></td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>

@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, reverse
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Cart, CartItem
+from .models import Cart, CartItem, CartGiftItem
 from .forms import CouponForm
-from products.models import Product
+from products.models import Product, Gifts
 import random
 from string import ascii_letters
 
@@ -52,7 +52,8 @@ def cart_data(request):
 def add_to_cart(request, dk, qty=1):
     instance = get_object_or_404(Product, id=dk)
     order = check_or_create_cart(request)
-    CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
+    cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
+    CartGiftItem.check_gifts(request, instance, cart_item)
     messages.success(request, ' The product %s added to cart' % instance.title)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

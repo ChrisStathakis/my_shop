@@ -18,7 +18,7 @@ from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod, PaymentOrders
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
-from carts.models import Cart, CartItem, Coupons
+from carts.models import Cart, CartItem, Coupons, CartGiftItem
 from my_site.models import Shipping
 
 
@@ -425,3 +425,9 @@ def create_destroy_title():
         return 'ΚΑΤ'+ str(number)
     else:
         return 'ΚΑΤ1'
+
+
+class GiftRetailItem(models.Model):
+    cart_related = models.ForeignKey(CartGiftItem, on_delete=models.CASCADE)
+    order_related = models.ForeignKey(RetailOrder, on_delete=models.CASCADE)
+    qty = models.PositiveIntegerField(default=0)

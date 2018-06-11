@@ -336,11 +336,13 @@ def gifts_view(request):
 def gifts_edit(request, pk):
     instance = get_object_or_404(Gifts, id=pk)
     related_products = instance.product_related.all()
-    gifts = instance.products_gift.all()
-    form = GiftCreateForm(request.POST, instance=instance)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))        
+    gift = instance.products_gift
+    form = GiftCreateForm(instance=instance)
+    if request.POST:
+        form = GiftCreateForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))
     products = Product.my_query.get_site_queryset().active_for_site()
     context = locals()
     return render(request, 'dashboard/order_section/gifts_edit.html', context)
@@ -348,15 +350,15 @@ def gifts_edit(request, pk):
 
 @staff_member_required
 def gift_edit_products(request, pk, dk, type, sub):
-    print('here')
+
     gift = get_object_or_404(Gifts, id=pk)
     instance = get_object_or_404(Product, id=dk)
     if type == 1:
         if sub == 1:
-            gift.products_gift.add(instance)
+            gift.products_gift = instance
             gift.save()
         else:
-            gift.products_gift.remove(instance)
+            gift.products_gift = None
             gift.save()
     if type == 2:
         if sub == 1:

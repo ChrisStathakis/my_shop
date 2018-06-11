@@ -21,13 +21,13 @@ from urllib.parse import urlencode
 from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
 from .models import FirstPage, Banner, Brands, CategorySite
-from products.models import Product, Color, ProductPhotos
+from products.models import Product, Color, ProductPhotos, Gifts
 from point_of_sale.models import RetailOrder, RetailOrderItem
 from my_site.models import Shipping
 from site_settings.models import PaymentMethod
 from site_settings.constants import CURRENCY, PAYMENT_METHOD
 from carts.views import check_if_cart_id, cart_data, check_or_create_cart
-from carts.models import CartItem, Coupons
+from carts.models import CartItem, Coupons, CartGiftItem
 from carts.forms import CartItemCreate, CartItemCreateWithAttrForm
 from .forms import CheckoutForm
 from accounts.models import CostumerAccount
@@ -182,7 +182,6 @@ def product_detail(request, slug):
         form = CartItemCreateWithAttrForm(instance_related=instance)
     else:
         form = CartItemCreate()
-
     if request.POST:
         if instance.size:
             form = CartItemCreateWithAttrForm(instance, request.POST)
@@ -190,15 +189,16 @@ def product_detail(request, slug):
                 qty = form.cleaned_data.get('qty', 1)
                 attribute = form.cleaned_data.get('attribute')
                 order = check_or_create_cart(request)
-                CartItem.create_cart_item(request, order=order, product=instance, qty=qty, size=attribute)
-                
+                cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty, size=attribute)
+                CartGiftItem.check_gifts(request, instance, cart_item)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
         else:
             form = CartItemCreate(request.POST)
             if form.is_valid():
                 qty = form.cleaned_data.get('qty', 1)
                 order = check_or_create_cart(request)
-                CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
+                cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
+                CartGiftItem.check_gifts(request, instance, cart_item)
                 messages.success(request, 'The product %s added in your cart' % instance.title)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
 
@@ -239,6 +239,8 @@ class CartPage(SearchMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CartPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
+        gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
+        print(gifts.count())
         context.update(locals())
         return context
 
