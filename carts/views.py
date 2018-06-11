@@ -59,9 +59,10 @@ def add_to_cart(request, dk, qty=1):
 
 
 def delete_cart_item(request, dk):
-    object = get_object_or_404(CartItem, id=dk)
-    messages.warning(request, 'The product %s has deleted' % object.product_related.title)
-    object.delete()
+    instance = get_object_or_404(CartItem, id=dk)
+    messages.warning(request, 'The product %s has deleted' % instance.product_related.title)
+    CartGiftItem.gift_delete(cart_item, '')
+    instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 

@@ -342,3 +342,20 @@ class CartGiftItem(models.Model):
                                                 product_related=gift.products_gift,
                                                 qty=cart_item.qty)
                 messages.success(request, f'{gift.gift_message}')
+
+    
+    @staticmethod
+    def gift_edit(cart_item, gifts):
+        qs_gifts = gifts.filter(cart_related=cart_item)
+        if qs_gifts.exists():
+            gift = qs_gifts.last()
+            gift.qty = cart_item.qty
+            gift.save()
+
+    @staticmethod
+    def gift_delete(cart_item, gifts):
+        qs_gifts = gifts.filter(cart_related=cart_item)
+        if qs_gifts.exists:
+            gift = qs_gifts.last()
+            gilt.delete()
+        

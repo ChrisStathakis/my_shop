@@ -240,7 +240,6 @@ class CartPage(SearchMixin, TemplateView):
         context = super(CartPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
         gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
-        print(gifts.count())
         context.update(locals())
         return context
 
@@ -256,6 +255,7 @@ class CartPage(SearchMixin, TemplateView):
                 messages.success(self.request, 'Coupon %s added in your cart!' % code)
             else:
                 messages.warning(self.request, 'This code is not a valid coupon')
+
         if self.request.POST:
             data = self.request.POST
             for key, value in data.items():
@@ -267,6 +267,8 @@ class CartPage(SearchMixin, TemplateView):
                         get_item = CartItem.objects.get(id=key)
                         get_item.qty = int(value)
                         get_item.save()
+                        get_item.refresh_from_db()
+                        CartGiftItem.gift_edit(get_item, gifts)
                     except:
                         continue
             messages.success(self.request, 'The cart updated!')
@@ -275,10 +277,17 @@ class CartPage(SearchMixin, TemplateView):
         return render(self.request, self.template_name, context=context)
 
 
+def ajax_edit_cart(request):
+    data = {}
+    pass
+
+
 def checkout_page(request):
     # del request.session['cart_id']
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
+    menu_categories, cart, cart_items = initial_data(request)
+    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
     if user:
         profile = CostumerAccount.objects.get(user=user)
         print(profile)
@@ -292,7 +301,7 @@ def checkout_page(request):
                                      'phone': profile.phone,
                                          
                                     })
-    menu_categories, cart, cart_items = initial_data(request)
+   
     if 'login_button' in request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')

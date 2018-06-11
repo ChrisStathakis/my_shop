@@ -428,6 +428,21 @@ def create_destroy_title():
 
 
 class GiftRetailItem(models.Model):
-    cart_related = models.ForeignKey(CartGiftItem, on_delete=models.CASCADE)
+    product_related = models.ForeignKey(Product, on_delete=models.CASCADE)
     order_related = models.ForeignKey(RetailOrder, on_delete=models.CASCADE)
+    cart_related = models.ForeignKey(CartItem, on_delete=models.SET_NULL, blank=True, null=True)
     qty = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.cart_related}'
+
+    @staticmethod
+    def create_gifts(cart, order):
+        cart_items = CartItem.objects.filter(cart_related=cart)
+        gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
+        for gift in gifts:
+            new_gift = GiftRetailItem.objects.create(product_related=gift.product_related,
+                                                     order_related=order,
+                                                     cart_related=gift.cart_related,
+                                                     qty=gift.qty
+                                                    )
