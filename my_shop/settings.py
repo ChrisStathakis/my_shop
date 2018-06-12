@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'reportlab',
     'social_django',
+    'import_export',
 
 ]
 

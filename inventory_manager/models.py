@@ -69,6 +69,7 @@ class Vendor(models.Model):
         verbose_name_plural = '9. Προμηθευτές'
         ordering = ['title', ]
         
+    '''   
     def save(self, *args, **kwargs):
         orders = self.order_set.all()
         self.balance = orders.aggregate(Sum('total_price'))['total_price__sum'] if orders else 0
@@ -78,6 +79,7 @@ class Vendor(models.Model):
         self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))['value__sum'] \
         if self.payment_orders.filter(is_paid=False) else 0
         super(Supply, self).save(*args, **kwargs)
+    '''
 
     @staticmethod
     def filter_data(request, queryset):
