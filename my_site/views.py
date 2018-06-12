@@ -16,6 +16,8 @@ from django.conf import settings
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.conf import settings
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
 from urllib.parse import urlencode
 
 from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
@@ -192,7 +194,7 @@ def product_detail(request, slug):
                 qty = form.cleaned_data.get('qty', 1)
                 order = check_or_create_cart(request)
                 cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
-                CartGiftItem.check_gifts(request, instance, cart_item)
+                CartGiftItem.check_cart(cart)
                 messages.success(request, 'The product %s added in your cart' % instance.title)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
 
@@ -262,9 +264,9 @@ class CartPage(SearchMixin, TemplateView):
                         get_item.qty = int(value)
                         get_item.save()
                         get_item.refresh_from_db()
-                        CartGiftItem.gift_edit(get_item, gifts)
                     except:
                         continue
+            CartGiftItem.check_cart(cart)
             messages.success(self.request, 'The cart updated!')
         cart.refresh_from_db()
         context = locals()
@@ -272,8 +274,22 @@ class CartPage(SearchMixin, TemplateView):
 
 
 def ajax_edit_cart(request):
+    menu_categories, cart, cart_items = initial_data(self.request)
     data = {}
-    pass
+    form_data = request.POST
+    for key, value in form_data:
+        try:
+            instance = CartItem.objects.get(id=key)
+            instance.qty = int(value) if int(value) > 0 else instance.qty
+            instance.save()
+        except:
+            continue
+    CartGiftItem.check_cart(cart)
+    data['table'] = render_to_string(request='',
+                                     template_name='', 
+                                     context={}
+                                     )
+    return JsonResponse(data)
 
 
 def checkout_page(request):
@@ -373,10 +389,6 @@ def order_detail_page(request, dk):
     context = locals()
     return render(request, 'my_site/order_detail.html', context)
 
-
-
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
 
 
 @login_required

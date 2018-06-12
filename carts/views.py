@@ -45,7 +45,7 @@ def cart_data(request):
     session_id = check_if_cart_id(request)
     try:
         cart = Cart.objects.filter(id_session=session_id).last()
-        cart_items = cart.cartitem_set.all() if cart else None
+        cart_items = cart.cart_items.all() if cart else None
     except:
         cart, cart_items = None, None
     return [cart, cart_items]
@@ -60,6 +60,7 @@ def add_to_cart(request, dk, qty=1):
     instance = get_object_or_404(Product, id=dk)
     cart = check_or_create_cart(request)
     cart_item = CartItem.create_cart_item(request, order=cart, product=instance, qty=qty)
+    print(cart, cart_item)
     CartGiftItem.check_cart(cart)
     messages.success(request, ' The product %s added to cart' % instance.title)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
