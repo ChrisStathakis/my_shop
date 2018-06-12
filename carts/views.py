@@ -60,7 +60,7 @@ def add_to_cart(request, dk, qty=1):
     instance = get_object_or_404(Product, id=dk)
     cart = check_or_create_cart(request)
     cart_item = CartItem.create_cart_item(request, order=cart, product=instance, qty=qty)
-    print(cart, cart_item)
+    cart.refresh_from_db()
     CartGiftItem.check_cart(cart)
     messages.success(request, ' The product %s added to cart' % instance.title)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -68,11 +68,10 @@ def add_to_cart(request, dk, qty=1):
 
 def delete_cart_item(request, dk):
     instance = get_object_or_404(CartItem, id=dk)
-    menu_categories, cart, cart_items = initial_data(self.request)
-    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
+    menu_categories, cart, cart_items = initial_data(request)
     messages.warning(request, 'The product %s has deleted' % instance.product_related.title)
-    CartGiftItem.gift_delete(cart_item, '')
     instance.delete()
+    CartGiftItem.check_cart(cart)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 

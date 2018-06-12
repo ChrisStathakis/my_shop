@@ -321,23 +321,21 @@ class CartGiftItem(models.Model):
     product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     qty = models.PositiveIntegerField(default=1)
 
-    class Meta:
-        unique_together = ['cart_related', 'product_related']
-
     def __str__(self):
         return self.cart_related
 
     @staticmethod
     def check_cart(cart):
-        gifts = cart.gifts.all()
-        gifts.delete()
-        items = cart.cart_items.all()
-        for item in items:
-            can_be_gift = Gifts.objects.filter(product_related=item.product_related)
-            if can_be_gift.exists:
-                for gift in can_be_gift:
-                    new_gift = CartGiftItem.objects.create(product_related=gift.products_gift,
-                                                           cart_related=cart,
-                                                           qty=item.qty
-                                                        )
+        if cart:
+            gifts = cart.gifts.all() 
+            gifts.delete()
+            items = cart.cart_items.all()
+            for item in items:
+                can_be_gift = Gifts.objects.filter(product_related=item.product_related)
+                if can_be_gift.exists:
+                    for gift in can_be_gift:
+                        new_gift = CartGiftItem.objects.create(product_related=gift.products_gift,
+                                                            cart_related=cart,
+                                                            qty=item.qty
+                                                            )
         

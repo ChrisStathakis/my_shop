@@ -184,18 +184,19 @@ def product_detail(request, slug):
             if form.is_valid():
                 qty = form.cleaned_data.get('qty', 1)
                 attribute = form.cleaned_data.get('attribute')
-                order = check_or_create_cart(request)
-                cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty, size=attribute)
+                cart = check_or_create_cart(request)
+                cart_item = CartItem.create_cart_item(request, order=cart, product=instance, qty=qty, size=attribute)
+                cart.refresh_from_db()
                 CartGiftItem.check_cart(cart)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
         else:
             form = CartItemCreate(request.POST)
             if form.is_valid():
                 qty = form.cleaned_data.get('qty', 1)
-                order = check_or_create_cart(request)
-                cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
+                cart = check_or_create_cart(request)
+                cart_item = CartItem.create_cart_item(request, order=cart, product=instance, qty=qty)
+                cart.refresh_from_db()
                 CartGiftItem.check_cart(cart)
-                messages.success(request, 'The product %s added in your cart' % instance.title)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
 
     context = locals()
@@ -293,7 +294,7 @@ def ajax_edit_cart(request):
 
 
 def checkout_page(request):
-    # del request.session['cart_id']
+    #del request.session['cart_id']
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     menu_categories, cart, cart_items = initial_data(request)
@@ -328,7 +329,7 @@ def checkout_page(request):
             cart_items = CartItem.objects.filter(order_related=cart)
             new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
             messages.success(request, 'Your Order Have Completed!')
-            GiftRetailItem.create_gifts(cart, new_order, cart_items, gifts)
+            GiftRetailItem.check_retail_order(new_order, cart)
             del request.session['cart_id']
             return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
     context = locals()
