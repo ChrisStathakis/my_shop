@@ -58,9 +58,9 @@ def initial_data(request):
 
 def add_to_cart(request, dk, qty=1):
     instance = get_object_or_404(Product, id=dk)
-    order = check_or_create_cart(request)
-    cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty)
-    CartGiftItem.check_gifts(request, instance, cart_item)
+    cart = check_or_create_cart(request)
+    cart_item = CartItem.create_cart_item(request, order=cart, product=instance, qty=qty)
+    CartGiftItem.check_cart(cart)
     messages.success(request, ' The product %s added to cart' % instance.title)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

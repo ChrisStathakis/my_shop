@@ -13,7 +13,7 @@ from decimal import Decimal
 
 from .managers import RetailOrderManager
 from accounts.models import CostumerAccount
-from products.models import  Product, SizeAttribute
+from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod, PaymentOrders
@@ -445,3 +445,18 @@ class GiftRetailItem(models.Model):
                                                         cart_related=gift.cart_related,
                                                         qty=gift.qty
                                                         )
+
+    def check_retail_order(order):
+        gifts = order.gifts.all()
+        gifts.delete()
+        items = order.order_items.all()
+        for item in items:
+            can_be_gift = Gifts.objects.filter(product_related=item.title)
+            if can_be_gift.exists:
+                for gift in can_be_gift:
+                    new_gift = GiftRetailItem.objects.create(product_related=gift.products_gift,
+                                                            order_related=order,
+                                                            qty=item.qty
+                                                            )
+                
+                

@@ -152,6 +152,20 @@
                                             <td colspan="5">No Products Selected</td>
                                         </tr>
                                     {% endfor %}
+                                    {% if gifts %}
+                                        <tr>
+                                            <th colspan='5 text-center'>Gifts</th>
+                                        </tr>
+                                        {% for gift in gifts %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ gift.product_related }}</td>
+                                                <td>{{ gift.qty }}</td>
+                                                <td>No Price</td>
+                                                <td></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
                                  </tbody>
                              </table>
                         </div>

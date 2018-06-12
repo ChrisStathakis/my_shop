@@ -106,7 +106,7 @@ def eshop_order_edit(request, pk):
     object_list = Product.my_query.get_site_queryset().active_for_site()
     order_items = RetailOrderItem.objects.filter(order=instance)
     form = EshopRetailForm(request.POST or None, instance=instance)
-
+    gifts = instance.gifts.all()
     if form.is_valid():
         form.save()
         return HttpResponseRedirect(reverse('dashboard:eshop_order_edit',
@@ -140,6 +140,7 @@ def add_edit_order_item(request, dk, pk, qty):
                                                         discount_value=product.price_discount,
                                                         )
         new_order_item.add_item(qty)
+    GiftRetailItem.check_retail_order(order)
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(dk,)))
 
 

@@ -116,7 +116,7 @@ class Cart(models.Model):
         return '%s %s' % ('Cart ', self.id)
 
     def save(self, *args, **kwargs):
-        get_items = self.cartitem_set.all()
+        get_items = self.cart_items.all()
         self.value = get_items.aggregate(total=(Sum(F('final_price') * F('qty'), output_field=models.DecimalField())))['total'] if get_items else 0
         self.check_coupons()
         self.final_price = self.value - self.coupon_discount
@@ -169,7 +169,7 @@ class CartItemManager(models.Manager):
 
 
 class CartItem(models.Model):
-    order_related = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    order_related = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     product_related = models.ForeignKey(Product, null=True, on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(default=1)
     characteristic = models.ForeignKey(SizeAttribute, blank=True, null=True, on_delete=models.CASCADE)
@@ -317,7 +317,7 @@ class CartRules(models.Model):
 
 
 class CartGiftItem(models.Model):
-    cart_related = models.ForeignKey(CartItem, on_delete=models.CASCADE)
+    cart_related = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='gifts')
     product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     qty = models.PositiveIntegerField(default=1)
 
@@ -328,34 +328,16 @@ class CartGiftItem(models.Model):
         return self.cart_related
 
     @staticmethod
-    def check_gifts(request, product, cart_item):
-        get_gifts = Gifts.objects.filter(product_related=product, status=True)
-        if get_gifts:
-            for gift in get_gifts:
-                qs_exists = CartGiftItem.objects.filter(cart_related=cart_item, product_related=product)
-                if qs_exists:
-                    instance = qs_exists.last()
-                    instance.qty = cart_item.qty
-                    instance.save()
-                else:
-                    CartGiftItem.objects.create(cart_related=cart_item,
-                                                product_related=gift.products_gift,
-                                                qty=cart_item.qty)
-                messages.success(request, f'{gift.gift_message}')
-
-    
-    @staticmethod
-    def gift_edit(cart_item, gifts):
-        qs_gifts = gifts.filter(cart_related=cart_item)
-        if qs_gifts.exists():
-            gift = qs_gifts.last()
-            gift.qty = cart_item.qty
-            gift.save()
-
-    @staticmethod
-    def gift_delete(cart_item, gifts):
-        qs_gifts = gifts.filter(cart_related=cart_item)
-        if qs_gifts.exists:
-            gift = qs_gifts.last()
-            gilt.delete()
+    def check_cart(cart):
+        gifts = cart.gifts.all()
+        gifts.delete()
+        items = cart.cart_items.all()
+        for item in items:
+            can_be_gift = Gifts.objects.filter(product_related=item.product_related)
+            if can_be_gift.exists:
+                for gift in can_be_gift:
+                    new_gift = CartGiftItem.objects.create(product_related=gift.products_gift,
+                                                           cart_related=cart,
+                                                           qty=item.qty
+                                                        )
         

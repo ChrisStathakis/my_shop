@@ -184,7 +184,7 @@ def product_detail(request, slug):
                 attribute = form.cleaned_data.get('attribute')
                 order = check_or_create_cart(request)
                 cart_item = CartItem.create_cart_item(request, order=order, product=instance, qty=qty, size=attribute)
-                CartGiftItem.check_gifts(request, instance, cart_item)
+                CartGiftItem.check_cart(cart)
                 return HttpResponseRedirect(reverse('product_page', kwargs={'slug': instance.slug}))
         else:
             form = CartItemCreate(request.POST)
@@ -233,7 +233,7 @@ class CartPage(SearchMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CartPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
-        gifts = CartGiftItem.objects.filter(cart_related__in=cart_items)
+        gifts = CartGiftItem.objects.filter(cart_related=cart)
         context.update(locals())
         return context
 
@@ -281,7 +281,7 @@ def checkout_page(request):
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     menu_categories, cart, cart_items = initial_data(request)
-    gifts = CartGiftItem.objects.filter(cart_related__in=cart_items) if cart_items else None
+    gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
     if user:
         profile = CostumerAccount.objects.get(user=user)
         print(profile)
