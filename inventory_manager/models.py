@@ -10,13 +10,22 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db.models import Sum
 from django.utils.translation import pgettext_lazy
 from django.conf import settings
-from mptt.models import MPTTModel, TreeForeignKey
-from tinymce.models import HTMLField
-from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
+from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from mptt.models import MPTTModel, TreeForeignKey
+from tinymce.models import HTMLField
+from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from decimal import Decimal
+
+def upload_image(instance, filename):
+    return f'/warehouse_images/{instance.title}/{filename}'
+
+def validate_file(value):
+    if value.file.size > 1024*1024*0.5:
+        raise ValidationError('this file is bigger than 0.5mb')
+    return value
 
 
 # Create your models here.
@@ -129,7 +138,7 @@ class OrderManager(models.Manager):
     def complete_orders(self):
         return super(OrderManager, self).filter(is_paid=True).order_by('day_created')
 
-'''
+
 class Order(DefaultOrderModel):
     vendor = models.ForeignKey(Vendor, verbose_name="Προμηθευτής", on_delete=models.CASCADE)
     total_price_no_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
@@ -269,7 +278,7 @@ class WarehouseOrderImage(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, verbose_name='Προϊόν',
+    product = models.ForeignKey('products.Product', verbose_name='Προϊόν',
                                 on_delete=models.CASCADE,
                                 null=True,
                                 )
@@ -278,15 +287,14 @@ class OrderItem(models.Model):
     taxes = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
     qty = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Ποσότητα')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Τιμή Μονάδας', blank=True, )
-    size = models.ForeignKey(SizeAttribute, verbose_name='Size', null=True, blank=True, on_delete=models.CASCADE)
+    size = models.ForeignKey('products.SizeAttribute', verbose_name='Size', null=True, blank=True, on_delete=models.CASCADE)
     total_clean_value = models.DecimalField(default=0, max_digits=15, decimal_places=2,
                                             verbose_name='Συνολική Αξία χωρίς Φόρους')
     total_value_with_taxes = models.DecimalField(default=0, max_digits=14, decimal_places=2,
                                                  verbose_name='Συνολική Αξία με φόρους')
     day_added = models.DateField(blank=True, null=True)
     final_price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    tracker = FieldTracker()
-
+    
     class Meta:
         ordering = ['product']
         verbose_name = "Συστατικά Τιμολογίου   "
@@ -374,4 +382,4 @@ class PreOrder(models.Model):
 
     def __str__(self):
         return self.title
-'''
+

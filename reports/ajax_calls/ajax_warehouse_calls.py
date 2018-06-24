@@ -5,18 +5,18 @@ from django.http import JsonResponse
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum, Q, F
 from django.conf import settings
-from ..tools.warehouse_functions import warehouse_filters
+from ..tools import warehouse_filters
 
-from inventory_manager.models import Order, OrderItem
+from inventory_manager.models import Vendor
 from point_of_sale.models import RetailOrderItem
-from products.models import Product, Vendor, Category, CategorySite
+from products.models import Product, Category, CategorySite
 
 CURRENCY = settings.CURRENCY
 
 def ajax_products_analysis(request):
     data = dict()
     switcher = request.GET.get('analysis')
-    queryset = Product.my_query.active_warehouse()
+    queryset = Product.my_query.active_for_site()
     queryset = Product.filters_data(request, queryset)
     queryset_analysis = [0, 0, 0] # total_qty, #total_warehouse_value, #total_sell_value
     if switcher == 'warehouse_analysis':

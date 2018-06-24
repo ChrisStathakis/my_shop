@@ -27,6 +27,7 @@ from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 import datetime
 
+from .tools import initial_data_from_database, warehouse_filters
 
 @method_decorator(staff_member_required, name='dispatch')
 class HomepageReport(LoginRequiredMixin, TemplateView):
@@ -45,6 +46,99 @@ class HomepageProductWarning(ListView):
     model = Product
     template_name = ''
     paginate_by = 50
+
+
+
+# products
+
+@method_decorator(staff_member_required, name='dispatch')
+class ReportProducts(ListView):
+    template_name = 'report/products.html'
+    model = Product
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = Product.my_query.active_for_site()
+        queryset = Product.filters_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ReportProducts, self).get_context_data(**kwargs)
+        currency = CURRENCY
+        # filters
+        products, category_name, vendor_name, color_name, discount_name, qty_name = warehouse_filters(self.request, self.object_list)
+        vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
+        search_name = self.request.GET.get('search_name', None)
+        products_count = self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0
+        context.update(locals())
+        return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class ProductDetail(LoginRequiredMixin, DetailView):
+    template_name = 'report/details/products_id.html'
+    model = Product
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductDetail, self).get_context_data(**kwargs)
+        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
+        date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
+        date_end = date_end + relativedelta(days=1)
+        order_items = OrderItem.objects.filter(product=self.object,
+                                               order__day_created__range=[date_start, date_end]
+                                               )
+        order_items_analysis = order_items.values('product').annotate(total_clean=Sum('total_clean_value'),
+                                                                      total_tax=Sum('total_value_with_taxes'),
+                                                                      qty_count=Sum('qty'),
+                                                                      )
+        # retail orders
+        retail_items = RetailOrderItem.objects.filter(title=self.object,
+                                                      day_added__range=[date_start, date_end]
+                                                      )
+        retail_sells_by_type = retail_items.values('order__order_type').annotate(total_incomes=Sum(F('qty')*F('final_price')),
+                                                                                 total_qty=Sum('qty'),
+                                                                                 ).order_by('order__order_type')
+
+        context.update(locals())
+        return context
+
+@method_decorator(staff_member_required, name='dispatch')
+class BrandsPage(ListView):
+    template_name = ''
+    model = Brands
+
+    def get_queryset(self):
+        queryset = Brands.objects.filter(active=True)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class ReportsIncome(ListView):

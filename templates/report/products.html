@@ -1,9 +1,13 @@
-{% extends 'report/warehouse.html' %} {% block content %}
-<div class="sixteen wide column">
-    <h2 class="ui center aligned icon header">
-        <i class="circular blue file icon"></i> Προϊόντα
-    </h2>
-</div>
+{% extends 'report/warehouse.html' %} 
+
+
+
+{% block content %}
+    <div class="sixteen wide column">
+        <h2 class="ui center aligned icon header">
+            <i class="circular blue file icon"></i> Προϊόντα
+        </h2>
+    </div>
 
 
 <div class="row">
@@ -53,7 +57,7 @@
                     data-slug="warehouse_analysis" id="button-analysis">Υπολογισμός Υπόλοιπου
             </button>
             <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="vendor_analysis" id="button-analysis">Ανάλυση Ανά Προμηθευτή
+                    data-slug="vendor_analysis" id="button-analysis">Ανάλυση Ανά Brand
             </button>
             <button class="ui green button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
                     data-slug="sells_analysis" id="button-analysis">Πωλήσεις Περιόδου

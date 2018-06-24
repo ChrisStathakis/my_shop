@@ -14,7 +14,12 @@
 
 <body>
 <div class="ui six item top fixed menu">
-    <a href="{% url 'reports:homepage' %}" class="active item">Home</a>
+    <a href="{% url 'reports:homepage' %}" class=" item">Home</a>
+    <a href="{% url 'reports:products' %}" class=" item">Προϊόντα</a>
+    <a href="{% url 'reports:homepage' %}" class="green item">Πωλήσεις</a>
+    <a href="{% url 'reports:homepage' %}" class=" item">Αγορες</a>
+    <a href="{% url 'reports:homepage' %}" class="red item">Εξοδα</a>
+    <a href="{% url 'reports:homepage' %}" class=" item">Ισολογισμός</a>
 </div>
 {% block test %}
 

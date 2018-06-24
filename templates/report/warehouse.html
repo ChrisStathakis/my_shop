@@ -4,8 +4,8 @@
 {% block down_menu %}
 
 <div class="ui six item bottom fixed menu">
-    <a href="" class="item">Κενρική Σελίδα</a>
     <a style="background-color: red"  href="{% url 'reports:products' %}" class="item">Προϊόντα</a>
+    <a href="{% url 'reports:products' %}" class="item">Brands</a>
     <a style="background-color: green" href="{% url 'reports:vendors' %}" class="item">Προμηθευτές</a>
     <a style="background-color: dodgerblue"  href="{% url 'reports:warehouse_categories' %}" class="item">Κατηγορίες</a>
     <a href="{% url 'reports:warehouse_orders' %}" class="item">Τιμολόγια</a>

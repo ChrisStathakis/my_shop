@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 from .views import *
-
+from .ajax_calls.ajax_warehouse_calls import ajax_products_analysis
 
 
 app_name = 'reports'
@@ -9,6 +9,17 @@ app_name = 'reports'
 urlpatterns = [
     url(r'^$', HomepageReport.as_view(), name='homepage'),
 
+    # products
+    path('products/', ReportProducts.as_view(), name='products'),
+    path('warehouse/products/ajax-analysis', view=ajax_products_analysis, name='ajax_products_analysis'),
+    path('products/ajax-search/', view=ajax_products_analysis, name='ajax_product_search'),
+    path(r'products/<int:pk>/', ProductDetail.as_view(), name='products_detail'),
+
+
+    path(r'vendors/', ReportProducts.as_view(), name='vendors'),
+    path('warehouse-categories/', ReportProducts.as_view(), name='warehouse_categories'),
+    url(r'orders/$', ReportProducts.as_view(), name='warehouse_orders'),
+    url(r'warehouse-products-flow/$', ReportProducts.as_view() , name='warehouse_order_items_flow'),
     ]
 
 '''
