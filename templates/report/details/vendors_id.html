@@ -1,0 +1,288 @@
+{% extends 'report/vendors.html' %}
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div class="column">
+            <h2 class="ui center aligned icon header">
+                <i class="circular users icon"></i>
+                Προμηθευτής {{ instance }}
+            </h2>
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title"> Filters</div>
+                <div class="content">
+                    <form class="ui form" method="get">
+                        {% include 'snippets/search_date_filter.html' %}
+                        <input  class="ui small green inverted fluid button" type="submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title">Πληροφορίες   Υπόλοιπο...{% if instance.balance > 0 %}<label class="ui red label">{{ instance.tag_balance }}</label>  {% else %}<label class="ui green label">{{ instance.tag_balance }}</label> {% endif %} , Μη πληρωμένες επιταγες κτλ..... {{ instance.tag_deposit }}</div>
+                <div class="content">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                          <p>ΑΦΜ... {{ instance.afm }}  ΔΟΥ...{{ instance.doy }}</p>
+                        </div>
+                        <div class="ui horizontal segments">
+                          <div class="ui segment">
+                            <p>Τηλέφωνα... {{ instance.tag_phones}}  Fax... {{ instance.fax }}</p>
+                          </div>
+                          <div class="ui segment">
+                            <p>Διεύθυνση...  {{ instance.address }}. Πόλη...  {{ instance.city }}</p>
+                          </div>
+                          <div class="ui segment">
+                            <p>Τκ  {{ instance.zip_code }}</p>
+                          </div>
+                        </div>
+                        <div class="ui segment">
+                          <p>Email...{{ instance.email }},  Site....{{ instance.site }}</p>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+        <br>
+        <div class="one wide column"></div>
+        <div class="fourteen wide column">
+            <button data-url='{% url "reports:vendor_detail_product_analysis" instance.id %}' class="ui green button button_analysis">Υπολογισμός Υπολοίπου Προϊόντων</button>
+            <button class="ui green button">Ανάλυση Πωλήσεων</button>
+            <button class="ui red button">Ανάλυση Πληρωμών</button>
+            <button class="ui blue button">Ανάλυση Παραγγελίας</button>
+        </div>
+        <div class="one wide column"></div>
+        <br>
+        <div class="one wide column"></div>
+        <div class="fourteen wide column ajax_container"></div>
+        <div class="one wide column"></div>
+    </div>
+
+    <div class="row">
+        <br><br>
+        <div class="one wide column"></div>
+        <div class="six wide column">
+            <h2 class="ui header">
+                <i class="payment green icon"></i>
+            <div class="content">
+                  Πληρωμές
+                  <div class="sub header">Όλες οι πληρωμές τιμολογίων προκαταβολές κτλ.</div>
+                </div>
+              </h2>
+            <table class="ui single line  selectable table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ημερομηνία</th>
+                        <th>Τίτλος Παραστατικου</th>
+                        <th>Συνολικό Ποσό</th>
+                        <th>Τρόπος Πληρωμής</th>
+                        <th>Κατάσταση</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ele in paychecks %}
+                        <tr>
+                            <td>{{ forloop.counter }}
+                            <td>{{ ele.date_expired|date }}</td>
+                            <td>{{ ele.title }}</td>
+                            <td>{{ ele.tag_value }}</td>
+                            <td>{{ ele.get_payment_type_display }}</td>
+                            <td>{{ ele.tag_is_paid }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>         
+        </div>
+        <div class="one wide column"></div>
+        <div class="seven wide column">
+            <h2 class="ui header">
+                <i class="blue calendar outline icon"></i>
+                <div class="content">
+                    Τιμόλόγια Αγοράς
+                <div class="sub header">'Ολα τα τιμολόγια για το διάστημα που έχετε επιλ</div>
+            </div>
+            </h2>
+            <table class="ui small selectable table">
+                <thead>
+                    <tr>
+                        <th>Ημερομηνία</th>
+                        <th>Κωδικός Τιμολογίου</th>
+                        <th>Αξία</th>
+                        <th>Κατάσταση</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ele in warehouse_orders %}
+                        <tr>
+                            <td>{{ ele.date_created|date }}</td>
+                            <td>{{ ele.code }}</td>
+                            <td>{{ ele.tag_total_value }}</td>
+                            <td>{{ ele.tag_is_paid }}</td>                                        
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="one wide column"></div>
+    </div>
+
+    <div style="margin-top:10%" class="row">
+            <div class="one wide column"></div>
+            <div class="five wide column">
+                <h2 class="ui header">
+                    <i class="payment green icon"></i>
+                    <div class="content">
+                      Προιόντα
+                      <div class="sub header">'Oλα τα ενεργά προϊόντα</div>
+                    </div>
+                  </h2>
+                <table class="ui selectable table">
+                    <thead>
+                        <tr>
+                            <th>Κωδικος Τιμολογίου</th>
+                            <th>Προϊόν</th>
+                            <th>Υπόλοιπο</th>
+                            <th>Τιμή Αγόρας - Τιμή Πώλησης</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ele in products %}
+                            <tr>
+                                <td>{{ ele.sku }}
+                                <td>{{ ele }}</td>
+                                <td>{{ ele.tag_qty }}</td>
+                                <td>{{ ele.tag_price_buy }} - {{ ele.tag_final_price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>         
+            </div>
+            <div class="one wide column"></div>
+            <div class="four wide column">
+                <h2 class="ui header">
+                    <i class="blue calendar outline icon"></i>
+                    <div class="content">
+                        Κίνηση Πωλήσεων
+                    <div class="sub header">'Ολα τα τιμολόγια για το διάστημα που έχετε επιλ</div>
+                </div>
+                </h2>
+                <table class="ui small selectable table">
+                    <thead>
+                        <tr>
+                            <th>Ημερομηνία</th>
+                            <th style="width: 10%"><a href="">Προϊόν</a></th>
+                            <th style="width: 10%"><a href="">Ποσότητα</a></th>
+                            <th style="width: 10%"><a href="">Τιμή Πώλησης</a></th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ele in order_item_sells %}
+                            <tr>
+                                <td>{{ ele.order__date_created|date }}</td>
+                                <td>{{ ele.title }}</td>
+                                <td>{{ ele.qty }}</td>
+                                <td>{{ ele.tag_final_price }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">Καμία Πώληση</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="one wide column"></div>
+            <div class="four wide column">
+                    <div style="" class="ui row">
+                            <div class="ui relaxed divided list">
+                                <div class="item">
+                                    <div class="header">Κινήσεις Προιόντων</div>
+                                </div>
+                                <div style="overflow:scroll; height: 400px;width: 300px; ">
+                                {% for order in pos_order_list %}
+                                    {% if order.order_type_for_vendor == 'sell' %}
+                                        <div style="margin-top: 3%;" class="item">
+                                            <i class="large cart green aligned icon"></i>{{ order.day_added }}
+                                            <div class="content">
+                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
+                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
+                                            </div>
+                                        </div>
+                                    {% elif order.order_type_for_vendor == 'return' %}
+                                        <div style="margin-top: 3%;" class="item">
+                                            <i class="large alarm blue aligned icon"></i>{{ order.day_added }}
+                                            <div class="content">
+                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
+                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
+                                            </div>
+                                        </div>
+                                    {% elif order.order_type_for_vendor == 'destroy' %}
+                                        <div style="margin-top: 3%;" class="item">
+                                            <i class="large red minus circle aligned icon"></i>{{ order.day_added }}
+                                            <div class="content">
+                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
+                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                    <div style="margin-top: 3%;" class="item">
+                                        <i class="large  github middle aligned icon"></i>{{ order.day_added }}
+                                        <div class="content">
+                                            <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
+                                            <div class="description">{{ payment.get_payment_type_display }}<br></div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                            <div class="ui list">
+                                <div class="item"><i class="header">Επεξήγηση</i></div>
+                                <div class="item"><i class="large cart green aligned icon"></i>Πωλήσεις</div>
+                                <div class="item"><i class="large alarm blue aligned icon"></i>Επιστροφές</div>
+                                <div class="item"><i class="large red minus circle aligned icon"></i>Ελλατωματικά κτλ.</div>
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $('.button_analysis').click(function(){
+            var btn = $(this);
+            var my_form = $('#filter_data').serialize();
+            $.ajax({
+                url: btn.attr('data-url'),
+                dataType: 'json',
+                data: my_form,
+                success: function(data){
+                    $('.ajax_container').html(data.html_data)
+                }
+            })
+        })
+    </script>
+
+{% endblock %}
+
+

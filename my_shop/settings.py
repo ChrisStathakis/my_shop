@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'carts',
     'point_of_sale',
 
+    'transcations',
+
     'gdpr',
 
 

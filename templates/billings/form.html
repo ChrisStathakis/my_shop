@@ -1,0 +1,107 @@
+{% extends 'billings/index.html' %}
+
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info">
+                                    <span>{{ message }}</span>
+                                </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <h4 class="text-center">{{ page_title }}</h4>
+                        <div class="content">
+                            <form method='post'>{% csrf_token %}
+                                {{ form }}
+                                <button name="edit_form" type='sumbit' class="btn btn-success">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="content">
+                            <a href="{{ back_url }}" class="btn btn-warning">Back</a>
+                            <a href="{{ duplicate_url }}" class="btn btn-info">Create as new</a>
+                            {% if payroll %}
+
+                            {% else %}
+                            <a class="btn btn-success" href="{% url 'billings:popup_category' %}" id="add_author" onclick="return showAddPopup(this);">Create New Billing</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="header"><h3>Payments Remaining Value to be Paid --> {{ instance.tag_remaining_value }}</h3></div>
+                        <div class="content">
+                            <table class="table table-bordered table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Value</th>
+                                        <th>Details</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in instance.payorders.all %}
+                                        <tr>
+                                            <td>{{ invoice.date_expired }}</td>
+                                            <td>{{ invoice.title|default_if_none:"No Title" }}</td>
+                                            <td>{{ invoice.tag_value }}</td>
+                                            <td>{{ invoice.get_payment_type_display }}, {{ invoice.is_paid }}</td>
+                                            <td><a href="" class="btn btn-warning btn-raised">Delete</a> </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5">No Payments Added</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+                            {% if not instance.is_paid %}
+                                <h5>Add Payment Order</h5>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{ form_payment }}
+                                    <button type="submit" name="create_payment" class="btn btn-success">Save</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        function showAddPopup(triggerLink) {
+            var name = triggerLink.id.replace(/^add/, '');
+            const href = triggerLink.href ;
+            var win = window.open(href, name, 'height=500,width=800, resizable=yes,scrollbar=yes');
+            win.focus();
+            return false
+        }
+
+        function closePopup(win, newID, newRepr, id) {
+            $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>');
+            win.close();
+        }
+
+    </script>
+
+{% endblock %}

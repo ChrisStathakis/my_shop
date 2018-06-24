@@ -51,6 +51,12 @@ class PaymentMethod(models.Model):
         return '%s %s' % (self.limit_value, CURRENCY)
 
 
+class Store(models.Model):
+    title = models.CharField(unique=True, max_length=100)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Country(models.Model):

@@ -1,0 +1,24 @@
+
+<h3 class="ui header">Ανάλυση Ανά Μήνα {{ date_range }}</h3>
+
+<table class="ui selectable inverted table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Μήνας</th>
+        <th>Συνολική Αξία</th>
+        <th>Πληρωμένη Αξία</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in month_data %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.month }}</td>
+            <td>{{ item.total_cost }} {{ currency }}</td>
+            <td>{{ item.total_price|floatformat:2 }} {{ currency }}</td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

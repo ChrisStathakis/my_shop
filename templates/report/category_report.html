@@ -1,0 +1,81 @@
+{% extends 'report/products.html' %}
+
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div class="column">
+            <h2 class="ui icon header">
+                <i class="settings icon"></i>
+                <div class="content">
+                    {{ title }}
+                    <div class="sub header">Επιλεγμένο Διάστημα... {{ date_range }}</div>
+                </div>
+            </h2>
+        </div>
+        <div class="column">
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title">
+                    Filters
+                </div>
+    
+            <div class="content">
+                <form method="post" class="ui form">{% csrf_token %}
+                    {% include 'snippets/search_date_filter.html' %}
+                    <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
+                </form>
+            </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+    <div class="four wide column">
+        <div style="text-align: center" class="ui  medium header">Κατηγορίες ΑποΘήκης</div>
+        <table style="margin-left: 1%" class="ui selectable striped table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Κατηγορία</th>
+                    <th>Ενέργεια</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ category }}</td>
+                        <td><a href='' class='ui green button'>Go</a> </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <div  class="ten wide column">
+        <div style="text-align: center" class="ui medium header">Ενέργειες</div>
+        <div class="row">
+            <a href='' class='ui button ajax_button'>Υπολογισμός υπολοίπου</a>
+            <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
+            <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
+            <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
+        </div>
+        <div class='row' id='ajax_container'>
+
+        </div>
+    </div>
+
+    <script>
+        $('.ajax_button').click(function() {
+            console.log('works!')
+        })
+    </script>
+
+{% endblock %}
+
