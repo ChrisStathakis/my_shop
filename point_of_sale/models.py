@@ -403,7 +403,7 @@ class RetailOrderItem(DefaultOrderItemModel):
         return self.order.order_type
 
     def template_tag_total_price(self):
-        return "{0:.2f}".format(round(self.price*self.qty,2)) + ' %s'%(CURRENCY)
+        return "{0:.2f}".format(round(self.value*self.qty,2)) + ' %s'%(CURRENCY)
 
     def price_for_vendor_page(self):
         #returns silimar def for price in vendor_id page

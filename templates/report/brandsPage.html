@@ -1,0 +1,153 @@
+{% extends 'report/warehouse.html' %} 
+
+{% block content %}
+    <div class="sixteen wide column">
+        <h2 class="ui center aligned icon header">
+            <i class="circular blue file icon"></i> Προϊόντα
+        </h2>
+    </div>
+
+
+<div class="row">
+    <div class="two wide column"></div>
+    <div class="twelve wide column">
+        <div class="ui styled fluid accordion">
+            <div class="title">
+                <i class="dropdown icon"></i> Filters Total Products.. {{ object_list.count }}
+            </div>
+            <div class="content">
+                <form class="ui form" method="get" id="filter_form">
+                        <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
+                        <a href="{% url 'reports:products' %}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+                    {% include "snippets/search_date_filter.html" %}
+                    <div class="three fields">
+                        <div class="field">
+                            {% if discount_name %}
+                            <label for="qty">Εκπτωση</label>
+                            <input type="checkbox" name="discount_name" class="ui checkbox" value="true" placeholder="Discount" checked><br> {% else %}
+                            <label for="qty">Εκπτωση</label>
+                            <input type="checkbox" name="discount_name" class="ui checkbox" value="true" placeholder="Discount"><br> {% endif %}
+                        </div>
+
+                        <div class="field">
+                            {% if qty_name %}
+                            <label for="qty">Απόθεμα</label>
+                            <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty" checked> {% else %}
+                            <label for="qty">Απόθεμα</label>
+                            <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty"> {% endif %}
+                        </div>
+                    </div>
+                     {% include 'snippets/vendor_cate_filter.html' %}
+                    <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
+                    <a href="{% url 'reports:products' %}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+    <div class="two wide column"></div>
+</div>
+
+<div class="row">
+    <div class="container">
+        <div class="sixteen wide column">
+            <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
+                    data-slug="warehouse_analysis" id="button-analysis">Υπολογισμός Υπόλοιπου
+            </button>
+            <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
+                    data-slug="vendor_analysis" id="button-analysis">Ανάλυση Ανά Brand
+            </button>
+            <button class="ui green button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
+                    data-slug="sells_analysis" id="button-analysis">Πωλήσεις Περιόδου
+            </button>
+            <button class="ui red button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
+                    data-slug="vendor_analysis" id="button-analysis">Αγορές Περιόδου
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="ui grid container">
+    <div class="four wide column"></div>
+    <div class="twelve wide column" id='ajax_container'></div> 
+</div>
+
+<div class="row">
+    <div class="one wide column"></div>
+    <div class="fourteen wide column">
+        <h2 class="ui header">Όλα τα Brands</h2>
+        <table class="ui small single line selectable table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Id</th>
+                    <th><a href="">Ονομασία</a></th>
+                    <th><a href="">Κατάσταση</a></th>
+                    <th>Ενέργιες</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ele in object_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ ele.id }}</td>
+                    <td>{{ ele.title }}</td>
+                    <td>{{ ele.tag_active }}</td>
+                    <td><a href='' class="ui blue button">Ανάλυση</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Σύνολα</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>{{ object_list.count }} Τεμ</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="one wide column"></div>
+
+
+<div class="row"></div>
+<div class="two wide column"></div>
+
+<div style="margin-bottom: 5%" class="row"></div>
+
+<script xmlns="http://www.w3.org/1999/html">
+    $('#search_pro').keyup(function() {
+        console.log('button pressed!dfdf');
+        var my_form = $('#filter_form').serialize();
+        $.ajax({
+            url: "{% url 'reports:ajax_product_search' %}",
+            dataType: 'json',
+            data: my_form,
+            success: function(data) {
+                 $('#ajax_container').html(data.result_data)
+            }   
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $('.warehouse_analysis').click(function() {
+        $('#ajax_container').html('<h2 class="ui header">Περιμένετε λίγο</h2>');
+        var btn = $(this);
+        var my_form = $('#filter_form').serialize();
+        $('#ajax_container').html('<h4>Waiting....</h4>');
+        console.log(my_form);
+        $.ajax({
+            url: btn.attr('data-url'),
+            dataType: 'json',
+            data: my_form + '&analysis='+ btn.attr('data-slug'),
+            success: function(data) {
+                $('#ajax_container').html(data.results)
+            }
+        })
+
+    })
+</script>
+{% endblock %}

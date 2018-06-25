@@ -11,23 +11,22 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView, View
 from django.db.models.functions import TruncMonth
 
+
 from products.models import *
-from inventory_manager.models import *
+from inventory_manager.models import Vendor, Order, OrderItem
 from site_settings.models import PaymentOrders
 from site_settings.constants import *
-
 from point_of_sale.models import *
 from transcations.models import *
-
-from django.db.models.functions import TruncMonth
 from accounts.models import CostumerAccount
+from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months
 
 from itertools import chain
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 import datetime
 
-from .tools import initial_data_from_database, warehouse_filters
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class HomepageReport(LoginRequiredMixin, TemplateView):
@@ -50,6 +49,7 @@ class HomepageProductWarning(ListView):
 
 
 # products
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class ReportProducts(ListView):
@@ -85,7 +85,7 @@ class ProductDetail(LoginRequiredMixin, DetailView):
         date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
         date_end = date_end + relativedelta(days=1)
         order_items = OrderItem.objects.filter(product=self.object,
-                                               order__day_created__range=[date_start, date_end]
+                                               order__timestamp__range=[date_start, date_end]
                                                )
         order_items_analysis = order_items.values('product').annotate(total_clean=Sum('total_clean_value'),
                                                                       total_tax=Sum('total_value_with_taxes'),
@@ -93,26 +93,30 @@ class ProductDetail(LoginRequiredMixin, DetailView):
                                                                       )
         # retail orders
         retail_items = RetailOrderItem.objects.filter(title=self.object,
-                                                      day_added__range=[date_start, date_end]
+                                                      timestamp__range=[date_start, date_end]
                                                       )
-        retail_sells_by_type = retail_items.values('order__order_type').annotate(total_incomes=Sum(F('qty')*F('final_price')),
+        retail_sells_by_type = retail_items.values('order__order_type').annotate(total_incomes=Sum(F('qty')*F('final_value')),
                                                                                  total_qty=Sum('qty'),
                                                                                  ).order_by('order__order_type')
 
         context.update(locals())
         return context
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class BrandsPage(ListView):
-    template_name = ''
+    template_name = 'report/brandsPage.html'
     model = Brands
 
     def get_queryset(self):
         queryset = Brands.objects.filter(active=True)
-
         return queryset
 
     def get_context_data(self, **kwargs):
+        context = super(BrandsPage, self).get_context_data(**kwargs)
+
+        context.update(locals())
+        return context
         
 
 

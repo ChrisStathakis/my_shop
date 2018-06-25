@@ -111,6 +111,7 @@ class Brands(models.Model):
     def get_absolute_url(self):
         return reverse('brand', kwargs={'slug': self.slug})
 
+
     @staticmethod
     def filters_data(queryset, search_name, active_name):
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset

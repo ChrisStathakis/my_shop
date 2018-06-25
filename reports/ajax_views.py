@@ -22,6 +22,29 @@ def ajax_analyse_vendors(request):
     return JsonResponse(data)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
 def ajax_warehouse_product_movement_vendor_analysis(request):
     data = dict()
     date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
