@@ -19,7 +19,8 @@ from site_settings.constants import *
 from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
-from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months
+from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, warehouse_vendors_analysis
+
 
 from itertools import chain
 from operator import attrgetter
@@ -119,493 +120,292 @@ class BrandsPage(ListView):
         return context
         
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class ReportsIncome(ListView):
-    model = RetailOrder
-    template_name = 'report/incomes.html'
-    paginate_by = 100
-
-    def get_queryset(self):
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        queryset = RetailOrder.my_query.sells_orders(date_start, date_end)
-        queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick = \
-            retail_orders_filter(self.request, queryset)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super(ReportsIncome, self).get_context_data(**kwargs)
-
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        last_year_start, last_year_end = date_start - relativedelta(years=1), date_end - relativedelta(years=1)
-        last_year_queryset = RetailOrder.my_query.sells_orders(last_year_start, last_year_end)
-        last_year_queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick = \
-            retail_orders_filter(
-                self.request, last_year_queryset)
-
-        # filters and initial data
-        seller_account, stores = User.objects.filter(is_staff=True), Store.objects.all()
-        shipping, payment_methods, order_type_name, order_status, currency = Shipping.objects.all(), PaymentMethod.my_query.active(), \
-                                                                             ORDER_TYPES, ORDER_STATUS, CURRENCY
-        days = date_end - date_start
-
-        # feed the charts
-        total_incomes, total_paid_value, total_diff, total_cost, total_return, total_sum = incomes_analysis(
-            self.object_list)
-        current_year_month_analysis = incomes_analysis_per_month(date_start, date_end, self.object_list)
-        last_year_month_analysis = incomes_analysis_per_month(last_year_start, last_year_end, last_year_queryset)
-        store_analysis = self.object_list.values('store_related__title').annotate(
-            country_population=Sum('final_price')). \
-            order_by('-country_population')
-
-        context.update(locals())
-        return context
-
-
-@staff_member_required
-def reports_income(request):
-    title = 'Πωλήσεις'
-    # initial data
-    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
-    queryset = RetailOrder.my_query.all_orders_by_date_filter(date_start, date_end)
-    last_year_start, last_year_end = date_start - relativedelta(years=1), date_end - relativedelta(years=1)
-    last_year_queryset = RetailOrder.my_query.sells_orders(last_year_start, last_year_end)
-
-    # filters and initial data
-    seller_account, stores = User.objects.filter(is_staff=True), Store.objects.all()
-    shipping, payment_methods, order_type_name, order_status, currency = Shipping.objects.all(), PAYMENT_TYPE, \
-                                                                         ORDER_TYPES, ORDER_STATUS, CURRENCY
-    queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick = \
-        retail_orders_filter(request, queryset)
-    last_year_queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick = \
-        retail_orders_filter(
-            request, last_year_queryset)
-    days = date_end - date_start
-
-    # feed the charts
-    total_incomes, total_paid_value, total_diff, total_cost, total_return, total_sum = incomes_analysis(queryset)
-    current_year_month_analysis = incomes_analysis_per_month(date_start, date_end, queryset)
-    last_year_month_analysis = incomes_analysis_per_month(last_year_start, last_year_end, last_year_queryset)
-    store_analysis = queryset.values('store_related__title').annotate(country_population=Sum('final_price')). \
-        order_by('-country_population')
-
-    # previous range day
-    '''
-    previous_period_start, previous_period_end = date_start - relativedelta(days=days.days), date_start - relativedelta(days=1)
-    previous_period = '%s - %s' % (str(previous_period_end).split(' ')[0].replace('-', '/'),str(previous_period_start).split(' ')[0].replace('-', '/'))
-    order_items_previous_period = RetailOrder.objects.filter(status__id=7, day_created__range =[previous_period_start, previous_period_end + relativedelta(days=1)]).order_by('-day_created')
-    previous_orders = RetailOrder.my_query.all_orders_by_date_filter(previous_period_start, previous_period_end).filter(order_type__in=['r', 'e'], status__id__in=[7, 8]).order_by('-day_created')
-    # creates last year date range
-    last_year_start, last_year_end = date_start - relativedelta(years=1), date_end - relativedelta(years=1)
-    orders_items_last_year = RetailOrder.objects.filter(status__id__in=[7, 8], day_created__range =[last_year_start, last_year_end]).order_by('-day_created')
-    last_year_orders = RetailOrder.my_query.all_orders_by_date_filter(last_year_start, last_year_end).filter(order_type__in=['r', 'e'], status__id__in=[7, 8]).order_by('-day_created')
-    # present orders
-    orders = all_orders.filter(order_type__in=['r', 'e'], status__id__in=[7, 8]).order_by('-day_created')
-    orders_analysis, last_year_analysis = incomes_analysis_per_month(date_start, date_end, orders, last_year_orders)
-    total_value, total_incomes, total_remaining_value, sum_product_cost = incomes_analysis(all_orders)
-    # average values
-    avg_cost, avg_profit, avg_income = 0, 0, 0
-    if orders:
-        avg_cost = orders.aggregate(Avg('total_cost'))['total_cost__avg']
-        avg_income = orders.aggregate(Avg('paid_value'))['paid_value__avg']
-        avg_profit = avg_income - avg_cost
-    # table analysis
-    current_data_per_user, previous_data_per_user, last_data_per_user = incomes_table_analysis(orders, previous_orders, last_year_orders, 'users', users)
-    current_data_per_payment, previous_data_per_payment, last_data_per_payment = incomes_table_analysis(orders, previous_orders, last_year_orders, 'payment', payment_methods)
-    '''
-    paginator = Paginator(queryset, 50)
-    page = request.GET.get('page')
-    try:
-        queryset = paginator.page(page)
-    except PageNotAnInteger:
-        queryset = paginator.page(1)
-    except EmptyPage:
-        queryset = paginator.page(paginator.num_pages)
-    context = locals()
-    context.update(csrf(request))
-    return render(request, 'report/incomes.html', context)
-
-
-@staff_member_required
-def reports_specific_order(request, dk):
-    currency = CURRENCY
-    order = RetailOrder.objects.get(id=dk)
-    order_items = order.retailorderitem_set.all()
-    return_page = request.META.get('HTTP_REFERER')
-    context = locals()
-    return render(request, 'report/income_specific_order.html', context)
-
-
-class RetailItemsFlow(ListView):
-    model = RetailOrderItem
-    template_name = 'reports/order_item_flow.html'
-    paginate_by = 100
-
-    def get_queryset(self):
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        queryset = RetailOrderItem.my_query.all_orders_by_date_filter(date_start, date_end)
-        queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick, \
-        product_name, category_name, vendor_name = retail_order_item_filter(self.request, queryset)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super(RetailItemsFlow, self).get_context_data(**kwargs)
-        currency = CURRENCY
-        vendors, categories, categories_site, colors, sizes = initial_data_from_database()
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick, \
-        product_name, category_name, vendor_name = retail_order_item_filter(self.request, self.object_list)
-
-        # table data
-        table_results = self.object_list.values('order__order_type').annotate(
-            total_incomes=Sum(F('qty') * F('final_price')),
-            total_cost=Sum(F('qty') * F('cost'))
-            ).order_by('final_price')
-        total_incomes, total_returns, total_destroy = [0, 0], [0, 0], [0, 0]  # first incomes on list after the cost
-        for result in table_results:
-            total_incomes[0] += result['total_incomes'] if result['order__order_type'] in ['r', 'e'] else 0
-            total_incomes[1] += result['total_cost'] if result['order__order_type'] in ['r', 'e'] else 0
-            total_returns[0] += result['total_incomes'] if result['order__order_type'] == 'b' else 0
-            total_returns[1] += result['total_cost'] if result['order__order_type'] == 'b' else 0
-            total_destroy[0] += result['total_incomes'] if result['order__order_type'] == 'd' else 0
-            total_destroy[1] += result['total_cost'] if result['order__order_type'] == 'd' else 0
-        total_sum = [total_incomes[0] - total_returns[0], total_incomes[1] - total_returns[1] - total_destroy[1]]
-        context.update(locals())
-        return context
-
-
-@staff_member_required
-def sell_items_flow(request):
-    title = 'Ροή Προϊόντων'
-    warehouse_categories, vendors, site_categories, colors, sizes, costumers = Category.objects.all(), Supply.objects.all(), \
-                                                                               CategorySite.objects.all(), Color.objects.all(), \
-                                                                               Size.objects.all(), CostumerAccount.objects.all()
-    date_start, date_end, date_range = initial_date(request)
-    #  initial start
-    order_items = RetailOrderItem.objects.filter(order__day_created__range=[date_start, date_end]).order_by(
-        '-day_added')
-    days = date_end - date_start
-    previous_period_start = date_start - relativedelta(days=days.days)
-    previous_period_end = date_start - relativedelta(days=1)
-    previous_period = '%s - %s' % (str(previous_period_end).split(' ')[0].replace('-', '/'),
-                                   str(previous_period_start).split(' ')[0].replace('-', '/'))
-    order_items_previous_period = RetailOrderItem.objects.filter(
-        order__day_created__range=[previous_period_start, previous_period_end + relativedelta(days=1)]).order_by(
-        '-day_added')
-    last_year_start = date_start - relativedelta(years=1)
-    last_year_end = date_end - relativedelta(years=1)
-    orders_items_last_year = RetailOrderItem.objects.filter(
-        order__day_created__range=[last_year_start, last_year_end]).order_by('-day_added')
-    order_items, order_items_previous_period, orders_items_last_year = order_items_filter(request, order_items,
-                                                                                          order_items_previous_period,
-                                                                                          orders_items_last_year)
-    # analysis
-    total_report = [0, 0, 0, 0, 0]  # incomes, profit, cost, taxes, count
-    sells = order_items.filter(order__order_type__in=['r', 'e'])
-    returns = order_items.filter(order__order_type='b')
-    incomes_total = sells.aggregate(total=Sum(F('price') * F('qty')))['total'] if sells else 0
-    return_total = returns.aggregate(total=Sum(F('price') * F('qty')))['total'] if returns else 0
-    total_report[0] = incomes_total - return_total
-
-    '''
-    ware_cate_report, vendors_report, costumers_report = {}, {}, {}
-    for order in order_items:
-        if order.order.order_type in ['r','e']:
-            total_report[0], total_report[1], total_report[2],total_report[3] = [total_report[0] +order.total_price_number(), total_report[1]+order.total_cost(), total_report[2]+order.total_taxes(),total_report[3]+order.qty]
-            if order.title.supplier in vendors_report.keys():
-                #splits the information per vendor
-                get_data = vendors_report[order.title.supplier]
-                get_data[0], get_data[1], get_data[2], get_data[3] = [get_data[0]+order.total_price_number(), get_data[1]+order.total_cost(), get_data[2]+order.total_taxes(), get_data[3]+order.qty]
-                vendors_report[order.title.supplier] = get_data
-            else:
-                vendors_report[order.title.supplier] = [order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0,0,0,0,0]
-            if order.title.category in ware_cate_report.keys():
-                get_data = ware_cate_report[order.title.category]
-                ware_cate_report[order.title.category] = get_data
-            else:
-                ware_cate_report[order.title.category] = [order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0,0,0,0,0]
-            if order.order.costumer_account in costumers_report.keys():
-                get_data = costumers_report[order.order.costumer_account]
-                get_data[0], get_data[1], get_data[2], get_data[3] = [get_data[0]+order.total_price_number(), get_data[1]+order.total_cost(), get_data[2]+order.total_taxes(), get_data[3]+order.qty]
-                costumers_report[order.order.costumer_account] = get_data
-            else:
-                costumers_report[order.order.costumer_account] = [order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0,0,0,0,0]
-    total_previous_period = [0,0,0,0]
-    for order in order_items_previous_period:
-        if order.order.order_type in ['e','r']:
-            total_previous_period[0] += order.total_price_number()
-            total_previous_period[1] += order.total_cost()
-            total_previous_period[2] += order.total_taxes()
-            total_previous_period[3] += order.qty
-            if order.title.supplier in vendors_report.keys():
-                get_data = vendors_report[order.title.supplier]
-                get_data[4], get_data[5], get_data[6], get_data[7] = [get_data[4]+order.total_price_number(), get_data[5]+order.total_cost(), get_data[6]+order.total_taxes(), get_data[7]+order.qty]
-                vendors_report[order.title.supplier] = get_data
-            else:
-                vendors_report[order.title.supplier] = [0,0,0,0,order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0]
-            if order.title.category in ware_cate_report.keys():
-                get_data = ware_cate_report[order.title.category]
-                get_data[4], get_data[5], get_data[6], get_data[7] = [get_data[4]+order.total_price_number(), get_data[5]+order.total_cost(), get_data[6]+order.total_taxes(), get_data[7]+order.qty]
-                ware_cate_report[order.title.category] = get_data
-            else:
-                ware_cate_report[order.title.category] = [0,0,0,0,order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0]
-            if order.order.costumer_account in costumers_report.keys():
-                get_data = costumers_report[order.order.costumer_account]
-                get_data[4], get_data[5], get_data[6], get_data[7] = [get_data[4]+order.total_price_number(), get_data[5]+order.total_cost(), get_data[6]+order.total_taxes(), get_data[7]+order.qty]
-                costumers_report[order.order.costumer_account] = get_data
-            else:
-                costumers_report[order.order.costumer_account] = [0,0,0,0,order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, 0,0,0,0]
-        last_year_total = [0,0,0,0]
-        for order in orders_items_last_year:
-            last_year_total[0] += order.total_price_number()
-            last_year_total[1] += order.total_cost()
-            last_year_total[2] += order.total_taxes()
-            last_year_total[3] += order.qty
-            if order.title.supplier in vendors_report.keys():
-                get_data = vendors_report[order.title.supplier]
-                get_data[8], get_data[9], get_data[10], get_data[11] = [get_data[8]+order.total_price_number(), get_data[9]+order.total_cost(), get_data[10]+order.total_taxes(), get_data[11]+order.qty]
-                vendors_report[order.title.supplier] = get_data
-            else:
-                vendors_report[order.title.supplier] = [0,0,0,0, 0,0,0,0, order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, ]
-            if order.title.category in ware_cate_report.keys():
-                get_data = ware_cate_report[order.title.category]
-                get_data[8], get_data[9], get_data[10], get_data[11] = [get_data[8]+order.total_price_number(), get_data[9]+order.total_cost(), get_data[10]+order.total_taxes(), get_data[11]+order.qty]
-                ware_cate_report[order.title.category] = get_data
-            else:
-                ware_cate_report[order.title.category] = [0,0,0,0, 0,0,0,0, order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, ]
-            if order.order.costumer_account in costumers_report.keys():
-                get_data = costumers_report[order.order.costumer_account]
-                get_data[8], get_data[9], get_data[10], get_data[11] = [get_data[8]+order.total_price_number(), get_data[9]+order.total_cost(), get_data[10]+order.total_taxes(), get_data[11]+order.qty]
-                costumers_report[order.order.costumer_account] = get_data
-            else:
-                costumers_report[order.order.costumer_account] = [0,0,0,0, 0,0,0,0, order.total_price_number(), order.total_cost(),order.total_taxes(), order.qty, ]
-    '''
-    page = request.GET.get('page')
-    paginator = Paginator(order_items, 50)
-    try:
-        order_items = paginator.page(page)
-    except PageNotAnInteger:
-        order_items = paginator.page(1)
-    except EmptyPage:
-        order_items = paginator.page(paginator.num_pages)
-    context = locals()
-    return render(request, 'reports/order_item_flow.html', context)
-
-
-class CostumersReport(ListView):
-    template_name = 'report/costumers-report.html'
-    model = CostumerAccount
+@method_decorator(staff_member_required, name='dispatch')
+class VendorsPage(ListView):
+    model = Vendor
+    template_name = 'report/vendors.html'
     paginate_by = 50
 
-    def get_context_data(self, **kwargs):
-        context = super(CostumersReport, self).get_context_data(**kwargs)
-
-        context.update(locals())
-        return context
-
-
-@staff_member_required
-def costumers_accounts_report(request):
-    currency = CURRENCY
-    title = 'Πελάτες'
-    costumer_account = CostumerAccount.objects.all()
-    search_text = request.POST.get('search_pro') or None
-    if search_text:
-        search_text = search_text
-        costumer_account = costumer_account.filter(Q(first_name__icontains=search_text) |
-                                                   Q(last_name__icontains=search_text) |
-                                                   Q(user__email__icontains=search_text) |
-                                                   Q(phone__icontains=search_text) |
-                                                   Q(cellphone__icontains=search_text)
-                                                   ).distinct()
-    context = locals()
-    context.update(csrf(request))
-    return render_to_response('reports/costumer_account_report.html', context)
-
-
-@staff_member_required
-def specific_costumer_account(request, dk):
-    costumer_account = CostumerAccount.objects.all()
-    costumer_account_spe = CostumerAccount.objects.get(id=dk)
-    orders = RetailOrder.objects.filter(costumer_account=costumer_account_spe)
-    search_text = request.POST.get('search_pro') or None
-    if search_text:
-        search_text = search_text
-        costumer_account = costumer_account.filter(Q(first_name__icontains=search_text) |
-                                                   Q(last_name__icontains=search_text) |
-                                                   Q(user__email__icontains=search_text) |
-                                                   Q(phone__icontains=search_text) |
-                                                   Q(cellphone__icontains=search_text)
-                                                   ).distinct()
-
-    context = locals()
-    context.update(csrf(request))
-    return render_to_response('reports/costumer_account_report.html', context)
-
-
-class BalanceSheet(TemplateView):
-    template_name = 'report/balance-sheet.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(BalanceSheet, self).get_context_data(**kwargs)
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
-        retail_orders = RetailOrder.my_query.all_orders_by_date_filter(date_start, date_end)
-        warehouse_orders = Order.objects.filter(day_created__range=[date_start, date_end])
-        bills_orders = FixedCostInvoice.objects.filter(date_expired__range=[date_start, date_end])
-        payroll_orders = PayrollInvoice.objects.filter(date_expired__range=[date_start, date_end], )
-        # expenses
-        total_expenses = [
-            round(warehouse_orders.aggregate(Sum('total_price'))['total_price__sum'], 2) if warehouse_orders else 0,
-            round(bills_orders.aggregate(Sum('final_price'))['final_price__sum'], 2) if bills_orders else 0,
-            round(payroll_orders.aggregate(Sum('value'))['value__sum'], 2) if payroll_orders else 0,
-            0]
-        total_expenses[3] = total_expenses[0] + total_expenses[1] + total_expenses[2]
-        warehouse_orders_by_month = warehouse_orders.annotate(month=TruncMonth('day_created')
-                                                              ).values('month').annotate(total_cost=Sum('total_price'),
-                                                                                         total_paid=Sum('paid_value')
-                                                                                         ).order_by('month')
-        bills_orders_by_month = bills_orders.annotate(month=TruncMonth('date_expired')
-                                                      ).values('month').annotate(total_cost=Sum('final_price'),
-                                                                                 total_paid=Sum('paid_value')
-                                                                                 ).order_by('month')
-        payroll_orders_by_month = payroll_orders.annotate(month=TruncMonth('date_expired')
-                                                          ).values('month').annotate(total_cost=Sum('value'),
-                                                                                     total_paid=Sum('paid_value')
-                                                                                     ).order_by('month')
-
-        total_expenses_by_month = []
-        for ele in warehouse_orders_by_month:
-            total_expenses_by_month.append([ele['month'].strftime('%B'), [ele['total_cost'],
-                                                                          ele['total_paid'],
-
-                                                                          ]
-                                            ])
-        for ele in bills_orders_by_month:
-            for data in total_expenses_by_month:
-                if ele['month'].strftime('%B') == data[0]:
-                    data[1][0] += ele['total_cost']
-                    data[1][1] += ele['total_paid']
-        for ele in payroll_orders_by_month:
-            for data in total_expenses_by_month:
-                if ele['month'].strftime('%B') == data[0]:
-                    data[1][0] += ele['total_cost']
-                    data[1][1] += ele['total_paid']
-        # incomes
-        retail_orders = RetailOrder.my_query.all_orders_by_date_filter(date_start, date_end)
-        incomes, orders_return, orders_destroy = retail_orders.filter(order_type__in=['r', 'e']), \
-                                                 retail_orders.filter(order_type='b'), retail_orders.filter(
-            order_type='d')
-        total_incomes = [incomes.aggregate(Sum('final_price'))['final_price__sum'] if incomes else 0,
-                         orders_return.aggregate(Sum('final_price'))['final_price__sum'] if orders_return else 0,
-                         orders_destroy.aggregate(Sum('total_cost'))['total_cost__sum'] if orders_destroy else 0,
-                         0]
-        total_incomes[3] = total_incomes[0] - total_incomes[1] - total_incomes[2]
-        incomes_per_month = incomes.annotate(month=TruncMonth('date_created')
-                                             ).values('month').annotate(total_income=Sum('final_price'),
-                                                                        total_paid=Sum('paid_value'),
-                                                                        total_cost=Sum('total_cost')
-                                                                        ).order_by('month')
-        orders_return_per_month = orders_return.annotate(month=TruncMonth('date_created')
-                                                         ).values('month').annotate(total_income=Sum('final_price'),
-                                                                                    total_paid=Sum('paid_value'),
-                                                                                    total_cost=Sum('total_cost')
-                                                                                    ).order_by('month')
-
-        clean_incomes_per_month = []
-        for ele in incomes_per_month:
-            clean_incomes_per_month.append([ele['month'], [ele['total_income'],
-                                                           ele['total_paid'],
-                                                           ele['total_paid']
-                                                           ]
-                                            ])
-        for ele in orders_return_per_month:
-            for data in clean_incomes_per_month:
-                if ele['month'] == data[0]:
-                    data[1][0] -= ele['total_income']
-                    data[1][1] -= ele['total_paid']
-                    data[1][2] -= ele['total_paid']
-
-        profit_losses = []
-        for ele in clean_incomes_per_month:
-            profit_losses.append([ele[0], ele[1][0]])
-
-        for ele in total_expenses_by_month:
-            for data in profit_losses:
-                if data[0].strftime('%B') == ele[0]:
-                    data[1] -= ele[1][0]
-        context.update(locals())
-        return context
-
-
-class PaymentFlow(ListView):
-    model = PaymentOrders
-    template_name = 'report/payment-flow.html'
-
     def get_queryset(self):
-        start_year, day_now, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        queryset = PaymentOrders.objects.filter(date_expired__range=[start_year, day_now])
-        search_name, payment_name, is_paid_name, vendor_name, category_name, status_name, date_pick = filters_name(
-            self.request)
-        queryset = queryset.filter(payment_type__in=payment_name) if payment_name else queryset
-        queryset = queryset.fiter(is_paid=True) if is_paid_name and is_paid_name in [True, False] else queryset
+        queryset = Vendor.objects.all()
+        queryset = Vendor.filter_data(self.request, queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
-        context = super(PaymentFlow, self).get_context_data(**kwargs)
-        #  filters
-        payment_type, payment_order_type, currency = PAYMENT_TYPE, PAYMENT_ORDER_TYPE, CURRENCY
-        search_name, payment_name, is_paid_name, vendor_name, category_name, status_name, date_pick = filters_name(
-            self.request)
+        context = super(VendorsPage, self).get_context_data(**kwargs)
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        payment_analysis = self.object_list.values('content_type__model').annotate(total_paid=Sum('value')
-                                                                                   ).order_by('content_type')
-        for ele in payment_analysis:
-            print(ele)
-        months = diff_month(date_start, date_end)
-        orders_outcome = self.object_list.filter(is_expense=True)
-        orders_income = self.object_list.filter(is_expense=False)
-        orders_income_total = [orders_income.aggregate(Sum('value'))['value__sum'] if orders_income else 0,
-                               orders_income.filter(is_paid=True).aggregate(Sum('value'))[
-                                   'value__sum'] if orders_income else 0
-                               ]
-        orders_outcome_total = [orders_outcome.aggregate(Sum('value'))['value__sum'] if orders_income else 0,
-                                orders_outcome.filter(is_paid=True).aggregate(Sum('value'))[
-                                    'value__sum'] if orders_income else 0
-                                ]
+        date_start_last_year, date_end_last_year = date_start- relativedelta(year=1), date_end-relativedelta(year=1)
+        date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
+        vendor_name, balance_name, search_name =[self.request.GET.getlist('vendor_name'),
+                                                 self.request.GET.get('balance_name'),
+                                                 self.request.GET.get('search_name'),
+                                                ]
 
-        # charts
-        orders_outcome_chart = balance_sheet_chart_analysis_for_date_expired(date_start, date_end, orders_outcome,
-                                                                             'value')
-        orders_income_chart = balance_sheet_chart_analysis_for_date_expired(date_start, date_end, orders_income,
-                                                                            'value')
-        diff_chart = [orders_income_chart[i][1] - orders_outcome_chart[i][1] for i in range(months + 1)]
+        orders = Order.objects.filter(timestamp__range=[date_start, date_end])
+        chart_data = [Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all() else 0,
+                      orders.aggregate(Sum('total_price'))['total_price__sum'] if orders else 0,
+                      orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
+                  ]
+        analysis = warehouse_vendors_analysis(self.request, date_start, date_end)
+        analysis_last_year = warehouse_vendors_analysis(self.request, date_start_last_year, date_end_last_year)
         context.update(locals())
         return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CheckOrderPage(ListView):
+    template_name = 'report/check_orders.html'
+    model = PaymentOrders
+    paginate_by = 30
+
+    def get_queryset(self):
+        queryset = PaymentOrders.objects.all()
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CheckOrderPage, self).get_context_data(**kwargs)
+        vendors = Supply.objects.filter(active=True)
+        context.update(locals())
+        return context
+
+
+@staff_member_required
+def vendor_detail(request, pk):
+    instance = get_object_or_404(Supply, id=pk)
+    # filters_data
+    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
+    vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
+    date_pick = request.GET.get('date_pick', None)
+
+    # data
+    products = Product.my_query.active_warehouse().filter(supply=instance)[:20]
+    warehouse_orders = Order.objects.filter(vendor=instance, date_created__range=[date_start, date_end])[:20]
+    
+    paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
+                           PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
+                                                        object_id__in=warehouse_orders.values('id'),
+                                                        ) 
+                          )
+                    )[:20]
+    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_created__range=[date_start, date_end])[:20]
+    context = locals()
+    return render(request, 'report/details/vendors_id.html', context)
+
+
+
+@staff_member_required
+def warehouse_category_reports(request):
+    categories, currency = Category.objects.all(), CURRENCY
+    site_categories = CategorySite.objects.all()
+    context = locals()
+    return render(request, 'report/category_report.html', context)
+
+
+class WarehouseCategoryReport(DetailView):
+    model = Category
+    template_name = ''
+
+
+
+@staff_member_required
+def warehouse_orders(request):
+    vendors, payment_method, currency = Supply.objects.all(), PaymentMethod.objects.all(), CURRENCY
+    orders = Order.objects.all()
+    orders = Order.filter_data(request, queryset=orders)
+
+    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
+    search_name, vendor_name, balance_name, paid_name = [request.GET.get('search_name'),
+                                                         request.GET.getlist('vendor_name'),
+                                                         request.GET.get('balance_name'),
+                                                         request.GET.get('paid_name')
+                                                         ]
+
+    order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('total_price'))[
+        'total_price__sum'] \
+        if orders else 0, orders.aggregate(Sum('paid_value'))[
+                                               'paid_value__sum'] if orders else 0
+    diff = total_value - paid_value
+    warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'total_price')
+    warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('total_price'),
+                                                                          paid_val=Sum('paid_value')).order_by(
+        '-value_total')
+    paginator = Paginator(orders, 100)
+    page = request.GET.get('page', 1)
+    orders = paginator.get_page(page)
+    context = locals()
+    return render(request, 'report/orders.html', context)
+
+
+@staff_member_required
+def order_id(request, dk):
+    currency = CURRENCY
+    order = get_object_or_404(Order, id=dk)
+    order_items = order.orderitem_set.all()
+    orders_files = order.warehouseorderimage_set.all()
+    payments_orders = order.payment_orders
+    context = locals()
+    return render(request, 'report/details/orders_id.html', context)
+
+
+@staff_member_required
+def warehouse_order_items_movements(request):
+    vendors, categories, categories_site, colors, sizes,  = initial_data_from_database()
+    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
+    search_name, payment_name, is_paid_name, vendor_name, category_name, status_name, date_pick = filters_name(
+        request)
+    warehouse_order_items = get_filters_warehouse_order_items(request, OrderItem.objects.filter(
+        order__day_created__range=[date_start, date_end]))
+    currency = CURRENCY
+    order_items_qty = warehouse_order_items.aggregate(Sum('qty'))['qty__sum'] if warehouse_order_items else 0
+    order_items_total_value = warehouse_order_items.aggregate(total=Sum(F('total_clean_value')*F('qty')))['total'] if warehouse_order_items else 0
+    avg_total_price = order_items_total_value/order_items_qty if order_items_qty > 0 else 0
+
+    paginator = Paginator(warehouse_order_items, 100)
+    page = request.GET.get('page')
+    try:
+        warehouse_order_items = paginator.page(page)
+    except PageNotAnInteger:
+        warehouse_order_items = paginator.page(1)
+    except EmptyPage:
+        warehouse_order_items = paginator.page(paginator.num_pages)
+    context = locals()
+    return render(request, 'report/warehouse_order_items_movements.html', context)
+
+
+@staff_member_required
+def products_movements(request):
+    currency, table = CURRENCY, ToolsTableOrder.objects.get(title='reports_table_product_order')
+    date_start, date_end, date_string = reports_initial_date(request)
+    check_date = date_pick_session(request)
+    if check_date:
+        date_start, date_end, date_string = check_date
+    vendors, warehouse_cate, colors, sizes = [Supply.objects.all(), Category.objects.all(), Color.objects.all(), Size.objects.all()]
+    try:
+        products_, sellings, buyings, returns, product_movements, filters_name = warehouse_movements_filters(request, date_start, date_end)
+        # category_name, vendor_name, color_name , size_name, query, date_pick
+        products, vendors_stats, warehouse_cate_stats, color_stats, size_stats, data_per_point = product_movenent_analysis(products_,
+            date_start, date_end, sellings, buyings, returns)
+        data_per_point.reverse()
+        paginator = Paginator(tuple(products.items()), 50)
+        page = request.GET.get('page')
+        try:
+            contacts = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            contacts = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            contacts = paginator.page(paginator.num_pages)
+        page_ = request.GET.get('page_')
+        paginator_ = Paginator(product_movements, 30)
+        try:
+            product_movements = paginator_.page(page_)
+        except PageNotAnInteger:
+            product_movements = paginator_.page(1)
+        except EmptyPage:
+            product_movements = paginator_.page(paginator_.num_pages)
+    except:
+        products, product_movements, filters_name = None, None, None
+    context = locals()
+    return render(request, 'reports/products_flow.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class WarehouseCategoryView(ListView):
+    model = Category
+    template_name = 'report/category_report.html'
+    paginate_by = 50
+
+
+
+@staff_member_required
+def category_report(request):
+    categories, category_site, categories_info, categories_site_info = Category.objects.all(), CategorySite.objects.all(), {}, {}
+    # get initial date from now and three months before.
+    date_start, date_end, date_string = reports_initial_date(request)
+    initial_order_item_buy = OrderItem.objects.filter(order__day_created__range=[date_start, date_end])
+    initial_order_item_sell = RetailOrderItem.my_query.selling_order_items(date_start=date_start, date_end=date_end)
+    initial_order_item_return = RetailOrderItem.my_query.return_order_items(date_start, date_end)
+    #initial_order_item_sell = RetailOrderItem.objects.filter(order__day_created__range=[date_start, date_end])
+    for cat in categories:
+        qs_buy = initial_order_item_buy.filter(product__category__id=cat.id)
+        qs_sell = initial_order_item_sell.filter(title__category=cat)
+        qs_return = initial_order_item_return.filter(title__category__id=cat.id)
+        categories_info[cat] = [qs_buy.aggregate(Sum('qty'))['qty__sum'] if qs_buy.aggregate(Sum('qty')) else 0,
+                                qs_buy.aggregate(total=Sum(F('qty')*F('price')))['total'] if qs_buy.aggregate(total=Sum(F('qty')*F('price')))['total'] else 0,
+                                qs_sell.aggregate(Sum('qty'))['qty__sum'] if qs_sell.aggregate(Sum('qty')) else 0,
+                                qs_sell.aggregate(total=Sum(F('qty')*F('price')))['total'] if qs_sell.aggregate(total=Sum(F('qty')*F('price')))['total'] else 0,
+                                ]
+    for cat in category_site:
+        categories_site_info[cat] = [qs_buy.aggregate(Sum('qty'))['qty__sum'] if qs_buy.aggregate(Sum('qty')) else 0,
+                                qs_buy.aggregate(total=Sum(F('qty') * F('price')))['total'] if
+                                qs_buy.aggregate(total=Sum(F('qty') * F('price')))['total'] else 0,
+                                qs_sell.aggregate(Sum('qty'))['qty__sum'] if qs_sell.aggregate(Sum('qty')) else 0,
+                                qs_sell.aggregate(total=Sum(F('qty') * F('price')))['total'] if
+                                qs_sell.aggregate(total=Sum(F('qty') * F('price')))['total'] else 0,
+                                ]
+    context = locals()
+    return render(request, 'reports/category_report.html', context)
+
+
+
+@staff_member_required
+def add_to_pre_order(request,dk,pk):
+    product = Product.objects.get(id=dk)
+    try:
+        order = PreOrder.objects.filter(status='a').last()
+        if request.POST:
+            form = PreOrderItemForm(request.POST,initial={'title':product,
+                                                          'order':order,})
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect('/reports/vendors/%s'%(pk))
+        else:
+            form =PreOrderItemForm(initial={'title':product,
+                                            'order':order,})
+        context={
+            'form':form,
+            'title':'Προσθήκη στην Προπαραγγελία.',
+            'return_page':'/reports/vendors/%s'%(pk),
+        }
+        context.update(csrf(request))
+        return render(request, 'inventory/create_costumer_form.html', context)
+    except:
+        messages.warning(request,'Δημιουργήστε Προπαραγγελία πρώτα.')
+        return HttpResponseRedirect('/reports/vendors/%s'%(pk))
+
+
+
+@staff_member_required
+def reports_order_reset_payments(request, dk):
+    order = Order.objects.get(id=dk)
+    pay_orders = order.payorders_set.all()
+    for pay_order in pay_orders:
+        pay_order.delete_pay()
+        pay_order.delete()
+    pay_orders_deposit = order.vendordepositorderpay_set.all()
+    for pay_order in pay_orders_deposit:
+        pay_order.delete_deposit()
+        pay_order.delete()
+    order.credit_balance = 0
+    order.status = 'p'
+    order.save()
+    return redirect('order_edit_main', dk=dk)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

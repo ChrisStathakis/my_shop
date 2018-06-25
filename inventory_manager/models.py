@@ -147,7 +147,6 @@ class Order(DefaultOrderModel):
     total_price_after_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
                                                      verbose_name="Αξία μετά την έκπτωση")
     total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Φ.Π.Α")
-    final_price = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Τελική Αξία")
     taxes_modifier = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
     objects = models.Manager()
     my_query = OrderManager()
@@ -163,7 +162,7 @@ class Order(DefaultOrderModel):
         all_order_items = self.orderitem_set.all()
         self.total_price_no_discount = all_order_items.aggregate(total=Sum(F('qty') * F('price')))['total'] \
             if all_order_items else 0
-        self.total_price_after_discount = all_order_items.aggregate(total=Sum(F('qty') * F('final_price')))['total'] \
+        self.total_price_after_discount = all_order_items.aggregate(total=Sum(F('qty') * F('final_value')))['total'] \
             if all_order_items else 0
         self.total_taxes = self.total_price_after_discount * (Decimal(self.get_taxes_modifier_display()) / 100)
         self.total_price = self.total_price_after_discount + self.total_taxes - self.total_discount
@@ -293,7 +292,7 @@ class OrderItem(models.Model):
     total_value_with_taxes = models.DecimalField(default=0, max_digits=14, decimal_places=2,
                                                  verbose_name='Συνολική Αξία με φόρους')
     day_added = models.DateField(blank=True, null=True)
-    final_price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    
     
     class Meta:
         ordering = ['product']

@@ -9,6 +9,7 @@ from point_of_sale.api.views import RetailOrderListApi, RetailRenderer
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('dashboard.urls', namespace='dashboard', )),
+    path('warehouse/', include('inventory_manager.urls', namespace='inventory')),
     path('billings/', include('transcations.urls', namespace='billings')),
     path('cart/', include('carts.urls', namespace='cart')),
     path('', include('my_site.urls')),

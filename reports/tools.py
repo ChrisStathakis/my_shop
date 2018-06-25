@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 from products.models import Category, Color, Size
 from my_site.models import CategorySite, Brands
-from inventory_manager.models import Vendor
+from inventory_manager.models import Vendor, Order, OrderItem
 from point_of_sale.models import *
 
 
@@ -87,3 +87,14 @@ def estimate_date_start_end_and_months(request):
     start_year, day_now, date_range = clean_date_filter(request, date_pick, date_start=start_year, date_end=day_now)
     months_list=12
     return [start_year, day_now, date_range, months_list]
+
+
+def warehouse_vendors_analysis(request, date_start, date_end):
+    vendor_name = request.GET.getlist('vendor_name', None)
+    orders = Order.objects.filter(timestamp__range=[date_start, date_end])
+    orders = orders.filter(vendor__id__in=vendor_name) if vendor_name else orders
+    current_vendor_analysis = orders.values('vendor__title').annotate(total_value=Sum('final_value'),
+                                                                      total_paid_=Sum('paid_value'),
+                                                                      )
+    # print(current_vendor_analysis)
+    return [current_vendor_analysis]

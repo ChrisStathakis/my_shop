@@ -1,7 +1,9 @@
 from django.conf.urls import url
 from django.urls import path
 from .views import *
-from .ajax_calls.ajax_warehouse_calls import ajax_products_analysis, ajax_product_search, ajax_product_detail
+from .ajax_calls.ajax_warehouse_calls import (ajax_products_analysis, ajax_product_search, ajax_product_detail,
+                                              ajax_vendors_page_analysis
+                                              )
 
 
 app_name = 'reports'
@@ -9,7 +11,7 @@ app_name = 'reports'
 urlpatterns = [
     url(r'^$', HomepageReport.as_view(), name='homepage'),
 
-    # products
+    # warehouse
     path('products/', ReportProducts.as_view(), name='products'),
     path('warehouse/products/ajax-analysis', view=ajax_products_analysis, name='ajax_products_analysis'),
     path('products/ajax-search/', view=ajax_product_search, name='ajax_product_search'),
@@ -17,15 +19,22 @@ urlpatterns = [
     path('products/<int:pk>/', ProductDetail.as_view(), name='products_detail'),
     path('product/<int:pk>/ajax_analysis', view=ajax_product_detail, name='ajax_product_analysis'),
 
-
     path('brands/', BrandsPage.as_view(), name='brands'),
 
+    path('vendors/', VendorsPage.as_view(), name='vendors'),
+    path('vendors/ajax_analysis', view=ajax_vendors_page_analysis, name='ajax_vendors_page_analysis'),
+    path('vendors/check-orders/', CheckOrderPage.as_view(), name='check_orders'),
+    url(r'vendors/(?P<pk>\d+)/$', view=vendor_detail, name='vendor_detail'),
+
+    path('warehouse-categories/', WarehouseCategoryView.as_view(), name='warehouse_categories'),
+    path('warehouse-category/<int:pk>', WarehouseCategoryReport.as_view(), name='warehouse_category_detail'),
+    path('orders/$', view=warehouse_orders, name='warehouse_orders'),
+    path('orders/<int:dk>', view=order_id, name='warehouse_order_detail'),
+    path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
 
 
-    path(r'vendors/', ReportProducts.as_view(), name='vendors'),
-    path('warehouse-categories/', ReportProducts.as_view(), name='warehouse_categories'),
-    url(r'orders/$', ReportProducts.as_view(), name='warehouse_orders'),
-    url(r'warehouse-products-flow/$', ReportProducts.as_view() , name='warehouse_order_items_flow'),
+
+   
     ]
 
 '''
