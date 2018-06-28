@@ -1,0 +1,166 @@
+{% extends 'inventory_manager/index.html' %} {% load static %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-7">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Edit Order</h4>
+                    </div>
+                    <div class="content">
+                        <form class='form' method="get">
+                            <table class="table table-responsive table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>id - sku</th>
+                                        <th>Product</th>
+                                        <th>Category</th>
+                                        <th colspan="3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                        <tr>
+                                            <td>{{ product.id }} - {{ product.sku }}</td>
+                                            <td>{{ product.title }}</td>
+                                            <td>{{ product.category }}</td>
+                                            <td><label>Add</label><input type='checkbox' class="form-control" value="{{ product.id }}" name='ids'></td>
+                                            <td><label>Τιμή</label><input type='number' class="form-control" name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
+                                            <td><label>'Εκπτωση</label><input type='number' class="form-control" name='discount_{{ product.order_discount }}' value="{{ product.order_discount }}" placeholder="0"></td>
+                                            <td><label>Ποσότητα</label><input type='number' class="form-control" name='qty_{{product.id}}' placeholder="0"></td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                            <div class="text-center">
+                                <button name='add_products' type="submit" class="btn btn-info btn-fill btn-wd">Add</button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-5">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title text-center">{{ instance }}, {{ instance.date_expired|date }}
+                            <br><br> Vendor:.. {{ instance.vendor }}
+                        </h4>
+                    </div>
+                    <div class="content">
+                        <ul class="list-unstyled team-members">
+                            <li>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        {{ instance.get_order_type_display }}
+                                        <br>
+                                        <span class="text-muted"><small>Status</small></span>
+                                    </div>
+                                    <div class="col-xs-3 text-right">
+                                        {{ instance.payment_method }}
+                                        <br>
+                                        <span class="text-muted"><small>Payment Type</small></span>
+                                    </div>
+                                    <div class="col-xs-3 text-right">
+                                        <btn class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></btn>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="row">
+                                    <div class="col-xs-9">
+                                        Taxes Value..{{ instance.tag_total_taxes }} <br>
+                                        Clean Value..{{ instance.tag_clean_value }} <br>
+                                        Discount Value..{{ instance.tag_discount }} <br>
+                                        First Value.. {{ instance.tag_first_value }}<br>
+                                        <br>
+                                        <span class="text-muted"><small>Prices</small></span>
+                                    </div>
+                                    <div class="col-xs-3 text-right">
+                                        {{ instance.tag_final_value }}<br>
+                                        <br>
+                                        <span class="text-muted"><small>Total Value</small></span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="row">
+                                    <div class="col-xs-9">
+                                        {{ instance.get_taxes_modifier_display }} %
+                                        <br>
+                                        <span class="text-muted"><small>Taxes Modifier</small></span>
+                                    </div>
+                                    <div class="col-xs-3 text-right">
+                                        <btn class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></btn>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        {{ object.tag_final_price }}
+                                        <br>
+                                        <span class="text-muted"><small>Price</small></span>
+                                    </div>
+                                    <div class="col-xs-6 text-right">
+                                        <small>Shipping Cost... </small>{{ object.tag_shipping_value }}<br>
+                                        <small>Cash Cost...</small>{{ object.tag_payment_value }}
+                                        <br>
+
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Order Items</h4>
+                    </div>
+                    <div class="content">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Value - Discount- Final Value</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in instance.order_items.all %}
+                                    <tr>
+                                        <td>{{ item }}</td>
+                                        <td>{{ item.qty }}</td>
+                                        <td>{{  item.tag_value }} - {{ item.discount_value }} % - {{ item.tag_final_value }}</td>
+                                        <td><a href="" class='btn btn-primary'>Edit</a><a href="" class='btn btn-warning'>Delete</a></td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">No data</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        <a href="" class="btn btn-success">Create Copy</a>
+                        <a href="" class="btn btn-warning">Delete</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

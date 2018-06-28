@@ -4,6 +4,14 @@ from .views import *
 app_name = 'inventory'
 
 urlpatterns = [
+    path('home/', view=WareHouseOrderPage.as_view(), name='warehouse_home'),
+    path('create-order/', view=create_new_warehouse_order, name='warehouse_create_order'),
+    path('order/quick-vendor/', view=quick_vendor_create, name='warehouse_quick_vendor'),
+    path('order/<int:dk>/', view=warehouse_order_detail, name='warehouse_order_detail'),
+    path('order/add-item/<int:dk>/<int:pk>/', view=warehouse_add_order_item, name='add_order_item'),
+    path('order/add-item/<int:dk>/edit/', view=edit_order_item, name='edit_order_item'),
+    path('order/add-item/<int:dk>/delete/', view=delete_order_item, name='delete_order_item'),
+
     path('vendor-list/',  VendorPageList.as_view(), name='vendor_list'),
     path('vendor-detail/<int:pk>/', VendorPageDetail.as_view(), name='vendor_detail'),
     path('vendor-list/create/', VendorPageCreate.as_view(), name='vendor_create'), 

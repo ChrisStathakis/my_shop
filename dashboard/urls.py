@@ -69,7 +69,7 @@ urlpatterns = [
 
     path('site-settings', SiteView.as_view(), name='site_view'),
 
-    path('warehouse/home/', view=create_copy_item, name='warehouse_home'),
+    
 
     # order section
     path('eshop-orders/', EshopOrdersPage.as_view(), name='eshop_orders_page'),

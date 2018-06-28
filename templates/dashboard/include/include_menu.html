@@ -20,19 +20,16 @@
                     <i class="ti-panel"></i>
                     <p>Site Settings</p>
                 </a>
-            </li>
-            {% comment warehouse urls %}
+            </li>   
             <li {% if dashboard %}class="active" {% endif %}>
-                <a href="{% url 'dashboard:warehouse_home' %}">
+                <a href="{% url 'inventory:warehouse_home' %}">
                     <i class="ti-panel"></i>
                     <p>Warehouse Home</p>
                 </a>
             </li>
-            {% endcomment %}
-
             {% comment reports %}
             <li {% if dashboard %}class="active" {% endif %}>
-                <a href="{% url 'dashboard:warehouse_home' %}">
+                <a href="{% url 'inventory:warehouse_home' %}">
                     <i class="ti-panel"></i>
                     <p>Warehouse Home</p>
                 </a>

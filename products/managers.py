@@ -4,6 +4,11 @@ from site_settings.constants import RETAIL_TRANSCATIONS
 
 class ProductSiteQuerySet(models.query.QuerySet):
 
+    def active_warehouse(self):
+        if RETAIL_TRANSCATIONS:
+            return self.filter(active=True, site_active=True, qty__gt=0)
+        return self.filter(active=True, site_active=True)
+
     def active_for_site(self):
         if RETAIL_TRANSCATIONS:
             return self.filter(active=True, site_active=True, qty__gt=0)

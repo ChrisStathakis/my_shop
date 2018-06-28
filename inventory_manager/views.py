@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect, redirect, reverse, get_object_or_404
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse, redirect, reverse, get_object_or_404
 from django.views.generic import ListView, DetailView, UpdateView, FormView, CreateView, TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -7,19 +7,163 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 
-from products.models import Product,  Color, Size
 
+from products.models import Product,  Color, Size
 from products.forms import VendorForm
 from .models import Order, OrderItem, Vendor, Category
 from .models import PaymentOrders
 from site_settings.forms import PaymentForm
+from inventory_manager.models import Order, OrderItem, Vendor
+from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm
 
 import datetime
+import decimal
+
+@method_decorator(staff_member_required, name='dispatch')
+class WareHouseOrderPage(ListView):
+    template_name = 'inventory_manager/index.html'
+    model = Order
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Order.objects.all()
+        queryset = self.model.filter_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(WareHouseOrderPage, self).get_context_data(**kwargs)
+        search_name = self.request.GET.get('search_name', None)
+        vendor_name = self.request.GET.getlist('vendor_name', None)
+        date_start = self.request.GET.get('date_start', None)
+        date_end = self.request.GET.get('date_end', None)
+        vendors = Vendor.objects.filter(active=True)
+        context.update(locals())
+        return context
+
+
+@staff_member_required
+def create_new_warehouse_order(request):
+    form = OrderQuickForm(request.POST or None,
+                          initial = {'date_expired': datetime.datetime.now()}
+                          )
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
+    context = locals()
+    return render(request, 'inventory_manager/create_order.html', context)
+
+
+@staff_member_required
+def quick_vendor_create(request):
+    form = VendorQuickForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse(
+            '<script>opener.closePopup(window, "%s", "%s", "#id_vendor");</script>' % (instance.pk, instance))
+    return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
+
+
+
+
+@staff_member_required
+def warehouse_order_detail(request, dk):
+    instance = get_object_or_404(Order, id=dk)
+    queryset = Product.my_query.get_site_queryset().active_warehouse().filter(vendor=instance.vendor)
+    products = queryset.filter(size=False)
+    products_with_size = queryset.filter(size=True)
+    form = WarehouseOrderForm(instance=instance)
+    if 'add_products' in request.GET:
+        ids = request.GET.getlist('ids', None)
+        if ids:
+            for id in ids:
+                get_product = get_object_or_404(Product, id=id)
+                get_order_item = OrderItem.objects.filter(product=get_product, order=instance)
+                qty = (request.GET.get('qty_%s' % id, 0))
+                qty = int(qty) if qty else 0
+                value = request.GET.get(f'price_{id}', get_product.price_buy)
+                discount = request.GET.get(f'dicscount_{id}', get_product.order_discount)
+                discount = decimal.Decimal(discount) if discount else 0
+                print('discount', type(discount))
+                if get_order_item.exists() and qty > 0:
+                    item = get_order_item.last()
+                    item.qty += qty
+                    item.value = value
+                    item.discount_value = discount
+                    item.save()
+                elif qty > 0:
+                    item = OrderItem.objects.create(product=get_product,
+                                                    order=instance,
+                                                    qty=qty,
+                                                    value=value,
+                                                    discount_value=discount
+                                                    )
+                else:
+                    messages.warning(request, 'Something goes wrong!')
+            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
+                    
+    if request.POST:
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'The order Edited!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    context = locals()
+    return render(request, 'inventory_manager/order_detail.html', context)
+
+
+@staff_member_required
+def warehouse_add_order_item(request, dk, pk):
+    instance = get_object_or_404(Product, id=pk)
+    order = get_object_or_404(Order, id=dk)
+    form = OrderItemForm(request.POST or None, initial={'product': instance,
+                                                        'order': order,
+                                                        'qty': 1,
+                                                        'price': instance.price_buy,
+                                                        'discount': instance.order_discount,
+                                                        })
+    if form.is_valid():
+        get_product = form.cleaned_data.get('product', None)
+        get_order = form.cleaned_data.get('order', None)
+        exists = OrderItem.objects.filter(order=get_order, product=get_product) if get_order and get_product else None
+        if exists:
+            current_item = exists.first()
+            qty = form.cleaned_data.get('qty', None)
+            current_item.qty += int(qty)
+            current_item.save()
+        else:
+            new_item = form.save()
+        return HttpResponseRedirect(reverse('dashboard:warehouse_order_detail', kwargs={'dk': dk}))
+    page_title = 'Add product %s' % instance
+    context = locals()
+    return render(request, 'dash_ware/form.html', context)
+
+
+@staff_member_required
+def edit_order_item(request, dk):
+    instance = get_object_or_404(OrderItem, id=dk)
+    form = OrderItemForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('dashboard:warehouse_order_detail', kwargs={'dk': instance.order.id}))
+    context = locals()
+    return render(request, 'dash_ware/form.html', context)
+
+
+@staff_member_required
+def delete_order_item(request, dk):
+    instance = get_object_or_404(OrderItem, id=dk)
+    instance.delete()
+    return HttpResponseRedirect(reverse('dashboard:warehouse_order_edit', kwargs={'dk': instance.order.id}))
+
+
+
+
+
+
 
 
 @method_decorator(staff_member_required, name='dispatch')
 class WarehouseHomepage(TemplateView):
-    template_name = ''
+    template_name = 'inventory_manager/'
 
     def get_context_data(self, **kwargs):
         context = super(WarehouseHomepage, self).get_context_data(**kwargs)
@@ -98,7 +242,7 @@ class WarehousePaymentPage(ListView):
         vendor_name = self.request.GET.getlist('vendor_name', None)
         date_start = self.request.GET.get('date_start', None)
         date_end = self.request.GET.get('date_end', None)
-        vendors  = Supply.objects.filter(active=True)
+        vendors  = Vendor.objects.filter(active=True)
         context.update(locals())
         return context
 
