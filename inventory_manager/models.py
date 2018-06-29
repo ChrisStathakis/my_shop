@@ -13,7 +13,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-
+from django.contrib import messages
 from mptt.models import MPTTModel, TreeForeignKey
 from tinymce.models import HTMLField
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
@@ -164,16 +164,10 @@ class Order(DefaultOrderModel):
 
     def save(self, *args, **kwargs):
         order_items= self.order_items.all()
-        self.total_price_no_discount = order_items.aggregate(Sum(F('qty')*F('value')))
-        '''
-        order_items = self.order_items.all()
-        order_items_value = order_items.aggregate(total=Sum(F('qty') * F('final_value')))['total'] \
-            if order_items else 0
-        self.total_price_no_discount = order_items_value
-        self.total_price_after_discount = order_items_value - self.total_discount
-        self.total_taxes = self.total_price_after_discount * (Decimal(self.get_taxes_modifier_display()) / 100)
-        self.final_value = self.total_price_after_discount + self.total_taxes
-
+        self.total_price_no_discount = order_items.aggregate(total=Sum(F('qty')*F('value'), output_field=models.FloatField()))['total'] if order_items else 0
+        self.total_price_after_discount = order_items.aggregate(total=Sum(F('qty')*F('final_value'), output_field=models.DecimalField()))['total'] if order_items else 0 
+        self.total_taxes = (self.total_price_after_discount - self.total_discount) * (Decimal(self.get_taxes_modifier_display()) / 100)
+        self.final_value = self.total_price_after_discount + self.total_taxes -self.total_discount
         if self.is_paid:
             get_orders = self.payment_orders.all()
             get_orders.update(is_paid=True)
@@ -196,9 +190,7 @@ class Order(DefaultOrderModel):
                                                        )
 
         super(Order, self).save(*args, **kwargs)
-        self.vendor.save()
-        '''
-        super(Order, self).save(*args, **kwargs)
+
 
     @staticmethod
     def filter_data(request, queryset):
@@ -284,9 +276,7 @@ class OrderItem(DefaultOrderItemModel):
                                             verbose_name='Συνολική Αξία χωρίς Φόρους')
     total_value_with_taxes = models.DecimalField(default=0, max_digits=14, decimal_places=2,
                                                  verbose_name='Συνολική Αξία με φόρους')
-   
-    
-    
+
     class Meta:
         ordering = ['product']
         verbose_name = "Συστατικά Τιμολογίου   "
@@ -301,7 +291,38 @@ class OrderItem(DefaultOrderItemModel):
         self.total_value_with_taxes = Decimal(self.total_clean_value) * (100+(Decimal(self.get_taxes_display()) / 100))
         super(OrderItem, self).save(*args, **kwargs)
         self.order.save()
-  
+        self.product.price_buy = self.value
+        self.product.order_discount = self.discount_value
+        self.product.save()
+
+    @staticmethod
+    def add_to_order(request, product, order):
+        print(product, order)
+        get_order_item = OrderItem.objects.filter(product=product, order=order)
+        qty = request.GET.get('qty_%s' % product.id, 0)
+        qty = int(qty) if qty else 0
+        value = request.GET.get(f'price_{product.id}', product.price_buy)
+        discount = request.GET.get(f'discount_{product.id}', product.order_discount)
+        discount = Decimal(discount) if discount else 0
+        print('qty', value, 'price', )
+        if get_order_item.exists() and qty > 0:
+            print('exist')
+            item = get_order_item.last()
+            item.qty += qty
+            item.value = value
+            item.discount_value = discount
+            item.save()
+        elif qty > 0:
+            print('new')
+            item = OrderItem.objects.create(product=product,
+                                            order=order,
+                                            qty=qty,
+                                            value=value,
+                                            discount_value=discount
+                                            )
+        else:
+            print('wtf')
+            messages.warning(request, 'Something goes wrong!')
 
     def tag_value(self):
         return f'{self.value} {CURRENCY}'
@@ -311,8 +332,6 @@ class OrderItem(DefaultOrderItemModel):
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)
-
-    
 
 
 @receiver(pre_delete, sender=OrderItem)

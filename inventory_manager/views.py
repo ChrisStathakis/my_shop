@@ -19,6 +19,7 @@ from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOr
 import datetime
 import decimal
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class WareHouseOrderPage(ListView):
     template_name = 'inventory_manager/index.html'
@@ -63,8 +64,6 @@ def quick_vendor_create(request):
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
 
 
-
-
 @staff_member_required
 def warehouse_order_detail(request, dk):
     instance = get_object_or_404(Order, id=dk)
@@ -77,31 +76,11 @@ def warehouse_order_detail(request, dk):
         if ids:
             for id in ids:
                 get_product = get_object_or_404(Product, id=id)
-                get_order_item = OrderItem.objects.filter(product=get_product, order=instance)
-                qty = (request.GET.get('qty_%s' % id, 0))
-                qty = int(qty) if qty else 0
-                value = request.GET.get(f'price_{id}', get_product.price_buy)
-                discount = request.GET.get(f'dicscount_{id}', get_product.order_discount)
-                discount = decimal.Decimal(discount) if discount else 0
-                print('discount', type(discount))
-                if get_order_item.exists() and qty > 0:
-                    item = get_order_item.last()
-                    item.qty += qty
-                    item.value = value
-                    item.discount_value = discount
-                    item.save()
-                elif qty > 0:
-                    item = OrderItem.objects.create(product=get_product,
-                                                    order=instance,
-                                                    qty=qty,
-                                                    value=value,
-                                                    discount_value=discount
-                                                    )
-                else:
-                    messages.warning(request, 'Something goes wrong!')
+                OrderItem.add_to_order(request, product=get_product, order=instance)
             return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
                     
     if request.POST:
+        form = WarehouseOrderForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
             messages.success(request, 'The order Edited!')

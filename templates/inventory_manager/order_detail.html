@@ -8,6 +8,13 @@
                 <div class="card">
                     <div class="header">
                         <h4 class="title">Edit Order</h4>
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
                     </div>
                     <div class="content">
                         <form class='form' method="get">
@@ -27,7 +34,7 @@
                                             <td>{{ product.title }}</td>
                                             <td>{{ product.category }}</td>
                                             <td><label>Add</label><input type='checkbox' class="form-control" value="{{ product.id }}" name='ids'></td>
-                                            <td><label>Τιμή</label><input type='number' class="form-control" name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
+                                            <td><label>Τιμή</label><input type='number' class="form-control" step='0.01' name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
                                             <td><label>'Εκπτωση</label><input type='number' class="form-control" name='discount_{{ product.order_discount }}' value="{{ product.order_discount }}" placeholder="0"></td>
                                             <td><label>Ποσότητα</label><input type='number' class="form-control" name='qty_{{product.id}}' placeholder="0"></td>
                                         </tr>
@@ -44,6 +51,17 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-5">
+
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        <a href="" class="btn btn-success">Create Copy</a>
+                        <a href="" class="btn btn-warning">Delete</a>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="header">
                         <h4 class="title text-center">{{ instance }}, {{ instance.date_expired|date }}
@@ -151,13 +169,15 @@
 
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Actions</h4>
+                        <div class="title">Edit Order</div>
                     </div>
-                    <div class="content">
-                        <a href="" class="btn btn-success">Create Copy</a>
-                        <a href="" class="btn btn-warning">Delete</a>
+                    <div class='content'>
+                        <form class="form" method='post'>{% csrf_token %}
+                            {{ form }}
+                            <button name='update_form' type="submit" class="btn btn-success">Save</button>
+                        </form>
                     </div>
-                </div>
+                </div>  
             </div>
 
         </div>
