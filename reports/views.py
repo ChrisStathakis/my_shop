@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, HttpResponseRedirect, redirect
+from django.shortcuts import render, render_to_response, HttpResponseRedirect, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -36,7 +36,7 @@ class HomepageReport(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomepageReport, self).get_context_data(**kwargs)
         retail_orders = RetailOrder.objects.all().order_by('-timestamp')[:10]
-        # warehouse_orders = Order.objects.all().order_by('-date_created')[:10]
+        warehouse_orders = Order.objects.all().order_by('-date_expired')[:10]
         paid_orders = PaymentOrders.objects.all()[:10]
         context.update(locals())
         return context
@@ -71,6 +71,7 @@ class ReportProducts(ListView):
         vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
         search_name = self.request.GET.get('search_name', None)
         products_count = self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0
+        
         context.update(locals())
         return context
 
@@ -86,20 +87,26 @@ class ProductDetail(LoginRequiredMixin, DetailView):
         date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
         date_end = date_end + relativedelta(days=1)
         order_items = OrderItem.objects.filter(product=self.object,
-                                               order__timestamp__range=[date_start, date_end]
+                                               order__date_expired__range=[date_start, date_end]
                                                )
         order_items_analysis = order_items.values('product').annotate(total_clean=Sum('total_clean_value'),
-                                                                      total_tax=Sum('total_value_with_taxes'),
+                                                                      total_tax=Sum('total_value_with_taxes', output_field=models.FloatField()),
                                                                       qty_count=Sum('qty'),
                                                                       )
         # retail orders
-        retail_items = RetailOrderItem.objects.filter(title=self.object,
-                                                      timestamp__range=[date_start, date_end]
+        retail_items_all = RetailOrderItem.objects.filter(title=self.object,
+                                                      order__date_expired__range=[date_start, date_end]
                                                       )
-        retail_sells_by_type = retail_items.values('order__order_type').annotate(total_incomes=Sum(F('qty')*F('final_value')),
+        retail_items = retail_items_all.filter(order__order_type__in=['r', 'e','wa'])
+        retail_items_analysis = retail_items.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),output_field=models.FloatField()),
                                                                                  total_qty=Sum('qty'),
-                                                                                 ).order_by('order__order_type')
-
+                                                                                 ).order_by('title')
+        return_products = retail_items_all.filter(order__order_type__in=['b', 'd'])
+        return_products_analysis = return_products.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),output_field=models.FloatField()),
+                                                                                 total_qty=Sum('qty'),
+                                                                                 ).order_by('title')
+                                                                                 
+        win_or_loss = retail_items_analysis[0]['total_incomes'] - order_items_analysis[0]['total_tax'] - return_products_analysis[0]['total_incomes']                                                                      
         context.update(locals())
         return context
 
@@ -143,7 +150,7 @@ class VendorsPage(ListView):
 
         orders = Order.objects.filter(timestamp__range=[date_start, date_end])
         chart_data = [Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all() else 0,
-                      orders.aggregate(Sum('total_price'))['total_price__sum'] if orders else 0,
+                      orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0,
                       orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
                   ]
         analysis = warehouse_vendors_analysis(self.request, date_start, date_end)
@@ -172,15 +179,15 @@ class CheckOrderPage(ListView):
 
 @staff_member_required
 def vendor_detail(request, pk):
-    instance = get_object_or_404(Supply, id=pk)
+    instance = get_object_or_404(Vendor, id=pk)
     # filters_data
     date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
     vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
     date_pick = request.GET.get('date_pick', None)
 
     # data
-    products = Product.my_query.active_warehouse().filter(supply=instance)[:20]
-    warehouse_orders = Order.objects.filter(vendor=instance, date_created__range=[date_start, date_end])[:20]
+    products = Product.my_query.active().filter(vendor=instance)[:20]
+    warehouse_orders = Order.objects.filter(vendor=instance, date_expired__range=[date_start, date_end])[:20]
     
     paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
                            PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
@@ -188,7 +195,7 @@ def vendor_detail(request, pk):
                                                         ) 
                           )
                     )[:20]
-    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_created__range=[date_start, date_end])[:20]
+    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_expired__range=[date_start, date_end])[:20]
     context = locals()
     return render(request, 'report/details/vendors_id.html', context)
 

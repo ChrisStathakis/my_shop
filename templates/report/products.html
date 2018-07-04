@@ -15,7 +15,7 @@
     <div class="twelve wide column">
         <div class="ui styled fluid accordion">
             <div class="title">
-                <i class="dropdown icon"></i> Filters Total Products.. {{ object_list.count }}
+                <i class="dropdown icon"></i> Filters 
             </div>
             <div class="content">
                 <form class="ui form" method="get" id="filter_form">
@@ -109,7 +109,7 @@
                     <td class="positive">{{ ele.show_warehouse_remain|floatformat:2 }} {{ ele.get_measure_unit_display }}
                     </td>
                     {% endif %}
-                    <td><a href="">{{ ele.supply|default_if_none:"Δε έχει επιλεγεί Προμηθευτής" }}</a></td>
+                    <td><a href="">{{ ele.vendor|default_if_none:"Δε έχει επιλεγεί Προμηθευτής" }}</a></td>
                     <td><a href="">{{ ele.category|default_if_none:"Δε έχει επιλεγεί Κατηγορία" }}<br></a></td>
                     <td>
                         {% if ele.have_size %}
@@ -124,6 +124,8 @@
             <tfoot>
                 <tr>
                     <th>Σύνολα</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>

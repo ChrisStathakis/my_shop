@@ -155,6 +155,7 @@ class Order(DefaultOrderModel):
     objects = models.Manager()
     my_query = OrderManager()
     payment_orders = GenericRelation(PaymentOrders)
+    update_warehouse= models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "1. Τιμολόγια"
@@ -190,6 +191,34 @@ class Order(DefaultOrderModel):
                                                        )
 
         super(Order, self).save(*args, **kwargs)
+
+
+    def update_warehouse(self, action): # action get the value of in anf out
+        if action == 'in':
+            self.update_warehouse = True
+            self.save()
+            self.refresh_from_db()
+            order_items = self.order_items.all()
+            for order_item in order_items:
+                product = order_item.product
+                product.qty -= order_item.qty
+                product.price_buy = order_item.value
+                product.order_discount = order_item.discount_value
+                product.save()
+            new_value = self.vendor.balance + self.final_value - self.paid_value
+            self.vendor.update(balance=new_value)
+        else:
+            self.update_warehouse = False
+            self.save()
+            self.refresh_from_db()
+            order_items = self.order_items.all()
+            for order_item in order_items:
+                product = order_item.product
+                product.qty += order_item.qty
+                product.save()
+            new_value = self.vendor.balance - self.final_value + self.paid_value
+            self.vendor.update(balance=new_value)
+        
 
 
     @staticmethod
@@ -288,12 +317,13 @@ class OrderItem(DefaultOrderItemModel):
         print('save', self.value, self.discount_value, type(self.get_taxes_display()))
         self.final_value = Decimal(self.value) * (100-self.discount_value)/100 if self.discount_value > 0 else self.value
         self.total_clean_value = self.final_value * self.qty
-        self.total_value_with_taxes = Decimal(self.total_clean_value) * (100+(Decimal(self.get_taxes_display()) / 100))
+        self.total_value_with_taxes = Decimal(self.total_clean_value) * ((100+Decimal(self.get_taxes_display())) / 100)
         super(OrderItem, self).save(*args, **kwargs)
         self.order.save()
         self.product.price_buy = self.value
         self.product.order_discount = self.discount_value
         self.product.save()
+
 
     @staticmethod
     def add_to_order(request, product, order):
@@ -329,6 +359,9 @@ class OrderItem(DefaultOrderItemModel):
 
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
+
+    def tag_total_clean_value(self):
+        return f'{self.total_clean_value} {CURRENCY}'
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)

@@ -64,7 +64,7 @@
         <br>
         <div class="one wide column"></div>
         <div class="fourteen wide column">
-            <button data-url='{% url "reports:vendor_detail_product_analysis" instance.id %}' class="ui green button button_analysis">Υπολογισμός Υπολοίπου Προϊόντων</button>
+            <button data-url='' class="ui green button button_analysis">Υπολογισμός Υπολοίπου Προϊόντων</button>
             <button class="ui green button">Ανάλυση Πωλήσεων</button>
             <button class="ui red button">Ανάλυση Πληρωμών</button>
             <button class="ui blue button">Ανάλυση Παραγγελίας</button>
@@ -133,9 +133,9 @@
                 <tbody>
                     {% for ele in warehouse_orders %}
                         <tr>
-                            <td>{{ ele.date_created|date }}</td>
-                            <td>{{ ele.code }}</td>
-                            <td>{{ ele.tag_total_value }}</td>
+                            <td>{{ ele.date_expired|date }}</td>
+                            <td>{{ ele }}</td>
+                            <td>{{ ele.tag_final_value }}</td>
                             <td>{{ ele.tag_is_paid }}</td>                                        
                         </tr>
                     {% endfor %}
@@ -147,7 +147,7 @@
 
     <div style="margin-top:10%" class="row">
             <div class="one wide column"></div>
-            <div class="five wide column">
+            <div class="seven wide column">
                 <h2 class="ui header">
                     <i class="payment green icon"></i>
                     <div class="content">
@@ -177,7 +177,7 @@
                 </table>         
             </div>
             <div class="one wide column"></div>
-            <div class="four wide column">
+            <div class="six wide column">
                 <h2 class="ui header">
                     <i class="blue calendar outline icon"></i>
                     <div class="content">
@@ -188,20 +188,23 @@
                 <table class="ui small selectable table">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Ημερομηνία</th>
-                            <th style="width: 10%"><a href="">Προϊόν</a></th>
-                            <th style="width: 10%"><a href="">Ποσότητα</a></th>
-                            <th style="width: 10%"><a href="">Τιμή Πώλησης</a></th>
-                            
+                            <th><a href="">Προϊόν</a></th>
+                            <th>Είδος Κίνησης</th>
+                            <th><a href="">Ποσότητα</a></th>
+                            <th><a href="">Τιμή Πώλησης</a></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody >
                         {% for ele in order_item_sells %}
                             <tr>
-                                <td>{{ ele.order__date_created|date }}</td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ ele.order.date_expired|date }}</td>
                                 <td>{{ ele.title }}</td>
+                                <td>{{ ele.order.get_order_type_display }}</td>
                                 <td>{{ ele.qty }}</td>
-                                <td>{{ ele.tag_final_price }}</td>
+                                <td>{{ ele.tag_final_value }}</td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -210,60 +213,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                
             </div>
-            <div class="one wide column"></div>
-            <div class="four wide column">
-                    <div style="" class="ui row">
-                            <div class="ui relaxed divided list">
-                                <div class="item">
-                                    <div class="header">Κινήσεις Προιόντων</div>
-                                </div>
-                                <div style="overflow:scroll; height: 400px;width: 300px; ">
-                                {% for order in pos_order_list %}
-                                    {% if order.order_type_for_vendor == 'sell' %}
-                                        <div style="margin-top: 3%;" class="item">
-                                            <i class="large cart green aligned icon"></i>{{ order.day_added }}
-                                            <div class="content">
-                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
-                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
-                                            </div>
-                                        </div>
-                                    {% elif order.order_type_for_vendor == 'return' %}
-                                        <div style="margin-top: 3%;" class="item">
-                                            <i class="large alarm blue aligned icon"></i>{{ order.day_added }}
-                                            <div class="content">
-                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
-                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
-                                            </div>
-                                        </div>
-                                    {% elif order.order_type_for_vendor == 'destroy' %}
-                                        <div style="margin-top: 3%;" class="item">
-                                            <i class="large red minus circle aligned icon"></i>{{ order.day_added }}
-                                            <div class="content">
-                                                <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
-                                                <div class="description">{{ payment.get_payment_type_display }}<br></div>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                    <div style="margin-top: 3%;" class="item">
-                                        <i class="large  github middle aligned icon"></i>{{ order.day_added }}
-                                        <div class="content">
-                                            <a target="_blank" href="" class="header">{{ order.order.title }},Τιμή..{{ order.price_for_vendor_page|floatformat:2 }} €, Ποσ.{{ order.qty }}</a>
-                                            <div class="description">{{ payment.get_payment_type_display }}<br></div>
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                {% endfor %}
-                                </div>
-                            </div>
-                            <div class="ui list">
-                                <div class="item"><i class="header">Επεξήγηση</i></div>
-                                <div class="item"><i class="large cart green aligned icon"></i>Πωλήσεις</div>
-                                <div class="item"><i class="large alarm blue aligned icon"></i>Επιστροφές</div>
-                                <div class="item"><i class="large red minus circle aligned icon"></i>Ελλατωματικά κτλ.</div>
-                            </div>
-                        </div>
-            </div>
+           
         </div>
     </div>
 

@@ -90,6 +90,13 @@ def warehouse_order_detail(request, dk):
 
 
 @staff_member_required
+def update_warehouse(pk, action):
+    instance = get_object_or_404(Order, id=pk)
+    instance.update_warehouse(action)
+    return HttpResponseRedirect(reverse('inventory:warehouse_order_detail'), kwargs={'dk': instance.id})
+
+
+@staff_member_required
 def warehouse_add_order_item(request, dk, pk):
     instance = get_object_or_404(Product, id=pk)
     order = get_object_or_404(Order, id=dk)

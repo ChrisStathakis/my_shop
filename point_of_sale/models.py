@@ -194,9 +194,6 @@ class RetailOrder(DefaultOrderModel):
     def tag_payment_value(self):
         return '%s %s' % (self.payment_cost, CURRENCY)
 
-    @property
-    def date_expired(self):
-        return self.date_created
 
     @property
     def get_order_items(self):

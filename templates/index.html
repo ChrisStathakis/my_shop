@@ -70,11 +70,11 @@
                     {% for order in retail_orders %}
                     <tr>
                       <td>
-                        {{ order.date_created|date }}
+                        {{ order.timestamp|date }}
                       </td>
-                      <td>{{ order.store_related }}</td>
+                      <td>{{ order }}</td>
                       <td>{{ order.get_order_type_display }}</td>
-                      <td>{{ order.tag_final_price }}</td>
+                      <td>{{ order.tag_final_value }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -101,11 +101,11 @@
                     {% for order in warehouse_orders %}
                     <tr>
                       <td>
-                        {{ order.day_created|date }}
+                        {{ order.date_expired|date }}
                       </td>
-                      <td>{{ order.code }}</td>
+                      <td>{{ order }}</td>
                       <td>{{ order.vendor }}</td>
-                      <td>{{ order.tag_total_value }}</td>
+                      <td>{{ order.tag_final_value }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

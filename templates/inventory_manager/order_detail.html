@@ -57,8 +57,9 @@
                         <h4 class="title">Actions</h4>
                     </div>
                     <div class="content">
-                        <a href="" class="btn btn-success">Create Copy</a>
-                        <a href="" class="btn btn-warning">Delete</a>
+                        {% if not instance.update_warehouse %}<a href="" class="btn btn-success">Update!</a>{% endif %}
+                        <br> <br><br>
+                        <a href="" onclick="return confirm('Do you really want to delete it?');" class="btn btn-warning">Delete</a>
                     </div>
                 </div>
 

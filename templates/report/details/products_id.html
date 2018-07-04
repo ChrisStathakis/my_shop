@@ -23,7 +23,7 @@
         <div class="twelve wide column">
             <div class="ui styled fluid accordion">
                 <div class="title">
-                    Filters
+                    Filters Περίοδος.. {{ date_start|date }} - {{ date_end|date }}
                 </div>
                 <div class="content">
                     <form id="filters_form" method="get" class="ui form">
@@ -120,41 +120,12 @@
             </div>
             <div style='text-align: center' class="ui blue header segment">
                 Κινήσεις Περιόδου<br>
-                <a class='ui green label'>Καθαρή Αξία</a>
-                <a class='ui red label'>Καθαρή Αξία + Φπα</a>
-                <a class='ui blue label'>Τεμάχια</a>
+                <a class='ui green label'>Έσοδα  {{ retail_items_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
+                <a class='ui red label'>Αγορές {{ order_items_analysis.0.total_tax|floatformat:2 }} {{ currency }}</a>
+                <a class='ui blue label'>Επιστροφές {{ return_products_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
             </div>
-            <div style="margin-left: 3%" class="ui large celled list">
-                <div class="item">
-                    <div class="content">
-                        <div class="header"><a class='ui green label'>{{ order_items_analysis.0.total_clean|floatformat:2|default_if_none:'0' }} {{ currency }}</a>
-                        <a class='ui red label'>{{ order_items_analysis.0.total_tax|floatformat:2|default_if_none:'0' }} {{ currency }}</a>
-                        <a class='ui blue label'>{{ order_items_analysis.0.qty_count|floatformat:2|default_if_none:'0' }} {{ product.get_measure_unit_display }}</a>
-                    </div>
-                        Αγορές Περιόδου
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="content">
-                        <div class="header">
-                            <a class='ui green label'>{{ retail_sells_.1|floatformat:2|default_if_none:'0' }} {{ currency }}</a>
-                            <a class='ui red label'>{{ retail_sells_.0|floatformat:2|default_if_none:'0' }} {{ currency }}</a>
-                            <a class='ui blue label'>{{ retail_sells_.1|floatformat:2|default_if_none:'0' }} {{ product.get_measure_unit_display }}</a>
-                        </div>
-                        Πωλήσεις Περιόδου
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="content">
-                        <div class="header">
-                            <a class='ui blue label'>{{ retail_returns_.1|floatformat:2 }} </a> <a class='ui red label'>- {{ retail_returns_.0|floatformat:2 }} {{ currency }} </a>
-                            <a class='ui teal label'>0 {{ currency }}</a>
-                        </div>
-                        Επιστροφές/Ελλατωματικά
-                    </div>
-                </div>
-            </div>
-            <div style='text-align: center' class="ui inverted green segment">Αποτελέσματα Χρήσης {{ win_or_loss }} {{ currency }} </div>
+            
+            <div style='text-align: center' class="ui  segment">Αποτελέσματα Χρήσης {{ win_or_loss }} {{ currency }} </div>
         </div>
         <div class="ui segments">
         <div class="ui segment">
@@ -195,7 +166,7 @@
                 <div style="width: 100%" class="ui styled accordion">
                 <div class="title">
                     <div style="text-align: center;" class="ui header  inverted blue segment">
-                        Αγορές Τιμολογίου
+                        Αγορές - Κινήσεις αποθήκης
                     </div>
                 </div>
                 <div class="content">
@@ -203,39 +174,43 @@
                     <thead>
                         <tr>
                             <th>Ημερομηνία</th>
-                            <th>Κωδικός Τιμολογίου - Χρωμα - Μέγεθος</th>
+                            <th>Κωδικός Τιμολογίου - Χρωμα</th>
                             <th>Προμηθευτής</th>
+                            <th>Είδος Τιμολογίου</th>
                             <th>Ποσότητα</th>
                             <th>Τιμή</th>
                             <th>Εκπτωση</th>
                             <th>Καθαρή Τιμή</th>
-                            <th>Φπα</th>
-                            <th>Τελική τιμή</th>
+                            <th>Συνολική Καθαρή Αξία</th>
+                            <th>Συνολική Αξία</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for ele in order_items %}
                         <tr>
-                            <td>{{ ele.order.day_created|date }}</td>
-                            <td><a href="{% url 'reports:warehouse_order_detail' ele.order.id %}">{{ ele.order.code }} - {{ ele.color.title }} - {{ ele.size.title }}</a> </td>
-                            <td>{{ ele.order.vendor }}</td>
+                            <td>{{ ele.order.date_expired|date }}</td>
+                            <td><a href="{% url 'reports:warehouse_order_detail' ele.order.id %}">{{ ele.order }} - {{ ele }}</a> </td>
+                            <td>{{ ele.order.vendor|truncatechars:'15' }}</td>
+                            <td>{{ ele.order.get_order_type_display }}</td>
                             <td>{{ ele.qty|floatformat:1 }}</td>
-                            <td>{{ ele.price|floatformat:2 }} {{ currency }}</td>
-                            <td>{{ ele.discount }} %</td>
-                            <td>{{ ele.tag_total_clean_price }}</td>
-                            <td>{{ ele.get_taxes_display }} %</td>
-                            <td style="color: red;">{{ ele.tag_total_final_price }} </td>
+                            <td>{{ ele.tag_value }} </td>
+                            <td>{{ ele.discount_value }} %</td>
+                            <td>{{ ele.tag_final_value }}</td>
+                            <td>{{ ele.tag_total_clean_value }} </td>
+                            <td style="color: red;">{{ ele.tag_total_final_value }} </td>
                         </tr>
                     {% endfor %}
                     <tr style="font-size: larger">
                         <td class="warning">Σύνολα</td>
                         <td class="warning"></td>
                         <td class="warning"></td>
-                        <td class="warning">{{ order_items_analysis.0.qty_count }} {{ product.get_measure_unit_display }}</td>
+                        <td class="warning"></td>
+                        <td class="warning">{{ order_items_analysis.0.qty_count }} {{ ele.unit }}</td>
+                        <td class="warning"></td>
                         <td class="warning"></td>
                         <td class="warning"></td>
                         <td class="warning">{{ order_items_analysis.0.total_clean|floatformat:2 }} {{ currency }}</td>
-                        <td></td>
+                  
                         <td class="warning">{{ order_items_analysis.0.total_tax|floatformat:2 }} {{ currency }}</td>
                     </tr>
                     </tbody>
@@ -243,36 +218,7 @@
                 </div>
             </div>
             </div>
-            <div class="ui divider segment"></div>
-            <div class="ui segment">
-                <div style="width: 100%" class="ui accordion">
-                <div class="title">
-                    <div style="text-align: center;" class="ui inverted teal center header segment">Εισαγωγές - Εξαγωγές Αποθήκης </div>
-                </div>
-                <div class="content">
-                    <table class="ui small single line selectable table">
-                    <thead>
-                        <tr>
-                            <th>Ημερομηνία</th>
-                            <th>Προϊόν</th>
-                            <th>Σχόλια</th>
-                            <th>Ποσότητα</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for ele in change_qty %}
-                        <tr>
-                            <td>{{ ele.order.day_added }}</td>
-                            <td>{{ ele.show_product }}</td>
-                            <td>{{ ele.order.title }} </td>
-                            <td>{{ ele.qty }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-            </table>
-                </div>
-            </div>
-            </div>
+ 
             <div class="ui divider segment"></div>
             <div class="ui segment">
                 <div style="width: 100%" class="ui accordion">
@@ -295,11 +241,11 @@
                             <tbody>
                                 {% for ele in retail_items %}
                                     <tr>
-                                        <td>{{ ele.order.date_created }}</td>
+                                        <td>{{ ele.order.date_expired|date }}</td>
                                         <td{% if ele.order.order_type == 'b' or ele.order.order_type == 'd' %} class="negative" {% endif %}>{{ ele.order.get_status_display }} - {{ ele.order.get_order_type_display }}</td>
                                         <td>{{ ele.order.title }}</td>
                                         <td>{{ ele.color }}, {{ ele.size }}</td>
-                                        <td>{{ ele.tag_final_price }}</td>
+                                        <td>{{ ele.tag_final_value }}</td>
                                         {% if ele.order.status.id == 8 %}
                                             <td class="negative">{{ ele.qty }}</td>
                                         {% else %}
@@ -315,19 +261,73 @@
                                 {% endfor %}
                                 <tr style="font-size: larger">
                                     <td class="warning">Σύνολα</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="positive">Μέση Τιμή {{ retail_sells_.2|floatformat:2 }} {{ currency }}</td>
-                                    <td class="positive">{{ retail_sells_.1 }}</td>
-                                    <td class="positive">{{ retail_sells_.0|floatformat:2 }} {{ currency }}</td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="positive">{{ retail_items_analysis.0.total_qty }}</td>
+                                    <td class="positive">{{ retail_items_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+            
             <div class="ui divider segment"></div>
+            <div class="ui segment">
+                <div style="width: 100%" class="ui accordion">
+                    <div class="title">
+                        <div style="text-align: center" class="ui red inverted header segment">Επιστροφές κτλ</div>
+                    </div>
+                    <div class="content">
+                        <table class="ui small single line selectable table">
+                            <thead>
+                                <tr>
+                                    <th>Ημερομηνία</th>
+                                    <th>Κατάσταση- Είδος Παραγγελίας </th>
+                                    <th>Πώληση</th>
+                                    <th>Χρώμα - Μέγεθος</th>
+                                    <th>Τιμή Μονάδας</th>
+                                    <th>Ποσότητα</th>
+                                    <th>Σύνολική Αξία</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ele in return_products %}
+                                    <tr>
+                                        <td>{{ ele.order.date_expired|date }}</td>
+                                        <td{% if ele.order.order_type == 'b' or ele.order.order_type == 'd' %} class="negative" {% endif %}>{{ ele.order.get_status_display }} - {{ ele.order.get_order_type_display }}</td>
+                                        <td>{{ ele.order.title }}</td>
+                                        <td>{{ ele.color }}, {{ ele.size }}</td>
+                                        <td>{{ ele.tag_final_value }}</td>
+                                        {% if ele.order.status.id == 8 %}
+                                            <td class="negative">{{ ele.qty }}</td>
+                                        {% else %}
+                                            <td>{{ ele.qty }}</td>
+                                        {% endif %}
+                                        {% if ele.order.status.id == 8 %}
+                                            <td> --- </td>
+                                        {% else %}
+                                            <td>{{ ele.template_tag_total_price }}</td>
+                                        {% endif %}
+                                    </tr>
+
+                                {% endfor %}
+                                <tr style="font-size: larger">
+                                    <td class="warning">Σύνολα</td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="warning"></td>
+                                    <td class="positive">{{ return_products_analysis.0.total_qty }}</td>
+                                    <td class="positive">{{ return_products_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="two wide column"></div>
