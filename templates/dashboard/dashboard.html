@@ -188,6 +188,7 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
+                                            <td>#</td>
                                             <th>Date</th>
                                             <th>Title</th>
                                             <th>Active</th>
@@ -200,6 +201,7 @@
                                     <tbody>
                                         {% for order in eshop_orders %}
                                             <tr>
+                                                <td>{{ forloop.counter }}</td>
                                                 <td>{{ order.timestamp|date }}</td>
                                                 <td>{{ order }}</td>
                                                 <td>{{ order.tag_final_price }}</td>
@@ -229,6 +231,7 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Date</th>
                                             <th>Product</th>
                                             <th>Order</th>
                                             <th>Qty</th>
@@ -239,10 +242,11 @@
                                         {% for product in last_items %}
                                             <tr>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ order.timestamp|date }}</td>
-                                                <td>{{ order.title }}</td>
-                                                <td>{{ order.tag_full_name }}</td>
-                                                <td>{{ order.tag_final_value }}</td>
+                                                <td>{{ product.order.timestamp|date }}</td>
+                                                <td>{{ product }}</td>
+                                                <td><a href='{% url "dashboard:eshop_order_edit" product.order.id  %}'>{{ product.order }}</a></td>
+                                                <td>{{ product.qty }}</td>
+                                                <td>{{ product.tag_final_value }}</td>
                                             </tr>
                                         {% empty %}
                                             <tr>

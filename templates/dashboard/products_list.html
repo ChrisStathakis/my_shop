@@ -25,7 +25,7 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-9">
                     <form method='post'>{% csrf_token %}
 
                         <div class="card">
@@ -45,12 +45,12 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Price</th>
-                                            <th>Category</th>
+                                            <th>Warehouse Category</th>
+                                            <th>Site Category</th>
                                             <th>Brand</th>
-                                            <th>Size Chart</th>
-                                            <th>Active</th>
-                                            <th>Featured</th>
+                                            <th>Vendor</th>
                                             <th>Qty</th>
+                                            <th>Active</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -62,17 +62,23 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ product.id }}</td>
-                                                <td><a href="{% url 'dashboard:product_detail' product.id %}">{{ product }}</a></td>
+                                                <td><a href="{% url 'dashboard:product_detail' product.id %}">{{ product|truncatechars:'30' }}</a></td>
                                                 <td>{{ product.tag_final_price }}</td>
-                                                <td>{{ product.category_site.first|default_if_none:"" }}</td>
-                                                <td>{{ product.brand|default_if_none:"" }}</td>
-                                                <td>{% if product.size|default_if_none:"No sizes" %}{% for size in product.sizeattribute_set.all %}{{ size }}, {% endfor %} {% else %}No size {% endif %}</td>
-                                                {{ product.tag_featured }}
-                                                {{ product.tag_qty_td }}
-                                                {{ product.tag_active }} 
+                                                <td>{{ product.tag_ware_category|truncatechars:'30' }}</td>
+                                                <td>{{ product.tag_site_category|truncatechars:'30' }}</td>
+                                                <td>{{ product.tag_brand|truncatechars:'30' }}</td>
+                                                <td>{{ product.tag_vendor|truncatechars:'30'}}</td>
+                                                <td>{{ product.tag_qty }}</td>
+                                                {{ product.tag_active }}                                         
                                             </tr>
                                             {% endfor %}
                                         </tbody>
+                                        <tfooter>
+                                            <tr>
+                                                <td colspan="2">Total Products</td>
+                                                <td>{{ total_products }}</td>
+                                            </tr>
+                                        </tfooter>
                                     </table>
                                 </div>
                         </div>
@@ -124,7 +130,7 @@
                     </form>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card">
                        <div class="header">
                             <h4>Filters</h4>
@@ -132,19 +138,22 @@
                        <div class="content">
                            <form method="get">
                                 <div class="pagination">
-                                    <input type='text' name='page' value='1' hidden>
                                     <span class="step-links">
                                         {% if page_obj.has_previous %}
-                                            <button class="btn btn-primary" type="submit" name='page' value="1">First Page</button>
-                                            <button class="btn btn-primary" type="submit" name="page" value="{{ page_obj.previous_page_number }}">Previous</button>
+                                            <a href='{{ request.build_absolute_uri }}&page=1' class="btn btn-primary" type="submit" name='page' value="1">First Page</a>
+                                            <a href='{{ request.build_absolute_uri }}&page={{ page_obj.previous_page_number }}' class="btn btn-primary" type="submit" name="page" value="{{ page_obj.previous_page_number }}">Previous</a>
                                         {% endif %}
                                         <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
                                         {%  if page_obj.has_next %}
-                                            <button class="btn btn-primary" type='submit' name="page" value="{{ page_obj.next_page_number }}">Next</button> 
+                                            {% if '?' in request.build_absolute_uri %} 
+                                            <a href='{{ request.build_absolute_uri }}&page={{ page_obj.next_page_number }}' class="btn btn-primary" type='submit' name="page" value="{{ page_obj.next_page_number }}">Next</a> 
+                                            {% else %}
+                                            <a href='?page={{ page_obj.next_page_number }}' class="btn btn-primary" type='submit' name="page" value="{{ page_obj.next_page_number }}">Next</a> 
+                                            {% endif %}
                                         {% endif %}
                                     </span>
                                 </div>
-                              
+                            
                                <div class="form-group">
                                    <input type="text" 
                                    {% if search_name %} 
@@ -344,6 +353,8 @@
 {% endblock %}
 
 {% block extra_js %}
+
+
     <script>
         $('#myModal').on('shown.bs.modal', function () {
             $('#myInput').trigger('focus')
@@ -372,3 +383,5 @@
 
     </script>
 {% endblock %}
+
+

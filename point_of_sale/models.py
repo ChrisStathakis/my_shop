@@ -327,6 +327,7 @@ class RetailOrderItem(DefaultOrderItemModel):
 
     class Meta:
         verbose_name_plural = '2. Προϊόντα Πωληθέντα'
+        ordering = ['-order__timestamp', ]
 
     def __str__(self):
         return self.title.title

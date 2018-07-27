@@ -15,7 +15,7 @@ class ProductSiteQuerySet(models.query.QuerySet):
         return self.filter(active=True, site_active=True)
 
     def featured(self):
-        return self.active_for_site().filter(is_featured=True)
+        return self.active_for_site().filter(is_featured=True)[:12]
 
     def category_queryset(self, cate):
         return self.active_for_site().filter(category_site__in=cate)

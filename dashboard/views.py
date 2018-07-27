@@ -34,7 +34,7 @@ class DashBoard(TemplateView):
         context = super(DashBoard, self).get_context_data(**kwargs)
         eshop_orders = RetailOrder.my_query.eshop_new_orders()
         sent_orders = RetailOrder.my_query.eshop_sent_orders()
-        last_items = RetailOrderItem.objects.all()[:10]
+        last_items = RetailOrderItem.objects.filter(order__in=eshop_orders)[:10] if eshop_orders else []
         revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_price'))['final_price__sum'] if RetailOrder.my_query.paid_orders() else 0
         carts = Cart.my_query.active_carts()
         currency = CURRENCY
@@ -47,10 +47,12 @@ class ProductsList(ListView):
     template_name = 'dashboard/products_list.html'
     model = Product
     paginate_by = 50
+    total_products = 0
 
     def get_queryset(self):
         queryset = Product.objects.all()
         queryset = Product.filters_data(self.request, queryset)
+        self.total_products = queryset.count() if queryset else 0
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -59,7 +61,6 @@ class ProductsList(ListView):
                                                                Color.objects.all(), Brands.objects.all(), \
                                                                CategorySite.objects.all()
         # get filters data
-        print(self.request.GET)
         search_name = self.request.GET.get('search_name', None)
         cate_name = self.request.GET.getlist('cate_name', None)
         site_cate_name = self.request.GET.getlist('site_cate_name', None)
@@ -68,6 +69,7 @@ class ProductsList(ListView):
         color_name = self.request.GET.getlist('color_name', None)
         feat_name = self.request.GET.get('feat_name', None)
         active_name = self.request.GET.get('active_name', None)
+        total_products = self.total_products
         products, currency = True, CURRENCY
         page_title = 'Product list'
         context.update(locals())

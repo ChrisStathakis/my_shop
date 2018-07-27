@@ -142,6 +142,7 @@ class Product(DefaultBasicModel):
     
     class Meta:
         verbose_name_plural = "1. Προϊόντα"
+        ordering = ['-id', ]
 
     def save(self, *args, **kwargs):
         if self.price:
@@ -158,14 +159,21 @@ class Product(DefaultBasicModel):
     def get_absolute_url(self):
         return reverse('product_page', kwargs={'slug': self.slug})
 
+    def tag_ware_category(self):
+        return f'{self.category.title}' if self.category else 'No category selected'
+
+    def tag_site_category(self):
+        return f'{self.category_site.first()}' if self.category_site.first() else 'No category selected'
+
+    def tag_brand(self):
+        return f'{self.brand}' if self.brand else 'No brand selected'
+
     def tag_category(self):
         return self.category.title if self.category else 'No Category'
 
     def tag_vendor(self):
         return self.vendor.title if self.vendor else 'No Supplier'
 
-    def tag_brand(self):
-        return self.brand if self.brand else 'Δεν έχει επιλεχτεί Brand'
 
     def tag_featured(self):
         return mark_safe('<td style="background-color:#a4e8a4;">Featured</td>') if self.is_featured else mark_safe('<td style="background-color:#d8a0a0;">No Featured</td>')
