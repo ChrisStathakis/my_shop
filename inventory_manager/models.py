@@ -21,8 +21,10 @@ from site_settings.tools import estimate_date_start_end_and_months
 from site_settings.constants import WAREHOUSE_ORDER_TYPE
 from decimal import Decimal
 
+
 def upload_image(instance, filename):
     return f'/warehouse_images/{instance.title}/{filename}'
+
 
 def validate_file(value):
     if value.file.size > 1024*1024*0.5:
@@ -47,6 +49,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_admin_url(self):
+        return reverse('dashboard:category_detail', kwargs={'pk': self.id})
 
 
 class TaxesCity(models.Model):
@@ -130,7 +135,7 @@ class Vendor(models.Model):
         return '%s' % self.phone if self.phone else ' ' + ', %s' % self.phone1 if self.phone1 else ' '     
 
     def get_absolute_url_form(self):
-        return reverse('edit_vendor_id',kwargs={'dk':self.id})
+        return reverse('edit_vendor_id', kwargs={'dk':self.id})
 
 
 class OrderManager(models.Manager):

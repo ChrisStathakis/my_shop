@@ -16,7 +16,7 @@
                             <h4 class="title">{{ title }}</h4>
                         </div>
                         <div class="content">
-                            <form method="post">{% csrf_token %}
+                            <form method="post" enctype="multipart/form-data">{% csrf_token %}
                                 {{ form }}
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-info btn-fill btn-wd">Save</button>
@@ -29,7 +29,8 @@
                 <div class="col-lg-4 col-md-5">
                     <div class="card">
                         <div class="header">
-                            <h4 class="title">Create</h4>
+                            <h4 class="title">Create</h4> <br>
+                            <a href="{{ delete_url }}" onclick="return confirm('Are you sure you want to delete it?');" class="btn btn-warning">Delete</a>
                         </div>
                         <div class="content">
                             <ul class="list-unstyled team-members">

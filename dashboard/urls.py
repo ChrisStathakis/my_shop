@@ -4,6 +4,7 @@ from .views import *
 from .view_sells import *
 from .views_ajax import *
 from .views_site import *
+from .views_product_settings import *
 
 app_name = 'dashboard'
 
@@ -19,18 +20,6 @@ urlpatterns = [
     path('products/add-sizes/create/<int:dk>/<int:pk>/', view=create_new_sizechart, name='create_product_sizechart'),
     path('products/add-related-products/<int:pk>/', RelatedProductsView.as_view(), name='product_related_view'),
 
-    # popup and ajax calls
-    # path('products/popup/create-brand/', view=createBrandPopup, name='brand_popup'),
-    # path('products/popup/create-category/', view=createCategoryPopup, name='category_popup'),
-    # path('products/popup/get_brand_id/', view=get_brand_id, name='get_brand_id'),
-    # path('products/popup/create-color/', view=create_color_popup, name='color_popup'),
-
-
-    path('category/', CategoryPage.as_view(), name='categories'),
-    path('categories-site/', CategorySitePage.as_view(), name='categories_site'),
-    path('brands/', BrandPage.as_view(), name='brands'),
-    path('colors/', ColorPage.as_view(), name='colors'),
-    path('sizes/', SizePage.as_view(), name='sizes'),
 
     # popup and ajax calls
     path('products/popup/create-brand/', view=createBrandPopup, name='brand_popup'),
@@ -38,11 +27,14 @@ urlpatterns = [
     path('products/popup/get_brand_id/', view=get_brand_id, name='get_brand_id'),
     path('products/popup/create-color/', view=create_color_popup, name='color_popup'),
 
+
+
     path('category/', CategoryPage.as_view(), name='categories'),
     path('categories-site/', CategorySitePage.as_view(), name='categories_site'),
     path('brands/', BrandPage.as_view(), name='brands'),
     path('colors/', ColorPage.as_view(), name='colors'),
     path('sizes/', SizePage.as_view(), name='sizes'),
+
 
     #  create urls
     path('category/create/', CategoryCreate.as_view(), name='category_create'),
@@ -53,6 +45,7 @@ urlpatterns = [
 
     #  delete urls
     path('category/delete/<int:pk>/', view=delete_category, name='delete_category'),
+    path('category-site/delete/<int:pk>/', view=delete_category_site, name='delete_category_site'),
     path('brands/delete/<int:pk>/', view=delete_brand, name='delete_brand'),
     path('color/delete/<int:pk>/', view=delete_color, name='delete_color'),
 

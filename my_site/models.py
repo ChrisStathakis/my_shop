@@ -32,7 +32,7 @@ class CategorySite(models.Model):
     content = models.TextField(blank=True, null=True)
     date_added = models.DateField(auto_now=True)
     meta_description = models.CharField(max_length=300, blank=True)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.SET_NULL)
     order = models.IntegerField(default=1)
     slug = models.SlugField(blank=True, null=True, allow_unicode=True)
     show_on_menu = models.BooleanField(default=False, verbose_name='Active on Navbar')
@@ -83,7 +83,6 @@ class CategorySite(models.Model):
         return queryset
 
 
-
 class Brands(models.Model):
     active = models.BooleanField(default=True, verbose_name='Ενεργοποίηση')
     title = models.CharField(max_length=120, verbose_name='Ονομασία Brand')
@@ -107,6 +106,9 @@ class Brands(models.Model):
     def image_tag_tiny(self):
         return mark_safe('<img scr="%s/%s" width="100px" height="100px" />'%(MEDIA_URL, self.image))
     image_tag.short_description = 'Είκονα'
+
+    def tag_active(self):
+        return 'Active' if self.active else 'No active'
 
     def get_absolute_url(self):
         return reverse('brand', kwargs={'slug': self.slug})

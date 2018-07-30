@@ -38,10 +38,10 @@
                                 {% for object in object_list %}
                                     <tr>
                                         <td>{{ object.id }}</td>
-                                        <td><a href="{{ object.get_edit_url }}">{{ object }}</a></td>
-                                        <td>{{ object.active }}</td>
-                                        <td><a href="{% url 'dashboard:edit_brand' object.id %}" class="btn btn-info">Edit</a>
-                                            <a href="{% url 'dashboard:delete_brand' object.id %}" class="btn btn-warning">Delete</a>
+                                        <td>{{ object }}</td>
+                                        <td>{{ object.tag_active }}</td>
+                                        <td>
+                                            <a href="{% url 'dashboard:edit_brand' object.id %}" class="btn btn-info">Edit</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
