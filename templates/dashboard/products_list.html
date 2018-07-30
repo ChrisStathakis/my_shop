@@ -45,7 +45,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Price</th>
-                                            <th>Warehouse Category</th>
+                                            <th>Color</th>
                                             <th>Site Category</th>
                                             <th>Brand</th>
                                             <th>Vendor</th>
@@ -64,7 +64,7 @@
                                                 <td>{{ product.id }}</td>
                                                 <td><a href="{% url 'dashboard:product_detail' product.id %}">{{ product|truncatechars:'30' }}</a></td>
                                                 <td>{{ product.tag_final_price }}</td>
-                                                <td>{{ product.tag_ware_category|truncatechars:'30' }}</td>
+                                                <td>{{ product.color.title|default_if_none:'No Color' }}</td>
                                                 <td>{{ product.tag_site_category|truncatechars:'30' }}</td>
                                                 <td>{{ product.tag_brand|truncatechars:'30' }}</td>
                                                 <td>{{ product.tag_vendor|truncatechars:'30'}}</td>

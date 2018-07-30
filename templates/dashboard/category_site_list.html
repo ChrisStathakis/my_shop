@@ -28,8 +28,8 @@
                                         <td>{{ object.id }}</td>
                                         <td><a href="{% url 'dashboard:edit_category_site' object.id %}">{{ object }}</a></td>
                                         <td>{{ object.order }}</td>
-                                        <td>{{ object.active }}</td>
-                                        <td>{{ object.show_on_menu }}</td>
+                                        <td>{{ object.tag_active }}</td>
+                                        <td>{{ object.tag_show_on_menu }}</td>
                                         <td>{{ object.parent|default_if_none:"No parent" }}</td>
                                     </tr>
                                 {% endfor %}

@@ -1,4 +1,4 @@
-{% extends 'dashboard/products_list.html' %} {% load static %}
+{% extends 'dashboard/dashboard.html' %} {% load static %}
 
 {% block content %}
     <style>
@@ -81,7 +81,7 @@
                                             <br />
                                         </div>
                                         <div class="col-xs-6 text-right">
-                                            <button class="btn btn-sm btn-success btn-icon"><i class="fa fa-align-right"></i></button>
+                                            <a id='add_brand' href='{% url "dashboard:brand_popup" %}' onclick="return showBrandPopup(this);" class="btn btn-sm btn-success btn-icon"><i class="fa fa-align-right"></i></a>
                                         </div>
                                     </div>
                                 </li>
@@ -115,3 +115,18 @@
 
 
 {% endblock %}
+
+{% block extra_js %}
+    <script>
+        function showAddPopup(triggeringLink) {
+            var name = triggeringLink.id.replace(/^add_/, '');
+            href = triggeringLink.href;
+            var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+            console.log(win)
+            win.focus();
+            return false;
+        }
+    </script>
+
+{% endblock extra_js %}
+    

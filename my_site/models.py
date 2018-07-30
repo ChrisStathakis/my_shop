@@ -61,6 +61,12 @@ class CategorySite(models.Model):
             return mark_safe('<img scr="%s%s" width="100px" height="100px" />'%(MEDIA_URL, self.image))
     image_tag.short_description = 'Είκονα'
 
+    def tag_active(self):
+        return 'Is Active' if self.active else 'No active'
+
+    def tag_show_on_menu(self):
+        return 'Show' if self.show_on_menu else 'No Show'
+
     def get_edit_url(self):
         return reverse('dashboard:category_detail', kwargs={'pk': self.id})
 
@@ -73,8 +79,6 @@ class CategorySite(models.Model):
     def get_childrens(self):
         childrens = CategorySite.objects.filter(parent=self)
         return childrens
-    
-    
     
     @staticmethod
     def filter_data(queryset, search_name, active_name):

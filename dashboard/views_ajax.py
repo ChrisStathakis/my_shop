@@ -11,7 +11,6 @@ from products.models import Brands
 from inventory_manager.models import Category
 
 def category_create(request):
-    print('here')
     form = CategoryForm(request.POST or None)
     if form.is_valid():
         instance = form.save()
@@ -49,8 +48,7 @@ def createBrandPopup(request):
     form = BrandForm(request.POST or None)
     if form.is_valid():
         instance = form.save()
-        return HttpResponse(
-            '<script>opener.closePopup(window, "%s", "%s", "#id_brand");</script>' % (instance.pk, instance))
+        return HttpResponse('<script>opener.closePopup(window, "%s", "%s", "#id_brand");</script>' % (instance.pk, instance))
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
 
 
