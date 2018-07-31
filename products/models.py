@@ -287,7 +287,7 @@ class SizeAttributeManager(models.Manager):
 
 class SizeAttribute(models.Model):
     title = models.ForeignKey(Size, on_delete=models.CASCADE, verbose_name='Νούμερο')
-    product_related = models.ForeignKey(Product, null=True, on_delete=models.CASCADE, verbose_name='Προϊόν')
+    product_related = models.ForeignKey(Product, null=True, on_delete=models.CASCADE, verbose_name='Προϊόν', related_name='product_sizes')
     qty = models.DecimalField(default=0, decimal_places=2, max_digits=6, verbose_name='Ποσότητα')
     order_discount = models.IntegerField(null=True, blank=True, default=0,verbose_name="'Εκπτωση Τιμολογίου σε %")
     price_buy = models.DecimalField(decimal_places=2,max_digits=6,default=0,verbose_name="Τιμή Αγοράς")
@@ -300,7 +300,6 @@ class SizeAttribute(models.Model):
 
     def save(self, *args, **kwargs):
         get_sizes = SizeAttribute.objects.filter(product_related=self.product_related)
-        
         super(SizeAttribute, self).save(*args, **kwargs)
         self.product_related.qty = get_sizes.aggregate(Sum('qty'))['qty__sum'] if get_sizes else 0
         self.product_related.save()

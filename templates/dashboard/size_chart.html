@@ -2,10 +2,26 @@
 
 {% block content %}
     <div class="container">
+        <div class="col-md-12">
+            {% if messages %}
+            <div class="card">
+                <div class="header">
+                    <h3 class="title">Message</h3>
+                </div>
+                <div class="content">
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
         <div class="col-md-8">
             <div class="card">
                 <div class="header">
-                    <div class="title">Add Size</div>
+                    <h3 class="title">Add Size to {{ instance }}</h3>
                 </div>
                 <div class="content">
                     <table class="table table-responsive table-bordered">
@@ -34,11 +50,10 @@
             </div>
         </div>
         <div class="col-md-4">
-            <a href="{% url 'dashboard:product_detail' instance.id %}" class="btn btn-warning btn-raised">Back</a>
-            <br> <br>
             <div class="card">
-                <div class="header">
-                    <div class="title">Selected size</div>
+                <div class="header"><a href="{% url 'dashboard:product_detail' instance.id %}" class="btn btn-warning btn-raised">Back</a>
+                    <br>
+                    <h4 class="title">Selected size</h4>
                 </div>
                 <div class="content" id="container_table">
                     <table class="table table-responsive table-bordered">
@@ -56,7 +71,9 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ size }}</td>
                                     <td>{{ size.qty }}</td>
-                                    <td>#</td>
+                                    <td>
+                                        <a href="{% url 'dashboard:product_delete_size' size.id %}" onclick="return confirm('Are you sure?');" class="btn btn-warning">Remove</a>
+                                    </td>
                                 </tr>
                             {% empty %}
                                 <tr>

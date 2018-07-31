@@ -22,7 +22,8 @@ from products.forms import (SizeAttributeForm, UpdateProductForm, ProductPhotoFo
 from carts.models import Cart                            
 from products.forms_popup import ProductPhotoUploadForm
 from site_settings.constants import CURRENCY
-from inventory_manager.models import Vendor, Category
+from inventory_manager.models import Vendor, Category, OrderItem
+from point_of_sale.models import RetailOrderItem
 from inventory_manager.forms import CategoryForm
 from my_site.models import CategorySite, Brands
 
@@ -124,37 +125,16 @@ def product_detail(request, pk):
     instance = get_object_or_404(Product, id=pk)
     products, currency, page_title = True, CURRENCY, '%s' % instance.title
     images = instance.get_all_images()
-    sizes = SizeAttribute.objects.filter(product_related=instance) if instance.size else None
+    sizes = instance.product_sizes.all()
     chars = instance.characteristics.all()
     form = UpdateProductForm(request.POST or None, instance=instance)
-    SizeAttrFormSet = formset_factory(SizeAttributeForm)
-    if sizes:
-        formset_size = SizeAttrFormSet(initial=[
-                                            {'qty': ele.qty, 'title': ele.title, 'product_related': ele.product_related} for ele in sizes
-                                            ])
-    if 'size_' in request.POST:
-        if sizes:
-            formset_size = SizeAttrFormSet(request.POST, initial=[
-                                            {'qty': ele.qty, 'title': ele.title, 'product_related': ele.product_related} for ele in sizes
-                                            ])
-        else:
-            formset_size = SizeAttributeForm(request.POST)
-        for form in formset_size:
-            if form.is_valid():
-                try:
-                    product = SizeAttribute.objects.get(title=form.cleaned_data['title'],
-                                                        product_related=form.cleaned_data['product_related']
-                                                        )
-                    product.qty = form.cleaned_data['qty']
-                    product.save()
-                except:
-                    form.save()
-        return redirect(reverse('dashboard:product_detail', kwargs={'pk': instance.id}))
+
     if 'save_' in request.POST:
         if form.is_valid():
             form.save()
             messages.success(request, 'The products %s is saves!')
             return HttpResponseRedirect(reverse('dashboard:products'))
+
     if 'update_' in request.POST:
         form.save()
         messages.success(request, 'The products %s is edited!')
@@ -204,11 +184,26 @@ def delete_product_image(request, pk):
 
 
 @staff_member_required
-def product_add_sizechart(request, dk):
-    instance = get_object_or_404(Product, id=dk)
-    sizes_attr = instance.sizeattribute_set.all()
+def product_add_sizechart(request, pk):
+    instance = get_object_or_404(Product, id=pk)
+    sizes_attr = instance.product_sizes.all()
     sizes = Size.objects.filter(active=True)
     return render(request, 'dashboard/size_chart.html', context=locals())
+
+
+@staff_member_required
+def delete_product_size(request, pk):
+    instance = get_object_or_404(SizeAttribute, id=pk)
+    retail_order_items = RetailOrderItem.objects.filter(size=instance)
+    warehouse_orders = OrderItem.objects.filter(size=instance)
+    if retail_order_items.exists() or warehouse_orders.exists():
+        print('here!@')
+        messages.warning(request, 'You cant delete this')
+    else:
+        instance.delete()
+        messages.success(request, 'You deleted this size')
+    return HttpResponseRedirect(reverse('dashboard:product_add_sizes', kwargs={'pk': instance.product_related.id}))
+
 
 
 @method_decorator(staff_member_required, name='dispatch')

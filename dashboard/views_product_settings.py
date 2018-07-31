@@ -331,18 +331,17 @@ class SizePage(ListView):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class SizeEditPage(FormView):
+class SizeEditPageView(UpdateView):
     form_class = SizeForm
     template_name = 'dashboard/form_view.html'
+    model = Size
+    success_url = reverse_lazy('dashboard:sizes')
 
     def get_context_data(self, **kwargs):
-        context = super(SizeEditPage, self).get_context_data(**kwargs)
+        context = super(SizeEditPageView, self).get_context_data(**kwargs)
         page_title = form_title = 'Edit Size'
         context.update(locals())
         return context
-
-    def get_success_url(self):
-        return reverse('dashboard:sizes')
 
     def form_valid(self, form):
         form.save()
