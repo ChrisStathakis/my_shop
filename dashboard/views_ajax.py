@@ -10,6 +10,7 @@ from products.forms import BrandForm, CategoryForm, ColorForm, SizeForm
 from products.models import Brands
 from inventory_manager.models import Category
 
+
 def category_create(request):
     form = CategoryForm(request.POST or None)
     if form.is_valid():

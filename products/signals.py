@@ -1,7 +1,8 @@
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from .models import Product
 from my_site.models import CategorySite
+from .models import SizeAttribute
 import slugify
 
 
@@ -25,3 +26,10 @@ def create_category_slug(sender, instance, **kwargs):
             new_slug = f'{new_slug}-{instance.id}'
         instance.slug = new_slug
         instance.save()
+
+
+@receiver(post_delete, sender=SizeAttribute)
+def delete_size_attribute(sender, instance, **kwargs):
+    product = instance.product_related
+    product.qty -= instance.qty
+    product.save()

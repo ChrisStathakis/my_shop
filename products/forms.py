@@ -32,13 +32,13 @@ class CreateProductForm(forms.ModelForm):
 class UpdateProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'is_featured', 'site_active', 'size', 'color', 'category', 'category_site', 'vendor', 'brand',
-                  'price', 'price_discount', 'order_code', 'measure_unit', 'qty', 'price_buy',
-                  'barcode', 'safe_stock',
-                  'active', 'is_service',
-                  'sku', 'site_text',
-                  'slug', 'notes',
-
+        fields = ['title', 'is_featured', 'site_active', 'active',
+                  'size', 'color', 'category_site', 'brand',
+                  'price', 'price_discount', 'qty', 'sku', 
+                  'site_text', 'safe_stock',
+                  'order_code', 'barcode', 'category', 'vendor',
+                  'price_buy','measure_unit', 'is_service', 'notes',
+                  'slug'
                   ]
 
     def __init__(self, *args, **kwargs):

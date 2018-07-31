@@ -98,7 +98,7 @@
                                     <tr>
                                         <th>Size</th>
                                         <th>Qty</th>
-                                        <th>Action</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,10 +106,7 @@
                                         <tr>
                                             <td>{{ size.title }}</td>
                                             <td>{{ size.qty }}</td>
-                                            <td>
-                                                <a href="" class="btn btn-sm btn-primary btn-icon"><i class="fa fa-edit"></i> </a>
-                                                <a href="" class="btn btn-sm btn-warning btn-icon"><i class="fa fa-close"></i></a>
-                                            </td>
+                                           
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -154,23 +151,22 @@
 
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Related Products</h4><a href="{% url 'dashboard:product_related_view' instance.id %}" class="btn btn-info">Add Related</a>
+                        <h4 class="title">Related Products</h4>
+                        <a href="{% url 'dashboard:product_related_view' instance.id %}" class="btn btn-info">Add Related</a>
                     </div>
                     <div class="content">
                         <table class="table table-responsive">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
+                                    <th>#</th>
+                                    <th>Product</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for product in related_products %}
+                                {% for product in instance.related_products.all %}
                                     <tr>
-                                        <th>{{ forloop.counter }}</th>
-                                        <th>{{ product }}</th>
-                                        <th><a href="" class="btn btn-warning">Delete</a> </th>
+                                        <th>{{ product.id }}</th>
+                                        <th>{{ product }}</th>     
                                     </tr>
                                 {% empty %}
                                     <tr>
@@ -181,6 +177,35 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="card">
+                        <div class="header">
+                            <h4 class="title">Different Color</h4>
+                            <a href="{% url 'dashboard:product_similar_color_view' instance.id %}" class="btn btn-info">Add Color Product</a>
+                        </div>
+                        <div class="content">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in instance.different_color.all %}
+                                        <tr>
+                                            <th>{{ product.id }}</th>
+                                            <th>{{ product }}</th>     
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3">No Related Added</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
             </div>
         </div>

@@ -16,6 +16,7 @@ from inventory_manager.models import Vendor, Category
 from site_settings.constants import MEDIA_URL, CURRENCY, UNIT
 from .managers import ProductManager
 
+WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
 def product_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
@@ -97,7 +98,7 @@ class Product(DefaultBasicModel):
     site_active = models.BooleanField(default=True, verbose_name='Active for Site')
     wholesale_active = models.BooleanField(default=False, verbose_name="Active for WholeSale")
     is_service = models.BooleanField(default=False, verbose_name='Service')
-    is_featured = models.BooleanField(default=True, verbose_name='Featured Product')
+    is_featured = models.BooleanField(default=False, verbose_name='Featured Product')
     is_offer = models.BooleanField(default=True)
     size = models.BooleanField(default=False, verbose_name='Μεγεθολόγιο')
     color = models.ForeignKey(Color, blank=True, null=True, verbose_name='Χρώμα', on_delete=models.CASCADE)
@@ -149,6 +150,14 @@ class Product(DefaultBasicModel):
             self.final_price = self.price_discount if self.price_discount > 0 else self.price
         self.is_offer = True if self.price_discount > 0 else False
         super(Product, self).save(*args, **kwargs)
+
+    def update_qty(self):
+        if WAREHOUSE_ORDERS_TRANSCATIONS:
+            pass
+        else:
+            items = self.related_products.all()
+            self.qty = items.aggregate(Sum('qty'))['qty__sum'] if items else self.qty
+            self.save()
 
     def __str__(self):
         return '%s %s' % (self.title, self.color) if self.color else self.title

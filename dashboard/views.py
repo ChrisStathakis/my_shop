@@ -28,6 +28,9 @@ from inventory_manager.forms import CategoryForm
 from my_site.models import CategorySite, Brands
 
 
+WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
+
+
 @method_decorator(staff_member_required, name='dispatch')
 class DashBoard(TemplateView):
     template_name = 'dashboard/dashboard.html'
@@ -188,6 +191,13 @@ def product_add_sizechart(request, pk):
     instance = get_object_or_404(Product, id=pk)
     sizes_attr = instance.product_sizes.all()
     sizes = Size.objects.filter(active=True)
+    if request.POST:
+        for ele in request.POST:
+            if ele.startswith('size_'):
+                id = ele.split('_')[1]
+                size = SizeAttribute.objects.get(id=id)
+                size.qty = request.POST.get(f'{ele}', 0)
+                size.save()
     return render(request, 'dashboard/size_chart.html', context=locals())
 
 
@@ -209,19 +219,48 @@ def delete_product_size(request, pk):
 @method_decorator(staff_member_required, name='dispatch')
 class RelatedProductsView(ListView):
     model = Product
-    template_name = 'dashboard/product_related_products.html'
+    template_name = 'dashboard/product_related_similar.html'
 
     def get_queryset(self):
-        queryset = Product.my_query.active_for_site()[:20]
-
+        queryset = Product.objects.all()
+        search_name = self.request.GET.get('search_name', None)
+        if search_name:
+            queryset = queryset.filter(title__icontains=search_name)
+        queryset = queryset[:20]
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(RelatedProductsView, self).get_context_data(**kwargs)
         instance = get_object_or_404(Product, id=self.kwargs['pk'])
+        related_products = instance.related_products.all()
+        search_name = self.request.GET.get('search_name', None)
+        title = f'Add Related Products to {instance.title}'
+        table_title = 'Related Products'
         context.update(locals())
         return context
 
+
+@staff_member_required
+def ajax_add_related_item(request, pk, dk):
+    data = {}
+    instance = get_object_or_404(Product, id=pk)
+    related_instance = get_object_or_404(Product, id=dk)
+    instance.related_products.add(related_instance)
+    related_products = instance.related_products.all()
+    data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/related.html', context=locals())
+    return JsonResponse(data)
+
+
+@staff_member_required
+def ajax_delete_related_product(request, pk, dk):
+    data = {}
+    instance = get_object_or_404(Product, id=pk)
+    related_instance = get_object_or_404(Product, id=dk)
+    instance.related_products.remove(related_instance)
+    related_products = instance.related_products.all()
+    data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/related.html', context=locals())
+    return JsonResponse(data)
+    
 
 @staff_member_required
 def create_new_sizechart(request, dk, pk):
@@ -239,7 +278,48 @@ def create_new_sizechart(request, dk, pk):
                                                 )
         sizes_attr = SizeAttribute.objects.filter(product_related=instance)
     data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/sizeattr.html', context=locals())
+    return JsonResponse(data)
 
+
+@method_decorator(staff_member_required, name='dispatch')
+class SimilarColorProductsView(ListView):
+    model = Product
+    template_name = 'dashboard/product_related_similar.html'
+    # i use the same template for related products too so with the boolean colors i change the data-url on template
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        search_name = self.request.GET.get('search_name', None)
+        if search_name:
+            queryset = queryset.filter(title__icontains=search_name)
+        queryset = queryset[:20]
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(SimilarColorProductsView, self).get_context_data(**kwargs)
+        instance = get_object_or_404(Product, id=self.kwargs['pk'])
+        related_products = instance.different_color.all()
+        title = f'Add Similar color Products to {instance.title}'
+        table_title = 'Similar Color'
+        colors = True
+        search_name = self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
+
+
+@staff_member_required
+def ajax_differenent_color_product_add_or_remove(request, pk, dk, choose):
+    # if choose = 1 add if choose = 2 remove!
+    data = {}
+    colors = True
+    instance = get_object_or_404(Product, id=pk)
+    different_color = get_object_or_404(Product, id=dk)
+    if choose == 1:
+        instance.different_color.add(different_color)
+    else:
+        instance.different_color.remove(different_color)
+    related_products = instance.different_color.all()
+    data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/sizeattr.html', context=locals())
     return JsonResponse(data)
 
 
