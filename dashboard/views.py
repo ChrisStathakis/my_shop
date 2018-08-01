@@ -319,7 +319,7 @@ def ajax_differenent_color_product_add_or_remove(request, pk, dk, choose):
     else:
         instance.different_color.remove(different_color)
     related_products = instance.different_color.all()
-    data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/sizeattr.html', context=locals())
+    data['html_data'] = render_to_string(request=request, template_name='dashboard/ajax_calls/related.html', context=locals())
     return JsonResponse(data)
 
 

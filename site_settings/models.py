@@ -120,3 +120,5 @@ def update_on_delete(sender, instance, *args, **kwargs):
         get_order.save()
     except:
         t = ''
+
+

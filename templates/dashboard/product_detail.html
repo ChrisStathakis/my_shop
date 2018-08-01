@@ -42,9 +42,11 @@
                         <a href="{% url 'dashboard:copy_product' instance.id %}" class="btn btn-success">Create Copy</a>
                         <a href="" class="btn btn-warning">Delete</a>
                         <br><br>
-                        <button class="btn btn-info" id="add_author" onclick="return showAddPopup(this);">Add Brand</button>
-                        <button data-href="{% url 'dashboard:category_popup' %}" class="btn btn-info" id="add_category" onclick="return addCat(this);">Add Category</button>
-                        <button data-href="" class="btn btn-info" id="add_color" onclick="return addColor(this);">Add Color</button>
+                        <button data-href="{% url 'dashboard:brand_popup' %}" class="btn btn-info" id="add_author" onclick="return addData(this);">Add Brand</button>
+                        <button data-href="{% url 'dashboard:category_popup' %}" class="btn btn-info" id="add_category" onclick="return addData(this);">Add Category</button>
+                        <button data-href="{% url 'dashboard:category_site_popup' %}" class="btn btn-info" id="add_category_site" onclick="return addData(this);">Add Category Site</button>
+                        <button data-href="{% url 'dashboard:color_popup' %}" class="btn btn-info" id="add_color" onclick="return addData(this);">Add Color</button>
+                        <button data-href="{% url 'dashboard:vendor_popup' %}" class="btn btn-info" id="add_vendor" onclick="return addData(this);">Add Vendor</button>
                     </div>
                 </div>
                 <div class="card card-user">
@@ -213,6 +215,7 @@
 </div>
 {% endblock %}
 {% block extra_js %}
+
     <script type="text/javascript">
         function showEditPopup(url) {
             var win = window.open(url, "Edit",
@@ -220,36 +223,19 @@
             return false;
         }
 
-        function showAddPopup(triggeringLink) {
-            console.log('here!');
-            var name = triggeringLink.id.replace(/^add_/, '');
-            href = '{% url "dashboard:brand_popup" %}';
+        function addData(triggeringLink) {
+            const name = triggeringLink.id.replace(/^add_/, '');
+            const btn = $(triggeringLink);
+            href = btn.attr('data-href');
+            console.log(href);
             var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
             win.focus();
-            return false;
-        }
-
-        function addCat(triggeringLink) {
-            console.log(triggeringLink, this);
-            var name = triggeringLink.id.replace(/^add_/, '');
-            href = '{% url "dashboard:category_popup" %}';
-            var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-            win.focus();
-            return false;
+            return false
         }
 
         function closePopup(win, newID, newRepr, id) {
             $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>');
             win.close();
         }
-
-        function addColor(triggeringLink) {
-            var name = triggeringLink.id.replace('^add_/', '');
-            href = '{% url "dashboard:color_popup" %}';
-            var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-            win.focus();
-            return false;
-        }
-
 </script>
 {% endblock %}

@@ -9,6 +9,9 @@ from products.forms_popup import *
 from products.forms import BrandForm, CategoryForm, ColorForm, SizeForm
 from products.models import Brands
 from inventory_manager.models import Category
+from inventory_manager.forms import VendorQuickForm
+from my_site.models import CategorySite
+from my_site.forms import CategorySiteForm
 
 
 def category_create(request):
@@ -53,6 +56,15 @@ def createBrandPopup(request):
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
 
 
+@staff_member_required
+def createVendorPopup(request):
+    form = VendorQuickForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse(
+            '<script>opener.closePopup(window, "%s", "%s", "#id_vendor");</script>' % (instance.pk, instance))
+    return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
+
 
 @staff_member_required
 def createCategoryPopup(request):
@@ -62,6 +74,17 @@ def createCategoryPopup(request):
         return HttpResponse(
             '<script>opener.closePopup(window, "%s", "%s", "#id_category");</script>' % (instance.pk, instance))
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
+
+
+@staff_member_required
+def createCategorySitePopup(request):
+    form = CategorySiteForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        return HttpResponse(
+            '<script>opener.closePopup(window, "%s", "%s", "#id_category_site");</script>' % (instance.pk, instance))
+    return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
+
 
 
 @staff_member_required
@@ -75,11 +98,11 @@ def get_brand_id(request):
 
 
 @staff_member_required
-def create_color_popup(request):
+def createColorPopup(request):
     form = ColorForm(request.POST or None)
     if form.is_valid():
         instance = form.save()
         return HttpResponse(
-             '<script>opener.closePopup(window, "%s", "%s", "#id_brand");</script>' % (instance.pk, instance)
+             '<script>opener.closePopup(window, "%s", "%s", "#id_color");</script>' % (instance.pk, instance)
         )
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})

@@ -27,7 +27,9 @@ urlpatterns = [
     path('products/popup/create-brand/', view=createBrandPopup, name='brand_popup'),
     path('products/popup/create-category/', view=createCategoryPopup, name='category_popup'),
     path('products/popup/get_brand_id/', view=get_brand_id, name='get_brand_id'),
-    path('products/popup/create-color/', view=create_color_popup, name='color_popup'),
+    path('products/popup/create-color/', view=createColorPopup, name='color_popup'),
+    path('producs/popup/create-vendor/', view=createVendorPopup, name='vendor_popup'),
+    path('products/popup/create-cate-site/', view=createCategorySitePopup, name='category_site_popup'),
 
     path('products/add-related-products/<int:pk>/ajax/<int:dk>/', view=ajax_add_related_item, name='ajax_add_related_item'),
     path('products/delete-related-products/<int:pk>/ajax/<int:dk>/', view=ajax_delete_related_product, name='ajax_delete_related_product'),

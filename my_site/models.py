@@ -71,7 +71,7 @@ class CategorySite(models.Model):
         return reverse('dashboard:category_detail', kwargs={'pk': self.id})
 
     def get_absolute_url(self):
-        return reverse('dashboard:categories')
+        return reverse('category_page', kwargs={'slug': self.slug})
 
     def absolute_url_site(self):
         pass

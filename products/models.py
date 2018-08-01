@@ -139,8 +139,7 @@ class Product(DefaultBasicModel):
     related_products = models.ManyToManyField('self', blank=True)
     different_color = models.ManyToManyField('self', blank=True)
     characteristics = models.ManyToManyField(ProductCharacteristics)
-    
-    
+
     class Meta:
         verbose_name_plural = "1. Προϊόντα"
         ordering = ['-id', ]
@@ -183,14 +182,15 @@ class Product(DefaultBasicModel):
     def tag_vendor(self):
         return self.vendor.title if self.vendor else 'No Supplier'
 
-
     def tag_featured(self):
         return mark_safe('<td style="background-color:#a4e8a4;">Featured</td>') if self.is_featured else mark_safe('<td style="background-color:#d8a0a0;">No Featured</td>')
 
     def tag_active(self):
         return mark_safe('<td style="background-color:#a4e8a4;">Active</td>') if self.active and self.site_active else mark_safe('<td style="background-color:#d8a0a0;">No Active</td>')
 
-    
+    def tag_final_show_price(self):
+        return f'{self.price_discount} {CURRENCY} from {self.price} {CURRENCY}' if self.price_discount > 0 else f'{self.price} {CURRENCY}'
+
     @property
     def tag_final_price(self):
         return '%s %s' % (self.final_price, CURRENCY)
@@ -333,13 +333,14 @@ class ProductPhotos(models.Model):
     image = models.ImageField()
     alt = models.CharField(null=True, blank=True, max_length=200, help_text='Θα δημιουργηθεί αυτόματα εάν δεν συμπληρωθεί')
     title = models.CharField(null=True ,blank=True, max_length=100, help_text='Θα δημιουργηθεί αυτόματα εάν δεν συμπληρωθεί')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     active = models.BooleanField(default=True)
     is_primary = models.BooleanField(default=False, verbose_name='Αρχική Εικόνα')
     is_back = models.BooleanField(default=False, verbose_name='Δεύτερη Εικόνα')
 
     class Meta:
         verbose_name_plural = 'Gallery'
+        ordering = ['is_primary', ]
 
     def __str__(self):
         return self.title

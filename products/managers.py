@@ -1,5 +1,8 @@
 from django.db import models
 from site_settings.constants import RETAIL_TRANSCATIONS
+from django.conf import settings
+
+USE_QTY_LIMIT = settings.USE_QTY_LIMIT
 
 
 class ProductSiteQuerySet(models.query.QuerySet):
@@ -10,9 +13,7 @@ class ProductSiteQuerySet(models.query.QuerySet):
         return self.filter(active=True, site_active=True)
 
     def active_for_site(self):
-        if RETAIL_TRANSCATIONS:
-            return self.filter(active=True, site_active=True, qty__gt=0)
-        return self.filter(active=True, site_active=True)
+        return self.filter(active=True, site_active=True, qty__gt=0) if USE_QTY_LIMIT else self.filter(active=True, site_active=True)
 
     def featured(self):
         return self.active_for_site().filter(is_featured=True)[:12]
@@ -35,4 +36,4 @@ class ProductManager(models.Manager):
     def get_site_queryset(self):
         return ProductSiteQuerySet(self.model, using=self._db)
 
-    
+

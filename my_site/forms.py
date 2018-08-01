@@ -6,6 +6,18 @@ from .models import Shipping
 from .validators import validate_cellphone, validate_number
 
 
+class CategorySiteForm(forms.ModelForm):
+
+    class Meta:
+        model = CategorySite
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(CategorySiteForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
 class ShippingForm(forms.ModelForm):
     
     class Meta:

@@ -123,7 +123,7 @@ class ColorForm(forms.ModelForm):
 
     class Meta:
         model = Color
-        fields = "__all__"
+        fields = ['title', 'costum_ordering', 'code_id']
 
     def __init__(self, *args, **kwargs):
         super(ColorForm, self).__init__(*args, **kwargs)
@@ -168,7 +168,6 @@ class SizeAttributeForm(forms.ModelForm):
         super(SizeAttributeForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-
 
 
 class GiftCreateForm(forms.ModelForm):

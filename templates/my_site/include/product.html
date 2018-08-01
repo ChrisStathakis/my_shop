@@ -1,0 +1,17 @@
+{% load static %}
+
+<div class="single-products-catagory clearfix">
+    <a href="{{ product.get_absolute_url }}">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="">
+        {% else %}
+        <img src="{% static 'home/no_image.png' %}" alt="">
+        {% endif %}
+        <!-- Hover Content -->
+        <div class="hover-content">
+            <div class="line"></div>
+            <p>{{ product.tag_final_price }}</p>
+            <h4>{{ product }}</h4>
+        </div>
+    </a>
+</div>
