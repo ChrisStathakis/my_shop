@@ -16,7 +16,7 @@ def initial_filter_data(queryset):
 
 def grab_user_filter_data(request):
     brand_name = request.GET.getlist('brand_name')
-    category_name = request.GET.getlist('cate_name')
+    category_name = request.GET.getlist('site_cate_name')
     color_name = request.GET.getlist('color_name')
     return [brand_name, category_name, color_name]
 

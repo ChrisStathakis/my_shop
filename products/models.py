@@ -79,7 +79,7 @@ class Size(DefaultBasicModel):
 
     class Meta:
         verbose_name_plural = '6. Μεγέθη'
-        ordering = ['-costum_ordering', ]
+        ordering = ['costum_ordering', ]
 
     def __str__(self):
         return self.title
@@ -306,6 +306,7 @@ class SizeAttribute(models.Model):
     class Meta:
         verbose_name_plural = '2. Μεγεθολόγιο'
         unique_together = ['title', 'product_related']
+        ordering = ['title']
 
     def save(self, *args, **kwargs):
         get_sizes = SizeAttribute.objects.filter(product_related=self.product_related)

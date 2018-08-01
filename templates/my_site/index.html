@@ -21,7 +21,7 @@
                 <div class="col-12">
                     <div class="search-content">
                         <form action="#" method="get">
-                            <input type="search" name="search" id="search" placeholder="Type your keyword...">
+                            <input type="search" name="search_name" id="search" placeholder="Type your keyword...">
                             <button type="submit"><img src="{% static 'home/img/core-img/search.png' %}" alt=""></button>
                         </form>
                     </div>
@@ -30,6 +30,22 @@
         </div>
     </div>
     <!-- Search Wrapper Area End -->
+
+    {% block messages %}
+        {% if messages %}
+        <div class="main-content-wrapper d-flex clearfix">
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        </div>
+        {% endif %}
+    {% endblock %}
 
     {% block content %}
     <!-- ##### Main Content Wrapper Start ##### -->
@@ -40,7 +56,7 @@
         <div class="products-catagories-area clearfix">
             <div class="amado-pro-catagory clearfix">
                 <!-- Single Catagory -->
-                {% for product in featured_products %}
+                {% for product in banners %}
                     {% include 'my_site/include/product.html' %}
                 {% endfor %}
             </div>

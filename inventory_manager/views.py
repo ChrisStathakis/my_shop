@@ -142,11 +142,6 @@ def delete_order_item(request, dk):
 
 
 
-
-
-
-
-
 @method_decorator(staff_member_required, name='dispatch')
 class WarehouseHomepage(TemplateView):
     template_name = 'inventory_manager/'

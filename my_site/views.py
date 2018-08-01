@@ -72,8 +72,9 @@ class NewProductsPage(SearchMixin, ListView):
         seo_title = 'New Products'
         brands, categories, colors = initial_filter_data(self.object_list)
         menu_categories, cart, cart_items = initial_data(self.request)
-        brand_name, cate_name, color_name = grab_user_filter_data(self.request)
+        brand_name, site_cate_name, color_name = grab_user_filter_data(self.request)
         context.update(locals())
+
         return context
 
 

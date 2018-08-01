@@ -5,89 +5,103 @@
     <!-- ##### Main Content Wrapper Start ##### -->
     <div class="main-content-wrapper d-flex clearfix">
         {% include 'my_site/include/navbar.html' %}
-
+        
         <div class="shop_sidebar_area">
-
+            <form method='get'>
             <!-- ##### Single Widget ##### -->
-            <div class="widget catagory mb-50">
-                <!-- Widget Title -->
-                <h6 class="widget-title mb-30">Categories</h6>
-                <div class="widget-desc">
-                    {% for category in categories %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="amado">
-                        <label class="form-check-label" for="amado">{{ category }}</label>
-                    </div>
-                    {% endfor %}
-                </div>
-
-            </div>
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget brands mb-50">
-                <!-- Widget Title -->
-                <h6 class="widget-title mb-30">Brands</h6>
-
-                <div class="widget-desc">
-                    {% for brand in brands %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="amado">
-                        <label class="form-check-label" for="amado">Amado</label>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget color mb-50">
-                <!-- Widget Title -->
-                <h6 class="widget-title mb-30">Color</h6>
-
-                <div class="widget-desc">
-                    <ul class="d-flex">
-                        <li><a href="#" class="color1"></a></li>
-                        <li><a href="#" class="color2"></a></li>
-                        <li><a href="#" class="color3"></a></li>
-                        <li><a href="#" class="color4"></a></li>
-                        <li><a href="#" class="color5"></a></li>
-                        <li><a href="#" class="color6"></a></li>
-                        <li><a href="#" class="color7"></a></li>
-                        <li><a href="#" class="color8"></a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- ##### Single Widget ##### -->
-            <div class="widget price mb-50">
-                <!-- Widget Title -->
-                <h6 class="widget-title mb-30">Price</h6>
-
-                <div class="widget-desc">
-                    <div class="slider-range">
-                        <div data-min="10" data-max="1000" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="10" data-value-max="1000" data-label-result="">
-                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                <div class="widget catagory mb-50">
+                    <!-- Widget Title -->
+                    <h6 class="widget-title mb-30">Categories</h6>
+                    <div class="widget-desc">
+                        {% for category in categories %}
+                        <div class="form-check">
+                            <input name='site_cate_name' class="form-check-input" type="checkbox" value="{{ category.id }}" id="category_{{ category.id }}" {% if category.id in site_cate_name %} checked {% endif %}>
+                            <label class="form-check-label" for="category_{{ category.id }}">{{ category }}</label>
                         </div>
-                        <div class="range-price">$10 - $1000</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- ##### Single Widget ##### -->
+                <div class="widget brands mb-50">
+                    <!-- Widget Title -->
+                    <h6 class="widget-title mb-30">Brands</h6>
+
+                    <div class="widget-desc">
+                        {% for brand in brands %}
+                        <div class="form-check">
+                            <input name='brand_name' class="form-check-input" type="checkbox" value="{{ brand.id }}" id="brand_{{ brand.id }}" {% if brand.id in brand_name %} checked {% endif %}>
+                            <label class="form-check-label" for="brand_{{ brand.id }}">{{ brand }}</label>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
+
+                <div class="widget brands mb-50">
+                        <!-- Widget Title -->
+                        <h6 class="widget-title mb-30">Colors</h6>
+    
+                        <div class="widget-desc">
+                            {% for color in colors %}
+                            <div class="form-check">
+                                <input name='color_name' class="form-check-input" type="checkbox" value="{{ color.id }}" id="color_{{ color.id }}" {% if color.id in color_name %} checked {% endif %}>
+                                <label class="form-check-label" for="color_{{ color.id }}">{{ color }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                <!-- ##### Single Widget ##### -->
+                <div class="widget color mb-50">
+                    <!-- Widget Title -->
+                    <h6 class="widget-title mb-30">Color</h6>
+
+                    <div class="widget-desc">
+                        <ul class="d-flex">
+                            <li><a href="#" class="color1"></a></li>
+                            <li><a href="#" class="color2"></a></li>
+                            <li><a href="#" class="color3"></a></li>
+                            <li><a href="#" class="color4"></a></li>
+                            <li><a href="#" class="color5"></a></li>
+                            <li><a href="#" class="color6"></a></li>
+                            <li><a href="#" class="color7"></a></li>
+                            <li><a href="#" class="color8"></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ##### Single Widget ##### -->
+                <div class="widget price mb-50">
+                    <!-- Widget Title -->
+                    <h6 class="widget-title mb-30">Price</h6>
+
+                    <div class="widget-desc">
+                        <div class="slider-range">
+                            <div data-min="10" data-max="1000" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="10" data-value-max="1000" data-label-result="">
+                                <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                            </div>
+                            <div class="range-price">$10 - $1000</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget price mb-50">
+                    <button type='submit' class="btn btn-primary">Save</button>
+                    <a href="{{ request.path }}" class="btn btn-warning">Reset</a>
+                </div>
+            </form>
         </div>
 
         <div class="amado_product_area section-padding-100">
             <div class="container-fluid">
-
                 <div class="row">
                     <div class="col-12">
                         <div class="product-topbar d-xl-flex align-items-end justify-content-between">
                             <!-- Total Products -->
                             <div class="total-products">
-                                <p>Showing 1-8 0f 25</p>
-                                <div class="view d-flex">
-                                    <a href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
-                                </div>
+                                <p>{{ seo_title }}</p>
                             </div>
                             <!-- Sorting -->
                             <div class="product-sorting d-flex">
@@ -119,227 +133,51 @@
 
                 <div class="row">
 
+                    {% for product in object_list %}
                     <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                    <div class="col-6 col-sm-3 col-md-6 col-xl-3">
                         <div class="single-product-wrapper">
                             <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product1.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product2.jpg" alt="">
-                            </div>
+                            <a href='{{ product.get_absolute_url }}'>
+                                <div class="product-img">
+                                    {% if product.image %}
+                                    <img class="img-thumbnail product-image" src="{{ product.image.url }}" alt="t">
+                                    {% else %}
+                                    <img class='img-thumbnail' src="{% static 'home/no_image.png' %}" alt="t">
+                                    <!-- Hover Thumb -->
+                                    {% endif %}
+                                    <img class="hover-img" src="{% static 'home/no_image.png' %}" alt="r">
+                                </div>
+                            </a>
 
                             <!-- Product Description -->
                             <div class="product-description d-flex align-items-center justify-content-between">
                                 <!-- Product Meta Data -->
                                 <div class="product-meta-data">
                                     <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
+                                    <p class="product-price">{{ product.tag_final_show_price }}</p>
+                                    <a href="{{ product.get_absolute_url }}">
+                                        <h6>{{ product }}</h6>
                                     </a>
                                 </div>
                                 <!-- Ratings & Cart -->
                                 <div class="ratings-cart text-right">
                                     <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                        <p>{{ product.brand }}</p>
                                     </div>
+                                    {% if product.size %}
+                                    <a href="{{ product.get_absolute_url }}" data-toggle="tooltip" data-placement="left" title="Details"><img src="{% static 'home/img/core-img/cart.png' %}" alt=""></a>
+                                    {% else %}
                                     <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
+                                        <a href="{% url 'cart:add' product.id %}" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="{% static 'home/img/core-img/cart.png' %}" alt=""></a>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product2.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product3.jpg" alt="">
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product3.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product4.jpg" alt="">
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product4.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product5.jpg" alt="">
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product5.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product6.jpg" alt="">
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <img src="img/product-img/product6.jpg" alt="">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="img/product-img/product1.jpg" alt="">
-                            </div>
-
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price">$180</p>
-                                    <a href="product-details.html">
-                                        <h6>Modern Chair</h6>
-                                    </a>
-                                </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
+                   
                 </div>
 
                 <div class="row">
@@ -357,6 +195,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 

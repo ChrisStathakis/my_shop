@@ -4,7 +4,7 @@
         <div class="mobile-nav">
             <!-- Navbar Brand -->
             <div class="amado-navbar-brand">
-                <a href="index.html"><img src="{% static 'home/img/core-img/logo.png' %}" alt=""></a>
+                <a href="{% url 'homepage' %}"><img src="{% static 'home/img/core-img/logo.png' %}" alt=""></a>
             </div>
             <!-- Navbar Toggler -->
             <div class="amado-navbar-toggler">
@@ -20,7 +20,7 @@
             </div>
             <!-- Logo -->
             <div class="logo">
-                <a href="index.html"><img src="{% static 'home/img/core-img/logo.png' %}" alt=""></a>
+                <a href="{% url 'homepage' %}"><img src="{% static 'home/img/core-img/logo.png' %}" alt=""></a>
             </div>
             <!-- Amado Nav -->
             <nav class="amado-nav">
@@ -29,17 +29,16 @@
                     {% for category in menu_categories %}
                         <li><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
                     {% endfor %}
-                    <li><a href="cart.html">Cart</a></li>
                 </ul>
             </nav>
             <!-- Button Group -->
             <div class="amado-btn-group mt-30 mb-100">
-                <a href="#" class="btn amado-btn mb-15">%Discount%</a>
-                <a href="#" class="btn amado-btn active">New this week</a>
+                <a href="{% url 'offers_page' %}" class="btn amado-btn mb-15">Discounts</a>
+                <a href="{% url 'new_products_page' %}" class="btn amado-btn active">New this week</a>
             </div>
             <!-- Cart Menu -->
             <div class="cart-fav-search mb-100">
-                <a href="cart.html" class="cart-nav"><img src="{% static 'home/img/core-img/cart.png' %}" alt=""> Cart <span>(0)</span></a>
+                <a href="{% url 'cart_page' %}" class="cart-nav"><img src="{% static 'home/img/core-img/cart.png' %}" alt=""> Cart <span>({{ cart_items.count|default_if_none:'0' }})</span></a>
                 <a href="#" class="fav-nav"><img src="{% static 'home/img/core-img/favorites.png' %}" alt=""> Favourite</a>
                 <a href="#" class="search-nav"><img src="{% static 'home/img/core-img/search.png' %}" alt=""> Search</a>
             </div>
