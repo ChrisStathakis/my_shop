@@ -83,3 +83,6 @@ def create_coupon(request):
     form_title = 'Create Coupon'
     context = locals()
     return render(request, 'dashboard/form_view.html', context)
+
+
+

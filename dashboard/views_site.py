@@ -30,6 +30,15 @@ class BannerView(ListView):
     model = Banner
     template_name = 'dashboard/site_templates/banners.html'
 
+    def get_queryset(self):
+        queryset = Banner.objects.all()
+        active_name = self.request.GET.get('active_name', None)
+        if active_name == '1':
+            queryset = queryset.filter(active=True)
+        if active_name == '2':
+            queryset = queryset.filter(active=False)
+        return queryset
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class BannerCreateView(CreateView):

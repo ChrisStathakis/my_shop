@@ -12,7 +12,7 @@
 {% block content %}
     <div class="content">
         <div class="container-fluid">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="header">
                         <h2 class='title text-center'> Add images to {{ instance }}</h2>
@@ -30,7 +30,7 @@
                     </div>   
                 </div>  
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <a href='{% url "dashboard:product_detail" instance.id %}' class='btn btn-warning'>Back</a>
                 <div class="card">
                     <div class="header"><h2 class='title text-center'>Photos</h2></div>
@@ -40,12 +40,16 @@
                                 <thead>
                                     <tr>
                                         <th>Photo</th>
+                                        <th colspan="3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for photo in photos %}
                                         <tr>
-                                            <td><a href="{{ photo.image.url }}">{{ photo.title }} - Photo..{{ forloop.counter }}</a> </th>
+                                            <td><img src='{{ photo.image.url }}' style='max-height: 50px;max-width: 50px;' class="img img-rounded img-thumbnail"></td>
+                                            <td><a href="{% url 'dashboard:edit_product_image' photo.id 'primary' %}" class="btn btn-primary">{{ photo.tag_primary }}</a></td>
+                                            <td><a href="{% url 'dashboard:edit_product_image' photo.id 'secondary' %}" class="btn btn-primary">{{ photo.tag_secondary }}</a></td>
+                                            <td><a href="{% url 'dashboard:edit_product_image' photo.id 'delete' %}" class="btn btn-primary">Delete</a></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

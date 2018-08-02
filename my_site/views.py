@@ -84,7 +84,7 @@ class OffersPage(SearchMixin, ListView):
     paginate_by = 16
 
     def get_queryset(self):
-        queryset = Product.my_query.active_for_site().filter(price_discount__gte=0)
+        queryset = Product.my_query.active_for_site().filter(price_discount__gt=0)
         queryset = Product.filters_data(self.request, queryset)
         queryset = queryset_ordering(self.request, queryset)
         return queryset
@@ -275,24 +275,24 @@ class CartPage(SearchMixin, TemplateView):
         return render(self.request, self.template_name, context=context)
 
 
-def ajax_edit_cart(request):
-    menu_categories, cart, cart_items = initial_data(self.request)
+def update_cart_page(request, pk, qty):
     data = {}
-    form_data = request.POST
-    for key, value in form_data:
-        try:
-            instance = CartItem.objects.get(id=key)
-            instance.qty = int(value) if int(value) > 0 else instance.qty
-            instance.save()
-        except:
-            continue
-    CartGiftItem.check_cart(cart)
-    data['table'] = render_to_string(request='',
-                                     template_name='', 
-                                     context={}
-                                     )
+    instance = get_object_or_404(CartItem, id=pk)
+    if qty > 0 :
+        instance.qty = qty
+        instance.save()
+    cart_items = instance.order_related.cart_items.all()
+    cart = instance.order_related
+    data['table_data'] = render_to_string(request=request,
+                                          template_name='my_site/ajax_calls/cart_page_table.html',
+                                          context = {'cart_items': cart_items}
+                                    )
+    data['cart_data'] = render_to_string(request=request,
+                                     template_name='my_site/ajax_calls/cart_page_cart.html',
+                                     context = {'cart': cart}
+                                    )
     return JsonResponse(data)
-
+    
 
 def checkout_page(request):
     #del request.session['cart_id']

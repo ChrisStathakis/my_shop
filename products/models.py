@@ -359,6 +359,12 @@ class ProductPhotos(models.Model):
 
     def tag_status(self):
         return 'First Picture' if self.is_primary else 'Back Picture' if self.is_back else 'Picture'
+    
+    def tag_primary(self):
+        return 'Primary' if self.is_primary else 'No Primary'
+
+    def tag_secondary(self):
+        return 'Secondary' if self.is_back else "No Back Image"
 
 
 class Gifts(models.Model):

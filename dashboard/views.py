@@ -179,6 +179,25 @@ class ProductAddMultipleImages(View):
 
 
 @staff_member_required
+def edit_product_image(request, pk, action):
+    instance = get_object_or_404(ProductPhotos, id=pk)
+    if action == 'primary':
+        if instance.is_primary:
+            instance.is_primary = False
+        else:
+            instance.is_primary = True
+    if action == 'secondary':
+        if instance.is_back:
+            instance.is_back = False
+        else:
+            instance.is_back = True
+    instance.save()
+    if action == 'delete':
+        instance.delete()
+    return HttpResponseRedirect(reverse('dashboard:product_add_images', kwargs={'dk': instance.product.id}))
+    
+
+@staff_member_required
 def delete_product_image(request, pk):
     instance = get_object_or_404(ProductPhotos, id=pk)
     instance.delete()

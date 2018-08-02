@@ -24,6 +24,7 @@ urlpatterns = [
 
     url(r'^product/(?P<slug>[-\w]+)/$', view=product_detail, name='product_page'),
     path('cart-page/', CartPage.as_view(), name='cart_page'),
+    path('cart-page/ajax/update/<int:pk>/<int:qty>/', view=update_cart_page, name='update_cart_page'),
     path('checkout/',  view=checkout_page, name='checkout_page'),
 
 

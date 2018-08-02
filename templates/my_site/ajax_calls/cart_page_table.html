@@ -1,0 +1,63 @@
+{% load static %}
+<table class="table table-responsive ">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Price/Total Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td class="cart_product_img">
+                    {% if item.product_related.image %}
+                        <a href="{{ item.product_related.get_absolute_url }}"><img class="img-thumbnail small-image" src="{{ item.product_related.image.url }}" alt="Product"></a>
+                    {% else %}
+                        <a href="{{ item.product_related.get_absolute_url }}"><img class="img-thumbnail small-image" src="{% static 'home/no_image.png' %}" alt="Product"></a>
+                    {% endif %}
+                </td>
+                <td class="cart_product_desc">
+                    <h5>{{ item }}</h5>
+                </td>
+                <td class="price">
+                    <span>{{ item.tag_final_price }}</span> / <span>{{ item.tag_total_price }}</span>
+                </td>
+                <td class="qty">
+                    <div class="qty-btn d-flex">
+                        <p>Qty</p>
+                        <div class="quantity">
+                            <input data-href='{{ item.id }}' type="number" class="qty-text my_button" id="qty_{{ item.id }}" step="1" min="1" max="300" name="qty_{{ item.id }}" value="{{item.qty }}">
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No items added</td>
+                </tr>
+            {% endfor %}
+           
+        </tbody>
+    </table>
+
+
+    <script>
+            $('.my_button').change(function(event) {
+                const btn = $(this);
+                const item = btn.attr('data-href')
+                const qty_name = 'qty_'+ item
+                const value = $('#'+ qty_name).val();
+                console.log('id: ',item, ', value: ', value)
+                let href = '/cart-page/ajax/update/'+ item + '/'+ value + '/'
+                $.ajax({
+                    dataType: 'json',
+                    url: href,
+                    success: function(response){
+                        $('#table_data').html(response.table_data)
+                        $('#cart_data').html(response.cart_data)
+                    }
+                })
+            })
+        </script>
