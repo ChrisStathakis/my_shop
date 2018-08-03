@@ -150,6 +150,14 @@ class Product(DefaultBasicModel):
         self.is_offer = True if self.price_discount > 0 else False
         super(Product, self).save(*args, **kwargs)
 
+    def update_product(self, transcation, qty):
+        if transcation == 'add':
+            self.qty += qty
+            self.save()
+        if transcation == 'remove':
+            self.qty -= qty
+            self.save()
+
     def update_qty(self):
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             pass

@@ -38,6 +38,9 @@ urlpatterns = [
     # create database always stay commented if in production
 
     path('user-data/', view=user_download_page, name='user_data'),
+
+    # test using
+    path('reset-cart/', view=reset_cart),
 ] 
 
 

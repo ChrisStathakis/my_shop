@@ -7,16 +7,13 @@
         {% include 'my_site/include/navbar.html' %}
         <div class="cart-table-area section-padding-100">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12 col-lg-8">
+                    <form method="post" class="row"> {% csrf_token %}
+                        <div class="col-12 col-lg-8">     
                             <div class="checkout_details_area mt-50 clearfix">
-    
                                 <div class="cart-title">
                                     <h2>Checkout</h2>
                                 </div>
-    
-                                <form action="#" method="post">
-                                    <div class="row">
+                                <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <input type="text" class="form-control" id="id_first_name" name='first_name' value="" placeholder="First Name" required>
                                         </div>
@@ -33,14 +30,17 @@
                                         <div class="col-12 mb-3">
                                             <input type="text" class="form-control mb-3" id="id_address" name='address' placeholder="Address" value="" required>
                                         </div>
-                                        <div class="col-12 mb-3">
-                                            <input type="text" class="form-control" id="id_city" name='city' placeholder="Town" value="">
+                                        <div class="col-md-6 mb-3">
+                                            <input type="text" class="form-control" id="id_city" name='city' placeholder="Town" value="" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <input type="text" class="form-control" id="id_zip_code" name='zip_code' placeholder="Zip Code" value="">
+                                            <input type="number" class="form-control" id="id_zip_code" name='zip_code' placeholder="Zip Code" value="" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <input type="number" class="form-control" id="id_cellphone" name='cellphone' min="0" placeholder="CellPhone No" value="">
+                                                <input type="number" class="form-control" id="id_cellphone" name='cellphone' min="0" placeholder="CellPhone No" value="" required>
+                                            </div>
+                                        <div class="col-md-6 mb-3">
+                                            <input type="number" class="form-control" id="id_cellphone" name='phone' min="0" placeholder="Phone" value="">
                                         </div>
                                         <div class="col-12 mb-3">
                                             <textarea name="comment" class="form-control w-100" id="comment" cols="30" rows="10" placeholder="Leave a comment about your order"></textarea>
@@ -52,12 +52,11 @@
                                                 <label class="custom-control-label" for="customCheck2">Create an accout</label>
                                             </div>
                                             <div class="custom-control custom-checkbox d-block">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                                <label class="custom-control-label" for="customCheck3">Ship to a different address</label>
+                                                <input name='agreed' type="checkbox" class="custom-control-input" id="customCheck3" required>
+                                                <label class="custom-control-label" for="customCheck3">Agree to Rules</label>
                                             </div>
                                         </div>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-4">
@@ -71,41 +70,33 @@
     
                                 <div class="payment-method">
                                         <h6>Payment Method</h6>
-                                    <!-- Cash on delivery -->
-                                    <div class="custom-control custom-checkbox mr-sm-2">
-                                        <input type="checkbox" class="custom-control-input" id="cod" checked>
-                                        <label class="custom-control-label" for="cod">Cash on Delivery</label>
-                                    </div>
-                                    <!-- Paypal -->
-                                    <div class="custom-control custom-checkbox mr-sm-2">
-                                        <input type="checkbox" class="custom-control-input" id="paypal">
-                                        <label class="custom-control-label" for="paypal">Paypal <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
-                                    </div>
+                                        {% for payment in payment_methods %}
+                                        <!-- Cash on delivery -->
+                                        <div class="custom-control mr-sm-2">
+                                            <label><input type="radio" name="payment_method" value="{{ payment.id }}" required>{{ payment }}</label>
+                                        </div>
+                                        {% endfor %}
                                 </div>
 
                                 <div class="payment-method">
                                     <h6>Shipping Method</h6>
+                                    {% for shipping in shippings %}
                                         <!-- Cash on delivery -->
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" class="custom-control-input" id="cod" checked>
-                                            <label class="custom-control-label" for="cod">Cash on Delivery</label>
+                                        <div class="custom-control mr-sm-2">
+                                            <label><input type="radio" name="shipping_method" value="{{ shipping.id }}" required>{{ shipping }}</label>
                                         </div>
-                                        <!-- Paypal -->
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" class="custom-control-input" id="paypal">
-                                            <label class="custom-control-label" for="paypal">Paypal <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
-                                        </div>
-                                    </div>
+                                    {% endfor %}
+                                </div>
     
                                 <div class="cart-btn mt-100">
-                                    <a href="#" class="btn amado-btn w-100">Checkout</a>
+                                    <button type='submit' class="btn amado-btn w-100">Checkout</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                   
+                    </form>
                 </div>
-            </div>
-        
+        </div>
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 

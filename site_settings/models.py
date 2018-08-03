@@ -6,7 +6,7 @@ from django.db.models.signals import post_delete, pre_save
 from django.utils import timezone
 from django.db.models import Sum, Q
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 from .constants import BANKS, CURRENCY
 
 
@@ -74,7 +74,7 @@ class DefaultOrderModel(models.Model):
     user_account = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.TextField(blank=True, null=True)
     payment_method = models.ForeignKey(PaymentMethod, null=True, on_delete=models.SET_NULL)
-    date_expired = models.DateTimeField(auto_created=True)
+    date_expired = models.DateTimeField(default=timezone.now())
     value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
@@ -91,11 +91,11 @@ class DefaultOrderModel(models.Model):
 class DefaultOrderItemModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-
     qty = models.PositiveIntegerField(default=1)
     value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     discount_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    
 
     class Meta:
         abstract = True

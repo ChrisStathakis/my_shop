@@ -175,7 +175,7 @@ class CreateOrderItemWithSizePage(CreateView):
         return reverse('dashboard:eshop_order_edit', kwargs={'pk': self.kwargs.get('pk')})
 
 
-@login_required()
+@staff_member_required
 def edit_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
     old_instance = get_object_or_404(RetailOrderItem, id=dk)
@@ -192,7 +192,7 @@ def edit_order_item(request, dk):
     return render(request, 'dashboard/order_section/edit_order_item.html', context)
 
 
-@login_required()
+@staff_member_required
 def delete_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
     instance.remove_item()

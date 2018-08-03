@@ -180,3 +180,4 @@ USE_QTY_LIMIT = False
 
 USE_WAREHOUSE = False
 USE_REPORTS = False
+TIME_ZONE = 'Europe/Istanbul'

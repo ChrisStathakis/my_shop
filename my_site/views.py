@@ -299,6 +299,8 @@ def checkout_page(request):
     form = CheckoutForm(request.POST or None)
     user = request.user.is_authenticated
     menu_categories, cart, cart_items = initial_data(request)
+    payment_methods = PaymentMethod.objects.filter(active=True)
+    shippings = Shipping.objects.filter(active=True)
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
     if user:
         profile = CostumerAccount.objects.get(user=user)
@@ -326,13 +328,20 @@ def checkout_page(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if request.POST:
         form = CheckoutForm(request.POST)
+        print(form.errors)
         if form.is_valid():
+            print('valid')
             cart_items = CartItem.objects.filter(order_related=cart)
-            new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
-            messages.success(request, 'Your Order Have Completed!')
-            GiftRetailItem.check_retail_order(new_order, cart)
-            del request.session['cart_id']
-            return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
+            try:
+                new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
+                messages.success(request, 'Your Order Have Completed!')
+                GiftRetailItem.check_retail_order(new_order, cart)
+                del request.session['cart_id']
+                return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
+            except:
+                del request.session['cart_id']
+                return HttpResponseRedirect('/')
+            
     context = locals()
     return render(request, 'my_site/checkout.html', context)
 
@@ -381,7 +390,6 @@ class FastOrdering(ListView):
         return context
 
 
-
 def order_detail_page(request, dk):
     instance = get_object_or_404(RetailOrder, id=dk)
     order_items = instance.order_items.all()
@@ -392,6 +400,9 @@ def order_detail_page(request, dk):
     return render(request, 'my_site/order_detail.html', context)
 
 
+def reset_cart(request):
+    del request.session['cart_id']
+    return HttpResponseRedirect('/')
 
 @login_required
 def user_download_page(request):

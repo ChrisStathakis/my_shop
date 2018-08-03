@@ -113,6 +113,7 @@ class RetailOrder(DefaultOrderModel):
     def __str__(self):
         return self.title if self.title else 'order'
 
+
     def save(self, *args, **kwargs):
         get_all_items = self.order_items.all()
         self.count_items = get_all_items.count() if get_all_items else 0
@@ -142,6 +143,12 @@ class RetailOrder(DefaultOrderModel):
         if self.order_type in ['b', 'd']:
             self.payorders.all().update(is_expense=True)
 
+    def update_order(self):
+        items = self.order_items.all()
+        self.value = items.aggregate(Sum('total_value'))['total_value__sum'] if items else 0
+        self.total_cost = items.aggregate(Sum('total_cost_value'))['total_cost_value__sum'] if items else 0
+        self.save()
+
     def check_coupons(self):
         total_value = 0
         active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
@@ -151,8 +158,6 @@ class RetailOrder(DefaultOrderModel):
                     total_value += coupon.discount_value if coupon.discount_value else \
                     (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
         self.discount = total_value
-
-    
 
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False
@@ -193,7 +198,6 @@ class RetailOrder(DefaultOrderModel):
 
     def tag_payment_value(self):
         return '%s %s' % (self.payment_cost, CURRENCY)
-
 
     @property
     def get_order_items(self):
@@ -242,7 +246,6 @@ class RetailOrder(DefaultOrderModel):
         return queryset
 
     
-
     @staticmethod
     def estimate_shipping_and_payment_cost(order_value, shipping, payment):
         shipping_cost = shipping.cost if shipping.active_minimum_cost < order_value else 0
@@ -268,13 +271,13 @@ class RetailOrder(DefaultOrderModel):
                                                last_name=form.cleaned_data.get('last_name'),
                                                city=form.cleaned_data.get('city'),
                                                address=form.cleaned_data.get('address'),
-                                                   zip_code=form.cleaned_data.get('zip_code'),
-                                                   cellphone=form.cleaned_data.get('cellphone'),
-                                                   phone=form.cleaned_data.get('phone'),
-                                                   costumer_submit=form.cleaned_data.get('agreed'),
-                                                   eshop_session_id=cart.id_session,
-                                                   notes=form.cleaned_data.get('notes'),
-                                                   cart_related=cart,
+                                               zip_code=form.cleaned_data.get('zip_code'),
+                                               cellphone=form.cleaned_data.get('cellphone'),
+                                               phone=form.cleaned_data.get('phone'),
+                                               costumer_submit=form.cleaned_data.get('agreed'),
+                                               eshop_session_id=cart.id_session,
+                                               notes=form.cleaned_data.get('notes'),
+                                               cart_related=cart,
                                                 )
         if cart.user:
             new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
@@ -289,6 +292,8 @@ class RetailOrder(DefaultOrderModel):
                                                                 discount_value=item.price_discount,
                                                                 size=item.characteristic,
                                                                 )
+                    
+
                 else:
                     order_item = RetailOrderItem.objects.create(title=item.product_related,
                                                                 order=new_order,
@@ -297,8 +302,9 @@ class RetailOrder(DefaultOrderModel):
                                                                 qty=item.qty,
                                                                 discount_value=item.price_discount,
                                                                 )
-                
-            
+                    
+                order_item.update_warehouse('remove', item.qty)
+            new_order.update_order()
             cart.is_complete = True
             cart.save()
         return new_order
@@ -322,6 +328,8 @@ class RetailOrderItem(DefaultOrderItemModel):
     is_find = models.BooleanField(default=False)
     is_return = models.BooleanField(default=False)
     size = models.ForeignKey(SizeAttribute, blank=True, null=True, on_delete=models.SET_NULL)
+    total_value = models.DecimalField(max_digits=20, decimal_places=0, default=0, help_text='qty*final_value')
+    total_cost_value = models.DecimalField(max_digits=20, decimal_places=0, default=0, help_text='qty*cost')
     my_query = RetailOrderItemManager()
     objects = models.Manager()
 
@@ -332,12 +340,31 @@ class RetailOrderItem(DefaultOrderItemModel):
     def __str__(self):
         return self.title.title
 
+    def save(self, *args, **kwargs):
+        self.final_value = self.discount_value if self.discount_value > 0 else self.value
+        self.total_value = self.final_value*self.qty
+        self.total_cost_value = self.cost*self.qty
+        super(RetailOrderItem, self).save(*args, **kwargs)
+    
+
+    def update_warehouse(self, transcation, qty):
+        if RETAIL_TRANSCATIONS:
+            product = self.title
+            if self.size:
+                self.size.update_size()
+            else:
+                product.update_product(transcation, qty)
+        else:
+            pass
+
+    def update_order_item(self):
+        self.order.update_order()
+        
+    
     def add_item(self, qty):
-        get_total_value = self.final_value * qty
-        get_total_cost = self.cost * qty
-        self.order.value += get_total_value
-        self.order.total_cost += get_total_cost
-        self.order.save()
+        get_total_value = self.total_value
+        get_total_cost = self.total_cost_value
+        self.order.update_order()
         if RETAIL_TRANSCATIONS:
             self.title.qty -= qty
             self.title.save()
@@ -349,11 +376,9 @@ class RetailOrderItem(DefaultOrderItemModel):
             costumer.save() 
 
     def remove_item(self):
-        get_total_value = self.final_value * self.qty
-        get_total_cost = self.cost * self.qty
-        self.order.value -= get_total_value
-        self.order.total_cost -= get_total_cost
-        self.order.save()
+        get_total_value = self.total_value
+        get_total_cost = self.total_cost_value
+        self.order.update_order()
         if RETAIL_TRANSCATIONS:
             self.title.qty += self.qty
             self.title.save()
@@ -363,11 +388,6 @@ class RetailOrderItem(DefaultOrderItemModel):
             costumer = self.order.costumer_account
             costumer.balance -= get_total_cost
             costumer.save()
-
-    def save(self, *args, **kwargs):
-        self.final_value = self.discount_value if self.discount_value > 0 else self.value
-        super(RetailOrderItem, self).save(*args, **kwargs)
-        
 
     def get_clean_value(self):
         return self.final_value * (100-self.order.taxes/100)
