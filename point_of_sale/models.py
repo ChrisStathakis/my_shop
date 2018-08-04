@@ -81,7 +81,7 @@ class RetailOrder(DefaultOrderModel):
     costumer_account = models.ForeignKey(CostumerAccount, blank=True, null=True, verbose_name='Πελάτης', on_delete=models.CASCADE)
     #eshop info only
 
-    shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.CASCADE)
+    shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.SET_NULL)
     shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     payment_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     day_sent = models.DateTimeField(blank=True, null=True)

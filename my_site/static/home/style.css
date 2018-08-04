@@ -24,3 +24,14 @@
         width: 100px;
         height: 100px;
     }
+
+    .my_radiobutton {
+        background-color:#f5f7fa;
+        color: black;
+        margin-right: 1%;
+        margin-left: 1%;
+    }
+
+    .my_radiobutton:hover {
+        background-color:#fbb710;
+    }

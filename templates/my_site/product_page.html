@@ -24,14 +24,24 @@
 
                 <div class="row">
                     <div class="col-12 col-lg-7">
-                        {% if product.images %}
+                        {% if instance.images %}
                         <div class="single_product_thumb">
                             <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                                 <ol class="carousel-indicators">
-                                    <li class="active" data-target="#product_details_slider" data-slide-to="0" style="background-image: url(img/product-img/pro-big-1.jpg);">
+                                    <li class="active" 
+                                        data-target="#product_details_slider" 
+                                        data-slide-to="0" 
+                                        {% if instance.image %} 
+                                            style="background-image: url({{ instance.image.url }});"
+                                        {% else %}
+                                            style="background-image: url(img/product-img/pro-big-1.jpg);"
+                                        {% endif %}
+                                    >
                                     </li>
-                                    <li data-target="#product_details_slider" data-slide-to="1" style="background-image: url(img/product-img/pro-big-2.jpg);">
+                                    {% for image in instace.images %}
+                                    <li data-target="#product_details_slider" data-slide-to="1" style="background-image: url({{ image.image.url }});">
                                     </li>
+                                    {% endfor %}
                                     <li data-target="#product_details_slider" data-slide-to="2" style="background-image: url(img/product-img/pro-big-3.jpg);">
                                     </li>
                                     <li data-target="#product_details_slider" data-slide-to="3" style="background-image: url(img/product-img/pro-big-4.jpg);">
@@ -63,7 +73,7 @@
                         </div>
                         {% else %}
                             <div class="carousel-item active">
-                                <a class="gallery_img" href="img/product-img/pro-big-1.jpg">
+                                <a class="gallery_img" href="{% static 'home/no_image.png' %}">
                                     <img class="img-responsive img-rounded" src="{% static 'home/no_image.png' %}" alt="First slide">
                                 </a>
                             </div>
@@ -110,12 +120,12 @@
                                     <p>Size</p>
                                     
                                     {% for size in instance.product_sizes.all %}
-                                    <div class="btn btn-primary">
+                                    <div class="btn my_radiobutton">
                                         <label>
                                             <input name='attribute' id='id_attribute' type="radio" value="{{ size.id }}" required> <span class="label-text">{{ size.title }}</span>
                                         </label>
                                     </div>
-                                    <&nbsp><&nbsp>
+                                    
                                     {% endfor %}
                                 </div>
                                 {% endif %}
@@ -141,3 +151,11 @@
 
     {% endblock %}
 
+{% block extra_js %}
+<script>
+    $('.my_radiobutton').click(function(){
+        const btn = $(this)
+    })
+</script>
+
+{% endblock extra_js %}

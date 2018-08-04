@@ -1,9 +1,18 @@
-{% extends 'dash_ware/index.html' %}
+{% extends 'dashboard/dashboard.html' %}
 
 
 {% block content %}
     <div class="content">
         <div class="container-fluid">
+            <div class="row">
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
             <div class="row">
                 <div class="col-md-8">
                     <div class="card">
@@ -19,12 +28,14 @@
                 </div>
                 <div class="col-md-4">
                     <div class="card">
+                        <h4 class="text-center">Actions</h4>
                         <div class="content">
-                            <a href="{{ back_url }}" class="btn btn-warning">Back</a>
+                            <a href="{{ back_url }}" class="btn btn-primary">Back</a>
+                            <br > <br >
+                            <a href="{% url 'dashboard:shipping_delete_view' object.id %}" class="btn btn-warning" onclick="return confirm('Are you sure?');">Delete</a>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 

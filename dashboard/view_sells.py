@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
+from django.contrib import messages
 from django.conf import settings
 
 from products.models import *
@@ -262,6 +263,10 @@ class ShippingEditPage(UpdateView):
 @staff_member_required
 def delete_shipping(request, pk):
     instance = get_object_or_404(Shipping, id=pk)
+    qs_exists = RetailOrder.objects.filter(shipping=instance)
+    if qs_exists.exists():
+        messages.warning(request, 'This Shipping Methos is on use, Cant Deleted')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     instance.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
