@@ -88,6 +88,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="header">
+                        <div class="title">
+                            <h4>Category Site Manager</h4>
+                        </div>
+                        <div class="content">
+                            <a href='{% url "dashboard:category_site_manager" instance.id %}' class="btn btn-primary">Manager</a>
+                        </div>
+                    </div>
+                </div>
+
                 {% if instance.size %}
                     <div class="card">
                         <div class="header">

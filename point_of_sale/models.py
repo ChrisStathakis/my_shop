@@ -113,7 +113,6 @@ class RetailOrder(DefaultOrderModel):
     def __str__(self):
         return self.title if self.title else 'order'
 
-
     def save(self, *args, **kwargs):
         get_all_items = self.order_items.all()
         self.count_items = get_all_items.count() if get_all_items else 0
@@ -221,7 +220,6 @@ class RetailOrder(DefaultOrderModel):
     def tag_full_address(self):
         return f'{self.address}, City: {self.city}'
 
-
     @staticmethod
     def eshop_orders_filtering(request, queryset):
         search_name = request.GET.get('search_name', None)
@@ -244,7 +242,6 @@ class RetailOrder(DefaultOrderModel):
                                    ).distinct() if search_name else queryset
         
         return queryset
-
     
     @staticmethod
     def estimate_shipping_and_payment_cost(order_value, shipping, payment):
@@ -261,7 +258,7 @@ class RetailOrder(DefaultOrderModel):
                                                                                     payment_method
                                                                                     )
         new_order = RetailOrder.objects.create(order_type='e',
-                                               title = f'EshopOrder1{cart.id}',
+                                               title=f'EshopOrder1{cart.id}',
                                                payment_method=form.cleaned_data.get('payment_method'),
                                                shipping=form.cleaned_data.get('shipping_method'),
                                                shipping_cost=shipping_cost,
@@ -273,7 +270,7 @@ class RetailOrder(DefaultOrderModel):
                                                address=form.cleaned_data.get('address'),
                                                zip_code=form.cleaned_data.get('zip_code'),
                                                cellphone=form.cleaned_data.get('cellphone'),
-                                               phone=form.cleaned_data.get('phone'),
+                                               #phone=form.cleaned_data.get('phone'),
                                                costumer_submit=form.cleaned_data.get('agreed'),
                                                eshop_session_id=cart.id_session,
                                                notes=form.cleaned_data.get('notes'),

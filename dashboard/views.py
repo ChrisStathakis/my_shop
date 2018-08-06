@@ -234,6 +234,25 @@ def delete_product_size(request, pk):
     return HttpResponseRedirect(reverse('dashboard:product_add_sizes', kwargs={'pk': instance.product_related.id}))
 
 
+@method_decorator(staff_member_required, name='dispatch')
+class CategorySiteManagerView(ListView):
+    template_name = 'dashboard/category_site_manager.html'
+    model = CategorySite
+
+    def get_queryset(self):
+        queryset = CategorySite.objects.filter(active=True)
+        search_name =  self.request.GET.get('search_name', None)
+        active_name = self.request.GET.get('active_name', None)
+        queryset = CategorySite.filter_data(queryset, search_name, active_name)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CategorySiteManagerView, self).get_context_data(**kwargs)
+        instance = get_object_or_404(Product, id=self.kwargs['pk']) 
+        context.update(locals())
+        return context
+    
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class RelatedProductsView(ListView):

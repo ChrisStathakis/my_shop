@@ -328,9 +328,8 @@ def checkout_page(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if request.POST:
         form = CheckoutForm(request.POST)
-        print(form.errors)
+        print(form.errors, request.POST.get('phone', 'wtf'))
         if form.is_valid():
-            print('valid')
             cart_items = CartItem.objects.filter(order_related=cart)
             try:
                 new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
@@ -383,7 +382,6 @@ class FastOrdering(ListView):
         most_used = []
         for ele in products:
             print(ele['id'])
-            
             most_used.append((RetailOrderItem.objects.get(id=ele['id']), ele['qty__sum']))
         print(most_used)
         context.update(locals())

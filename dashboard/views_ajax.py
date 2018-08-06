@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 import json
 
 from products.forms_popup import *
@@ -106,3 +108,35 @@ def createColorPopup(request):
              '<script>opener.closePopup(window, "%s", "%s", "#id_color");</script>' % (instance.pk, instance)
         )
     return render(request, 'dashboard/ajax_calls/popup_form.html', {"form": form})
+
+
+@staff_member_required
+def ajax_category_site_add(request, pk, dk, choice):
+    data = {}
+    instance = get_object_or_404(Product, id=pk)
+    category = get_object_or_404(CategorySite, id=dk)
+    if choice == 'add':
+        instance.category_site.add(category)
+    if choice =='remove':
+        instance.category_site.remove(category)
+    data['table'] = render_to_string(request=request,
+                                     template_name='dashboard/ajax_calls/category_site_manager.html',
+                                     context = {'instance': instance}
+                                     )
+    return JsonResponse(data)
+
+
+@staff_member_required
+def ajax_category_site_search(request, pk):
+    data = {}
+    instance = get_object_or_404(Product, id=pk)
+    search_name = request.GET.get('search_name', None)
+    queryset = CategorySite.objects.filter(active=True)
+    object_list = CategorySite.filter_data(queryset, search_name, active_name='1')
+    data['table'] = render_to_string(request=request,
+                                     template_name='dashboard/ajax_calls/category_site_search.html',
+                                     context = {'object_list': object_list,
+                                                'instance': instance
+                                                }
+                                     )
+    return JsonResponse(data)

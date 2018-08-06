@@ -19,6 +19,7 @@ urlpatterns = [
     path('products/delete-images/<int:pk>/', view=delete_product_image, name='delete_image'),
     path('products/add-sizes/<int:pk>/', view=product_add_sizechart, name='product_add_sizes'),
     path('products/delete-sizes/<int:pk>/', view=delete_product_size, name='product_delete_size'),
+    path('products/category-site-manager/<int:pk>/', CategorySiteManagerView.as_view(), name='category_site_manager'),
     path('products/add-sizes/create/<int:dk>/<int:pk>/', view=create_new_sizechart, name='create_product_sizechart'),
     path('products/add-related-products/<int:pk>/', RelatedProductsView.as_view(), name='product_related_view'),
     path('products/similar-products/<int:pk>/', SimilarColorProductsView.as_view(), name='product_similar_color_view'),
@@ -35,6 +36,9 @@ urlpatterns = [
     path('products/add-related-products/<int:pk>/ajax/<int:dk>/', view=ajax_add_related_item, name='ajax_add_related_item'),
     path('products/delete-related-products/<int:pk>/ajax/<int:dk>/', view=ajax_delete_related_product, name='ajax_delete_related_product'),
     path('products/different-color/<int:pk>/ajax/<int:dk>/<int:choose>/', view=ajax_differenent_color_product_add_or_remove, name='ajax_add_remove_similar_color'),
+
+    path('products/ajax/add-or-remove-category-site/<int:pk>/<int:dk>/<slug:choice>/', view=ajax_category_site_add, name='category_site_add_or_remove'),
+    path('product/ajax/category-site-search/<int:pk>/', view=ajax_category_site_search, name='ajax_category_site_search'),
 
 
     path('category/', CategoryPage.as_view(), name='categories'),

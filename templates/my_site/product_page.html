@@ -24,60 +24,44 @@
 
                 <div class="row">
                     <div class="col-12 col-lg-7">
-                        {% if instance.images %}
                         <div class="single_product_thumb">
                             <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                                 <ol class="carousel-indicators">
-                                    <li class="active" 
-                                        data-target="#product_details_slider" 
-                                        data-slide-to="0" 
-                                        {% if instance.image %} 
+                                    <li class="active"
+                                        data-target="#product_details_slider"
+                                        data-slide-to="0"
+                                        {% if instance.image %}
                                             style="background-image: url({{ instance.image.url }});"
                                         {% else %}
-                                            style="background-image: url(img/product-img/pro-big-1.jpg);"
+                                            style="background-image: url({% static 'home/no_image.png' %});"
                                         {% endif %}
                                     >
                                     </li>
-                                    {% for image in instace.images %}
-                                    <li data-target="#product_details_slider" data-slide-to="1" style="background-image: url({{ image.image.url }});">
+                                    {% for image in instance.images.all %}
+                                    <li data-target="#product_details_slider" data-slide-to="{{ forloop.counter }}" style="background-image: url({{ image.image.url }});">
                                     </li>
                                     {% endfor %}
-                                    <li data-target="#product_details_slider" data-slide-to="2" style="background-image: url(img/product-img/pro-big-3.jpg);">
-                                    </li>
-                                    <li data-target="#product_details_slider" data-slide-to="3" style="background-image: url(img/product-img/pro-big-4.jpg);">
-                                    </li>
                                 </ol>
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <a class="gallery_img" href="img/product-img/pro-big-1.jpg">
-                                            <img class="d-block w-100" src="img/product-img/pro-big-1.jpg" alt="First slide">
+                                        <a class="gallery_img"
+                                           {% if instance.image %} href="{{ instance.image.url }}" {% else %} href="{% static 'home/no_image.png' %}" {% endif %}>
+                                            <img class="d-block w-100"
+                                                 {% if instance.image %} src="{{ instance.image.url }}" {% else %} src="{% static 'home/no_image.png' %}" {% endif %} alt="First slide"
+                                            >
                                         </a>
                                     </div>
+                                    {% for image in instance.images.all %}
                                     <div class="carousel-item">
-                                        <a class="gallery_img" href="img/product-img/pro-big-2.jpg">
-                                            <img class="d-block w-100" src="img/product-img/pro-big-2.jpg" alt="Second slide">
+                                        <a class="gallery_img" href="{{ image.image.url }}">
+                                            <img class="d-block w-100" src="{{ image.image.url }}" alt="Second slide">
                                         </a>
                                     </div>
-                                    <div class="carousel-item">
-                                        <a class="gallery_img" href="img/product-img/pro-big-3.jpg">
-                                            <img class="d-block w-100" src="img/product-img/pro-big-3.jpg" alt="Third slide">
-                                        </a>
-                                    </div>
-                                    <div class="carousel-item">
-                                        <a class="gallery_img" href="img/product-img/pro-big-4.jpg">
-                                            <img class="d-block w-100" src="img/product-img/pro-big-4.jpg" alt="Fourth slide">
-                                        </a>
-                                    </div>
+                                    {% endfor %}
+
                                 </div>
                             </div>
                         </div>
-                        {% else %}
-                            <div class="carousel-item active">
-                                <a class="gallery_img" href="{% static 'home/no_image.png' %}">
-                                    <img class="img-responsive img-rounded" src="{% static 'home/no_image.png' %}" alt="First slide">
-                                </a>
-                            </div>
-                        {% endif %}
                     </div>
                     <div class="col-12 col-lg-5">
                         <div class="single_product_desc">
@@ -85,28 +69,27 @@
                             <div class="product-meta-data">
                                 <div class="line"></div>
                                 <p class="product-price">{{ instance.tag_final_show_price }}</p>
-                                <a href="">
+                                <a href="{{ instance.image.url }}">
                                     <h6>{{ instance }}</h6>
                                 </a>
-                                <br>
                                 <!-- Ratings & Review -->
                                 <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
                                     <div class="ratings">
-                                        {{ instance.tag_brand }}
+                                        Brand: {{ instance.tag_brand }}
                                     </div>
                                     <div class="ratings">
-                                        <a href="#">{{ instance.tag_site_category }}</a>
+                                        Category <a href="#">{{ instance.tag_site_category }}</a>
                                     </div>
                                 </div><div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
                                     <div class="ratings">
-                                        {{ instance.sku|default_if_none:'No Sku' }}
+                                        Product Sku: {{ instance.sku|default_if_none:'No Sku' }}
                                     </div>
                                     <div class="ratings">
-                                        <p style="color: {{ instance.color.code_id }}"><i class="fa fa-circle"></i> {{ instance.color }}</p>
+                                       Color <p style="color: {{ instance.color.code_id }}"><i class="fa fa-circle"></i> {{ instance.color }}</p>
                                     </div>
                                 </div>
                                 <!-- Avaiable -->
-
+                                <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p>
                             </div>
 
                             <div class="short_overview my-5">
@@ -118,14 +101,13 @@
                                 {% if instance.size %}
                                 <div class="cart-btn d-flex mb-50">
                                     <p>Size</p>
-                                    
                                     {% for size in instance.product_sizes.all %}
                                     <div class="btn my_radiobutton">
                                         <label>
                                             <input name='attribute' id='id_attribute' type="radio" value="{{ size.id }}" required> <span class="label-text">{{ size.title }}</span>
                                         </label>
                                     </div>
-                                    
+
                                     {% endfor %}
                                 </div>
                                 {% endif %}
