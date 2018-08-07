@@ -282,6 +282,7 @@ class Product(DefaultBasicModel):
         color_name = request.GET.getlist('color_name', None)
         feat_name = request.GET.get('feat_name', None)
         active_name = request.GET.get('active_name', None)
+        size_name = request.GET.get('size_name', None)
     
         queryset = queryset.filter(active=True, site_active=True) if active_name == '1' else queryset.filter(active=False, site_active=False) if active_name == '2' else queryset  
         queryset = queryset.filter(is_featured=True) if feat_name == '1' else queryset
@@ -291,6 +292,11 @@ class Product(DefaultBasicModel):
         queryset = queryset.filter(category_site__id__in=site_cate_name) if site_cate_name else queryset
         queryset = queryset.filter(color__id__in=color_name) if color_name else queryset
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        if size_name:
+            queryset = queryset.filter(size=True)
+            sizes_selected = SizeAttribute.objects.filter(title__id__in=size_name, product_related__in=queryset)
+            my_ids = sizes_selected.values('product_related')
+            queryset = queryset.filter(id__in=my_ids)
         return queryset
 
     
@@ -303,7 +309,7 @@ class SizeAttributeManager(models.Manager):
 
 
 class SizeAttribute(models.Model):
-    title = models.ForeignKey(Size, on_delete=models.CASCADE, verbose_name='Νούμερο')
+    title = models.ForeignKey(Size, on_delete=models.CASCADE, verbose_name='Νούμερο', related_name='sizes')
     product_related = models.ForeignKey(Product, null=True, on_delete=models.CASCADE, verbose_name='Προϊόν', related_name='product_sizes')
     qty = models.DecimalField(default=0, decimal_places=2, max_digits=6, verbose_name='Ποσότητα')
     order_discount = models.IntegerField(null=True, blank=True, default=0,verbose_name="'Εκπτωση Τιμολογίου σε %")

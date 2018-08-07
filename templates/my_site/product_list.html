@@ -52,6 +52,19 @@
                         </div>
                     </div>
 
+                
+                <div class="widget brands mb-50">
+                    <h6 class="widget-title mb-30">Sizes</h6>
+                    <div class="widget-desc">
+                        {% for size in sizes %}
+                            <div class="form-check">
+                                <input name='size_name' class="form-check-input" type="checkbox" value="{{ size.0 }}" id="size_{{ szie.id }}" {% if size.0 in sizes %} checked {% endif %}>
+                                <label class="form-check-label" for="size_{{ size.0 }}">{{ size.1 }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <!-- ##### Single Widget ##### -->
                 <div class="widget color mb-50">
                     <!-- Widget Title -->
@@ -186,12 +199,28 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <!-- Pagination -->
                         <nav aria-label="navigation">
                             <ul class="pagination justify-content-end mt-50">
-                                <li class="page-item active"><a class="page-link" href="#">01.</a></li>
-                                <li class="page-item"><a class="page-link" href="#">02.</a></li>
-                                <li class="page-item"><a class="page-link" href="#">03.</a></li>
+                                {% if page_obj.has_previous %}
+                                    {% if '?' in request.path %}
+                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}&page=1">01.</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ object_list.previous_page_number }}">Previous</a></li>
+                                    {% else %}
+                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}?page=1">Next</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ object_list.previous_page_number }}">Last</a></li>
+                                    {% endif %}
+                                {% endif %}
+                                <li class="page-item"><a class="page-link" href="{{ request.path }}">Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.</a></li>
+
+                                {% if object_list.has_next %}
+                                    {% if '?' in request.path %}
+                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}&page=1">01.</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ object_list.previous_page_number }}">Previous</a></li>
+                                    {% else %}
+                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}?page={{ object_list.next_page_number }}">Next</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ object_list.paginator.num_pages }}">Last</a></li>
+                                    {% endif %}
+                                {% endif %}
                                 <li class="page-item"><a class="page-link" href="#">04.</a></li>
                             </ul>
                         </nav>

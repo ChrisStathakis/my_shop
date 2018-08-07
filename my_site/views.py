@@ -58,7 +58,7 @@ class Homepage(SearchMixin, TemplateView):
 class NewProductsPage(SearchMixin, ListView):
     template_name = 'my_site/product_list.html'
     model = Product
-    paginate_by = 16
+    paginate_by = 4
 
     def get_queryset(self):
         queryset = Product.my_query.active_for_site()
@@ -70,7 +70,7 @@ class NewProductsPage(SearchMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(NewProductsPage, self).get_context_data(**kwargs)
         seo_title = 'New Products'
-        brands, categories, colors = initial_filter_data(self.object_list)
+        brands, categories, colors, sizes = initial_filter_data(self.object_list)
         menu_categories, cart, cart_items = initial_data(self.request)
         brand_name, site_cate_name, color_name = grab_user_filter_data(self.request)
         context.update(locals())

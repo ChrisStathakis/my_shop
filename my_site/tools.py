@@ -1,4 +1,4 @@
-from products.models import Color, Size, Product
+from products.models import Color, Size, Product, SizeAttribute
 from .models import CategorySite, Brands
 from django.shortcuts import HttpResponse, HttpResponseRedirect
 
@@ -10,8 +10,9 @@ def initial_filter_data(queryset):
     categories = CategorySite.objects.filter(id__in=categories_id)
     color_id = queryset.values_list('color', flat=True)
     colors = Color.objects.filter(id__in=color_id)
-
-    return [brands, categories, colors]
+    sizes = SizeAttribute.objects.filter(product_related__in=queryset).values_list('title', 'title__title').distinct()
+    print(sizes)
+    return [brands, categories, colors, sizes]
 
 
 def grab_user_filter_data(request):
