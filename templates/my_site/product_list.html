@@ -5,9 +5,19 @@
     <!-- ##### Main Content Wrapper Start ##### -->
     <div class="main-content-wrapper d-flex clearfix">
         {% include 'my_site/include/navbar.html' %}
-        
+
         <div class="shop_sidebar_area">
             <form method='get'>
+                <div class="product-sorting d-flex">
+                <div class="sort-by-date d-flex align-items-center mr-15">
+                    <p>Sort by</p>
+                    <select onchange="this.form.submit()" name="select" id="sortBydate">
+                        <option value="price">Price</option>
+                        <option value="newest">Newest</option>
+                        <option value="title">Title</option>
+                    </select>
+                </div>
+                </div>
             <!-- ##### Single Widget ##### -->
                 <div class="widget catagory mb-50">
                     <!-- Widget Title -->
@@ -15,7 +25,7 @@
                     <div class="widget-desc">
                         {% for category in categories %}
                         <div class="form-check">
-                            <input name='site_cate_name' class="form-check-input" type="checkbox" value="{{ category.id }}" id="category_{{ category.id }}" {% if category.id in site_cate_name %} checked {% endif %}>
+                            <input name='site_cate_name' class="form-check-input" type="checkbox" value="{{ category.id }}" id="category_{{ category.id }}" {% if category.id|stringformat:"s" in site_cate_name %} checked {% endif %}>
                             <label class="form-check-label" for="category_{{ category.id }}">{{ category }}</label>
                         </div>
                         {% endfor %}
@@ -31,7 +41,7 @@
                     <div class="widget-desc">
                         {% for brand in brands %}
                         <div class="form-check">
-                            <input name='brand_name' class="form-check-input" type="checkbox" value="{{ brand.id }}" id="brand_{{ brand.id }}" {% if brand.id in brand_name %} checked {% endif %}>
+                            <input name='brand_name' class="form-check-input" type="checkbox" value="{{ brand.id }}" id="brand_{{ brand.id }}" {% if brand.id|stringformat:"s" in brand_name %} checked {% endif %}>
                             <label class="form-check-label" for="brand_{{ brand.id }}">{{ brand }}</label>
                         </div>
                         {% endfor %}
@@ -45,7 +55,7 @@
                         <div class="widget-desc">
                             {% for color in colors %}
                             <div class="form-check">
-                                <input name='color_name' class="form-check-input" type="checkbox" value="{{ color.id }}" id="color_{{ color.id }}" {% if color.id in color_name %} checked {% endif %}>
+                                <input name='color_name' class="form-check-input" type="checkbox" value="{{ color.id }}" id="color_{{ color.id }}" {% if color.id|stringformat:"s" in color_name %} checked {% endif %}>
                                 <label class="form-check-label" for="color_{{ color.id }}">{{ color }}</label>
                             </div>
                             {% endfor %}
@@ -116,29 +126,7 @@
                             <div class="total-products">
                                 <p>{{ seo_title }}</p>
                             </div>
-                            <!-- Sorting -->
-                            <div class="product-sorting d-flex">
-                                <div class="sort-by-date d-flex align-items-center mr-15">
-                                    <p>Sort by</p>
-                                    <form action="#" method="get">
-                                        <select name="select" id="sortBydate">
-                                            <option value="value">Date</option>
-                                            <option value="value">Newest</option>
-                                            <option value="value">Popular</option>
-                                        </select>
-                                    </form>
-                                </div>
-                                <div class="view-product d-flex align-items-center">
-                                    <p>View</p>
-                                    <form action="#" method="get">
-                                        <select name="select" id="viewProduct">
-                                            <option value="value">12</option>
-                                            <option value="value">24</option>
-                                            <option value="value">48</option>
-                                            <option value="value">96</option>
-                                        </select>
-                                    </form>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -148,7 +136,7 @@
 
                     {% for product in object_list %}
                     <!-- Single Product Area -->
-                    <div class="col-6 col-sm-3 col-md-6 col-xl-3">
+                    <div class="col-6 col-sm-4 col-md-6 col-xl-4">
                         <div class="single-product-wrapper">
                             <!-- Product Image -->
                             <a href='{{ product.get_absolute_url }}'>
@@ -203,33 +191,50 @@
                             <ul class="pagination justify-content-end mt-50">
                                 {% if page_obj.has_previous %}
                                     {% if '?' in request.path %}
-                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}&page=1">01.</a></li>
-                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ object_list.previous_page_number }}">Previous</a></li>
+                                        <li class="page-item "><a class="page-link" href="{{ request.path }}&page=1">First</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
                                     {% else %}
-                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}?page=1">Next</a></li>
-                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ object_list.previous_page_number }}">Last</a></li>
+                                        <li class="page-item "><a class="page-link" href="{{ request.path }}?page=1">First</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
                                     {% endif %}
                                 {% endif %}
-                                <li class="page-item"><a class="page-link" href="{{ request.path }}">Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.</a></li>
+                                    <li class="page-item"><a class="page-link" href="{{ request.path }}">Page {{ page_obj.number }} </a></li>
 
-                                {% if object_list.has_next %}
+                                {% if page_obj.has_next %}
                                     {% if '?' in request.path %}
-                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}&page=1">01.</a></li>
-                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ object_list.previous_page_number }}">Previous</a></li>
+                                        <li class="page-item "><a class="page-link" href="{{ request.path }}&page={{ page_obj.next_page_number }}">Next</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}&page={{ page_obj.paginator.num_pages }}">Last</a></li>
                                     {% else %}
-                                        <li class="page-item active"><a class="page-link" href="{{ request.path }}?page={{ object_list.next_page_number }}">Next</a></li>
-                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ object_list.paginator.num_pages }}">Last</a></li>
+                                        <li class="page-item "><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">Next</a></li>
+                                        <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}">Last</a></li>
                                     {% endif %}
                                 {% endif %}
-                                <li class="page-item"><a class="page-link" href="#">04.</a></li>
+
                             </ul>
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 
+    {% endblock %}
+
+    {% block extra_js %}
+        <script>
+            $('#sortBydate').change(function () {
+                const btn = $(this);
+                const value = btn.val();
+                const current_url = window.location.href;
+                var final_url = '';
+                console.log(value, current_url)
+                if(current_url.includes('order_by')){
+
+                } else {
+                    final_url = current_url + '?order_by='+ value
+                }
+            })
+        </script>
     {% endblock %}

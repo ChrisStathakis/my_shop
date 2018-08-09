@@ -38,3 +38,7 @@
     .my_radiobutton:hover {
         background-color:#fbb710;
     }
+
+    .pagination .page-item .page-link {
+        width: 70px;
+    }

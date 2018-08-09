@@ -120,7 +120,9 @@ urlpatterns = [
 
     # user urls
     path('users-list/', UsersPage.as_view(), name='users_list'),
- 
+
+    #tools
+    path('tools/discount-manager/', discount_manager, name='discount_manager'),
 
     # page config urls
     path('page-config/', PageConfigView.as_view(), name="page_config"),

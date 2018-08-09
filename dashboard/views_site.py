@@ -1,8 +1,9 @@
 from django.views.generic import ListView, TemplateView, CreateView, UpdateView, DeleteView, View
-from django.shortcuts import reverse, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import reverse, get_object_or_404, HttpResponseRedirect, get_list_or_404, render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
+from django.db.models import F
 
 from my_site.models import Banner
 from carts.models import Coupons
@@ -11,6 +12,9 @@ from my_site.models import FirstPage, Banner
 from my_site.forms import BannerForm, FirstPageForm
 from accounts.models import User, CostumerAccount
 from accounts.forms import CostumerAccountAdminForm, CreateUserAdmin
+from products.models import Product, CategorySite, Brands
+
+from decimal import Decimal
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -148,6 +152,25 @@ class UsersPage(ListView):
         return context
 
 
+@staff_member_required
+def discount_manager(request):
+    queryset = Product.my_query.active()
+    brands= Brands.objects.filter(active=True)
+    if request.POST:
+        percent = request.POST.get('percent', None)
+        price_ = request.POST.get('price', None)
+        remove_discount = request.POST.get('remove_discount',None)
+        if percent:
+            modifier = Decimal((100-int(percent))/100)
+            queryset.update(price_discount=F('price')*modifier)
+        elif price_:
+            queryset.update(price_discount=price_)
+        elif remove_discount:
+            queryset.update(price_discount=0)
+    return render(request, 'dashboard/site_templates/discount_page.html', context=locals())
+
+
+
 @method_decorator(staff_member_required, name='dispatch')
 class PageConfigView(View):
     template_name = 'dashboard/page_config/index.html'
@@ -221,3 +244,5 @@ def delete_first_page(request, dk):
     get_object = get_object_or_404(FirstPage, id=dk)
     get_object.delete()
     return HttpResponseRedirect(reverse('dashboard:page_config'))
+
+
