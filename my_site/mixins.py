@@ -15,3 +15,6 @@ class SearchMixin:
             search_name = self.request.GET.get('search_name')
             return custom_redirect('search_page', search_name=search_name)
         return super(SearchMixin, self).get(*args, **kwargs)
+
+
+

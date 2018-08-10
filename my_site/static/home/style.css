@@ -42,3 +42,7 @@
     .pagination .page-item .page-link {
         width: 70px;
     }
+
+    .related_product {
+        margin-right: 3%;
+    }

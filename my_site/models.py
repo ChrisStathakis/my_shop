@@ -3,11 +3,26 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.core.exceptions import ValidationError
+
 
 from site_settings.models import DefaultBasicModel
 from site_settings.models import Country
 from site_settings.constants import MEDIA_URL, CURRENCY
 
+
+def validate_size(value):
+    if value.file.size > 0.4*1024*1024:
+        raise ValidationError('This file is bigger than 0.7mb!')
+
+
+def upload_location(instance, filename):
+    return 'first_page/%s/%s' % (instance.title, filename)
+
+
+def upload_banner(instance, filename):
+    return 'banner/%s/%s' % (instance.title, filename)
 
 def validate_positive_decimal(value):
     if value < 0:
@@ -157,31 +172,6 @@ class Shipping(models.Model):
 
     def tag_active(self):
         return 'Active' if self.active else 'No Active'
-
-
-
-
-
-
-from django.db import models
-from django.core.exceptions import ValidationError
-# Create your models here.
-
-
-def validate_size(value):
-    if value.file.size > 0.4*1024*1024:
-        raise ValidationError('This file is bigger than 0.7mb!')
-
-
-def upload_location(instance, filename):
-    return 'first_page/%s/%s' % (instance.title, filename)
-
-
-def upload_banner(instance, filename):
-    return 'banner/%s/%s' % (instance.title, filename)
-
-
-# front end models
 
 
 class FirstPage(models.Model):

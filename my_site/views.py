@@ -73,7 +73,6 @@ class NewProductsPage(SearchMixin, ListView):
         brands, categories, colors, sizes = initial_filter_data(self.object_list)
         menu_categories, cart, cart_items = initial_data(self.request)
         brand_name, site_cate_name, color_name = grab_user_filter_data(self.request)
-        print(site_cate_name)
         context.update(locals())
 
         return context
@@ -86,6 +85,7 @@ class OffersPage(SearchMixin, ListView):
 
     def get_queryset(self):
         queryset = Product.my_query.active_for_site().filter(price_discount__gt=0)
+        print('queryset count', queryset.count())
         queryset = Product.filters_data(self.request, queryset)
         queryset = queryset_ordering(self.request, queryset)
         return queryset
@@ -94,7 +94,7 @@ class OffersPage(SearchMixin, ListView):
         context = super(OffersPage, self).get_context_data(**kwargs)
         seo_title = 'Offers'
         menu_categories, cart, cart_items = initial_data(self.request)
-        brands, categories, colors = initial_filter_data(self.object_list)
+        brands, categories, colors, sizes = initial_filter_data(self.object_list)
         brand_name, cate_name, color_name = grab_user_filter_data(self.request)
         if 'search_name' in self.request.GET:
             search_name = self.request.GET.get('search_name')
@@ -122,7 +122,7 @@ class CategoryPageList(SearchMixin, ListView):
         context = super(CategoryPageList, self).get_context_data(**kwargs)
         seo_title = self.category.title
         menu_categories, cart, cart_items = initial_data(self.request)
-        brands, categories, colors = initial_filter_data(self.object_list)
+        brands, categories, colors, sizes = initial_filter_data(self.object_list)
         brand_name, cate_name, color_name = grab_user_filter_data(self.request)
         context.update(locals())
         return context
@@ -164,7 +164,7 @@ class BrandPage(SearchMixin, ListView):
         context = super(BrandPage, self).get_context_data(**kwargs)
         instance = get_object_or_404(Brands, slug=self.kwargs['slug'])
         menu_categories, cart, cart_items = initial_data(self.request)
-        brands, categories, colors = initial_filter_data(self.object_list)
+        brands, categories, colors, sizes = initial_filter_data(self.object_list)
         brand_name, cate_name, color_name = grab_user_filter_data(self.request)
         seo_title = '%s' % instance.title
         context.update(locals())
@@ -220,7 +220,7 @@ class SearchPage(ListView):
     def get_context_data(self, **kwargs):
         context = super(SearchPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
-        brands, categories, colors = initial_filter_data(self.object_list)
+        brands, categories, colors, sizes = initial_filter_data(self.object_list)
         brand_name, cate_name, color_name = grab_user_filter_data(self.request)
         seo_title = '%s' % self.search_name
         search_name = self.request.GET.get('search_name', None)

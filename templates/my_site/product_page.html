@@ -125,6 +125,37 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Related Products</h3>
+                    </div>
+                    <div class="row">
+                        {% for product in instance.related_products.all %}
+                            <div class="card related_product" style="width: 18rem;">
+                                <img {% if product.image %}
+                                    src="{{ product.image.url }}" 
+                                    {% else %}
+                                    src="{% static 'home/no_image.png' %}"
+                                    {% endif %}
+                                    class="img-responsive" alt="a"
+                                />
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ peoducct }}</h5>
+                                    <p class="card-text">{{ product.tag_show_price }}</p>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">{{ product.brand }}</li>
+                                    <li class="list-group-item">{{ product.category_site.first }}</li>
+                                </ul>
+                                <div class="card-body">
+                                    <a href="{{ product.get_absolute_url }}" class="card-link">Details</a>
+                                    
+                                    </div>
+                                </div>
+                            
+                        {% endfor %}
+                             </div>
+                        </div>         
             </div>
         </div>
         <!-- Product Details Area End -->

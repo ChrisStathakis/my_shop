@@ -12,7 +12,10 @@ from my_site.models import FirstPage, Banner
 from my_site.forms import BannerForm, FirstPageForm
 from accounts.models import User, CostumerAccount
 from accounts.forms import CostumerAccountAdminForm, CreateUserAdmin
-from products.models import Product, CategorySite, Brands
+from products.models import Product, CategorySite, Brands, Gifts
+from products.forms import GiftCreateForm, GiftEditForm
+from .tools import product_filters_data, product_filters_get
+
 
 from decimal import Decimal
 
@@ -91,8 +94,6 @@ class CouponCreate(CreateView):
     success_url = reverse_lazy('dashboard:coupons_view')
 
 
-
-
 #  dashboard urls
 
 
@@ -155,7 +156,8 @@ class UsersPage(ListView):
 @staff_member_required
 def discount_manager(request):
     queryset = Product.my_query.active()
-    brands= Brands.objects.filter(active=True)
+    brands, categories, site_categories = product_filters_data()
+    search_name, brand_name, category_name, category_site_name = product_filters_get(request)
     if request.POST:
         percent = request.POST.get('percent', None)
         price_ = request.POST.get('price', None)
@@ -246,3 +248,52 @@ def delete_first_page(request, dk):
     return HttpResponseRedirect(reverse('dashboard:page_config'))
 
 
+
+@staff_member_required
+def gifts_view(request):
+    object_list = Gifts.objects.all()
+    form = GiftCreateForm(request.POST or None)
+    if form.is_valid():
+        instance = form.save()
+        instance.refresh_from_db()
+        return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))
+    context = locals()
+    return render(request, 'dashboard/order_section/gifts.html', context)
+
+
+@staff_member_required
+def gifts_edit(request, pk):
+    instance = get_object_or_404(Gifts, id=pk)
+    related_products = instance.product_related.all()
+    gift = instance.products_gift
+    form = GiftCreateForm(instance=instance)
+    if request.POST:
+        form = GiftCreateForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': instance.id}))
+    products = Product.my_query.get_site_queryset().active_for_site()
+    context = locals()
+    return render(request, 'dashboard/order_section/gifts_edit.html', context)
+
+
+@staff_member_required
+def gift_edit_products(request, pk, dk, type, sub):
+
+    gift = get_object_or_404(Gifts, id=pk)
+    instance = get_object_or_404(Product, id=dk)
+    if type == 1:
+        if sub == 1:
+            gift.products_gift = instance
+            gift.save()
+        else:
+            gift.products_gift = None
+            gift.save()
+    if type == 2:
+        if sub == 1:
+            gift.product_related.add(instance)
+            gift.save()
+        else:
+            gift.product_related.remove(instance)
+            gift.save()
+    return HttpResponseRedirect(reverse('dashboard:gift_detail', kwargs={'pk': pk}))

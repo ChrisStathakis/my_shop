@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+MYSQL = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -105,6 +105,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'train_db.sqlite3'),
+    }
+}
+
+if MYSQL:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'my_shop',
+        'USER': 'christosstath',
+        'PASSWORD': 'my_shop10',
+        'HOST': 'christosstath.mysql.pythonanywhere-services.com',  
+        'PORT': '3306',
     }
 }
 

@@ -4,3 +4,4 @@ django-rest-framework
 django-tinymce
 reportlab
 coreapi
+mysqlclient

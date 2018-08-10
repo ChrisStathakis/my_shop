@@ -66,17 +66,59 @@
                             <form method="get">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Search</label>
-                                    <input type="text" class="form-control" name="searxh_name" placeholder="Enter..">
+                                    <input type="text" class="form-control" name="search_name" placeholder="Enter..">
                                 </div>
                                 <h4>Brands</h4>
                                 {% for brand in brands %}
-                                <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                  <label class="form-check-label" for="defaultCheck1">
-                                    Default checkbox
-                                  </label>
-                                </div>
+                                    <div class="form-check">
+                                    <input 
+                                        name='brand_name' 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        value="{{ brand.id }}" 
+                                        id="brand_{{ brand.id }}"
+                                        {% if brand.id|stringformat:"s" in brand_name %} checked {% endif %}
+                                    >
+                                    <label class="form-check-label" for="brand_{{ brand.id }}">
+                                        {{ brand }}
+                                    </label>
+                                    </div>
                                 {% endfor %}
+
+                                <h4>Category</h4>
+                                {% for category in categories %}
+                                    <div class="form-check">
+                                        <input 
+                                            name='category_name' 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            value="{{ category.id }}" 
+                                            id="category_{{ category.id }}"
+                                            {% if category.id|stringformat:"s" in category_name %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="category_{{ category.id }}">
+                                            {{ category }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+
+                                <h4>Category Site</h4>
+                                {% for category in site_categories %}
+                                    <div class="form-check">
+                                        <input 
+                                            name='category_site_name' 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            value="{{ category.id }}" 
+                                            id="categorys_{{ category.id }}"
+                                            {% if category.id|stringformat:"s" in category_site_name %} checked {% endif %}
+                                        >
+                                        <label class="form-check-label" for="categorys_{{ category.id }}">
+                                            {{ category }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                                <button type='submit' class="btn btn-primary">Save</button>
                             </form>
                        </div>
                    </div>

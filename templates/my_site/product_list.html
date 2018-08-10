@@ -1,5 +1,9 @@
 {% extends 'my_site/index.html' %} {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"  media="screen">
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+{% endblock extra_css %}
 
 {% block content %}
     <!-- ##### Main Content Wrapper Start ##### -->
@@ -25,7 +29,7 @@
                     <div class="widget-desc">
                         {% for category in categories %}
                         <div class="form-check">
-                            <input name='site_cate_name' class="form-check-input" type="checkbox" value="{{ category.id }}" id="category_{{ category.id }}" {% if category.id|stringformat:"s" in site_cate_name %} checked {% endif %}>
+                            <input onclick='this.form.submit()' name='site_cate_name' class="form-check-input" type="checkbox" value="{{ category.id }}" id="category_{{ category.id }}" {% if category.id|stringformat:"s" in site_cate_name %} checked {% endif %}>
                             <label class="form-check-label" for="category_{{ category.id }}">{{ category }}</label>
                         </div>
                         {% endfor %}
@@ -41,7 +45,7 @@
                     <div class="widget-desc">
                         {% for brand in brands %}
                         <div class="form-check">
-                            <input name='brand_name' class="form-check-input" type="checkbox" value="{{ brand.id }}" id="brand_{{ brand.id }}" {% if brand.id|stringformat:"s" in brand_name %} checked {% endif %}>
+                            <input onclick='this.form.submit()' name='brand_name' class="form-check-input" type="checkbox" value="{{ brand.id }}" id="brand_{{ brand.id }}" {% if brand.id|stringformat:"s" in brand_name %} checked {% endif %}>
                             <label class="form-check-label" for="brand_{{ brand.id }}">{{ brand }}</label>
                         </div>
                         {% endfor %}
@@ -55,7 +59,7 @@
                         <div class="widget-desc">
                             {% for color in colors %}
                             <div class="form-check">
-                                <input name='color_name' class="form-check-input" type="checkbox" value="{{ color.id }}" id="color_{{ color.id }}" {% if color.id|stringformat:"s" in color_name %} checked {% endif %}>
+                                <input onclick='this.form.submit()' name='color_name' class="form-check-input" type="checkbox" value="{{ color.id }}" id="color_{{ color.id }}" {% if color.id|stringformat:"s" in color_name %} checked {% endif %}>
                                 <label class="form-check-label" for="color_{{ color.id }}">{{ color }}</label>
                             </div>
                             {% endfor %}
@@ -68,7 +72,7 @@
                     <div class="widget-desc">
                         {% for size in sizes %}
                             <div class="form-check">
-                                <input name='size_name' class="form-check-input" type="checkbox" value="{{ size.0 }}" id="size_{{ szie.id }}" {% if size.0 in sizes %} checked {% endif %}>
+                                <input onclick='this.form.submit()' name='size_name' class="form-check-input" type="checkbox" value="{{ size.0 }}" id="size_{{ szie.id }}" {% if size.0 in sizes %} checked {% endif %}>
                                 <label class="form-check-label" for="size_{{ size.0 }}">{{ size.1 }}</label>
                             </div>
                         {% endfor %}
@@ -76,32 +80,12 @@
                 </div>
 
                 <!-- ##### Single Widget ##### -->
-                <div class="widget color mb-50">
-                    <!-- Widget Title -->
-                    <h6 class="widget-title mb-30">Color</h6>
-
-                    <div class="widget-desc">
-                        <ul class="d-flex">
-                            <li><a href="#" class="color1"></a></li>
-                            <li><a href="#" class="color2"></a></li>
-                            <li><a href="#" class="color3"></a></li>
-                            <li><a href="#" class="color4"></a></li>
-                            <li><a href="#" class="color5"></a></li>
-                            <li><a href="#" class="color6"></a></li>
-                            <li><a href="#" class="color7"></a></li>
-                            <li><a href="#" class="color8"></a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- ##### Single Widget ##### -->
                 <div class="widget price mb-50">
                     <!-- Widget Title -->
                     <h6 class="widget-title mb-30">Price</h6>
-
                     <div class="widget-desc">
                         <div class="slider-range">
-                            <div data-min="10" data-max="1000" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="10" data-value-max="1000" data-label-result="">
+                            <div id='price_meter' name='price_meter' data-min="10" data-max="1000" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="10" data-value-max="1000" data-label-result="">
                                 <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
                                 <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
                                 <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
