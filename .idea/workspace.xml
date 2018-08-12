@@ -5,192 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72c4f91b-add1-49b2-a03b-d6581d9e94b3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lagrace_data.sqlite3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/carts/migrations/0002_coupons_categories.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/carts/migrations/0003_auto_20180811_2025.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/carts/migrations/0004_auto_20180811_2025.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/frontend/migrations/0002_auto_20180811_2025.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0002_auto_20180811_2025.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0003_auto_20180811_2025.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0002_auto_20180811_2025.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/banner/po/04-ff-coffee_120-ab.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/carts/migrations/0002_cartgiftitem.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/carts/migrations/0003_auto_20180611_1628.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/carts/migrations/0004_auto_20180612_0755.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/carts/migrations/0005_auto_20180612_1554.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/carts/migrations/0006_auto_20180612_1616.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frontend/migrations/0002_auto_20180605_0816.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frontend/migrations/0003_auto_20180605_0819.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frontend/migrations/0004_auto_20180605_1406.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/frontend/migrations/0005_auto_20180803_1315.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0002_order_orderitem_preorder_warehouseorderimage.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0003_auto_20180628_1416.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0004_auto_20180628_1523.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0005_auto_20180628_1642.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0006_auto_20180630_1241.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0007_auto_20180803_1315.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0008_auto_20180803_1535.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/04-ff-coffee_120-ab.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/5001.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/5003.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/5004.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/banner/cac/300x600_SB_1_1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/banner/hmghm/180x150_V_4_2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/banner/nghn/728x90_SB_4_1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/banner/ou/300_x_250_V_4.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/banner/po/04-ff-coffee_120-ab.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/bea_PBN126919-1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/bea_PBN126924-1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/bea_PBN126924-2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/bea_PBN126924-3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/bea_PBN126924-4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/media_cdn/brands/react.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0002_retailorderitem_title.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0003_auto_20180603_0934.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0004_retailorderitem_size.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0005_auto_20180604_1855.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0006_auto_20180606_1451.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0007_auto_20180607_0712.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0008_auto_20180611_1628.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0009_auto_20180612_0755.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0010_auto_20180612_1605.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0011_retailorder_date_expired.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0012_auto_20180803_1315.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0013_auto_20180803_1535.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/products/migrations/0002_auto_20180601_0949.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/products/migrations/0003_gifts.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/products/migrations/0004_auto_20180608_1523.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/products/migrations/0005_auto_20180608_1813.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/products/migrations/0006_auto_20180803_1315.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/site_settings/migrations/0002_auto_20180603_0934.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/site_settings/migrations/0003_auto_20180606_1451.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/site_settings/migrations/0004_store.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/site_settings/migrations/0005_auto_20180803_1315.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/site_settings/migrations/0006_auto_20180803_1535.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/__init__.py" afterPath="$PROJECT_DIR$/frontend/__init__.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/admin.py" afterPath="$PROJECT_DIR$/frontend/admin.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/apps.py" afterPath="$PROJECT_DIR$/frontend/apps.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/forms.py" afterPath="$PROJECT_DIR$/frontend/forms.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/frontend/migrations/0001_initial.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/migrations/__init__.py" afterPath="$PROJECT_DIR$/frontend/migrations/__init__.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/mixins.py" afterPath="$PROJECT_DIR$/frontend/mixins.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/models.py" afterPath="$PROJECT_DIR$/frontend/models.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_mixin.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_mixin.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_responsive.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_responsive.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_theme_color.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_theme_color.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_variables.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/_variables.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/style.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/23fb10bb6531a16595cc9a8cbcaeb8f40f41ec84/style.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_mixin.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_mixin.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_responsive.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_responsive.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_theme_color.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_theme_color.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_variables.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/_variables.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/style.scssc" afterPath="$PROJECT_DIR$/frontend/static/home/.sass-cache/997c61c8c2a2a831333fab68bc2254612bdf8817/style.scssc" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/animate.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/animate.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/bootstrap.min.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/bootstrap.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/classy-nav.min.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/classy-nav.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/core-style.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/core-style.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/core-style.css.map" afterPath="$PROJECT_DIR$/frontend/static/home/css/core-style.css.map" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/font-awesome.min.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/font-awesome.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/jquery-ui.min.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/jquery-ui.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/magnific-popup.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/magnific-popup.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/nice-select.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/nice-select.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/css/owl.carousel.css" afterPath="$PROJECT_DIR$/frontend/static/home/css/owl.carousel.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/FontAwesome.otf" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/FontAwesome.otf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/fontawesome-webfont.eot" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/fontawesome-webfont.eot" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/fontawesome-webfont.svg" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/fontawesome-webfont.svg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/fontawesome-webfont.ttf" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/fontawesome-webfont.ttf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/fontawesome-webfont.woff" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/fontawesome-webfont.woff" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/fontawesome-webfont.woff2" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/fontawesome-webfont.woff2" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helvetica_neu_bold-webfont.ttf" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helvetica_neu_bold-webfont.ttf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helvetica_neu_bold-webfont.woff" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helvetica_neu_bold-webfont.woff" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helvetica_neu_bold-webfont.woff2" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helvetica_neu_bold-webfont.woff2" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helveticaneue_medium-webfont.ttf" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helveticaneue_medium-webfont.ttf" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helveticaneue_medium-webfont.woff" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helveticaneue_medium-webfont.woff" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/fonts/helveticaneue_medium-webfont.woff2" afterPath="$PROJECT_DIR$/frontend/static/home/fonts/helveticaneue_medium-webfont.woff2" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/1.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/1.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/2.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/2.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/3.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/3.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/4.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/4.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/5.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/5.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/6.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/6.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/7.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/7.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/8.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/8.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/9.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/9.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/cart1.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/cart1.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/cart2.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/cart2.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/bg-img/cart3.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/bg-img/cart3.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/cart.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/cart.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/favicon.ico" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/favicon.ico" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/favorites.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/favorites.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/logo.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/logo.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/logo2.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/logo2.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/paypal.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/paypal.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/core-img/search.png" afterPath="$PROJECT_DIR$/frontend/static/home/img/core-img/search.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/pro-big-1.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/pro-big-1.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/pro-big-2.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/pro-big-2.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/pro-big-3.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/pro-big-3.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/pro-big-4.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/pro-big-4.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product1.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product1.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product2.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product2.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product3.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product3.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product4.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product4.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product5.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product5.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/img/product-img/product6.jpg" afterPath="$PROJECT_DIR$/frontend/static/home/img/product-img/product6.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/jquery-1.12.2.min.js" afterPath="$PROJECT_DIR$/frontend/static/home/jquery-1.12.2.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/active.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/active.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/bootstrap.min.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/classy-nav.min.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/classy-nav.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/jquery/jquery-2.2.4.min.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/jquery/jquery-2.2.4.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/map-active.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/map-active.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/plugins.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/plugins.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/js/popper.min.js" afterPath="$PROJECT_DIR$/frontend/static/home/js/popper.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/no_image.png" afterPath="$PROJECT_DIR$/frontend/static/home/no_image.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/scss/_mixin.scss" afterPath="$PROJECT_DIR$/frontend/static/home/scss/_mixin.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/scss/_responsive.scss" afterPath="$PROJECT_DIR$/frontend/static/home/scss/_responsive.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/scss/_theme_color.scss" afterPath="$PROJECT_DIR$/frontend/static/home/scss/_theme_color.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/scss/_variables.scss" afterPath="$PROJECT_DIR$/frontend/static/home/scss/_variables.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/scss/style.scss" afterPath="$PROJECT_DIR$/frontend/static/home/scss/style.scss" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/static/home/style.css" afterPath="$PROJECT_DIR$/frontend/static/home/style.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/tests.py" afterPath="$PROJECT_DIR$/frontend/tests.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/tools.py" afterPath="$PROJECT_DIR$/frontend/tools.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/urls.py" afterPath="$PROJECT_DIR$/frontend/urls.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/validators.py" afterPath="$PROJECT_DIR$/frontend/validators.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/my_site/views.py" afterPath="$PROJECT_DIR$/frontend/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/train_db.sqlite3" afterPath="$PROJECT_DIR$/train_db.sqlite3" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lagrace_data.sqlite3" afterPath="$PROJECT_DIR$/lagrace_data.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/carts/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/carts/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/carts/models.py" afterPath="$PROJECT_DIR$/carts/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/carts/views.py" afterPath="$PROJECT_DIR$/carts/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dashboard/view_sells.py" afterPath="$PROJECT_DIR$/dashboard/view_sells.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dashboard/views.py" afterPath="$PROJECT_DIR$/dashboard/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dashboard/views_ajax.py" afterPath="$PROJECT_DIR$/dashboard/views_ajax.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dashboard/views_product_settings.py" afterPath="$PROJECT_DIR$/dashboard/views_product_settings.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dashboard/views_site.py" afterPath="$PROJECT_DIR$/dashboard/views_site.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gdpr/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/gdpr/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/admin.py" afterPath="$PROJECT_DIR$/inventory_manager/admin.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_shop/settings.py" afterPath="$PROJECT_DIR$/my_shop/settings.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_shop/urls.py" afterPath="$PROJECT_DIR$/my_shop/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/point_of_sale/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/point_of_sale/models.py" afterPath="$PROJECT_DIR$/point_of_sale/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/products/admin.py" afterPath="$PROJECT_DIR$/products/admin.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/products/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/products/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/products/models.py" afterPath="$PROJECT_DIR$/products/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/products/signals.py" afterPath="$PROJECT_DIR$/products/signals.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/tools.py" afterPath="$PROJECT_DIR$/reports/tools.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/urls.py" afterPath="$PROJECT_DIR$/reports/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/views.py" afterPath="$PROJECT_DIR$/reports/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/site_settings/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/site_settings/migrations/0001_initial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/dashboard/brand_list.html" afterPath="$PROJECT_DIR$/templates/dashboard/brand_list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/dashboard/include/pagination.html" afterPath="$PROJECT_DIR$/templates/dashboard/include/pagination.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/dashboard/product_detail.html" afterPath="$PROJECT_DIR$/templates/dashboard/product_detail.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/my_site/product_list.html" afterPath="$PROJECT_DIR$/templates/my_site/product_list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/my_site/product_page.html" afterPath="$PROJECT_DIR$/templates/my_site/product_page.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/report/brandsPage.html" afterPath="$PROJECT_DIR$/templates/report/brandsPage.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/report/products.html" afterPath="$PROJECT_DIR$/templates/report/products.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/transcations/migrations/0001_initial.py" afterPath="$PROJECT_DIR$/transcations/migrations/0001_initial.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py" afterPath="$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/ajax_views.py" afterPath="$PROJECT_DIR$/reports/ajax_views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/snippets/filter_form.html" afterPath="$PROJECT_DIR$/templates/snippets/filter_form.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/snippets/search_date_filter.html" afterPath="$PROJECT_DIR$/templates/snippets/search_date_filter.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/snippets/vendor_cate_filter.html" afterPath="$PROJECT_DIR$/templates/snippets/vendor_cate_filter.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -205,11 +26,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2941">
-              <caret line="208" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
+            <state relative-caret-position="3094">
+              <caret line="211" column="0" lean-forward="false" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
               <folding>
                 <element signature="e#0#106#0" expanded="true" />
               </folding>
@@ -217,12 +38,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="products.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/report/products.html">
+      <file leaf-file-name="ajax_views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reports/ajax_views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="90" column="53" lean-forward="false" selection-start-line="90" selection-start-column="53" selection-end-line="90" selection-end-column="53" />
-              <folding />
+            <state relative-caret-position="187">
+              <caret line="98" column="34" lean-forward="false" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ajax_warehouse_calls.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="37" column="77" lean-forward="false" selection-start-line="37" selection-start-column="77" selection-end-line="37" selection-end-column="77" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -230,18 +65,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/products/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="529">
+            <state relative-caret-position="-1256">
               <caret line="198" column="28" lean-forward="false" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="filter_form.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/snippets/filter_form.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -250,8 +75,8 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+            <state relative-caret-position="129">
+              <caret line="15" column="72" lean-forward="false" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="72" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -281,6 +106,8 @@
       <find>pagi</find>
       <find>WarehouseCategoryView</find>
       <find>warehouse_categories</find>
+      <find>supply</find>
+      <find>ajax_products_analysis</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -289,10 +116,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/dashboard/category_site_list.html" />
-        <option value="$PROJECT_DIR$/templates/dashboard/page_create.html" />
-        <option value="$PROJECT_DIR$/templates/dashboard/form_view.html" />
-        <option value="$PROJECT_DIR$/dashboard/views_product_settings.py" />
         <option value="$PROJECT_DIR$/templates/dashboard/size_chart.html" />
         <option value="$PROJECT_DIR$/products/forms.py" />
         <option value="$PROJECT_DIR$/dashboard/views_ajax.py" />
@@ -334,12 +157,16 @@
         <option value="$PROJECT_DIR$/templates/dashboard/brands_detail_view.html" />
         <option value="$PROJECT_DIR$/templates/report/brandsPage.html" />
         <option value="$PROJECT_DIR$/templates/report/brands_detail_view.html" />
-        <option value="$PROJECT_DIR$/reports/views.py" />
         <option value="$PROJECT_DIR$/inventory_manager/admin.py" />
         <option value="$PROJECT_DIR$/products/admin.py" />
         <option value="$PROJECT_DIR$/reports/urls.py" />
-        <option value="$PROJECT_DIR$/templates/snippets/filter_form.html" />
         <option value="$PROJECT_DIR$/templates/report/products.html" />
+        <option value="$PROJECT_DIR$/reports/views.py" />
+        <option value="$PROJECT_DIR$/templates/snippets/search_date_filter.html" />
+        <option value="$PROJECT_DIR$/templates/snippets/vendor_cate_filter.html" />
+        <option value="$PROJECT_DIR$/templates/snippets/filter_form.html" />
+        <option value="$PROJECT_DIR$/reports/ajax_views.py" />
+        <option value="$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py" />
       </list>
     </option>
   </component>
@@ -382,52 +209,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="snippets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="my_shop" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reports" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -697,7 +478,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -759,35 +540,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/my_site/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="51" column="18" lean-forward="true" selection-start-line="33" selection-start-column="4" selection-end-line="51" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/my_site/include/navbar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="29" column="65" lean-forward="false" selection-start-line="29" selection-start-column="65" selection-end-line="29" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/my_site/amado/shop.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="472" column="14" lean-forward="true" selection-start-line="98" selection-start-column="0" selection-end-line="472" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/my_site/include/js.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="41" lean-forward="false" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/my_site/include/css.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -1119,36 +871,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reports/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="31" column="0" lean-forward="false" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/report/warehouse.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="347">
           <caret line="22" column="31" lean-forward="true" selection-start-line="22" selection-start-column="31" selection-end-line="22" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/snippets/filter_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/products/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="198" column="28" lean-forward="false" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -1161,12 +887,82 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/templates/snippets/vendor_cate_filter.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="49" column="6" lean-forward="true" selection-start-line="49" selection-start-column="6" selection-end-line="49" selection-end-column="6" />
+          <folding>
+            <element signature="n#div#0;n#div#0;n#!!top" expanded="false" />
+            <element signature="n#div#1;n#div#0;n#!!top" expanded="false" />
+            <element signature="n#div#2;n#div#0;n#!!top" expanded="false" />
+            <element signature="n#div#1;n#!!top" expanded="false" />
+            <element signature="n#div#2;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/snippets/search_date_filter.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="36" column="5" lean-forward="false" selection-start-line="36" selection-start-column="2" selection-end-line="36" selection-end-column="5" />
+          <folding>
+            <element signature="n#div#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/snippets/filter_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="30" column="10" lean-forward="false" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/reports/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2941">
-          <caret line="208" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
+        <state relative-caret-position="3094">
+          <caret line="211" column="0" lean-forward="false" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
           <folding>
             <element signature="e#0#106#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="129">
+          <caret line="15" column="72" lean-forward="false" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="72" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/ajax_views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="98" column="34" lean-forward="false" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/products/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1256">
+          <caret line="198" column="28" lean-forward="false" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="37" column="77" lean-forward="false" selection-start-line="37" selection-start-column="77" selection-end-line="37" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>

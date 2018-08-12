@@ -29,6 +29,42 @@
 
 {% endif %}
 
+{% if switcher == 'brand_analysis' %}
+    <h3>Ανάλυση Αποθήκης ανά Brand</h3>
+    <table class="ui table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Brand</th>
+                <th colspan="3">Αξία Αποθήκης</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>Ποσότητα</th>
+                <th class="warning">Τιμή Αγοράς</th>
+                <th class="positive">Τιμή Πώλησης</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for brand in brand_analysis %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ brand.brand__title }}</td>
+                    <td>{{ brand.total_qty }}</td>
+                    <td class="warning">{{ brand.total_ware_price }} {{ currency }} </td>
+                    <td class="positive">{{ brand.total_sell_price }} {{ currency }}</td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td colspan="5">Δε έχετε επιλέξει Brand</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
 {% if switcher == 'vendor_analysis' %}
     <h3>Ανάλυση Αποθήκης ανά Προμηθευτή</h3>
     <table class="ui table">

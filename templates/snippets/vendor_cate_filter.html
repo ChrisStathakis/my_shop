@@ -2,7 +2,7 @@
     <div class="field">
         <label>Προμηθευτές</label>
         {% for vendor in vendors %}
-            {% if vendor.id|stringformat:"s" in vendor_name %}
+            {% if vendor.id|stringformat:"s" in request.GET.vendor_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="vendor_name" value="{{ vendor.id }}">
                     <label>{{ vendor }}</label>
@@ -18,7 +18,7 @@
     <div class="field">
         <label>Κατηγορίες Αποθήκης</label>
         {% for cate in categories %}
-            {% if cate.id|stringformat:"s" in category_name %}
+            {% if cate.id|stringformat:"s" in request.GET.category_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="category_name" value="{{ cate.id }}">
                     <label>{{ cate }}</label>
@@ -34,7 +34,7 @@
     <div class="field">
             <label>Brands</label>
             {% for vendor in brands %}
-                {% if vendor.id|stringformat:"s" in brand_name %}
+                {% if vendor.id|stringformat:"s" in request.GET.brand_name %}
                     <div class="ui slider checkbox">
                         <input type="checkbox" checked name="brand_name" value="{{ vendor.id }}">
                         <label>{{ vendor }}</label>
@@ -51,7 +51,7 @@
 <div class="field">
         <label>Κατηγορίες Site</label>
          {% for cate in categories_site %}
-            {% if cate.id|stringformat:"s" in category_name %}
+            {% if cate.id|stringformat:"s" in request.GET.category_site_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="cate_site_name" value="{{ cate.id }}">
                     <label>{{ cate }}</label>
@@ -68,7 +68,7 @@
     <div class="field">
         <label>Χρώμα</label>
         {% for color in colors %}
-            {% if color.id|stringformat:"s" in color_name %}
+            {% if color.id|stringformat:"s" in request.GET.color_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="color_name" value="{{ color.id }}">
                     <label>{{ color }}</label>
@@ -84,7 +84,7 @@
     <div class="field">
         <label>Μέγεθος</label>
         {% for size in sizes %}
-            {% if size.id|stringformat:"s" in sizes_name %}
+            {% if size.id|stringformat:"s" in request.GET.sizes_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="size_name" value="{{ size.id }}">
                     <label>{{ size }}</label>

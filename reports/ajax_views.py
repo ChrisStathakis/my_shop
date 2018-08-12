@@ -22,9 +22,7 @@ def ajax_analyse_vendors(request):
     return JsonResponse(data)
 
 
-
 def ajax_vendors_page_analysis(request):
-
     data = dict()
     queryset = Vendor.objects.all()
     vendor_name, balance_name, search_pro, queryset = vendors_filter(request, queryset)

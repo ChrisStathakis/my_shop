@@ -29,7 +29,7 @@
                     data-slug="warehouse_analysis" id="button-analysis">Υπολογισμός Υπόλοιπου
             </button>
             <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="vendor_analysis" id="button-analysis">Ανάλυση Ανά Brand
+                    data-slug="brand_analysis" id="button-analysis">Ανάλυση Ανά Brand
             </button>
             <button class="ui green button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
                     data-slug="sells_analysis" id="button-analysis">Πωλήσεις Περιόδου
@@ -59,6 +59,7 @@
                     <th colspan="2"><a href="">Προιόν</a></th>
                     <th><a href="">Τιμή Αγοράς</a></th>
                     <th><a href="">Τιμή Λιανικής/Αρχική Τιμή</a></th>
+                    <th>Brand</th>
                     <th><a href="">Προμηθευτής</a></th>
                     <th><a href="">Κατηγορία<br>Κατηγορία Site</a></th>
                     <th><a href="">Υπόλοιπο</a></th>
@@ -72,6 +73,7 @@
                     <td colspan="2"><a href="{% url 'reports:products_detail' ele.id %}">{{ ele }}</a> {{ ele.color|default_if_none:"" }}</td>
                     <td style="color:red">{{ ele.tag_price_buy }}</td>
                     <td class="positive">{{ ele.tag_final_show_price }}</td>
+                    <td><a href='{{ ele.brand.get_report_url }}'>{{ ele.tag_brand }}</a></td>
                     <td><a href="">{{ ele.vendor|default_if_none:"Δε έχει επιλεγεί Προμηθευτής" }}</a></td>
                     <td><a href="">{{ ele.category|default_if_none:"Δε έχει επιλεγεί Κατηγορία" }}<br></a></td>
                     <td {% if ele.show_warehouse_remain %} class="negative" {% else %} class="positive" {% endif %}>{{ ele.show_warehouse_remain|floatformat:2 }} {{ ele.get_measure_unit_display }}</td>
@@ -122,6 +124,7 @@
         $('#ajax_container').html('<h2 class="ui header">Περιμένετε λίγο</h2>');
         var btn = $(this);
         var my_form = $('#filter_form').serialize();
+        console.log(my_form)
         $('#ajax_container').html('<h4>Waiting....</h4>');
         console.log(my_form);
         $.ajax({

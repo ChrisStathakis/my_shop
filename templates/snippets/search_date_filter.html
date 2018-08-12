@@ -28,13 +28,10 @@
         >
     </div>
     <div class="field">
-        {% if date_pick %} 
         <input 
-            name="date_pick" 
-            value="{{ date_pick }}" 
-            {% if request.GET.date_pick %} placeholder="{{ request.GET.date_pick }}"
-            {% else %}<input  name="date_pick" placeholder="Ημερομηνία" 
-            {% endif %}
+            name="date_pick"
+            {% if request.GET.date_pick %} placeholder="{{ request.GET.date_pick }}" value="{{ request.GET.date_pick }}"
+            {% else %}placeholder="Ημερομηνία" {% endif %}
         >
     </div>
 </div>

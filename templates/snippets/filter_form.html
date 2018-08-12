@@ -28,6 +28,7 @@
             <input type="checkbox" name="size_data_name" class="ui checkbox" {% if request.GET.size_data_name %} value="true"{% endif %}>
         </div>
     </div>
+    </div>
     {% include 'snippets/vendor_cate_filter.html' %}
     <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
     <a href="{{ request.path }}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>

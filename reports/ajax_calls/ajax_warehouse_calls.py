@@ -10,14 +10,16 @@ from ..tools import warehouse_filters
 from inventory_manager.models import Vendor
 from point_of_sale.models import RetailOrderItem
 from products.models import Product, Category, CategorySite
-
+from frontend.models import Brands
 CURRENCY = settings.CURRENCY
+
 
 def ajax_products_analysis(request):
     data = dict()
     switcher = request.GET.get('analysis')
     queryset = Product.my_query.active_for_site()
     queryset = Product.filters_data(request, queryset)
+    print(queryset.count(), request.GET)
     queryset_analysis = [0, 0, 0] # total_qty, #total_warehouse_value, #total_sell_value
     if switcher == 'warehouse_analysis':
         queryset_analysis[0] = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
@@ -30,6 +32,22 @@ def ajax_products_analysis(request):
                                                     'switcher': switcher
                                                     }
                                             )
+
+    if switcher == 'brand_analysis':
+        print(queryset)
+        brand_analysis = queryset.values('brand__title').annotate(total_ware_price=Sum(F('qty')*F('price_buy')),
+                                                                  total_qty = Sum('qty'),
+                                                                  total_sell_price=Sum(F('qty')*F('final_price'))
+                                                                  ).order_by('total_sell_price')
+        print('brands', Brands.objects.filter(id__in=request.GET.getlist('brand_name')))
+        data['results'] = render_to_string(request=request,
+                                           template_name='report/ajax/warehouse/ajax_warehouse_analysis.html',
+                                           context={'switcher': switcher,
+                                                    'brand_analysis': brand_analysis,
+                                                    'currency': CURRENCY
+                                                   }
+                                           )
+
     if switcher == 'vendor_analysis':
         vendor_analysis = queryset.values('supply__title').annotate(total_ware_price=Sum(F('qty')*F('final_price')),
                                                                     total_sell_price=Sum(F('qty')*F('price_buy'))
