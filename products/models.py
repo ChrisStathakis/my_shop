@@ -283,8 +283,17 @@ class Product(DefaultBasicModel):
         feat_name = request.GET.get('feat_name', None)
         active_name = request.GET.get('active_name', None)
         size_name = request.GET.get('size_name', None)
+        size_data_name = request.GET.get('size_data_name', None)
+        discount_name = request.GET.get('discount_name')
+        qty_name = request.GET.get('qty_exists_name')
+        qty_up_name = request.GET.get('qty_up_name')
+        qty_down_name = request.GET.get('qty_down_name')
     
         queryset = queryset.filter(active=True, site_active=True) if active_name == '1' else queryset.filter(active=False, site_active=False) if active_name == '2' else queryset  
+        queryset = queryset.filter(size=True) if size_data_name else queryset
+        queryset = queryset.filter(price_discount__gt=0) if discount_name else queryset
+        queryset = queryset.filter(qty__gt=0) if qty_name else queryset
+
         queryset = queryset.filter(is_featured=True) if feat_name == '1' else queryset
         queryset = queryset.filter(category__id__in=cate_name) if cate_name else queryset
         queryset = queryset.filter(brand__id__in=brand_name) if brand_name else queryset

@@ -61,15 +61,18 @@ class ReportProducts(ListView):
     def get_context_data(self, **kwargs):
         context = super(ReportProducts, self).get_context_data(**kwargs)
         currency = CURRENCY
-        # filters
-        products, category_name, vendor_name, color_name, discount_name, qty_name = warehouse_filters(self.request, self.object_list)
         vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
-        search_name = self.request.GET.get('search_name', None)
         products_count = self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0
-        
         context.update(locals())
         return context
 
+@method_decorator(staff_member_required, name='dispatch')
+class ProductSizeView(ListView):
+    model = SizeAttribute
+    template_name = ''
+
+    def get_queryset(self):
+        queryset = SizeAttribute.objects.filter(product=True)
 
 @method_decorator(staff_member_required, name='dispatch')
 class ProductDetail(LoginRequiredMixin, DetailView):

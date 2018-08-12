@@ -18,13 +18,23 @@
 
 <div class="two fields">
     <div class="field">
-        <input type="text" id='search_name' class="ui text" name="search_name" {% if search_name %} 
-        value="{{ search_name }}" placeholder="{{ search_name }}" {% else %} placeholder="Αναζήτηση" {% endif %}>
+        <input 
+        type="text" 
+        id='search_name' 
+        class="ui text" 
+        name="search_name" 
+        {% if request.GET.search_name %} value="{{ request.GET.search_name }}" placeholder="{{ request.GET.search_name }}" {% else %} 
+        placeholder="Αναζήτηση" {% endif %}
+        >
     </div>
     <div class="field">
-        {% if date_pick %} <input  name="date_pick" value="{{ date_pick }}" placeholder="{{ date_pick }}" >
-        {% else %}
-            <input  name="date_pick" placeholder="Ημερομηνία" >
-        {% endif %}
+        {% if date_pick %} 
+        <input 
+            name="date_pick" 
+            value="{{ date_pick }}" 
+            {% if request.GET.date_pick %} placeholder="{{ request.GET.date_pick }}"
+            {% else %}<input  name="date_pick" placeholder="Ημερομηνία" 
+            {% endif %}
+        >
     </div>
 </div>
