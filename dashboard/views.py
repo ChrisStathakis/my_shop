@@ -25,7 +25,7 @@ from site_settings.constants import CURRENCY
 from inventory_manager.models import Vendor, Category, OrderItem
 from point_of_sale.models import RetailOrderItem
 from inventory_manager.forms import CategoryForm
-from my_site.models import CategorySite, Brands
+from frontend.models import CategorySite, Brands
 
 
 WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS

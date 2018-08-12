@@ -12,8 +12,8 @@ from products.forms import BrandForm, CategoryForm, ColorForm, SizeForm
 from products.models import Brands
 from inventory_manager.models import Category
 from inventory_manager.forms import VendorQuickForm
-from my_site.models import CategorySite
-from my_site.forms import CategorySiteForm
+from frontend.models import CategorySite
+from frontend.forms import CategorySiteForm
 
 
 def category_create(request):

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, re
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from my_site.models import CategorySite
+from frontend.models import CategorySite
 from .models import Cart, CartItem, CartGiftItem
 from .forms import CouponForm
 from products.models import Product, Gifts

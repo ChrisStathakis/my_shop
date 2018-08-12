@@ -1,0 +1,28 @@
+<form class="ui form" method="get" id="filter_form">
+    <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
+    <a href="{{ request.path }}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+    {% include "snippets/search_date_filter.html" %}
+    <div class="three fields">
+        <div class="field">
+            {% if discount_name %}
+                <label for="qty">Εκπτωση</label>
+                <input type="checkbox" name="discount_name" class="ui checkbox" value="true" placeholder="Discount" checked><br> {% else %}
+                <label for="qty">Εκπτωση</label>
+                <input type="checkbox" name="discount_name" class="ui checkbox" value="true" placeholder="Discount"><br> {% endif %}
+        </div>
+        <div class="field">
+            {% if qty_name %}
+                <label for="qty">Απόθεμα</label>
+                <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty" checked> {% else %}
+                <label for="qty">Απόθεμα</label>
+                <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty"> {% endif %}
+        </div>
+        <div class="field">
+            <label for="size">Μεγεθολόγιο</label>
+            <input type="checkbox" name="size_data" class="ui checkbox" {% if size_data %} value="true"{% endif %}>
+        </div>
+    </div>
+    {% include 'snippets/vendor_cate_filter.html' %}
+    <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
+    <a href="{{ request.path }}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+</form>

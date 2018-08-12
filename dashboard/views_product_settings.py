@@ -24,7 +24,7 @@ from products.forms_popup import ProductPhotoUploadForm
 from site_settings.constants import CURRENCY
 from inventory_manager.models import Vendor, Category
 from inventory_manager.forms import CategoryForm
-from my_site.models import CategorySite, Brands
+from frontend.models import CategorySite, Brands
 
 
 @method_decorator(staff_member_required, name='dispatch')

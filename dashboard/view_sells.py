@@ -18,8 +18,8 @@ from point_of_sale.models import *
 from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm, CreateOrderItemWithSizeForm
 from transcations.models import *
 
-from my_site.models import Shipping
-from my_site.forms import ShippingForm
+from frontend.models import Shipping
+from frontend.forms import ShippingForm
 from site_settings.models import PaymentMethod
 from site_settings.forms import PaymentMethodForm
 

@@ -6,9 +6,24 @@ from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 
 from products.models import Category, Color, Size
-from my_site.models import CategorySite, Brands
+from frontend.models import CategorySite, Brands
 from inventory_manager.models import Vendor, Order, OrderItem
 from point_of_sale.models import *
+
+
+def get_filters_get_data(request):
+    search_name = request.GET.get('search_name', None)
+    category_name = request.GET.getlist('category_name', None)
+    vendor_name = request.GET.getlist('vendor_name', None)
+    brand_name = request.GET.getlist('brand_name', None)
+    category_site_name = request.GET.getlist('category_site_name', None)
+    site_status = request.GET.get('site_status', None)
+    color_name = request.GET.getlist('color_name', None)
+    size_name = request.GET.getlist('size_name', None)
+    discount_name = request.GET.get('discount_name', None)
+    qty_name = request.GET.get('qty_name', None)
+    return [search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name,
+            discount_name, qty_name]
 
 
 def initial_data_from_database():

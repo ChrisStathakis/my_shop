@@ -19,7 +19,7 @@ from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod, PaymentOrders
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
-from my_site.models import Shipping
+from frontend.models import Shipping
 
 
 RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIONS, settings.PRODUCT_ATTRITUBE_TRANSCATION 

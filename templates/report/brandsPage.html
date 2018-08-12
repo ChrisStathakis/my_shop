@@ -17,8 +17,8 @@
             </div>
             <div class="content">
                 <form class="ui form" method="get" id="filter_form">
-                        <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
-                        <a href="{% url 'reports:products' %}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+                    <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
+                    <a href="{{ request.path }}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
                     {% include "snippets/search_date_filter.html" %}
                     <div class="three fields">
                         <div class="field">
@@ -31,15 +31,15 @@
 
                         <div class="field">
                             {% if qty_name %}
-                            <label for="qty">Απόθεμα</label>
-                            <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty" checked> {% else %}
+                                <label for="qty">Απόθεμα</label>
+                                <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty" checked> {% else %}
                             <label for="qty">Απόθεμα</label>
                             <input type="checkbox" name='qty_name' class="ui checkbox" value="true" placeholder="qty"> {% endif %}
                         </div>
                     </div>
-                     {% include 'snippets/vendor_cate_filter.html' %}
+                    {% include 'snippets/vendor_cate_filter.html' %}
                     <button style="width: 100%" type="submit" class="ui green button" placeholder="">Save</button>
-                    <a href="{% url 'reports:products' %}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
+                    <a href="{{ request.path }}" style="margin-left: 50%" class="ui red button">Καθαρισμός Φίλτρων</a>
                 </form>
                 
             </div>
@@ -93,7 +93,7 @@
                     <td>{{ ele.id }}</td>
                     <td>{{ ele.title }}</td>
                     <td>{{ ele.tag_active }}</td>
-                    <td><a href='' class="ui blue button">Ανάλυση</a></td>
+                    <td><a href='{% url 'reports:brands_detail' ele.id %}' class="ui blue button">Ανάλυση</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -4,12 +4,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import F
-
-from my_site.models import Banner
+from django.contrib import  messages
+from frontend.models import Banner
 from carts.models import Coupons
-from my_site.forms import BannerForm
-from my_site.models import FirstPage, Banner
-from my_site.forms import BannerForm, FirstPageForm
+from frontend.forms import BannerForm
+from frontend.models import FirstPage, Banner
+from frontend.forms import BannerForm, FirstPageForm
 from accounts.models import User, CostumerAccount
 from accounts.forms import CostumerAccountAdminForm, CreateUserAdmin
 from products.models import Product, CategorySite, Brands, Gifts

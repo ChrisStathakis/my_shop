@@ -5,4 +5,3 @@ from .models import Product, Category, Vendor
 
 admin.site.register(Product, ImportExportModelAdmin)
 admin.site.register(Category, ImportExportModelAdmin)
-admin.site.register(Vendor, ImportExportModelAdmin)

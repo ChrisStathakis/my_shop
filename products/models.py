@@ -10,7 +10,7 @@ from decimal import Decimal
 from tinymce.models import HTMLField
 
 from site_settings.models import DefaultBasicModel
-from my_site.models import CategorySite, Brands
+from frontend.models import CategorySite, Brands
 from inventory_manager.models import Vendor, Category
 
 from site_settings.constants import MEDIA_URL, CURRENCY, UNIT

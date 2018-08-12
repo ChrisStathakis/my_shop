@@ -19,14 +19,13 @@ from site_settings.constants import *
 from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
-from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, warehouse_vendors_analysis
+from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, warehouse_vendors_analysis, get_filters_get_data
 
 
 from itertools import chain
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta
 import datetime
-
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -46,10 +45,6 @@ class HomepageProductWarning(ListView):
     model = Product
     template_name = ''
     paginate_by = 50
-
-
-
-# products
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -115,16 +110,28 @@ class ProductDetail(LoginRequiredMixin, DetailView):
 class BrandsPage(ListView):
     template_name = 'report/brandsPage.html'
     model = Brands
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = Brands.objects.filter(active=True)
+        queryset = Brands.filters_data(queryset, self.request)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(BrandsPage, self).get_context_data(**kwargs)
-
+        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name,\
+        discount_name, qty_name = get_filters_get_data(self.request)
         context.update(locals())
         return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class BrandDetailView(DetailView):
+    template_name = 'report/brands_detail_view.html'
+    model = Brands
+
+    def get_context_data(self, **kwargs):
+        pass
         
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -200,6 +207,12 @@ def vendor_detail(request, pk):
     return render(request, 'report/details/vendors_id.html', context)
 
 
+@method_decorator(staff_member_required, name='dispatch')
+class WarehouseCategoryView(ListView):
+    model = Category
+    template_name = 'report/category_report.html'
+    paginate_by = 50
+
 
 @staff_member_required
 def warehouse_category_reports(request):
@@ -209,10 +222,18 @@ def warehouse_category_reports(request):
     return render(request, 'report/category_report.html', context)
 
 
+@method_decorator(staff_member_required, name='dispatch')
 class WarehouseCategoryReport(DetailView):
     model = Category
     template_name = ''
 
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CategorySiteView(ListView):
+    model = CategorySite
+    template_name = ''
+    paginate_by = 20
 
 
 @staff_member_required
@@ -318,11 +339,6 @@ def products_movements(request):
     return render(request, 'reports/products_flow.html', context)
 
 
-@method_decorator(staff_member_required, name='dispatch')
-class WarehouseCategoryView(ListView):
-    model = Category
-    template_name = 'report/category_report.html'
-    paginate_by = 50
 
 
 

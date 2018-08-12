@@ -14,7 +14,7 @@ import datetime
 from site_settings.constants import CURRENCY, RETAIL_TRANSCATIONS
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod
-from my_site.models import Shipping, validate_positive_decimal, CategorySite
+from frontend.models import Shipping, validate_positive_decimal, CategorySite
 from products.models import Product, SizeAttribute, Gifts
 
 

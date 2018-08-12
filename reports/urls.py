@@ -20,14 +20,19 @@ urlpatterns = [
     path('product/<int:pk>/ajax_analysis', view=ajax_product_detail, name='ajax_product_analysis'),
 
     path('brands/', BrandsPage.as_view(), name='brands'),
+    path('brands/detail/<int:pk>/', BrandDetailView.as_view(), name='brands_detail'),
 
     path('vendors/', VendorsPage.as_view(), name='vendors'),
     path('vendors/ajax_analysis', view=ajax_vendors_page_analysis, name='ajax_vendors_page_analysis'),
     path('vendors/check-orders/', CheckOrderPage.as_view(), name='check_orders'),
     url(r'vendors/(?P<pk>\d+)/$', view=vendor_detail, name='vendor_detail'),
 
-    path('warehouse-categories/', WarehouseCategoryView.as_view(), name='warehouse_categories'),
+    path('warehouse-categories/', WarehouseCategoryReport.as_view(), name='warehouse_categories'),
     path('warehouse-category/<int:pk>', WarehouseCategoryReport.as_view(), name='warehouse_category_detail'),
+
+    path('site-categories/', WarehouseCategoryView.as_view(), name='site_categories'),
+    path('site-category/<int:pk>', WarehouseCategoryReport.as_view(), name='site_category_detail'),
+
     path('orders/$', view=warehouse_orders, name='warehouse_orders'),
     path('orders/<int:dk>', view=order_id, name='warehouse_order_detail'),
     path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
