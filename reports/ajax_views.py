@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.db.models.functions import TruncMonth
 
+from .tools import initial_date
 
 def ajax_analyse_vendors(request):
     data = dict()
@@ -42,6 +43,20 @@ def ajax_vendors_page_analysis(request):
     return JsonResponse(data)
 
 
+
+def category_analysis(request):
+    data = {}
+    data_type = request.GET.get('data_type')
+    date_start, date_end = initial_date(request)
+    category_name = request.GET.getlist('category_name')
+    vendor_name = request.GET.getlist('vendor_name')
+
+    if data_type == 'warehouse':
+        queryset = OrderItem.objects.filter(order__date_expired__range=[date_start, date_end])
+        queryset = queryset.filters_data(request, queryset)
+        queryset_analysis = ''
+
+    return JsonResponse(data)
 
 
 

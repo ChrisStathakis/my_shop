@@ -177,7 +177,6 @@ class CheckOrderPage(ListView):
 
     def get_queryset(self):
         queryset = PaymentOrders.objects.all()
-
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -211,33 +210,36 @@ def vendor_detail(request, pk):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class WarehouseCategoryView(ListView):
+class WarehouseCategoriesView(ListView):
     model = Category
     template_name = 'report/category_report.html'
     paginate_by = 50
-
-
-@staff_member_required
-def warehouse_category_reports(request):
-    categories, currency = Category.objects.all(), CURRENCY
-    site_categories = CategorySite.objects.all()
-    context = locals()
-    return render(request, 'report/category_report.html', context)
+    
+    def get_context_data(self, **kwargs):
+        context = super(WarehouseCategoriesView, self).get_context_data(**kwargs)
+        search_name = self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class WarehouseCategoryReport(DetailView):
+class WarehouseCategoryView(DetailView):
     model = Category
     template_name = ''
 
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class CategorySiteView(ListView):
+class CategoriesSiteView(ListView):
     model = CategorySite
     template_name = ''
-    paginate_by = 20
+    paginate_by = 50
 
+@method_decorator(staff_member_required, name='dispatch')
+class CategorySiteView(DetailView):
+    model = CategorySite
+    template_name = ''
+    
 
 @staff_member_required
 def warehouse_orders(request):

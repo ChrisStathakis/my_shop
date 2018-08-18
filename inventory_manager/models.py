@@ -339,7 +339,6 @@ class OrderItem(DefaultOrderItemModel):
         value = request.GET.get(f'price_{product.id}', product.price_buy)
         discount = request.GET.get(f'discount_{product.id}', product.order_discount)
         discount = Decimal(discount) if discount else 0
-        print('qty', value, 'price', )
         if get_order_item.exists() and qty > 0:
             print('exist')
             item = get_order_item.last()
@@ -370,6 +369,17 @@ class OrderItem(DefaultOrderItemModel):
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)
+
+    @staticmethod
+    def filters_data(request, queryset):
+        category_name = request.GET.getlist('category_name', None)
+        brand_name = request.GET.getlist('brand_name', None)
+        vendor_name = request.GET.getlist('vendor_name', None)
+        queryset = queryset.filter(product__category__id__in=category_name) if category_name else queryset
+        queryset = queryset.filter(product__brand__id__in=brand_name) if brand_name else queryset
+        queryset = queryset.filter(product_vendor__id__in=vendor_name) if vendor_name else queryset
+        return queryset
+
 
 
 @receiver(pre_delete, sender=OrderItem)

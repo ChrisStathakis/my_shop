@@ -27,11 +27,11 @@ urlpatterns = [
     path('vendors/check-orders/', CheckOrderPage.as_view(), name='check_orders'),
     url(r'vendors/(?P<pk>\d+)/$', view=vendor_detail, name='vendor_detail'),
 
-    path('warehouse-categories/', WarehouseCategoryReport.as_view(), name='warehouse_categories'),
-    path('warehouse-category/<int:pk>', WarehouseCategoryReport.as_view(), name='warehouse_category_detail'),
+    path('warehouse-categories/', WarehouseCategoriesView.as_view(), name='warehouse_categories'),
+    # path('warehouse-category/<int:pk>', WarehouseCategoryReport.as_view(), name='warehouse_category_detail'),
 
-    path('site-categories/', WarehouseCategoryView.as_view(), name='site_categories'),
-    path('site-category/<int:pk>', WarehouseCategoryReport.as_view(), name='site_category_detail'),
+    path('site-categories/', WarehouseCategoriesView.as_view(), name='site_categories'),
+    # path('site-category/<int:pk>', WarehouseCategoryReport.as_view(), name='site_category_detail'),
 
     path('orders/$', view=warehouse_orders, name='warehouse_orders'),
     path('orders/<int:dk>', view=order_id, name='warehouse_order_detail'),

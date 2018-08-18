@@ -197,17 +197,24 @@ def vendor_detail(request, pk):
     return render(request, 'report/details/vendors_id.html', context)
 
 
-@staff_member_required
-def warehouse_category_reports(request):
-    categories, currency = Category.objects.all(), CURRENCY
-    site_categories = CategorySite.objects.all()
-    context = locals()
-    return render(request, 'report/category_report.html', context)
-
-
-class WarehouseCategoryReport(DetailView):
+@method_decorator(staff_member_required, name='dispatch')
+class WarehouseCategoriesReport(ListView):
     model = Category
-    template_name = ''
+    template_name = 'report/category_report.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        queryset = Category.objects.filter(active=True)
+        queryset = Category.filter_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(WarehouseCategoriesReport, self).get_context_data(**kwargs)
+
+        search_name = self.request.GET.get('search_name', None)
+
+        context.update(locals())
+        return context
 
 
 
