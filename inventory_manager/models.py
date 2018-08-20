@@ -183,7 +183,8 @@ class Order(DefaultOrderModel):
         if self.paid_value >= self.final_value and self.paid_value > 0.5:
             self.is_paid = True
 
-        if self.is_paid and self.paid_value < self.total_price:
+        '''
+        if self.is_paid and self.paid_value < self.final_value:
             get_diff = self.total_price - self.paid_value
             new_payment = PaymentOrders.objects.create(date_expired=self.day_created,
                                                        value=get_diff,
@@ -193,6 +194,7 @@ class Order(DefaultOrderModel):
                                                        content_type=ContentType.objects.get_for_model(Order),
                                                        object_id=self.id
                                                        )
+        '''
 
         super(Order, self).save(*args, **kwargs)
         if WAREHOUSE_ORDERS_TRANSCATIONS:
@@ -202,7 +204,6 @@ class Order(DefaultOrderModel):
     def update_warehouse(self):
         self.vendor.save()
         
-
 
     @staticmethod
     def filter_data(request, queryset):
@@ -234,7 +235,7 @@ class Order(DefaultOrderModel):
 
     @property
     def get_remaining_value(self):
-        return round(self.final_value - self.paid_value, 2)
+        return self.final_value - self.paid_value
 
     def tag_remaining_value(self):
         return '%s %s' % (self.get_remaining_value, CURRENCY)

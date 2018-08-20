@@ -8,8 +8,9 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="header">
-                        <h4 class="text-center title">Create New Payment</h4>
+                        <h4 class="text-center title">Order {{ instance }}. Remaining {{ instance.tag_remaining_value }}</h4>
                     </div>
+                    {% if instance.get_remaining_value > 0 %}
                     <div class="content">
                         <form method='POST'> {% csrf_token %}
                             {{ form }}
@@ -46,6 +47,11 @@
                             </tbody>
                         </table>
                     </div>
+                    {% else %}
+                        <div class="content">
+                            <h4 class="header">The payment is done</h4>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-6">
@@ -57,7 +63,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>Date</th>
                                     <th>title</th>
                                     <th>Payment Method</th>
                                     <th>Status</th>
@@ -68,12 +74,13 @@
                             <tbody>
                                 {% for payment in payments %}
                                     <tr>
-                                        <td>{{ payment.id }}</td>
+                                        <td>{% if payment.is_paid %}<span style='color:green'>{{ payment.date_expired|date }}</span> {% else %}<span style='color:red'>{{ payment.date_expired|date }}</span>  {% endif %}</td>
                                         <td>{{ payment.title }}</td>
                                         <td>{{ payment.payment_method }}</td>
                                         <td>{{ payment.tag_is_paid }}</td>
-                                        <td>{{ payment.tag_final_price }}</td>
-                                        <td><a href='' class='btn btn-warning'>Delete</a></td>
+                                        <td>{{ payment.tag_final_value }} <a href="{% url 'inventory:order_payment_manager_add_or_remove' instance.id payment.id 'paid' %}" class="btn btn-success">PAID</a></td>
+                                        <td><a href="{% url 'inventory:order_payment_manager_add_or_remove' instance.id payment.id 'edit' %}" class="btn btn-primary">Edit</a>
+                                            <a href="{% url 'inventory:order_payment_manager_add_or_remove' instance.id payment.id 'delete' %}" class='btn btn-warning'>Delete</a></td>
                                     </tr>
                                 {% empty %}
                                     <tr>

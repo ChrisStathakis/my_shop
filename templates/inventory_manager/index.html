@@ -47,14 +47,20 @@
 								<p>Vendors</p>
                             </a>
                         </li>
-                         <li>
-                            <a href="">
-                                <i class="ti-panel"></i>
-								<p>Settings</p>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="ti-bell"></i>
+                                <p>Expenses</p>
+                                <b class="caret"></b>
                             </a>
-                        </li>
+                            <ul class="dropdown-menu">
+                                <li><a href="">General</a></li>
+                                <li><a href="{% url 'dashboard:categories_site' %}">Payroll</a></li>
+                                <li><a href="{% url 'dashboard:brands' %}">Bills</a></li>     
+                            </ul>
+                          </li>
                         <li>
-                            <a href="{% url 'inventory:payment_list' %}">
+                            <a href="{% url 'dashboard:payment_view' %}">
                                 <i class="ti-panel"></i>
 								<p>Payments</p>
                             </a>
@@ -103,10 +109,10 @@
                                             {% for order in object_list %}
                                             <tr>
                                                 <td>{{ forloop.counter }}</td>
-                                                <td>{{ order.date_created|date }}</td>
+                                                <td>{{ order.date_expired|date }}</td>
                                                 <td>{{ order }}</td>
                                                 <td>{{ order.vendor }}</td>
-                                                <td>{{ order.tag_total_value }}</td>
+                                                <td>{{ order.tag_final_value }}</td>
                                                 <td><a href="{% url 'inventory:warehouse_order_detail' order.id %}" class="btn btn-primary" >Details</td>
                                             </tr>
                                             {% endfor %}

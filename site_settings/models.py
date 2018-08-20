@@ -74,7 +74,7 @@ class DefaultOrderModel(models.Model):
     user_account = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.TextField(blank=True, null=True)
     payment_method = models.ForeignKey(PaymentMethod, null=True, on_delete=models.SET_NULL)
-    date_expired = models.DateTimeField(default=timezone.now())
+    date_expired = models.DateField(default=timezone.now())
     value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
@@ -87,6 +87,10 @@ class DefaultOrderModel(models.Model):
     class Meta:
         abstract = True
 
+    def tag_is_paid(self):
+        return 'Is Paid' if self.is_paid else 'Not Paid'
+
+    
     
 
 

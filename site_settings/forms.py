@@ -7,7 +7,7 @@ class PaymentForm(forms.ModelForm):
     object_id = forms.IntegerField(widget=forms.HiddenInput())
     content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.HiddenInput())
     is_expense = forms.BooleanField(widget=forms.HiddenInput())
-    date_expired = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'date',}))
+    date_expired = forms.DateField(widget=forms.DateInput(attrs={'type': 'date',}))
 
     class Meta:
         model = PaymentOrders

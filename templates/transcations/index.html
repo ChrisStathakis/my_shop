@@ -1,0 +1,89 @@
+{% extends "inventory_manager/index.html" %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class='col-lg-4'>
+                    <div class="card">
+                        <div class="header">
+                            <h3 class="title">Bills</h3>
+                        </div>
+                        <div class="content">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Category</th>
+                                        <th>Title</th>
+                                        <th>Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in bills %}
+                                        <tr>
+                                            <td>{{ invoice.date_expired|date }}</td>
+                                            <td>{{ invoice.category }}</td>
+                                            <td>{{ invoice.title }}</td>
+                                            <td>{{ invoice.tag_final_value }}</td>
+                                            <td><a href='' class="btn btn-primary">Edit</a></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5">No data</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <a href="" class="btn btn-success">Go to Bill Page</a>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-lg-4'>
+                    <div class="card">
+                        <div class="header">
+                            <h3 class="title">Payroll</h3>
+                        </div>
+                        <div class="content">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Category</th>
+                                        <th>Title</th>
+                                        <th>Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in payrolls %}
+                                        <tr>
+                                            <td>{{ invoice.date_expired|date }}</td>
+                                            <td>{{ invoice.category }}</td>
+                                            <td>{{ invoice.title }}</td>
+                                            <td>{{ invoice.tag_final_value }}</td>
+                                            <td><a href='' class="btn btn-primary">Edit</a></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5">No data</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-lg-4'>
+                    <div class="card">
+                        <div class="header">
+                            <h3>Generic Expenses</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

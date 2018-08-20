@@ -128,8 +128,18 @@ def order_payment_manager(request, pk):
     instance = get_object_or_404(Order, id=pk)
     payments = instance.payment_orders.all()
     vendor_payments = instance.vendor.payment_orders.all()
-    form = PaymentForm(request.POST or None)
-
+    form = PaymentForm(request.POST or None, 
+                       initial={
+                           'value': instance.get_remaining_value,
+                           'title': 'Hello',
+                           'object_id': instance.id,
+                           'content_type': ContentType.objects.get_for_model(instance),
+                           'is_expense': True,
+                           
+                       })
+    if form.is_valid():
+        form.save()
+        instance.save()
     context = locals()
     return render(request, 'inventory_manager/order_manage_payments.html', context)
 
@@ -137,6 +147,7 @@ def order_payment_manager(request, pk):
 def order_payment_manager_add_or_remove(request, pk, dk, slug):
     instance = get_object_or_404(Order, id=pk)
     payment = get_object_or_404(PaymentOrders, id=dk)
+
     if slug == 'add':
         difference = instance.get_remaining_value
         if difference > 0 and payment.final_value >= difference:
@@ -144,6 +155,7 @@ def order_payment_manager_add_or_remove(request, pk, dk, slug):
                 payment.object_id = pk
                 payment.content_type = ContentType.objects.get_for_model(instance)
                 payment.save()
+                instance.save()
             else:
                 payment.final_value -= difference
                 payment.save()
@@ -153,18 +165,35 @@ def order_payment_manager_add_or_remove(request, pk, dk, slug):
                 new_check.content_type = ContentType.objects.get_for_model(instance)
                 new_check.final_value = difference
                 new_check.save()
-    return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
+                instance.save()
+        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
 
+    if slug == 'delete':
+        payment.delete()
+        instance.save()
+        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
 
-@method_decorator(staff_member_required, name='dispatch')
-class WarehouseHomepage(TemplateView):
-    template_name = 'inventory_manager/'
-
-    def get_context_data(self, **kwargs):
-        context = super(WarehouseHomepage, self).get_context_data(**kwargs)
-
-        context.update(locals())
-        return context
+    if slug == 'paid':
+        payment.is_paid = True
+        payment.save()
+        instance.save()
+        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
+    form = PaymentForm(request.POST or None, 
+                       instance=payment,
+                       initial = {
+                           'object_id': payment.object_id,
+                           'content_object': payment.content_object,
+                           'is_expense': payment.is_expense,
+                           'date_expired': payment.date_expired
+                        }
+                    )
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
+    instance.save()
+    page_title = f'Edit {instance.title} payment'
+    back_url = reverse('inventory:order_payment_manager', kwargs={'pk': pk})
+    return render(request, 'inventory_manager/form.html', context=locals())
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -222,12 +251,11 @@ class VendorPageCreate(FormView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class WarehousePaymentPage(ListView):
-    model = Order
+    model = PaymentOrders
     template_name = 'inventory_manager/payment_list.html'
 
     def get_queryset(self):
-        queryset = Order.objects.all()
-        queryset = self.model.filter_data(self.request, queryset)
+        queryset = PaymentOrders.objects.all()
         return queryset
 
     def get_context_data(self, **kwargs):
