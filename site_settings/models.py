@@ -87,6 +87,8 @@ class DefaultOrderModel(models.Model):
     class Meta:
         abstract = True
 
+    
+
 
 class DefaultOrderItemModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -109,6 +111,13 @@ class PaymentOrders(DefaultOrderModel):
 
     def __str__(self):
         return f"Επιταγη {self.title}"
+
+    def save(self, *args, **kwargs):
+        self.final_value = self.value
+        super(PaymentOrders, self).save(*args, **kwargs)
+
+    def tag_final_value(self):
+        return f'{self.final_value} {CURRENCY}'
 
 
 @receiver(post_delete, sender=PaymentOrders)

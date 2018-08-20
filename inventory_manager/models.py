@@ -11,7 +11,7 @@ from django.db.models import Sum
 from django.utils.translation import pgettext_lazy
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete
 from django.dispatch import receiver
 from django.contrib import messages
 from mptt.models import MPTTModel, TreeForeignKey
@@ -21,6 +21,7 @@ from site_settings.tools import estimate_date_start_end_and_months
 from site_settings.constants import WAREHOUSE_ORDER_TYPE
 from decimal import Decimal
 
+WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
 def upload_image(instance, filename):
     return f'/warehouse_images/{instance.title}/{filename}'
@@ -91,17 +92,15 @@ class Vendor(models.Model):
         verbose_name_plural = '9. Προμηθευτές'
         ordering = ['title', ]
         
-    '''   
+     
     def save(self, *args, **kwargs):
         orders = self.order_set.all()
-        self.balance = orders.aggregate(Sum('total_price'))['total_price__sum'] if orders else 0
+        self.balance = orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0
         self.balance -= orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
-        self.balance -= self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))['value__sum'] \
-        if self.payment_orders.filter(is_paid=True) else 0
-        self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))['value__sum'] \
-        if self.payment_orders.filter(is_paid=False) else 0
-        super(Supply, self).save(*args, **kwargs)
-    '''
+        # self.balance -= self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))['value__sum'] if self.payment_orders.filter(is_paid=True) else 0
+        self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))['value__sum'] if self.payment_orders.filter(is_paid=False) else 0
+        super(Vendor, self).save(*args, **kwargs)
+    
 
     @staticmethod
     def filter_data(request, queryset):
@@ -196,33 +195,12 @@ class Order(DefaultOrderModel):
                                                        )
 
         super(Order, self).save(*args, **kwargs)
+        if WAREHOUSE_ORDERS_TRANSCATIONS:
+            self.update_warehouse()
 
 
-    def update_warehouse(self, action): # action get the value of in anf out
-        if action == 'in':
-            self.update_warehouse = True
-            self.save()
-            self.refresh_from_db()
-            order_items = self.order_items.all()
-            for order_item in order_items:
-                product = order_item.product
-                product.qty -= order_item.qty
-                product.price_buy = order_item.value
-                product.order_discount = order_item.discount_value
-                product.save()
-            new_value = self.vendor.balance + self.final_value - self.paid_value
-            self.vendor.update(balance=new_value)
-        else:
-            self.update_warehouse = False
-            self.save()
-            self.refresh_from_db()
-            order_items = self.order_items.all()
-            for order_item in order_items:
-                product = order_item.product
-                product.qty += order_item.qty
-                product.save()
-            new_value = self.vendor.balance - self.final_value + self.paid_value
-            self.vendor.update(balance=new_value)
+    def update_warehouse(self):
+        self.vendor.save()
         
 
 
@@ -256,7 +234,7 @@ class Order(DefaultOrderModel):
 
     @property
     def get_remaining_value(self):
-        return round(self.total_price - self.paid_value, 2)
+        return round(self.final_value - self.paid_value, 2)
 
     def tag_remaining_value(self):
         return '%s %s' % (self.get_remaining_value, CURRENCY)
@@ -319,16 +297,28 @@ class OrderItem(DefaultOrderItemModel):
         return f'{self.product}'
 
     def save(self, *args, **kwargs):
-        print('save', self.value, self.discount_value, type(self.get_taxes_display()))
         self.final_value = Decimal(self.value) * (100-self.discount_value)/100 if self.discount_value > 0 else self.value
-        self.total_clean_value = self.final_value * self.qty
-        self.total_value_with_taxes = Decimal(self.total_clean_value) * ((100+Decimal(self.get_taxes_display())) / 100)
+        self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
+        self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100+self.get_taxes_display()) / 100)
         super(OrderItem, self).save(*args, **kwargs)
-        self.order.save()
         self.product.price_buy = self.value
         self.product.order_discount = self.discount_value
         self.product.save()
 
+    def remove_from_order(self, qty):
+        if WAREHOUSE_ORDERS_TRANSCATIONS:
+            product = self.product
+            product.qty -= qty
+            product.save()
+        self.order.save()
+
+    def quick_add_to_order(self, qty):
+        qty = Decimal(qty) if qty else 0
+        if WAREHOUSE_ORDERS_TRANSCATIONS:
+            product = self.product
+            product.qty += qty
+            product.save()
+        self.order.save()
 
     @staticmethod
     def add_to_order(request, product, order):
@@ -340,20 +330,24 @@ class OrderItem(DefaultOrderItemModel):
         discount = request.GET.get(f'discount_{product.id}', product.order_discount)
         discount = Decimal(discount) if discount else 0
         if get_order_item.exists() and qty > 0:
-            print('exist')
             item = get_order_item.last()
             item.qty += qty
             item.value = value
             item.discount_value = discount
             item.save()
+            if WAREHOUSE_ORDERS_TRANSCATIONS:
+                product.qty += qty
+                product.save()
         elif qty > 0:
-            print('new')
             item = OrderItem.objects.create(product=product,
                                             order=order,
                                             qty=qty,
                                             value=value,
                                             discount_value=discount
                                             )
+            if WAREHOUSE_ORDERS_TRANSCATIONS:
+                product.qty += qty
+                product.save()
         else:
             print('wtf')
             messages.warning(request, 'Something goes wrong!')
@@ -382,19 +376,12 @@ class OrderItem(DefaultOrderItemModel):
 
 
 
-@receiver(pre_delete, sender=OrderItem)
+@receiver(post_delete, sender=OrderItem)
 def update_qty_on_delete(sender, instance, *args, **kwargs):
-    product = instance.product
-    order = instance.order
-    self = instance
-    product.qty -= instance.qty
-    product.save()
-    get_all_items = OrderItem.objects.filter(order=order)
-    first_price = get_all_items.aggregate(total=Sum(F('qty') * F('price')))['total'] if get_all_items else 0
-    price_after_discount = first_price * ((100 - Decimal(self.discount)) / 100)
-    price_after_taxes = price_after_discount * ((100 + Decimal(self.get_taxes_display())) / 100)
-    self.order.total_price_no_discount, self.order.total_price_after_discount, self.order.total_price = first_price, price_after_discount, price_after_taxes
-    self.order.total_discount, self.order.total_taxes = price_after_discount - first_price, price_after_taxes - price_after_discount
+    product, order, self = instance.product,instance.order, instance
+    if WAREHOUSE_ORDERS_TRANSCATIONS:
+        product.qty -= instance.qty
+        product.save()
     self.order.save()
 
 

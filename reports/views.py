@@ -66,6 +66,7 @@ class ReportProducts(ListView):
         context.update(locals())
         return context
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class ProductSizeView(ListView):
     model = SizeAttribute
@@ -225,7 +226,14 @@ class WarehouseCategoriesView(ListView):
 @method_decorator(staff_member_required, name='dispatch')
 class WarehouseCategoryView(DetailView):
     model = Category
-    template_name = ''
+    template_name = 'report/details/warehouse_category.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(WarehouseCategoryView, self).get_context_data(**kwargs)
+        products = Product.objects.filter(category=self.object)
+        total_qty = products.aggregate(total_qty=Sum('qty')) if products else 0
+        context.update(locals())
+        return context
 
 
 
@@ -342,9 +350,6 @@ def products_movements(request):
         products, product_movements, filters_name = None, None, None
     context = locals()
     return render(request, 'reports/products_flow.html', context)
-
-
-
 
 
 @staff_member_required

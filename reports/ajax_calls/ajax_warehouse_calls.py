@@ -11,6 +11,7 @@ from inventory_manager.models import Vendor
 from point_of_sale.models import RetailOrderItem
 from products.models import Product, Category, CategorySite
 from frontend.models import Brands
+from ..tools import initial_date
 CURRENCY = settings.CURRENCY
 
 
@@ -109,6 +110,35 @@ def ajax_product_detail(request, pk):
     return JsonResponse(data)
 
 
+def ajax_warehouse_category_analysis(request):
+    data = {}
+    data_type = request.GET.get('data_type')
+    date_start, date_end, date_range = initial_date(request)
+    category_name = request.GET.getlist('category_name')
+    vendor_name = request.GET.getlist('vendor_name')
+
+    if data_type == 'warehouse':
+        queryset = OrderItem.objects.filter(order__date_expired__range=[date_start, date_end])
+        queryset = OrderItem.filters_data(request, queryset)
+        results = queryset.values('product__category__title').annotate(total_qty=Sum('qty'))
+        
+        data['result'] = render_to_string(request=request,
+                                          template_name='report/ajax/warehouse/ajax_warehouse_category_analysis.html',
+                                          context={'results': results}
+                                          )
+    return JsonResponse(data)
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------#
 def ajax_vendors_page_analysis(request):
 
     data = dict()

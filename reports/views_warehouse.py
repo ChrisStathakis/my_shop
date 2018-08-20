@@ -169,7 +169,7 @@ class CheckOrderPage(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CheckOrderPage, self).get_context_data(**kwargs)
-        vendors = Supply.objects.filter(active=True)
+        vendors = Vendor.objects.filter(active=True)
         context.update(locals())
         return context
 
@@ -215,6 +215,17 @@ class WarehouseCategoriesReport(ListView):
 
         context.update(locals())
         return context
+
+@staff_member_required
+def warehouse_category_detail(request, pk):
+    instance = get_object_or_404(Category, id=pk)
+    products = Product.objects.filter(category=instance)
+    date_start, date_end, date_range = initial_date(request)
+    warehouse_order_items = OrderItem.objects.filter(product__in=products, order__date_expired=[date_start, date_end])
+
+    context = locals()
+    return render(request, '')
+    
 
 
 

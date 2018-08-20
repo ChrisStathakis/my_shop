@@ -1,0 +1,20 @@
+<table class="ui table">
+    <thead>
+        <th>#</th>
+        <th>Κατηγορία</th>
+        <th>Αγορές</th>
+    </thead>
+    <tbody>
+        {% for category in reports %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td> {{ category }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="3">No data</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+</table>

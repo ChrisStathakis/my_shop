@@ -1,9 +1,27 @@
 from django.db import models
 
 
+class RetailQuerySet(models.QuerySet):
+
+    def sells(self):
+        return self.filter(order_type__in=['r', 'e'])
+    
+    def returns(self):
+        return self.filter(order_type='b')
+
+    def sells_by_date_range(date_start, date_end):
+        return self.sells().filter(date_expired__range=[date_start, date_end])
+    
+    def all_by_date_range(date_start, date_end):
+        return self.filter(date_expired__range=[date_start, date_end])
+
+
 class RetailOrderManager(models.Manager):
+
+    
+
     def all_orders_by_date_filter(self, date_start, date_end):
-        return super(RetailOrderManager, self).filter(date_created__range=[date_start, date_end]).order_by('-date_created')
+        return super(RetailOrderManager, self).filter(date_expired__range=[date_start, date_end]).order_by('-date_created')
 
     def sells_orders(self, date_start, date_end):
         return self.all_orders_by_date_filter(date_start, date_end).filter(order_type__in=['r', 'e']).exclude(status__in=['5', '6'])

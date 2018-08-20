@@ -9,8 +9,11 @@ class ProductSiteQuerySet(models.query.QuerySet):
 
     def active_warehouse(self):
         if RETAIL_TRANSCATIONS:
-            return self.filter(active=True, site_active=True, qty__gt=0)
-        return self.filter(active=True, site_active=True)
+            return self.filter(active=True)
+        return self.filter(active=True)
+
+    def active(self):
+        return self.filter(active=True)
 
     def active_for_site(self):
         return self.filter(active=True, site_active=True, qty__gt=0) if USE_QTY_LIMIT else self.filter(active=True, site_active=True)
@@ -19,7 +22,7 @@ class ProductSiteQuerySet(models.query.QuerySet):
         return self.active_for_site().filter(is_featured=True)[:12]
 
     def category_queryset(self, cate):
-        return self.active_for_site().filter(category_site__in=cate)
+        return self.active().filter(category_site__in=cate)
 
 
 class ProductManager(models.Manager):

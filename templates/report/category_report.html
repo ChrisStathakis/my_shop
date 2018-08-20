@@ -51,7 +51,7 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ category }}</td>
-                        <td><a href='' class='ui green button'>Go</a> </td>
+                        <td><a href='{% url 'reports:warehouse_category' category.id %}' class='ui green button'>Go</a> </td>
                     </tr>
                 {% empty %}
                     <tr>
@@ -65,21 +65,38 @@
     <div  class="ten wide column">
         <div style="text-align: center" class="ui medium header">Ενέργειες</div>
         <div class="row">
-            <a href='' class='ui button ajax_button'>Υπολογισμός υπολοίπου</a>
+            <button data-type="warehouse" data-url="{% url 'reports:ajax_ware_cate_ana' %}" class='ui blue button ajax_button'>Ανάλυση Αποθήκης</button>
             <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
             <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
             <a href='' class='ui button'>Υπολογισμός υπολοίπου</a>
         </div>
         <div class='row' id='ajax_container'>
-
+            <p>Hello!</p>
         </div>
     </div>
 
+
+{% endblock %}
+
+{% block extra_js %}
     <script>
-        $('.ajax_button').click(function() {
-            console.log('works!')
+        $('.ajax_button').click(function () {
+            const btn = $(this);
+            const data_type = btn.attr('data-type');
+            const my_form = $('#filter_form').serialize();
+            $('#ajax_container').html('<h4>Loading</h4>');
+            $.ajax({
+                url: btn.attr('data-url'),
+                dataType: 'json',
+                data: my_form + '&data_type='+ data_type,
+                before: function () {
+                    $('#ajax_container').html('<h4>Loading</h4>')
+                },
+                success: function(response) {
+                    $('#ajax_container').html(response.result)
+                }
+            })
         })
     </script>
-
 {% endblock %}
 

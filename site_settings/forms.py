@@ -1,9 +1,11 @@
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from .models import PaymentOrders, PaymentMethod
 
 
 class PaymentForm(forms.ModelForm):
     object_id = forms.IntegerField(widget=forms.HiddenInput())
+    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.HiddenInput())
     is_expense = forms.BooleanField(widget=forms.HiddenInput())
     date_expired = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'date',}))
 

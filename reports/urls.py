@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.urls import path
 from .views import *
 from .ajax_calls.ajax_warehouse_calls import (ajax_products_analysis, ajax_product_search, ajax_product_detail,
-                                              ajax_vendors_page_analysis
+                                              ajax_vendors_page_analysis, ajax_warehouse_category_analysis
                                               )
 
 
@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'vendors/(?P<pk>\d+)/$', view=vendor_detail, name='vendor_detail'),
 
     path('warehouse-categories/', WarehouseCategoriesView.as_view(), name='warehouse_categories'),
+    path('warehouse-categories/detail/<int:pk>/', WarehouseCategoryView.as_view(), name='warehouse_category'),
+    path('warehouse-categories/ajax/', ajax_warehouse_category_analysis, name='ajax_ware_cate_ana'),
     # path('warehouse-category/<int:pk>', WarehouseCategoryReport.as_view(), name='warehouse_category_detail'),
 
     path('site-categories/', WarehouseCategoriesView.as_view(), name='site_categories'),

@@ -43,8 +43,7 @@ def ajax_vendors_page_analysis(request):
     return JsonResponse(data)
 
 
-
-def category_analysis(request):
+def ajax_warehouse_category_analysis(request):
     data = {}
     data_type = request.GET.get('data_type')
     date_start, date_end = initial_date(request)
@@ -57,25 +56,6 @@ def category_analysis(request):
         queryset_analysis = ''
 
     return JsonResponse(data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 
 
 def ajax_warehouse_product_movement_vendor_analysis(request):
