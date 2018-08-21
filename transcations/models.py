@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from decimal import Decimal
 from model_utils import FieldTracker
@@ -18,7 +19,7 @@ from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 import datetime
 
 User = get_user_model()
-
+CURRENCY = settings.CURRENCY
 
 class BillCategory(models.Model):
     title = models.CharField(unique=True, max_length=150)
@@ -30,16 +31,32 @@ class BillCategory(models.Model):
     
 class Bill(DefaultOrderModel):
     category = models.ForeignKey(BillCategory, null=True, on_delete=models.SET_NULL)
-    payment_orders = ''
+    payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
         ordering = ['date_expired',]
     
     def __str__(self):
-        return f'{self.Category} - {self.title}'
+        return f'{self.category} - {self.title}' if self.category else f'self.title'
 
     def save(self, *args, **kwargs):
-        pass
+        self.final_value = self.value
+        self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
+        if self.is_paid:
+            get_value = self.get_remaining_value
+            if get_value > 0:
+                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
+                                                         value=self.get_remaining_value,
+                                                         payment_method=self.payment_method,
+                                                         is_paid=True,
+                                                         object_id=self.id,
+                                                         content_type=ContentType.objects.get_for_model(self),
+                                                         is_expense=True
+                                                        )
+        super().save(*args, **kwargs)
+
+    def tag_final_value(self):
+        return f'{self.final_value} {CURRENCY}'
 
 
 class Occupation(models.Model):

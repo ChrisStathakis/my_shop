@@ -21,7 +21,7 @@ def category_create(request):
     if form.is_valid():
         instance = form.save()
         return HttpResponse(
-            '<script>opener.closePopup(window, "%s", "%s", "#id_author");</script>' % (instance.pk, instance))
+            '<script>opener.closePopup(window, "%s", "%s", "#id_category");</script>' % (instance.pk, instance))
     return render(request, "dashboard/ajax_calls/popup_form.html", {"form": form})
 
 
@@ -117,7 +117,7 @@ def ajax_category_site_add(request, pk, dk, choice):
     category = get_object_or_404(CategorySite, id=dk)
     if choice == 'add':
         instance.category_site.add(category)
-    if choice =='remove':
+    if choice == 'remove':
         instance.category_site.remove(category)
     data['table'] = render_to_string(request=request,
                                      template_name='dashboard/ajax_calls/category_site_manager.html',

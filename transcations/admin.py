@@ -5,3 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import *
 from .forms import *
+
+@admin.register(Bill)
+class BillAdmin(admin.ModelAdmin):
+    pass

@@ -87,8 +87,15 @@ class DefaultOrderModel(models.Model):
     class Meta:
         abstract = True
 
+
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'Not Paid'
+
+    def tag_final_value(self):
+        return f'{self.final_value} {CURRENCY}'
+
+    def get_remaining_value(self):
+        return self.final_value - self.paid_value
 
     
     
