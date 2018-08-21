@@ -31,7 +31,7 @@
                     <span class="icon-bar bar2"></span>
                     <span class="icon-bar bar3"></span>
                 </button>
-                <a class="navbar-brand" href="{% url 'dashboard:products' %}">Warehouse Orders</a>
+                {% block title %}<a class="navbar-brand" href="">Warehouse Orders</a> {% endblock %}
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -55,9 +55,9 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'billings:homepage' %}">Homepage</a></li>
+                                <li><a href="{% url 'billings:bill_list' %}">Bills</a></li>     
+                                <li><a href="{% url 'billings:payroll_list' %}">Payroll</a></li>
                                 <li><a href="">General</a></li>
-                                <li><a href="{% url 'dashboard:categories_site' %}">Payroll</a></li>
-                                <li><a href="{% url 'dashboard:brands' %}">Bills</a></li>     
                             </ul>
                           </li>
                         <li>

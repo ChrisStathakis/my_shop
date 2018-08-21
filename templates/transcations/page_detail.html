@@ -1,14 +1,15 @@
 {% extends "transcations/index.html" %}
 
+{% block title %}<a class="navbar-brand" href="">{{ page_title }}</a> {% endblock %}
 
 {% block content %}
 <div class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg-6">
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Bill list</h4>
+                        <h4 class="title">Payment List</h4>
                     </div>
                     <div class="content">
                         <table class="table">
@@ -16,21 +17,21 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Date</th>
-                                    <th>Category</th>
                                     <th>Title</th>
-                                    <th>Value</th>
-                                    <th>Actions</th>
+                                    <th colspan="2">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for instance in queryset %}
+                                {% for instance in payment_orders %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td>{{ instance.date_expired|date }}</td>
-                                        <td>{{ instance.category }}</td>
+                                        <td {% if not instance.is_paid %} style='background-color:red' {% else %} style='background:green' {% endif %}>{{ instance.date_expired|date }}</td>
+                                        
                                         <td>{{ instance }}</td>
                                         <td>{{ instance.tag_final_value }}</td>
-                                        <td><a href="" class="btn btn-primary">Edit</a> </td>
+                                        <td colspan="2">
+                                            <a onclick='return confirm("Are you sure?");' href="{% url 'billings:edit_bill_actions' instance.id 'payment_delete' %}" class="btn btn-warning">Delete</a>
+                                         </td>
                                     </tr>
                                 {% empty %}
                                     <tr>
@@ -43,42 +44,33 @@
                 </div>
             </div>
 
-            <div class="col-lg-3">
+            <div class="col-lg-6" id="form_container">
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Filters</h4>
-                    </div>
-                    <div class="content">
-                        <form method="get">
-                            {% for category in categories %}
-                                <div class="checkbox">
-                                    <label><input type="checkbox" value="{{ category.id }}" name="category_name">{{ category }}</label>
-                                </div>
-                            {% endfor %}
-                        </form>
-                        <button href="{% url 'billings:ajax_bill_cat_popup' %}"
+                        <h4 class="title">New Invoice</h4>
+                        <button data-url="{{ data_url }}"
                                 onclick="return showAddPopup(this);"
-                                class="btn btn-raised btn-primary">Create Category
+                                class="btn btn-raised btn-primary">{{ button_title }}
                         </button>
                     </div>
-                </div>
-                
-            </div>
-
-            <div class="col-lg-4" id="form_container">
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">New Bill</h4>
-                    </div>
                     <div class="content">
-                        <form method="post" class="form"> {% csrf_token %}
+                        <form method="post" class="form form-raised"> {% csrf_token %}
                             {{ form }}
                             <button name="new_bill" type="submit" class="btn btn-success">Save</button>
                         </form>
-
                     </div>
                 </div>
                 
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        <a href="{% url 'billings:edit_bill_actions' instance.id 'save_as' %}" class="btn btn-primary">Save as</a>
+                        <a onclick="return confirm('Are you sure?');" href="{% url 'billings:edit_bill_actions' instance.id 'delete' %}" class="btn btn-warning">Delete</a>
+                    </div>
+                </div>
+               
             </div>
 
         </div>
@@ -91,9 +83,9 @@
     <script type="text/javascript">
     console.log('works');
         function showAddPopup(triggerLink) {
-            console.log('works');
+            console.log(triggerLink);
             const name = 'category';
-            const href = "{% url 'billings:ajax_bill_cat_popup' %}";
+            const href = "{{ data_url }}";
             var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbar=yes');
             win.focus();
             return false

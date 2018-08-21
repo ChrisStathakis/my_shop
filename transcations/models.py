@@ -43,10 +43,10 @@ class Bill(DefaultOrderModel):
         self.final_value = self.value
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         if self.is_paid:
-            get_value = self.get_remaining_value
+            get_value = self.get_remaining_value()
             if get_value > 0:
                 new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
-                                                         value=self.get_remaining_value,
+                                                         value=self.get_remaining_value(),
                                                          payment_method=self.payment_method,
                                                          is_paid=True,
                                                          object_id=self.id,
@@ -55,8 +55,23 @@ class Bill(DefaultOrderModel):
                                                         )
         super().save(*args, **kwargs)
 
+    def update_paid_value(self):
+        payment_orders = self.payment_orders.filter(is_paid=True)
+        self.paid_value = payment_orders.aggregate(Sum('final_value'))['final_value__sum'] if payment_orders else 0
+        self.is_paid = True if self.is_paid >= self.final_value else False
+        self.save()
+
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
+
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        category_name = request.GET.getlist('category_name', None)
+
+        queryset = queryset.filter(category__id__in=category_name) if category_name else queryset
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        return queryset
 
 
 class Occupation(models.Model):
@@ -91,7 +106,7 @@ class Person(models.Model):
         verbose_name_plural = "6. Υπάλληλος"
 
     def save(self, *args, **kwargs):
-        get_orders = PayrollInvoice.objects.filter(person=self)
+        get_orders = Payroll.objects.filter(person=self)
         person_value = get_orders.aggregate(Sum('value'))['value__sum'] if get_orders else 0
         person_paid = get_orders.aggregate(Sum('paid_value'))['paid_value__sum'] if get_orders else 0
         self.balance = person_value - person_paid
@@ -117,26 +132,16 @@ class PayrollInvoiceManager(models.Manager):
         return super(PayrollInvoiceManager, self).filter(person=instance)
 
     def not_paid(self):
-        return super(PayrollInvoiceManager, self).filter(is_paid=False, active=True)
+        return super(PayrollInvoiceManager, self).filter(is_paid=False)
 
 
-class Payroll(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(max_length=64, verbose_name='Περιγραφή', blank=True, null=True)
+class Payroll(DefaultOrderModel):
     person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.CASCADE)
     category = models.CharField(max_length=1, choices=PAYROLL_CHOICES, default='1')
-    value = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Αξία')
-    date_created = models.DateField(auto_now=True)
-    date_expired = models.DateField(default=timezone.now, verbose_name='Πληρωμή μέχρι .....')
-    paid_value = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Πιστωτικό Υπόλοιπο')
-    payment_method = models.CharField(max_length=1, choices=PAYMENT_TYPE, default='1')
-    is_paid = models.BooleanField(default=False)
-    payorders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = PayrollInvoiceManager()
 
     class Meta:
-        verbose_name_plural = "7. Εντολές Πληρωμής Υπαλλήλων. "
         ordering = ['is_paid', '-date_expired', ]
 
     def save(self, *args, **kwargs):
@@ -159,9 +164,8 @@ class Payroll(models.Model):
                                                      object_id=self.id,
                                                      date_expired=self.date_expired,
                                                      )
-        super(PayrollInvoice, self).save(*args, **kwargs)
-        person = self.person
-        person.save()
+        super(Payroll, self).save(*args, **kwargs)
+        self.person.save()
 
     def __str__(self):
         return '%s %s' % (self.date_expired, self.person.title)
