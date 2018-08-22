@@ -51,6 +51,17 @@ class PersonForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+class OccupationForm(forms.ModelForm):
+    
+    class Meta:
+        model = Occupation
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(OccupationForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
 
 
 

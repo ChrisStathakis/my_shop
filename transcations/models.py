@@ -21,6 +21,7 @@ import datetime
 User = get_user_model()
 CURRENCY = settings.CURRENCY
 
+
 class BillCategory(models.Model):
     title = models.CharField(unique=True, max_length=150)
     balance = models.DecimalField(default=0, max_digits=50, decimal_places=2)
@@ -28,9 +29,15 @@ class BillCategory(models.Model):
     def __str__(self):
         return self.title
 
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        return queryset
+
     
 class Bill(DefaultOrderModel):
-    category = models.ForeignKey(BillCategory, null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(BillCategory, null=True, on_delete=models.SET_NULL, related_name='bills')
     payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
@@ -61,6 +68,18 @@ class Bill(DefaultOrderModel):
         self.is_paid = True if self.is_paid >= self.final_value else False
         self.save()
 
+    def add_bill(self):
+        bill = self.category
+        bill.balance += self.final_value
+        bill.balance -= self.paid_value
+        bill.save()
+
+    def remove_bill(self):
+        bill = self.category
+        bill.balance -= self.final_value
+        bill.balance += self.paid_value
+        bill.save()
+
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
 
@@ -89,6 +108,12 @@ class Occupation(models.Model):
 
     def __str__(self):
         return self.title
+
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        return queryset
 
 
 class Person(models.Model):
@@ -125,6 +150,13 @@ class Person(models.Model):
         print(vacations)
         days = vacations.aggregate(Sum('days'))['days__sum'] if vacations else 0
         return days
+
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        occup_name = request.GET.getlist('occup_name', None)
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        queryset = queryset.filter(occupation__id__in=occup_name) if occup_name else queryset
+        return queryset
 
 
 class PayrollInvoiceManager(models.Manager):

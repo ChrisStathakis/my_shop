@@ -1,0 +1,169 @@
+{% extends "transcations/index.html" %}
+
+{% block title %}<a class="navbar-brand" href="">{{ page_title }}</a> {% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">List</h4>
+                    </div>
+                    <div class="content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Title</th>
+                                    <th>Value</th>
+                                    <th colspan="2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for instance in object_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td {% if not instance.is_paid %} style='background-color:red' {% else %} style='background:green' {% endif %}>{{ instance.date_expired|date }}</td>
+                                        <td>{{ instance.category }}</td>
+                                        <td>{{ instance }}</td>
+                                        <td>{{ instance.tag_final_value }}</td>
+                                        <td colspan="2">
+                                            {% if not instance.is_paid %}<a href="{% url 'billings:edit_bill' instance.id 'paid' %}" class="btn btn-success">Paid</a>{% endif %}
+                                            <a href="{% url 'billings:edit_bill' instance.id 'edit' %}" class="btn btn-primary">Edit</a>
+                                            <a onclick='return confirm("Are you sure?");' href="{% url 'billings:edit_bill' instance.id 'delete' %}" class="btn btn-warning">Delete</a>
+                                         </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5">No Data</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Filters</h4>
+                    </div>
+                    <div class="content">
+                        <form method="get">
+                            <div class="pagination">
+                                <span class="step-links">
+                                    {% if queryset.has_previous %}
+                                        <a href="?page=1">&laquo; first</a>
+                                        <a href="?page={{ queryset.previous_page_number }}">previous</a>
+                                    {% endif %}
+                                    <span class="current">
+                                        Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
+                                    </span>
+                                    {% if queryset.has_next %}
+                                        <a href="?page={{ queryset.next_page_number }}">next</a>
+                                        <a href="?page={{ queryset.paginator.num_pages }}">last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <input type="text" class='form-control' name='search_name' placeholder='search'>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Date from</label>
+                                    <input type='date' class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                        <label>Date until</label>
+                                        <input type='date' class="form-control">
+                                    </div>
+                            </div>
+                            <h5>Categories</h5>
+                            {% for category in categories %}
+                                <div class="checkbox">
+                                    <label><input type="checkbox" value="{{ category.id }}" name="category_name">{{ category }}</label>
+                                </div>
+                            {% endfor %}
+                        </form>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="col-lg-4" id="form_container">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">New Invoice</h4>
+                        <button data-url="{{ data_url }}"
+                                onclick="return showAddPopup(this);"
+                                class="btn btn-raised btn-primary">{{ button_title }}
+                        </button>
+                    </div>
+                    <div class="content">
+                        <form method="post" class="form form-raised"> {% csrf_token %}
+                            {{ form }}
+                            <button name="new_bill" type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+                {% if payment_orders %}
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Payments Orders</h4>
+                    </div>
+                    <div class="content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Value</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payment_orders %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ payment.date_expired }}</td>
+                                        <td>{{ payment.tag_final_value }}</td>
+                                        <td><a href="" class="btn btn-warning">Delete</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+    console.log('works');
+        function showAddPopup(triggerLink) {
+            console.log(triggerLink);
+            const name = 'category';
+            const href = "{{ data_url }}";
+            var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbar=yes');
+            win.focus();
+            return false
+        }
+
+        function closePopup(win, newID, newRepr, id) {
+            $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>');
+            win.close();
+        }
+    </script>
+{% endblock %}
