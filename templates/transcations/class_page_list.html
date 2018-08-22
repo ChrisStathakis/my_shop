@@ -16,10 +16,10 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Title</th>
-                                    <th>Value</th>
+                                    <th>Person</th>
+                                    <th>Occupation</th>
+                                    <th>Phones</th>
+                                    <th>Balance</th>
                                     <th colspan="2">Actions</th>
                                 </tr>
                             </thead>
@@ -27,14 +27,12 @@
                                 {% for instance in object_list %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td {% if not instance.is_paid %} style='background-color:red' {% else %} style='background:green' {% endif %}>{{ instance.date_expired|date }}</td>
-                                        <td>{{ instance.category }}</td>
                                         <td>{{ instance }}</td>
-                                        <td>{{ instance.tag_final_value }}</td>
+                                        <td>{{ instance.occupation }}</td>
+                                        <td>{{ instance.phone|default_if_none:'No phone added' }}, {{ instance.phone1|default_if_none:'No phone added' }}</td>
+                                        <td>{{ instance.tag_balance }}</td>
                                         <td colspan="2">
-                                            {% if not instance.is_paid %}<a href="{% url 'billings:edit_bill' instance.id 'paid' %}" class="btn btn-success">Paid</a>{% endif %}
-                                            <a href="{% url 'billings:edit_bill' instance.id 'edit' %}" class="btn btn-primary">Edit</a>
-                                            <a onclick='return confirm("Are you sure?");' href="{% url 'billings:edit_bill' instance.id 'delete' %}" class="btn btn-warning">Delete</a>
+                                            <a href="{{ instance.get_dashboard_url }}" class="btn btn-primary">Edit</a>
                                          </td>
                                     </tr>
                                 {% empty %}
@@ -99,10 +97,12 @@
                 <div class="card">
                     <div class="header">
                         <h4 class="title">New Invoice</h4>
+                        {% if button_title %}
                         <button data-url="{{ data_url }}"
                                 onclick="return showAddPopup(this);"
                                 class="btn btn-raised btn-primary">{{ button_title }}
                         </button>
+                        {% endif %}
                     </div>
                     <div class="content">
                         <form method="post" class="form form-raised"> {% csrf_token %}

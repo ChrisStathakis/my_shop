@@ -29,6 +29,9 @@ class BillCategory(models.Model):
     def __str__(self):
         return self.title
 
+    def get_dashboard_url(self):
+        return reverse('billings:bill_cate_detail', kwargs={'pk': self.id})
+
     @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
@@ -106,6 +109,9 @@ class Occupation(models.Model):
 
     tag_balance.short_description = 'Υπόλοιπο'
 
+    def get_dashboard_url(self):
+        return reverse('billings:occup_detail', kwargs={'pk': self.id})
+
     def __str__(self):
         return self.title
 
@@ -122,7 +128,7 @@ class Person(models.Model):
     phone = models.CharField(max_length=10, verbose_name='Τηλέφωνο', blank=True)
     phone1 = models.CharField(max_length=10, verbose_name='Κινητό', blank=True)
     date_added = models.DateField(default=timezone.now, verbose_name='Ημερομηνία Πρόσληψης')
-    occupation = models.ForeignKey(Occupation, verbose_name='Απασχόληση', on_delete=models.CASCADE)
+    occupation = models.ForeignKey(Occupation, null=True, verbose_name='Απασχόληση', on_delete=models.SET_NULL)
     store_related = models.ForeignKey(Store, blank=True, null=True, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
     vacation_days = models.IntegerField(default=0)
@@ -143,6 +149,9 @@ class Person(models.Model):
     def tag_balance(self):
         return '%s %s' % (self.balance, CURRENCY)
 
+    def get_dashboard_url(self):
+        return reverse('billings:person_detail', kwargs={'pk': self.id})
+
     tag_balance.short_description = 'Υπόλοιπο'
 
     def calculate_total_days(self):
@@ -150,6 +159,7 @@ class Person(models.Model):
         print(vacations)
         days = vacations.aggregate(Sum('days'))['days__sum'] if vacations else 0
         return days
+    
 
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
@@ -168,7 +178,7 @@ class PayrollInvoiceManager(models.Manager):
 
 
 class Payroll(DefaultOrderModel):
-    person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.CASCADE, related_name='person_invoices')
     category = models.CharField(max_length=1, choices=PAYROLL_CHOICES, default='1')
     objects = models.Manager()
     my_query = PayrollInvoiceManager()
@@ -237,13 +247,40 @@ def update_person_on_delete(sender, instance, *args, **kwargs):
 
 
 class GenericExpenseCategory(models.Model):
-    pass
+    title = models.CharField(unique=True, max_length=150)
+    balance = models.DecimalField(default=0, decimal_places=2, max_digits=20)
 
+    def __str__(self):
+        return self.title
+
+    def tag_balance(self):
+        return f'{self.balance} {CURRENCY}'
+
+    def get_dashboard_url(self):
+        return reverse('billings:expense_cate_detail', kwargs={'pk': self.id})
+
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        return queryset
+
+ 
 class GenericExpense(DefaultOrderModel):
-    pass
+    category = models.ForeignKey(GenericExpenseCategory, null=True, on_delete=models.SET_NULL)
 
+    def get_dashboard_url(self):
+        return reverse('billings:expense_detail', kwargs={'pk': self.id})
 
-
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        category_name = request.GET.getlist('category_name', None)
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        queryset = queryset.fitler(category__id__in=category_name) if category_name else queryset
+        return queryset
+    
+    
 class VacationReason(models.Model):
     title = models.CharField(max_length=150, unique=True)
 

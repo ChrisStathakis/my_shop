@@ -1,0 +1,70 @@
+{% extends "transcations/index.html" %}
+
+{% block title %}<a class="navbar-brand" href="">{{ page_title }}</a> {% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <h4 class='card'>
+                <div class='header'>
+                    <h4>{{ page_title }}</h4>
+                </div>
+            </h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-6" id="form_container">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">New Invoice</h4>
+                        {% if button_title %}
+                        <button data-url="{{ data_url }}"
+                                onclick="return showAddPopup(this);"
+                                class="btn btn-raised btn-primary">{{ button_title }}
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="content">
+                        <form method="post" class="form form-raised"> {% csrf_token %}
+                            {{ form }}
+                            <button name="new_bill" type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        
+                        <a onclick="return confirm('Are you sure?');" href="" class="btn btn-warning">Delete</a>
+                    </div>
+                </div>
+               
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+    console.log('works');
+        function showAddPopup(triggerLink) {
+            console.log(triggerLink);
+            const name = 'category';
+            const href = "{{ data_url }}";
+            var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbar=yes');
+            win.focus();
+            return false
+        }
+
+        function closePopup(win, newID, newRepr, id) {
+            $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>');
+            win.close();
+        }
+    </script>
+{% endblock %}

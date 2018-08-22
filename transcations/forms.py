@@ -44,7 +44,7 @@ class PersonForm(forms.ModelForm):
 
     class Meta:
         model = Person
-        fields = '__all__'
+        fields = ['title', 'occupation', 'phone', 'phone1', 'active']
 
     def __init__(self, *args, **kwargs):
         super(PersonForm, self).__init__(*args, **kwargs)
@@ -55,14 +55,36 @@ class OccupationForm(forms.ModelForm):
     
     class Meta:
         model = Occupation
-        fields = '__all__'
+        fields = ['title', 'notes']
 
     def __init__(self, *args, **kwargs):
         super(OccupationForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+            
+
+class GenericExpenseForm(forms.ModelForm):
+
+    class Meta:
+        model = GenericExpense
+        fields = ['date_expired', 'category', 'title', 'payment_method', 'value', 'is_paid']
+
+    def __init__(self, *args, **kwargs):
+        super(GenericExpenseCategoryForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 
+class GenericExpenseCategoryForm(forms.ModelForm):
+
+    class Meta:
+        model = GenericExpenseCategory
+        fields = ['title',]
+
+    def __init__(self, *args, **kwargs):
+        super(GenericExpenseCategoryForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 
 class VacationForm(forms.ModelForm):

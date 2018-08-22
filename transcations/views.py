@@ -6,8 +6,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from .models import *
-from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm
+from .models import Person, Occupation, Bill, BillCategory, GenericExpenseCategory, GenericExpense
+from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm, GenericExpenseForm, GenericExpenseCategoryForm
 from site_settings.forms import PaymentForm
 from site_settings.models import PaymentOrders
 from dateutil.relativedelta import relativedelta
@@ -126,6 +126,38 @@ def edit_payroll(request, pk):
     return render(request, 'transcations/payroll_list.html', context)
 
 
+
+@staff_member_required
+def expenses_list_view(request):
+    page_title, button_title, data_url= 'Generic Expense', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    queryset = GenericExpense.objects.all()
+    categories = GenericExpenseCategory.objects.all()
+    form = Gene(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'New payroll added')
+        return HttpResponseRedirect(reverse('billings:payroll_list'))
+    context = locals()
+    return render(request, 'transcations/page_list.html', context)
+
+
+@staff_member_required
+def edit_expenses(request, pk):
+    instance = get_object_or_404(GenericExpense, id=pk)
+    queryset = Payroll.objects.all()
+    persons = Person.objects.all()
+    occupations = Occupation.objects.all()
+    form = PayrollForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'New payroll added')
+        return HttpResponseRedirect(reverse('billings:payroll_list'))
+    context = locals()
+    return render(request, 'transcations/payroll_list.html', context)
+
+
+
+
 @method_decorator(staff_member_required, name='dispatch')
 class PersonListView(ListView, FormView):
     model = Person
@@ -158,8 +190,14 @@ class PersonListView(ListView, FormView):
 class PersonDetailView(DetailView, UpdateView):
     model = Person
     form_class = PersonForm
-    template_name = 'trans'
-    success_url = reverse_lazy('')
+    template_name = 'transcations/class_page_detail.html'
+    success_url = reverse_lazy('billings:person_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonDetailView, self).get_context_data(**kwargs)
+        page_title, button_title, data_url = f'{self.object.title}', 'Create Occupation', reverse('billings:ajax_occup_popup')
+        context.update(locals())
+        return context
 
     def form_valid(self, form):
         form.save()
@@ -182,7 +220,7 @@ class OccupationListView(ListView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(OccupationListView, self).get_context_data(**kwargs)
-        page_title, button_title = 'Ocuupation', 'Create Person'
+        page_title, button_title = 'Occupation', 'Create Person'
         search_name = self.request.GET.get('search_name', None)
         context.update(locals())
         return context
@@ -190,6 +228,25 @@ class OccupationListView(ListView, FormView):
     def form_valid(self, form):
         form.save()
         messages.success(self.request, 'The occupation added!')
+        return super().form_valid(form)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class OccupationDetailView(DetailView, UpdateView):
+    model = Occupation
+    form_class = OccupationForm
+    template_name = 'transcations/class_page_detail.html'
+    success_url = reverse_lazy('billings:occup_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(OccupationDetailView, self).get_context_data(**kwargs)
+        page_title, button_title = f'{self.object.title}', False
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'The Person is edited')
         return super().form_valid(form)
 
 
@@ -207,8 +264,70 @@ class BillCategoryListView(ListView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BillCategoryListView, self).get_context_data(**kwargs)
-        page_title, button_title = 'Bill', 'Create Person'
+        page_title = 'Bill'
         search_name = self.request.GET.get('search_name', None)
         context.update(locals())
         return context
 
+
+@method_decorator(staff_member_required, name='dispatch')
+class BillCategoryDetailView(DetailView, UpdateView):
+    model = BillCategory
+    form_class = BillCategoryForm
+    template_name = 'transcations/class_page_detail.html'
+    success_url = reverse_lazy('billings:bill_cate_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(BillCategoryDetailView, self).get_context_data(**kwargs)
+        page_title = f'{self.object.title}'
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'The Person is edited')
+        return super().form_valid(form)
+
+
+  
+@method_decorator(staff_member_required, name='dispatch')
+class GenericExpenseCategoryListView(ListView, FormView):
+    model = GenericExpenseCategory
+    template_name = 'transcations/class_page_list.html'
+    form_class = GenericExpenseCategoryForm
+    success_url = reverse_lazy('billings:expense_cate_list')
+
+    def get_queryset(self):
+        queryset = GenericExpenseCategory.objects.all()
+        queryset = GenericExpenseCategory.filters_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericExpenseCategoryListView, self).get_context_data(**kwargs)
+        page_title = 'Generic Expense Category'
+        search_name = self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'New category added!')
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class GenericExpenseCategoryDetailView(DetailView, UpdateView):
+    model = GenericExpenseCategory
+    form_class = GenericExpenseCategoryForm
+    template_name = 'transcations/class_page_detail.html'
+    success_url = reverse_lazy('billings:expense_cate_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericExpenseCategoryDetailView, self).get_context_data(**kwargs)
+        page_title = f'{self.object.title}'
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'The Person is edited')
+        return super().form_valid(form)

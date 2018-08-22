@@ -57,7 +57,7 @@
                                 <li><a href="{% url 'billings:homepage' %}">Homepage</a></li>
                                 <li><a href="{% url 'billings:bill_list' %}">Bills</a></li>     
                                 <li><a href="{% url 'billings:payroll_list' %}">Payroll</a></li>
-                                <li><a href="">General</a></li>
+                                <li><a href="{% url 'billings:expenses_list' %}">General</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
@@ -70,7 +70,7 @@
                                 <li><a href="{% url 'billings:person_list' %}">Person</a></li>
                                 <li><a href="{% url 'billings:occup_list' %}">Occupation</a></li>
                                 <li><a href="{% url 'billings:bill_cate_list' %}">Bill Category</a></li>
-                                <li><a href="">General</a></li>
+                                <li><a href="{% url 'billings:expense_cate_list' %}">General Expenses</a></li>
                             </ul>
                         </li>
                         <li>
