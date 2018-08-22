@@ -59,12 +59,19 @@
                                 <li><a href="{% url 'billings:payroll_list' %}">Payroll</a></li>
                                 <li><a href="">General</a></li>
                             </ul>
-                          </li>
-                        <li>
-                            <a href="{% url 'dashboard:payment_view' %}">
-                                <i class="ti-panel"></i>
-								<p>Payments</p>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="ti-bell"></i>
+                                <p>Settings</p>
+                                <b class="caret"></b>
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'billings:homepage' %}">Person</a></li>
+                                <li><a href="{% url 'billings:bill_list' %}">Occupation</a></li>
+                                <li><a href="{% url 'billings:payroll_list' %}">Bill Category</a></li>
+                                <li><a href="">General</a></li>
+                            </ul>
                         </li>
                         <li>
                             <a href="">

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from .models import *
-from .forms import BillForm, PayrollForm
+from .forms import BillForm, PayrollForm, PersonForm
 from site_settings.forms import PaymentForm
 from site_settings.models import PaymentOrders
 from dateutil.relativedelta import relativedelta
@@ -69,9 +69,10 @@ def edit_bill(request, pk, slug):
     context = locals()
     return render(request, 'transcations/page_detail.html', context)
 
+
 @staff_member_required
 def edit_bills_actions(request, pk, slug):
-    instance =get_object_or_404(PaymentOrders, id=pk) if slug =='payment_delete' else get_object_or_404(Bill, id=pk) 
+    instance = get_object_or_404(PaymentOrders, id=pk) if slug == 'payment_delete' else get_object_or_404(Bill, id=pk)
     if slug == 'save_as':
         new_instance = instance
         new_instance = None
@@ -85,11 +86,13 @@ def edit_bills_actions(request, pk, slug):
         messages.warning(request, 'The bill is deleted!')
         return HttpResponseRedirect(reverse('billings:bill_list'))
     if slug == 'payment_delete':
-        get_order = instance.
+        get_order = instance.content_object
+        print(get_order)
         instance.delete()
+        get_order.update_paid_value()
         messages.warning(request, 'The payment invoice is deleted')
-        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': new_instance.id}))
-    return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': new_instance.id}))
+        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': get_order.id}))
+    return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': instance.id}))
 
 
 
@@ -121,3 +124,20 @@ def edit_payroll(request, pk):
         return HttpResponseRedirect(reverse('billings:payroll_list'))
     context = locals()
     return render(request, 'transcations/payroll_list.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class PersonListView(ListView, FormView):
+    model = Person
+    template_name = 'transcations/setting_list.html'
+    form_class = PersonForm
+    success_url = reverse_lazy('')
+
+    def get_queryset(self):
+        queryset = Person.objects.all()
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonListView, self).get_context_data(**kwargs)
+
