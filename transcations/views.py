@@ -45,6 +45,7 @@ def bills_list_view(request):
 def edit_bill(request, pk, slug):
     instance = get_object_or_404(Bill, id=pk)
     page_title, button_title, data_url = f'{instance}', 'Create Category', reverse('billings:ajax_bill_cat_popup')
+    print(instance.get_dashboard_save_as_url())
     payment_orders = instance.payment_orders.all()
     if slug == 'delete':
         payment_orders = instance.payment_orders.all()

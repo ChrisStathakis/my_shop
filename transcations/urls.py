@@ -10,6 +10,7 @@ urlpatterns = [
     path('bill-page/', bills_list_view, name='bill_list'),
     path('bill-page/edit/<int:pk>/<slug:slug>/', edit_bill, name='edit_bill'),
     path('bill-page/edit/actions/<int:pk>/<slug:slug>/', edit_bills_actions, name='edit_bill_actions'),
+    
 
     path('payroll-page/', payroll_list_view, name='payroll_list'),
     path('payroll-page/edit/<int:pk>/<slug:slug>/', edit_payroll, name='edit_payroll'),
@@ -22,6 +23,8 @@ urlpatterns = [
     path('ajax/popup/payroll-person/', create_person_popup, name='ajax_payroll_person_popup'),
     path('ajax/popup/occupation/', create_occup_popup, name='ajax_occup_popup'),
     path('ajax/popup/expenses-categpry/', create_generic_category_popup, name='ajax_generic_cate_popup'),
+
+    path('bill-page/save-as/<int:pk>/<slug:slug>/', save_as_view, name ='save_as_view'),
 
     #settings
     path('settings/person-list/', PersonListView.as_view(), name='person_list'),

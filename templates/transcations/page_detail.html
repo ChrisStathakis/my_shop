@@ -47,7 +47,8 @@
             <div class="col-lg-6" id="form_container">
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">New Invoice</h4>
+                        <h4 class="title">Edit {{ page_title }}</h4>
+                        <br>
                         <button data-url="{{ data_url }}"
                                 onclick="return showAddPopup(this);"
                                 class="btn btn-raised btn-primary">{{ button_title }}
@@ -66,7 +67,7 @@
                         <h4 class="title">Actions</h4>
                     </div>
                     <div class="content">
-                        <a href="{% url 'billings:edit_bill_actions' instance.id 'save_as' %}" class="btn btn-primary">Save as</a>
+                        <a href="{{ instance.get_dashboard_save_as_url }}" class="btn btn-primary">Save as</a>
                         <a onclick="return confirm('Are you sure?');" href="{% url 'billings:edit_bill_actions' instance.id 'delete' %}" class="btn btn-warning">Delete</a>
                     </div>
                 </div>

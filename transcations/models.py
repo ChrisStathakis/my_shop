@@ -32,6 +32,8 @@ class BillCategory(models.Model):
     def get_dashboard_url(self):
         return reverse('billings:bill_cate_detail', kwargs={'pk': self.id})
 
+    
+
     @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
@@ -64,6 +66,12 @@ class Bill(DefaultOrderModel):
                                                          is_expense=True
                                                         )
         super().save(*args, **kwargs)
+
+    def get_dashboard_url(self):
+        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'edit'})
+    
+    def get_dashboard_save_as_url(self):
+        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'bill'})
 
     def update_paid_value(self):
         payment_orders = self.payment_orders.filter(is_paid=True)
@@ -151,6 +159,7 @@ class Person(models.Model):
 
     def get_dashboard_url(self):
         return reverse('billings:person_detail', kwargs={'pk': self.id})
+        
 
     tag_balance.short_description = 'Υπόλοιπο'
 
@@ -211,6 +220,12 @@ class Payroll(DefaultOrderModel):
 
     def __str__(self):
         return '%s %s' % (self.date_expired, self.person.title)
+    
+    def get_dashboard_url(self):
+        return reverse('billings:edit_payroll', kwargs={'pk': self.id})
+    
+    def get_dashboard_save_as_url(self):
+        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
 
     def tag_paid_value(self):
         return '%s %s' % (self.paid_value, CURRENCY)
@@ -268,6 +283,9 @@ class GenericExpenseCategory(models.Model):
  
 class GenericExpense(DefaultOrderModel):
     category = models.ForeignKey(GenericExpenseCategory, null=True, on_delete=models.SET_NULL)
+
+    def get_dashboard_save_as_url(self):
+        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
 
     def get_dashboard_url(self):
         return reverse('billings:expense_detail', kwargs={'pk': self.id})
