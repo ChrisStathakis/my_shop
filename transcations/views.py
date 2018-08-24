@@ -6,8 +6,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from .models import Person, Occupation, Bill, BillCategory, GenericExpenseCategory, GenericExpense
-from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm, GenericExpenseForm, GenericExpenseCategoryForm
+from .models import Person, Occupation, Bill, BillCategory, GenericExpenseCategory, GenericExpense, Payroll
+from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm, GenericExpenseForm,\
+    GenericExpenseCategoryForm
 from site_settings.forms import PaymentForm
 from site_settings.models import PaymentOrders
 from dateutil.relativedelta import relativedelta
@@ -34,7 +35,7 @@ def bills_list_view(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('billings:bill_list'))
-    paginator = Paginator(queryset, 25) 
+    paginator = Paginator(queryset, 10)
     page = request.GET.get('page')
     queryset = paginator.get_page(page)
     context = locals()
@@ -74,6 +75,86 @@ def edit_bill(request, pk, slug):
 @staff_member_required
 def edit_bills_actions(request, pk, slug):
     instance = get_object_or_404(PaymentOrders, id=pk) if slug == 'payment_delete' else get_object_or_404(Bill, id=pk)
+    if slug == 'delete':
+        for payorder in instance.payment_orders.all():
+            payorder.delete()
+        instance.delete()
+        messages.warning(request, 'The bill is deleted!')
+        return HttpResponseRedirect(reverse('billings:bill_list'))
+    if slug == 'payment_delete':
+        get_order = instance.content_object
+        print(get_order)
+        instance.delete()
+        get_order.update_paid_value()
+        messages.warning(request, 'The payment invoice is deleted')
+        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': get_order.id}))
+    return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': instance.id}))
+
+
+@staff_member_required
+def payroll_list_view(request):
+    page_title, button_title, data_url= 'Bills', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    queryset = Payroll.objects.all()
+    persons = Person.objects.all()
+    occupations = Occupation.objects.all()
+    form = PayrollForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'New payroll added')
+        return HttpResponseRedirect(reverse('billings:payroll_list'))
+    context = locals()
+    return render(request, 'transcations/page_list.html', context)
+
+
+@staff_member_required
+def edit_expense_(request, pk, slug, model_):
+    instance = get_object_or_404(Bill, id=pk) if model_ == 'bill' else get_object_or_404(Payroll, id=pk)\
+        if model_ == 'payroll' else get_object_or_404(GenericExpense, id=pk)
+    my_form = BillForm if model_ == 'bill' else PaymentForm if model_ == 'payroll' else GenericExpense
+    if slug == 'delete':
+        instance.destroy_payments()
+        instance.update_category()
+        return HttpResponseRedirect(instance.get_dashboard_list_url())
+    if slug == 'paid':
+        instance.is_paid = True
+        instance.save()
+        instance.update_category()
+        return HttpResponseRedirect(instance.get_dashboard_list_url())
+    form = my_form(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        instance.update_category()
+        messages.success(request, f'New {model_} added')
+        return HttpResponseRedirect(instance.get_dashboard_url())
+    context = locals()
+    return render(request, 'transcations/payroll_list.html', context)
+
+
+@staff_member_required
+def edit_payroll(request, pk, slug):
+    instance = get_object_or_404(Payroll, id=pk)
+    if slug == 'delete':
+        payrolls = instance.pa
+        instance.delete()
+        instance.person.update_balance()
+        messages.warning(request, 'The payroll has delete!')
+        return HttpResponseRedirect(reverse('billings:payroll_list'))
+
+    queryset = Payroll.objects.all()
+    persons = Person.objects.all()
+    occupations = Occupation.objects.all()
+    form = PayrollForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'New payroll added')
+        return HttpResponseRedirect(reverse('billings:payroll_list'))
+    context = locals()
+    return render(request, 'transcations/payroll_list.html', context)
+
+
+@staff_member_required
+def edit_payroll_actions(request, pk, slug):
+    instance = get_object_or_404(PaymentOrders, id=pk) if slug == 'payment_delete' else get_object_or_404(Payroll, id=pk)
     if slug == 'save_as':
         new_instance = instance
         new_instance = None
@@ -96,44 +177,12 @@ def edit_bills_actions(request, pk, slug):
     return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': instance.id}))
 
 
-
-@staff_member_required
-def payroll_list_view(request):
-    page_title, button_title, data_url= 'Bills', 'Create Person', reverse('billings:ajax_payroll_person_popup')
-    queryset = Payroll.objects.all()
-    persons = Person.objects.all()
-    occupations = Occupation.objects.all()
-    form = PayrollForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'New payroll added')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
-    context = locals()
-    return render(request, 'transcations/page_list.html', context)
-
-
-@staff_member_required
-def edit_payroll(request, pk):
-    instance = get_object_or_404(Payroll, id=pk)
-    queryset = Payroll.objects.all()
-    persons = Person.objects.all()
-    occupations = Occupation.objects.all()
-    form = PayrollForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'New payroll added')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
-    context = locals()
-    return render(request, 'transcations/payroll_list.html', context)
-
-
-
 @staff_member_required
 def expenses_list_view(request):
     page_title, button_title, data_url= 'Generic Expense', 'Create Person', reverse('billings:ajax_payroll_person_popup')
     queryset = GenericExpense.objects.all()
     categories = GenericExpenseCategory.objects.all()
-    form = Gene(request.POST or None)
+    form = GenericExpense(request.POST or None)
     if form.is_valid():
         form.save()
         messages.success(request, 'New payroll added')
@@ -155,8 +204,6 @@ def edit_expenses(request, pk):
         return HttpResponseRedirect(reverse('billings:payroll_list'))
     context = locals()
     return render(request, 'transcations/payroll_list.html', context)
-
-
 
 
 @method_decorator(staff_member_required, name='dispatch')

@@ -6,10 +6,10 @@
 <div class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg-8">
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Invoice List</h4>
+                        <h4 class="title">Invoice List</h4> <br> <button class="btn btn-success">Fast Report</button>
                     </div>
                     <div class="content">
                         <table class="table">
@@ -26,15 +26,28 @@
                             <tbody>
                                 {% for instance in queryset %}
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td {% if not instance.is_paid %} style='background-color:red' {% else %} style='background:green' {% endif %}>{{ instance.date_expired|date }}</td>
+                                        <td>{{ forloop.counter }}
+                                            {% if not instance.is_paid %}
+                                                <a href="{{ instance.get_paid_url }}" class="btn btn-success">Paid</a>
+                                            {% endif %}
+                                        </td>
+                                        <td {% if not instance.is_paid %}
+                                                style='background-color:#ffcb00'
+                                            {% else %}
+                                                style='background:green'
+                                            {% endif %}>
+                                            {{ instance.date_expired|date }}
+                                        </td>
                                         <td>{{ instance.category }}</td>
                                         <td>{{ instance }}</td>
                                         <td>{{ instance.tag_final_value }}</td>
                                         <td colspan="2">
-                                            {% if not instance.is_paid %}<a href="{% url 'billings:edit_bill' instance.id 'paid' %}" class="btn btn-success">Paid</a>{% endif %}
-                                            <a href="{% url 'billings:edit_bill' instance.id 'edit' %}" class="btn btn-primary">Edit</a>
-                                            <a onclick='return confirm("Are you sure?");' href="{% url 'billings:edit_bill' instance.id 'delete' %}" class="btn btn-warning">Delete</a>
+
+                                            <a href="{{ instance.get_dashboard_url }}" class="btn btn-primary">Edit</a>
+                                            <a onclick='return confirm("Are you sure?");'
+                                               href="{{ instance.get_delete_url }}"
+                                               class="btn btn-warning">Delete
+                                            </a>
                                          </td>
                                     </tr>
                                 {% empty %}
@@ -47,9 +60,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-3">
-                <div class="card">
+            <div class="col-lg-4" id="form_container">
+            <div class="card">
                     <div class="header">
                         <h4 class="title">Filters</h4>
                     </div>
@@ -58,15 +70,15 @@
                             <div class="pagination">
                                 <span class="step-links">
                                     {% if queryset.has_previous %}
-                                        <a href="?page=1">&laquo; first</a>
-                                        <a href="?page={{ queryset.previous_page_number }}">previous</a>
+                                        <a class="btn btn-primary" href="?page=1">&laquo; first</a>
+                                        <a class="btn btn-primary" href="?page={{ queryset.previous_page_number }}">previous</a>
                                     {% endif %}
                                     <span class="current">
                                         Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
                                     </span>
                                     {% if queryset.has_next %}
-                                        <a href="?page={{ queryset.next_page_number }}">next</a>
-                                        <a href="?page={{ queryset.paginator.num_pages }}">last &raquo;</a>
+                                        <a class="btn btn-primary" href="?page={{ queryset.next_page_number }}">next</a>
+                                        <a class="btn btn-primary" href="?page={{ queryset.paginator.num_pages }}">last &raquo;</a>
                                     {% endif %}
                                 </span>
                             </div>
@@ -89,16 +101,13 @@
                                 </div>
                             {% endfor %}
                         </form>
-                        
+
                     </div>
                 </div>
-                
-            </div>
-
-            <div class="col-lg-4" id="form_container">
                 <div class="card">
                     <div class="header">
                         <h4 class="title">New Invoice</h4>
+                        <br>
                         <button data-url="{{ data_url }}"
                                 onclick="return showAddPopup(this);"
                                 class="btn btn-raised btn-primary">{{ button_title }}
