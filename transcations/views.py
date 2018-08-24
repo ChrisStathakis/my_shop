@@ -43,55 +43,6 @@ def bills_list_view(request):
 
 
 @staff_member_required
-def edit_bill(request, pk, slug):
-    instance = get_object_or_404(Bill, id=pk)
-    page_title, button_title, data_url = f'{instance}', 'Create Category', reverse('billings:ajax_bill_cat_popup')
-    print(instance.get_dashboard_save_as_url())
-    payment_orders = instance.payment_orders.all()
-    if slug == 'delete':
-        payment_orders = instance.payment_orders.all()
-        for payment_order in payment_orders:
-            payment_order.delete()
-        instance.delete()
-        messages.warning(request, f'The bill {instance.title} is deleted')
-        return HttpResponseRedirect(reverse('billings:bill_list'))
-    if slug == 'paid':
-        instance.is_paid=True
-        instance.save()
-        messages.warning(request, f'The bill {instance.title} is deleted')
-        return HttpResponseRedirect(reverse('billings:bill_list'))
-    form = BillForm(instance=instance)
-    if request.POST:
-        form = BillForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            messages.warning(request, f'The bill {instance.title} is deleted')
-            return HttpResponseRedirect(reverse('billings:bill_list'))
-
-    context = locals()
-    return render(request, 'transcations/page_detail.html', context)
-
-
-@staff_member_required
-def edit_bills_actions(request, pk, slug):
-    instance = get_object_or_404(PaymentOrders, id=pk) if slug == 'payment_delete' else get_object_or_404(Bill, id=pk)
-    if slug == 'delete':
-        for payorder in instance.payment_orders.all():
-            payorder.delete()
-        instance.delete()
-        messages.warning(request, 'The bill is deleted!')
-        return HttpResponseRedirect(reverse('billings:bill_list'))
-    if slug == 'payment_delete':
-        get_order = instance.content_object
-        print(get_order)
-        instance.delete()
-        get_order.update_paid_value()
-        messages.warning(request, 'The payment invoice is deleted')
-        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': get_order.id}))
-    return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': instance.id}))
-
-
-@staff_member_required
 def payroll_list_view(request):
     page_title, button_title, data_url= 'Bills', 'Create Person', reverse('billings:ajax_payroll_person_popup')
     queryset = Payroll.objects.all()
@@ -107,12 +58,23 @@ def payroll_list_view(request):
 
 
 @staff_member_required
-def edit_expense_(request, pk, slug, model_):
-    instance = get_object_or_404(Bill, id=pk) if model_ == 'bill' else get_object_or_404(Payroll, id=pk)\
-        if model_ == 'payroll' else get_object_or_404(GenericExpense, id=pk)
-    my_form = BillForm if model_ == 'bill' else PaymentForm if model_ == 'payroll' else GenericExpense
+def edit_page(request, mymodel, pk, slug):
+    print('edit', mymodel, f'slug: {slug}')
+    if mymodel == 'bill':
+        instance = get_object_or_404(Bill, id=pk)
+        page_title, button_title, data_url = 'Bill', 'Create Bill', reverse('billings:ajax_bill_cat_popup')
+        my_form = BillForm
+    if mymodel == 'payroll':
+        instance = get_object_or_404(Payroll, id=pk)
+        page_title, button_title, data_url = 'Payroll', 'Create Payroll', reverse('billings:ajax_payroll_person_popup')
+        my_form = PayrollForm
+    if mymodel == 'expense':
+        instance = get_object_or_404(Bill, id=pk)
+        page_title, button_title, data_url = 'Expense', 'Create Expense', reverse('billings:ajax_generic_cate_popup')
+        my_form = PayrollForm
     if slug == 'delete':
         instance.destroy_payments()
+        instance.delete()
         instance.update_category()
         return HttpResponseRedirect(instance.get_dashboard_list_url())
     if slug == 'paid':
@@ -124,57 +86,10 @@ def edit_expense_(request, pk, slug, model_):
     if form.is_valid():
         form.save()
         instance.update_category()
-        messages.success(request, f'New {model_} added')
-        return HttpResponseRedirect(instance.get_dashboard_url())
+        messages.success(request, f'New {mymodel} added')
+        return HttpResponseRedirect(instance.get_dashboard_list_url())
     context = locals()
-    return render(request, 'transcations/payroll_list.html', context)
-
-
-@staff_member_required
-def edit_payroll(request, pk, slug):
-    instance = get_object_or_404(Payroll, id=pk)
-    if slug == 'delete':
-        payrolls = instance.pa
-        instance.delete()
-        instance.person.update_balance()
-        messages.warning(request, 'The payroll has delete!')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
-
-    queryset = Payroll.objects.all()
-    persons = Person.objects.all()
-    occupations = Occupation.objects.all()
-    form = PayrollForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'New payroll added')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
-    context = locals()
-    return render(request, 'transcations/payroll_list.html', context)
-
-
-@staff_member_required
-def edit_payroll_actions(request, pk, slug):
-    instance = get_object_or_404(PaymentOrders, id=pk) if slug == 'payment_delete' else get_object_or_404(Payroll, id=pk)
-    if slug == 'save_as':
-        new_instance = instance
-        new_instance = None
-        new_instance.save()
-        new_instance.refresh_from_db()
-        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': new_instance.id}))
-    if slug == 'delete':
-        for payorder in instance.payment_orders.all():
-            payorder.delete()
-        instance.delete()
-        messages.warning(request, 'The bill is deleted!')
-        return HttpResponseRedirect(reverse('billings:bill_list'))
-    if slug == 'payment_delete':
-        get_order = instance.content_object
-        print(get_order)
-        instance.delete()
-        get_order.update_paid_value()
-        messages.warning(request, 'The payment invoice is deleted')
-        return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': get_order.id}))
-    return HttpResponseRedirect(reverse('billings:bill_detail', kwargs={'pk': instance.id}))
+    return render(request, 'transcations/page_detail.html', context)
 
 
 @staff_member_required
@@ -191,19 +106,7 @@ def expenses_list_view(request):
     return render(request, 'transcations/page_list.html', context)
 
 
-@staff_member_required
-def edit_expenses(request, pk):
-    instance = get_object_or_404(GenericExpense, id=pk)
-    queryset = Payroll.objects.all()
-    persons = Person.objects.all()
-    occupations = Occupation.objects.all()
-    form = PayrollForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'New payroll added')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
-    context = locals()
-    return render(request, 'transcations/payroll_list.html', context)
+# settings  ------------------------------------------ settings  ------------------------------------------------- settings ------------------------------------------------------
 
 
 @method_decorator(staff_member_required, name='dispatch')

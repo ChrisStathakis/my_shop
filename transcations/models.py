@@ -14,7 +14,7 @@ from inventory_manager.models import *
 from site_settings.constants import *
 from site_settings.models import PaymentMethod, PaymentOrders, Store
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-
+from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager
 
 import datetime
 
@@ -23,8 +23,11 @@ CURRENCY = settings.CURRENCY
 
 
 class BillCategory(models.Model):
+    active = models.BooleanField(default=True)
     title = models.CharField(unique=True, max_length=150)
     balance = models.DecimalField(default=0, max_digits=50, decimal_places=2)
+    objects = models.Manager()
+    my_query = BillCategoryManager()
 
     def __str__(self):
         return self.title
@@ -38,6 +41,9 @@ class BillCategory(models.Model):
         paid_value = queryset.aggregate(Sum('paid_value'))['paid_value__sum'] if queryset else 0
         self.balance = value - paid_value
         self.save()
+
+    def tag_balance(self):
+        return f'{self.balance} {CURRENCY}'
 
     @staticmethod
     def filters_data(request, queryset):
@@ -74,16 +80,16 @@ class Bill(DefaultOrderModel):
         self.category.update_balance()
 
     def get_dashboard_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'edit'})
+        return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'edit'})
 
     def get_paid_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug': 'paid'})
+        return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug': 'paid'})
 
     def get_delete_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'delete'})
+        return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'delete'})
     
     def get_dashboard_save_as_url(self):
-        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'bill'})
+        return reverse('billings:save_as_view', kwargs={'mymodel':'bill', 'pk': self.id, 'slug': 'bill'})
 
     def get_dashboard_list_url(self):
         return reverse('billings:bill_list')
@@ -111,6 +117,7 @@ class Bill(DefaultOrderModel):
 
 
 class Occupation(models.Model):
+    active = models.BooleanField(default=True)
     title = models.CharField(max_length=64, verbose_name='Απασχόληση')
     notes = models.TextField(blank=True, null=True, verbose_name='Σημειώσεις')
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
@@ -146,6 +153,10 @@ class Person(models.Model):
     store_related = models.ForeignKey(Store, blank=True, null=True, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
     vacation_days = models.IntegerField(default=0)
+
+    objects = models.Manager()
+    my_query = PersonManager()
+
 
     class Meta:
         verbose_name_plural = "6. Υπάλληλος"
@@ -240,6 +251,17 @@ class Payroll(DefaultOrderModel):
     def get_dashboard_save_as_url(self):
         return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
 
+    def get_dashboard_list_url(self):
+        return reverse('billings:payment_list')
+
+    def update_category(self):
+        self.person.update_balance()
+
+    def destroy_payments(self):
+        queryset = self.payment_orders.all()
+        for payment in queryset:
+            payment.delete()
+
     def tag_paid_value(self):
         return '%s %s' % (self.paid_value, CURRENCY)
 
@@ -275,8 +297,13 @@ def update_person_on_delete(sender, instance, *args, **kwargs):
 
 
 class GenericExpenseCategory(models.Model):
+    active = models.BooleanField(default=True)
     title = models.CharField(unique=True, max_length=150)
     balance = models.DecimalField(default=0, decimal_places=2, max_digits=20)
+
+    objects = models.Manager()
+    my_query = ExpenseCategoryManager()
+
 
     def __str__(self):
         return self.title
@@ -296,6 +323,10 @@ class GenericExpenseCategory(models.Model):
  
 class GenericExpense(DefaultOrderModel):
     category = models.ForeignKey(GenericExpenseCategory, null=True, on_delete=models.SET_NULL)
+    payment_orders = GenericRelation(PaymentOrders)
+
+    class Meta:
+        ordering = ['is_paid', 'date_expired']
 
     def get_dashboard_save_as_url(self):
         return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
@@ -308,6 +339,17 @@ class GenericExpense(DefaultOrderModel):
 
     def get_delete_url(self):
         return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'delete'})
+
+    def get_dashboard_list_url(self):
+        return reverse('billings:payment_list')
+
+    def update_category(self):
+        self.person.update_balance()
+
+    def destroy_payments(self):
+        queryset = self.payment_orders.all()
+        for payment in queryset:
+            payment.delete()
 
     @staticmethod
     def filters_data(request, queryset):

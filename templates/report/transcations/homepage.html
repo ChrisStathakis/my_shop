@@ -1,0 +1,122 @@
+{% extends 'index.html' %}
+
+{% block down_menu %}
+<div class="ui  four item bottom fixed menu">
+    <a href="{% url 'reports:bills_report_view' %}" style="background-color: green" class="item">Λογαριασμοί</a>
+    <a href="" class="item">Μισθοδοσια</a>
+    <a href="" style="background-color: red" class="item">Γενικά Έξοδα</a>
+    <a class="item">Ροή</a>
+</div>
+{% endblock %}
+
+
+{% block content %}
+        <div class="six wide column"></div>
+        <div class="four wide column">
+            <h2 style="text-align: center" class="ui header">
+                <i class="cart green icon"></i>
+                <div class="content">
+                    Κεντρική Σελίδα.
+                </div>
+            </h2>
+        </div>
+        <div class="six wide column"></div>
+        <div style="margin-left: 2%" class="three column row">
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="green checked cart icon"></i>
+                <div class="content">
+                    Υπόλοιπο Λογαριασμών
+                    <div class="sub header"></div>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Λογαριασμος</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in bills %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ instance }}</td>
+                      <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_balance }}</td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Δε υπάρχουν ενεργοί λογαριασμοί</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="red checked calendar icon"></i>
+                <div class="content">
+                    Υπόλοιπο Μισθοδοσίας
+                    <div class="sub header"></div>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Υπάλληλος</th>
+                        <th>Επάγγελμα</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in payrolls %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ instance }}</td>
+                      <td>{{ instance.occupation }}</td>
+                      <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_balance }}</td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Δε υπάρχουν ενεργοί Υπάλληλοι</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="blue checked visa icon"></i>
+                <div class="content">
+                    Γενικά Έξοδα
+                    <div class="sub header">{{ last_seven_days }}</div>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Eίδος</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in expenses %}
+                        <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ instance }}</td>
+                        <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_balance }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Δε υπάρχουν Γενικά Εξοδα.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% endblock %}

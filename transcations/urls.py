@@ -8,23 +8,16 @@ urlpatterns = [
     path('homepage/', homepage, name='homepage'),
 
     path('bill-page/', bills_list_view, name='bill_list'),
-    path('bill-page/edit/<int:pk>/<slug:slug>/', edit_bill, name='edit_bill'),
-    path('bill-page/edit/actions/<int:pk>/<slug:slug>/', edit_bills_actions, name='edit_bill_actions'),
-    
-
     path('payroll-page/', payroll_list_view, name='payroll_list'),
-    path('payroll-page/edit/<int:pk>/<slug:slug>/', edit_payroll, name='edit_payroll'),
-
     path('expenses-page/', expenses_list_view, name='expenses_list'),
-    path('expenses-page/edit/<int:pk>/<slug:slug>/', edit_expenses, name='edit_expenses'),
+    path('edit-page/<slug:mymodel>/<int:pk>/<slug:slug>/', edit_page, name='edit_page'),
+    path('bill-page/save-as/<int:pk>/<slug:slug>/', save_as_view, name ='save_as_view'),
 
     #ajax
     path('ajax/popup/bill-category/', create_bill_category_popup, name='ajax_bill_cat_popup'),
     path('ajax/popup/payroll-person/', create_person_popup, name='ajax_payroll_person_popup'),
     path('ajax/popup/occupation/', create_occup_popup, name='ajax_occup_popup'),
-    path('ajax/popup/expenses-categpry/', create_generic_category_popup, name='ajax_generic_cate_popup'),
-
-    path('bill-page/save-as/<int:pk>/<slug:slug>/', save_as_view, name ='save_as_view'),
+    path('ajax/popup/expenses-category/', create_generic_category_popup, name='ajax_generic_cate_popup'),
 
     #settings
     path('settings/person-list/', PersonListView.as_view(), name='person_list'),

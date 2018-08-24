@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 from .views import *
+from .views_transcations import *
 from .ajax_calls.ajax_warehouse_calls import (ajax_products_analysis, ajax_product_search, ajax_product_detail,
                                               ajax_vendors_page_analysis, ajax_warehouse_category_analysis
                                               )
@@ -38,6 +39,10 @@ urlpatterns = [
     path('orders/$', view=warehouse_orders, name='warehouse_orders'),
     path('orders/<int:dk>', view=order_id, name='warehouse_order_detail'),
     path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
+
+    # transcations
+    path('transcations/', transcations_homepage, name='transcation_homepage'),
+    path('transcations/bill-list/', BillsReportView.as_view(), name='bills_report_view'),
 
 
 
