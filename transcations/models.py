@@ -14,7 +14,7 @@ from inventory_manager.models import *
 from site_settings.constants import *
 from site_settings.models import PaymentMethod, PaymentOrders, Store
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager
+from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager, OccupationManager
 
 import datetime
 
@@ -121,6 +121,9 @@ class Occupation(models.Model):
     title = models.CharField(max_length=64, verbose_name='Απασχόληση')
     notes = models.TextField(blank=True, null=True, verbose_name='Σημειώσεις')
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
+
+    objects = models.Manager()
+    my_query = OccupationManager()
 
     class Meta:
         verbose_name_plural = "5. Απασχόληση"
@@ -314,6 +317,7 @@ class GenericExpenseCategory(models.Model):
     def get_dashboard_url(self):
         return reverse('billings:expense_cate_detail', kwargs={'pk': self.id})
 
+    @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
 

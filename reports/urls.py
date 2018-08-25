@@ -44,6 +44,8 @@ urlpatterns = [
     path('transcations/', transcations_homepage, name='transcation_homepage'),
     path('transcations/bill-list/', BillsReportView.as_view(), name='bills_report_view'),
 
+    path('transcations/bill/category/<int:pk>/')
+
 
 
    

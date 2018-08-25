@@ -23,3 +23,9 @@ class ExpenseCategoryManager(models.Manager):
 
     def get_queryset(self):
         return TranscationsQueryset(self.model, using=self._db)
+
+
+class OccupationManager(models.Manager):
+
+    def get_queryset(self):
+        return TranscationsQueryset(self.model, using=self._db)
