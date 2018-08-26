@@ -35,6 +35,9 @@ class BillCategory(models.Model):
     def get_dashboard_url(self):
         return reverse('billings:bill_cate_detail', kwargs={'pk': self.id})
 
+    def get_report_url(self):
+        return reverse('billings:report')
+
     def update_balance(self):
         queryset = self.bills.all()
         value = queryset.aggregate(Sum('final_value'))['final_value__sum']  if queryset else 0
@@ -57,7 +60,7 @@ class Bill(DefaultOrderModel):
     payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
-        ordering = ['is_paid', 'date_expired',]
+        ordering = ['-date_expired',]
     
     def __str__(self):
         return f'{self.category} - {self.title}' if self.category else f'self.title'

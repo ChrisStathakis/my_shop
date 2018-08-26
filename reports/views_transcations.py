@@ -32,6 +32,14 @@ class BillsReportView(ListView):
                                              self.request.GET.getlist('bill_name'),
                                              self.request.GET.get('paid_name')
                                             ]
+        bills = BillCategory.my_query.get_queryset().is_active()
+        payments_orders = PaymentOrders.objects.filter(object_id__in=self.object_list.values('id'),
+                                                       content_type=ContentType.objects.get_for_model(self.object_list.model)
+                                                       )
+        analysis_per_bill = self.object_list.values('category__title').annotate(value=Sum('final_value'),
+                                                                                paid_value_=Sum('paid_value'),
+                                                                                remaining=Sum(F('final_value')-F('paid_value'))
+                                                                                ).order_by('value')
         context.update(locals())
         return context
 
@@ -39,7 +47,7 @@ class BillsReportView(ListView):
 @method_decorator(staff_member_required, name='dispatch')
 class PayrollReportView(ListView):
     model = Payroll
-    template_name = ''
+    template_name = 'report/transcations/payroll.html'
     paginate_by = 50
 
     def get_queryset(self):
@@ -78,22 +86,6 @@ class GenericExpense(ListView):
                                              self.request.GET.getlist('bill_name'),
                                              self.request.GET.get('paid_name')
                                             ]
+
         context.update(locals())
 
-
-@method_decorator(staff_member_required, name='dispatch')
-class BillCategoryDetail(ListView):
-    model = Bill
-    template_name = ''
-    paginate_by = 50
-
-    def get_queryset(self):
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        instance = get_object_or_404(BillCategory, kwargs={id: self.kwargs['pk']})
-        queryset = self.model.objects.filter(category=instance, date_expired__range=[date_start, date_end])
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super(BillCategory, self).get_context_data(**kwargs)
-
-        return context
