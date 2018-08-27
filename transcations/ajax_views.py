@@ -53,7 +53,6 @@ def save_as_function(pk, model, slug):
     new_instance.refresh_from_db()
 
 
-
 def fast_report(request, slug):
     data = {}
     queryset = BillCategory.objects.filter(balance__gt=0) if slug == 'bill' else Person.objects.all() \
@@ -67,24 +66,24 @@ def fast_report(request, slug):
 
 def save_as_view(request, pk, slug):
     if slug == 'bill':
+        print('here', slug)
         save_as_function(pk, Bill, slug)
         return HttpResponseRedirect(reverse('billings:edit_page',
-                                            kwargs={'pk': Bill.objects.last().id,
+                                            kwargs={'pk': Bill.objects.latest('id').id,
                                                     'slug': 'edit',
                                                     'mymodel': slug})
                                     )
     elif slug == 'payroll':
         save_as_function(pk, Payroll, slug)
-        print(Payroll.objects.last().id)
         return HttpResponseRedirect(reverse('billings:edit_page',
-                                            kwargs={'pk': Payroll.objects.last().id,
+                                            kwargs={'pk': Payroll.objects.latest('id').id,
                                                     'slug': 'edit',
                                                     'mymodel': slug})
                                     )
     elif slug == 'expenses':
         save_as_function(pk, GenericExpense, slug)
         return HttpResponseRedirect(reverse('billings:edit_page',
-                                            kwargs={'pk': GenericExpense.objects.last().id,
+                                            kwargs={'pk': GenericExpense.objects.latest('id').id,
                                                     'slug': 'edit',
                                                     'mymodel': slug})
                                     )

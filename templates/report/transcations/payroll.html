@@ -44,10 +44,10 @@
                             <div class="field"></div>
                         </div>
                         {% include 'snippets/search_date_filter.html' %}
-                        {% include 'snippets/retail_order_filters.html' %}
+                        {% include 'snippets/bills_filters.html' %}
                         <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
                     </form>
-                    <a href="" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
+                    <a href="{{ request.path }}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
                         <i class="trash icon"></i>
                         Καθαρισμός Φίλτρων
                     </a>
@@ -143,11 +143,12 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ invoice.date_expired|date }}</td>
+                            <td>{{ invoice.get_category_display }}</td>
+                            <td>{{ invoice.person }}</td>
+                            <td>{{ invoice.person.occupation }}</td>
                             <td>{{ invoice.title }}</td>
-                            <td>{{ invoice.title }}</td>
-                            <td>{{ invoice.category }}</td>
                             <td>{{ invoice.tag_final_value }}</td>
-                            <td{% if invoice.is_paid %} class="positive" {% else %} class="negative" {% endif %}>{{ invoice.tag_is_paid }}</td>
+                            <td {% if invoice.is_paid %} class="positive" {% else %} class="negative" {% endif %} >{{ invoice.tag_is_paid }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -162,25 +163,45 @@
                 <a href="" class="ui button">{{ bill }}</a>
             {% endfor %}
             <br>
-            <h4>Στατιστικα στοιχεία</h4>
+            <h4>Ανάλυση Ανά Υπάλληλο</h4>
             <table class="ui inverted table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Λογαριασμός</th>
+                        <th>Υπάλληλος</th>
                         <th>Συνολική Αξία</th>
-                        <th>Πληρωμένη Αξία</th>
                         <th>Υπόλοιπο</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for bill in analysis_per_bill %}
+                    {% for bill in analysis_per_person %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ bill.category__title }}</td>
-                            <td>{{ bill.value }}</td>
-                            <td>{{ bill.paid_value_ }}</td>
-                            <td>{{ bill.remaining }}</td>
+                            <td>{{ bill.person__title }}</td>
+                            <td>{{ bill.total_value }} {{ currency }}</td>
+                            <td>{{ bill.remaining_value }} {{ currency }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h4>Ανάλυση Ανά Είδος</h4>
+            <table class="ui inverted table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Είδος</th>
+                        <th>Συνολική Αξία</th>
+                        <th>Υπόλοιπο</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in analysis_per_cate %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ bill.category }}</td>
+                            <td>{{ bill.total_value }} {{ currency }}</td>
+                            <td>{{ bill.remaining_value }} {{ currency }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

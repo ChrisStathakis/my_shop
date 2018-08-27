@@ -17,25 +17,26 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Date</th>
+                                    <th>Payment Method</th>
                                     <th>Title</th>
                                     <th colspan="2">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for instance in payment_orders %}
+                                {% for ele in instance.payment_orders.all %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td {% if not instance.is_paid %} style='background-color:red' {% else %} style='background:green' {% endif %}>{{ instance.date_expired|date }}</td>
-                                        
-                                        <td>{{ instance }}</td>
-                                        <td>{{ instance.tag_final_value }}</td>
+                                        <td {% if not ele.is_paid %} class="danger" {% else %} class="success" {% endif %}>{{ ele.date_expired|date }}</td>
+                                        <td>{{ ele.payment_method }}</td>
+                                        <td>{{ ele }}</td>
+                                        <td>{{ ele.tag_final_value }}</td>
                                         <td colspan="2">
-                                            <a onclick='return confirm("Are you sure?");' href="{% url 'billings:edit_bill_actions' instance.id 'payment_delete' %}" class="btn btn-warning">Delete</a>
+                                            <a onclick='return confirm("Are you sure?");' href="" class="btn btn-warning">Delete</a>
                                          </td>
                                     </tr>
                                 {% empty %}
                                     <tr>
-                                        <td colspan="5">No Data</td>
+                                        <td colspan="6">No Data</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -45,6 +46,22 @@
             </div>
 
             <div class="col-lg-6" id="form_container">
+                <div class="card">
+                    <div class="header">
+                        <a href="{{ instance.get_dashboard_list_url }}" class="btn btn-warning">Back</a>
+                        <br >
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        <a href="{{ instance.get_dashboard_save_as_url }}" class="btn btn-primary">Save as</a>
+                        <a onclick="return confirm('Are you sure?');" href="{{ instance.get_delete_url }}" class="btn btn-warning">Delete</a>
+                    </div>
+                </div>
                 <div class="card">
                     <div class="header">
                         <h4 class="title">Edit {{ page_title }}</h4>
@@ -59,16 +76,6 @@
                             {{ form }}
                             <button name="new_bill" type="submit" class="btn btn-success">Save</button>
                         </form>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title">Actions</h4>
-                    </div>
-                    <div class="content">
-                        <a href="{% url 'billings:save_as_view' instance.id 'payroll' %}" class="btn btn-primary">Save as</a>
-                        <a onclick="return confirm('Are you sure?');" href="{{ instance.get_delete_url }}" class="btn btn-warning">Delete</a>
                     </div>
                 </div>
                

@@ -1,9 +1,11 @@
 from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_text
 from django.contrib.admin.views.decorators import staff_member_required
 from transcations.models import *
 
+from site_settings.constants import PAYROLL_CHOICES, CURRENCY
 
 def transcations_homepage(request):
     bills = BillCategory.my_query.get_queryset().is_active()
@@ -53,19 +55,40 @@ class PayrollReportView(ListView):
 
     def get_queryset(self):
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        queryset = Payroll.objects.filter(date_expired__range=[date_start, date_end])
+        queryset = self.model.objects.filter(date_expired__range=[date_start, date_end])
+        queryset  = self.model.filters_data(self.request, queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(PayrollReportView, self).get_context_data(**kwargs)
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        search_name, bill_name, paid_name = [self.request.GET.get('search_name'),
-                                             self.request.GET.getlist('bill_name'),
-                                             self.request.GET.get('paid_name')
-                                            ]
+        search_name, person_name, occup_name, paid_name, bill_group_name = [self.request.GET.get('search_name'),
+                                                                            self.request.GET.getlist('person_name'),
+                                                                            self.request.GET.getlist('occup_name'),
+                                                                            self.request.GET.getlist('paid_name'),
+                                                                            self.request.GET.getlist('bill_group_name'),
+                                                                        ]
         persons = Person.my_query.get_queryset().is_active()
         occupations = Occupation.my_query.get_queryset().is_active()
+        bills_group = PAYROLL_CHOICES
+        payment_orders = PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Payroll), 
+                                                      object_id__in=self.object_list.values('id')
+                                                      )
+        analysis_per_person = self.object_list.values('person__title').annotate(total_value=Sum('final_value'),
+                                                                                remaining_value=Sum(
+                                                                                    F('final_value') - F('paid_value'))
+                                                                                ).order_by('total_value')
+        cate = dict(self.model._meta.get_field('category').flatchoices)
+        analysis_per_cate = self.object_list.values('category').annotate(total_value=Sum('final_value'),
+                                                                                     remaining_value=Sum(
+                                                                                         F('final_value') - F(
+                                                                                             'paid_value'))
+                                                                                     ).order_by('total_value')
+        for ele in analysis_per_cate:
+            ele['category'] = force_text(cate[ele['category']], strings_only=True)
+
         context.update(locals())
+        context['currency'] = CURRENCY
         return context
 
 

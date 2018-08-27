@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import PaymentOrders
 
-# Register your models here.
+@admin.register(PaymentOrders)
+class PaymentOrders(admin.ModelAdmin):
+    pass

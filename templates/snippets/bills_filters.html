@@ -46,17 +46,45 @@
     <div class="field">
         <label>Κατηγορία Εξόδων</label>
         {% for bill in bills_group %}
-            {% if bill.id|stringformat:"s" in bills_group_name %}
-                <div class="ui checkbox">
-                    <input type="checkbox" name="bills_group_name" value="{{ bill.id }}" checked>
-                    <label>{{ bill }}</label>
-                </div>
-            {% else %}
-                <div class="ui checkbox">
-                    <input type="checkbox" name="bills_group_name" value="{{ bill.id }}">
-                    <label>{{ bill }}</label>
-                </div>
-            {% endif %}
+            <div class="ui checkbox">
+                <input type="checkbox"
+                       id="bill_groip_{{ bill.0 }}"
+                       name="bill_group_name"
+                       value="{{ bill.0 }}"
+                       {% if bill.id|stringformat:"s" in bill_group_name %}checked{% endif %}
+                >
+                <label for="bill_groip_{{ bill.0 }}">{{ bill.1 }}</label>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="two fields">
+    <div class="field">
+        <label>Υπάλληλοι</label>
+        {% for person in persons %}
+            <div class="ui checkbox">
+                <input type="checkbox"
+                       id="person_{{ person.id }}"
+                       name="person_name"
+                       value="{{ person.id }}"
+                       {% if person.id|stringformat:"s" in person_name %} checked {% endif %}
+                >
+                <label for="person_{{ person.id }}">{{ person }}</label>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="field">
+        <label>Υπάλληλοι</label>
+        {% for occup in occupations %}
+            <div class="ui checkbox">
+                <input type="checkbox"
+                       id="occup_{{ occup.id }}"
+                       name="occup_name"
+                       value="{{ occup.id }}"
+                       {% if occup.id|stringformat:"s" in occup_name %} checked {% endif %}
+                >
+                <label for="occup_{{ occup.id }}">{{ occup }}</label>
+            </div>
         {% endfor %}
     </div>
 </div>

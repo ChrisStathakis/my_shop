@@ -66,6 +66,9 @@ class Bill(DefaultOrderModel):
         return f'{self.category} - {self.title}' if self.category else f'self.title'
 
     def save(self, *args, **kwargs):
+        if not self.is_paid:
+            for ele in self.payment_orders.all():
+                ele.delete()
         self.final_value = self.value
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         if self.is_paid:
@@ -79,8 +82,10 @@ class Bill(DefaultOrderModel):
                                                          content_type=ContentType.objects.get_for_model(self),
                                                          is_expense=True
                                                         )
+        
         super().save(*args, **kwargs)
         self.category.update_balance()
+    
 
     def get_dashboard_url(self):
         return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'edit'})
@@ -92,7 +97,7 @@ class Bill(DefaultOrderModel):
         return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'delete'})
     
     def get_dashboard_save_as_url(self):
-        return reverse('billings:save_as_view', kwargs={'mymodel':'bill', 'pk': self.id, 'slug': 'bill'})
+        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'bill'})
 
     def get_dashboard_list_url(self):
         return reverse('billings:bill_list')
@@ -118,7 +123,7 @@ class Bill(DefaultOrderModel):
         queryset = queryset.filter(category__id__in=category_name) if category_name else queryset
         queryset = queryset.filter(Q(title__icontains=search_name)|
                                    Q(category__title__icontains=search_name)
-                                   ).distict() if search_name else queryset
+                                   ).distinct() if search_name else queryset
         return queryset
 
 
@@ -166,7 +171,6 @@ class Person(models.Model):
     objects = models.Manager()
     my_query = PersonManager()
 
-
     class Meta:
         verbose_name_plural = "6. Υπάλληλος"
 
@@ -186,8 +190,6 @@ class Person(models.Model):
 
     def get_dashboard_url(self):
         return reverse('billings:person_detail', kwargs={'pk': self.id})
-        
-
     tag_balance.short_description = 'Υπόλοιπο'
 
     def calculate_total_days(self):
@@ -225,9 +227,22 @@ class Payroll(DefaultOrderModel):
 
     def save(self, *args, **kwargs):
         self.final_value = self.value
+        if not self.is_paid:
+            for ele in self.payment_orders.all():
+                ele.delete()
+        self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         if self.is_paid:
-            get_orders = self.payment_orders.all()
-            get_orders.update(is_paid=True)
+            get_value = self.get_remaining_value()
+            if get_value > 0:
+                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
+                                                         value=self.get_remaining_value(),
+                                                         payment_method=self.payment_method,
+                                                         is_paid=True,
+                                                         object_id=self.id,
+                                                         content_type=ContentType.objects.get_for_model(self),
+                                                         is_expense=True
+                                                        )
+        
 
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
             'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
@@ -287,10 +302,28 @@ class Payroll(DefaultOrderModel):
         return "Is Paid" if self.is_paid else "Not Paid"
 
     def get_remaining_value(self):
-        return self.value - self.paid_value
+        return self.final_value - self.paid_value
 
     def tag_remaining_value(self):
         return '%s %s' % (self.get_remaining_value(), CURRENCY)
+
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        person_name = request.GET.getlist('person_name', None)
+        occup_name = request.GET.getlist('occup_name', None)
+        paid_name = request.GET.getlist('paid_name', None)
+        bill_group_name = request.GET.getlist('bill_group_name', None)
+
+        queryset = queryset.filter(category__in=bill_group_name) if bill_group_name else queryset
+        queryset = queryset.filter(person__id__in=person_name) if person_name else queryset
+        queryset = queryset.filter(person__occupation__id__in=occup_name) if occup_name else queryset
+        queryset = queryset.filter(Q(title__icontains=search_name) |
+                                   Q(person__title__icontains=search_name) |
+                                   Q(person__occupation__title__icontains=search_name)
+                                   ).distict() if search_name else queryset
+
+        return queryset
 
 
 @receiver(pre_delete, sender=Payroll)
@@ -314,7 +347,6 @@ class GenericExpenseCategory(models.Model):
 
     objects = models.Manager()
     my_query = ExpenseCategoryManager()
-
 
     def __str__(self):
         return self.title

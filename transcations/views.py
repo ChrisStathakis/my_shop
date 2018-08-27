@@ -44,7 +44,7 @@ def bills_list_view(request):
 
 @staff_member_required
 def payroll_list_view(request):
-    page_title, button_title, data_url= 'Bills', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    page_title, button_title, data_url= 'Payroll', 'Create Person', reverse('billings:ajax_payroll_person_popup')
     queryset = Payroll.objects.all()
     persons = Person.objects.all()
     occupations = Occupation.objects.all()
@@ -59,7 +59,6 @@ def payroll_list_view(request):
 
 @staff_member_required
 def edit_page(request, mymodel, pk, slug):
-    print('edit', mymodel, f'slug: {slug}')
     if mymodel == 'bill':
         instance = get_object_or_404(Bill, id=pk)
         page_title, button_title, data_url = 'Bill', 'Create Bill', reverse('billings:ajax_bill_cat_popup')
@@ -94,16 +93,17 @@ def edit_page(request, mymodel, pk, slug):
 
 @staff_member_required
 def expenses_list_view(request):
-    page_title, button_title, data_url= 'Generic Expense', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    page_title, button_title, data_url= 'General Expenses', 'Create Expense Category', reverse('billings:ajax_payroll_person_popup')
     queryset = GenericExpense.objects.all()
     categories = GenericExpenseCategory.objects.all()
-    form = GenericExpense(request.POST or None)
+    form = GenericExpenseForm(request.POST or None)
     if form.is_valid():
         form.save()
-        messages.success(request, 'New payroll added')
+        messages.success(request, 'New expense added')
         return HttpResponseRedirect(reverse('billings:payroll_list'))
     context = locals()
     return render(request, 'transcations/page_list.html', context)
+
 
 
 # settings  ------------------------------------------ settings  ------------------------------------------------- settings ------------------------------------------------------
