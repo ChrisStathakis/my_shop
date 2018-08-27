@@ -97,10 +97,18 @@
                             <h5>Categories</h5>
                             {% for category in categories %}
                                 <div class="checkbox">
-                                    <label><input onclick="this.form.submit()" type="checkbox" value="{{ category.id }}" name="category_name">{{ category }}</label>
+                                    <label>
+                                        <input onclick="this.form.submit()"
+                                               type="checkbox"
+                                               value="{{ category.id }}"
+                                               name="bill_name"
+                                               {% if category.id|stringformat:'s' in bill_name %} checked {% endif %}
+                                        >{{ category }}
+                                    </label>
                                 </div>
                             {% endfor %}
                             <button type="submit" class="btn btn-default btn-round">Save</button>
+                            <a href="{{ request.path }}" class="btn btn-warning">Reset</a>
                         </form>
 
                     </div>

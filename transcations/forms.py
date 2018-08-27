@@ -32,7 +32,7 @@ class PayrollForm(forms.ModelForm):
 
     class Meta:
         model = Payroll
-        fields = ['title', 'date_expired', 'person', 'value', 'is_paid']
+        fields = ['date_expired', 'title', 'person', 'payment_method', 'category', 'value', 'is_paid']
 
     def __init__(self, *args, **kwargs):
         super(PayrollForm, self).__init__(*args, **kwargs)

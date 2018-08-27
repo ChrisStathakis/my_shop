@@ -44,10 +44,10 @@
                             <div class="field"></div>
                         </div>
                         {% include 'snippets/search_date_filter.html' %}
-                        {% include 'snippets/retail_order_filters.html' %}
+                        {% include 'snippets/bills_filters.html' %}
                         <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
                     </form>
-                    <a href="" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
+                    <a href="{{ request.path }}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
                         <i class="trash icon"></i>
                         Καθαρισμός Φίλτρων
                     </a>
@@ -146,6 +146,10 @@
                             <td>{{ invoice.tag_final_value }}</td>
                             <td{% if invoice.is_paid %} class="positive" {% else %} class="negative" {% endif %}>{{ invoice.tag_is_paid }}</td>
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No data</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -179,6 +183,10 @@
                             <td>{{ bill.paid_value_ }}</td>
                             <td>{{ bill.remaining }}</td>
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No data</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -200,6 +208,10 @@
                             <td>{{ payment.title }}</td>
                             <td>{{ payment.payment_method }}</td>
                             <td>{{ payment.tag_final_value }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No data</td>
                         </tr>
                     {% endfor %}
                 </tbody>

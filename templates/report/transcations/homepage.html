@@ -3,9 +3,9 @@
 {% block down_menu %}
 <div class="ui  four item bottom fixed menu">
     <a href="{% url 'reports:bills_report_view' %}" style="background-color: green" class="item">Λογαριασμοί</a>
-    <a href="" class="item">Μισθοδοσια</a>
-    <a href="" style="background-color: red" class="item">Γενικά Έξοδα</a>
-    <a class="item">Ροή</a>
+    <a href="{% url 'reports:payroll_report_view' %}" class="item">Μισθοδοσια</a>
+    <a href="{% url 'reports:generic_expenses_view' %}" style="background-color: red" class="item">Γενικά Έξοδα</a>
+    <a class="item">Συνολική Εικόνα</a>
 </div>
 {% endblock %}
 

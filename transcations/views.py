@@ -28,7 +28,7 @@ def bills_list_view(request):
     categories = BillCategory.objects.all()
     queryset = Bill.objects.all()
     search_name = request.GET.get('search_name', None)
-    category_name = request.GET.getlist('category_name', None)
+    bill_name = request.GET.getlist('bill_name', None)
     queryset = Bill.filters_data(request, queryset)
     form = BillForm(request.POST or None)
     if 'new_bill' in request.POST:

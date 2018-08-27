@@ -105,17 +105,20 @@ class Bill(DefaultOrderModel):
         for payment in queryset:
             payment.delete()
 
-
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
 
     @staticmethod
     def filters_data(request, queryset):
+        paid_name = request.GET.getlist('paid_name', None)
         search_name = request.GET.get('search_name', None)
-        category_name = request.GET.getlist('category_name', None)
-
+        category_name = request.GET.getlist('bill_name', None)
+        queryset = queryset.filter(is_paid=True) if 'paid' in paid_name else queryset.filter(is_paid=False)\
+            if 'not_paid' in paid_name else queryset
         queryset = queryset.filter(category__id__in=category_name) if category_name else queryset
-        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        queryset = queryset.filter(Q(title__icontains=search_name)|
+                                   Q(category__title__icontains=search_name)
+                                   ).distict() if search_name else queryset
         return queryset
 
 
@@ -215,27 +218,29 @@ class Payroll(DefaultOrderModel):
     payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = PayrollInvoiceManager()
+    payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
         ordering = ['is_paid', '-date_expired', ]
 
     def save(self, *args, **kwargs):
+        self.final_value = self.value
         if self.is_paid:
-            get_orders = self.payorders.all()
+            get_orders = self.payment_orders.all()
             get_orders.update(is_paid=True)
 
-        self.paid_value = self.payorders.filter(is_paid=True).aggregate(Sum('value'))[
-            'value__sum'] if self.payorders.filter(is_paid=True) else 0
+        self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
+            'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         self.paid_value = self.paid_value if self.paid_value else 0
 
-        if self.paid_value >= self.value:
+        if self.paid_value >= self.final_value:
             self.is_paid = True
 
-        if self.is_paid and self.paid_value < self.value:
+        if self.is_paid and self.paid_value < self.final_value:
             new_order = PaymentOrders.objects.create(payment_type=self.payment_method,
                                                      value=self.value - self.paid_value,
                                                      is_paid=True,
-                                                     content_type=ContentType.objects.get_for_model(PayrollInvoice),
+                                                     content_type=ContentType.objects.get_for_model(Payroll),
                                                      object_id=self.id,
                                                      date_expired=self.date_expired,
                                                      )
@@ -246,19 +251,19 @@ class Payroll(DefaultOrderModel):
         return '%s %s' % (self.date_expired, self.person.title)
     
     def get_dashboard_url(self):
-        return reverse('billings:edit_payroll', kwargs={'pk': self.id})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'edit', 'mymodel':'payroll'})
 
     def get_paid_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug': 'paid'})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'paid', 'mymodel':'payroll'})
 
     def get_delete_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'delete'})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'delete', 'mymodel':'payroll'})
     
     def get_dashboard_save_as_url(self):
         return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
 
     def get_dashboard_list_url(self):
-        return reverse('billings:payment_list')
+        return reverse('billings:payroll_list')
 
     def update_category(self):
         self.person.update_balance()

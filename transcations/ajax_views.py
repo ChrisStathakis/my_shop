@@ -44,14 +44,14 @@ def create_generic_category_popup(request):
     return render(request, '', context={'form': form})
 
 
-def save_as_function(url, pk, model):
+def save_as_function(pk, model, slug):
     instance = get_object_or_404(model, id=pk)
     new_instance = instance
     new_instance.pk = None
     new_instance.is_paid = False
     new_instance.save()
     new_instance.refresh_from_db()
-    return HttpResponseRedirect(reverse(f'{url}', kwargs={'pk': new_instance.id, 'slug':'edit'}))
+
 
 
 def fast_report(request, slug):
@@ -64,14 +64,30 @@ def fast_report(request, slug):
                                        )
     return JsonResponse(data)
 
+
 def save_as_view(request, pk, slug):
-    print('save_As')
     if slug == 'bill':
-        print('here')
-        save_as_function('billings:edit_bill', pk, Bill)
-    if slug == 'payroll':
-        save_as_function('billings:edit_payroll', pk, Payroll)
-    if slug == 'expenses':
-        save_as_function('billings:edit_expense', pk, GenericExpense)
-    return HttpResponseRedirect('/')
+        save_as_function(pk, Bill, slug)
+        return HttpResponseRedirect(reverse('billings:edit_page',
+                                            kwargs={'pk': Bill.objects.last().id,
+                                                    'slug': 'edit',
+                                                    'mymodel': slug})
+                                    )
+    elif slug == 'payroll':
+        save_as_function(pk, Payroll, slug)
+        print(Payroll.objects.last().id)
+        return HttpResponseRedirect(reverse('billings:edit_page',
+                                            kwargs={'pk': Payroll.objects.last().id,
+                                                    'slug': 'edit',
+                                                    'mymodel': slug})
+                                    )
+    elif slug == 'expenses':
+        save_as_function(pk, GenericExpense, slug)
+        return HttpResponseRedirect(reverse('billings:edit_page',
+                                            kwargs={'pk': GenericExpense.objects.last().id,
+                                                    'slug': 'edit',
+                                                    'mymodel': slug})
+                                    )
+    else:
+        return HttpResponseRedirect('/')
 
