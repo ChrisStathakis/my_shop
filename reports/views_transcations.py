@@ -22,6 +22,7 @@ class BillsReportView(ListView):
     def get_queryset(self):
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
         queryset = Bill.objects.filter(date_expired__range=[date_start, date_end])
+        queryset = Bill.filters_data(self.request, queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -63,15 +64,15 @@ class PayrollReportView(ListView):
                                              self.request.GET.get('paid_name')
                                             ]
         persons = Person.my_query.get_queryset().is_active()
-        Occupations = Occupation.my_query.get_queryset().is_active()
+        occupations = Occupation.my_query.get_queryset().is_active()
         context.update(locals())
         return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class GenericExpense(ListView):
+class GenericExpenseView(ListView):
     model = GenericExpense
-    template_name = ''
+    template_name = 'report/transcations/generic_expenses.html'
     paginate_by = 100
 
     def get_queryset(self):

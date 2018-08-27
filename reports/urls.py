@@ -43,6 +43,8 @@ urlpatterns = [
     # transcations
     path('transcations/', transcations_homepage, name='transcation_homepage'),
     path('transcations/bill-list/', BillsReportView.as_view(), name='bills_report_view'),
+    path('transcations/payroll-list/', PayrollReportView.as_view(), name='payroll_report_view'),
+    path('transcations/expenses-list/', GenericExpenseView.as_view(), name='generic_expenses_view')
 
    
     ]
