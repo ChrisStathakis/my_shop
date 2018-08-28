@@ -8,8 +8,12 @@
             <h2 class="ui blue icon header">
                 <i class=" blue cart icon"></i>
                 <div class="content">
-                    {{ order }}
-                    <div class="sub header">{{ order.day_created|date }} <br>ID {{ order.code|default_if_none:'Τιμολόγιο Αγοράς' }} -- Τιμολόγιο Αγοράς -- Κατάσταση {% if order.is_paid %}<label class="ui green label">Πληρωμένο</label> {% else %}<label class="ui red label">Μη Πληρωμένο</label>  {% endif %}</div>
+                    {{ instance }}
+                    <div class="sub header">
+                        {{ instance.date_expired|date }} 
+                        <br>ID {{ instance.id|default_if_none:'Τιμολόγιο Αγοράς' }} -- Τιμολόγιο Αγοράς -- Κατάσταση 
+                        {% if instance.is_paid %}<label class="ui green label">Πληρωμένο</label> {% else %}<label class="ui red label">Μη Πληρωμένο</label>  {% endif %}
+                    </div>
                 </div>
             </h2>
         </div>
@@ -25,17 +29,18 @@
     <div class="four wide column">
         <div class="ui segments">
             <div style='text-align: center' class="ui inverted blue segment">Πληροφορίες</div>
-            <div style='text-align: center' class="ui blue header segment">  Συνολική Αξία {{ order.tag_all_values.4 }}</div>
+            <div style='text-align: center' class="ui blue header segment">  Συνολική Αξία {{ instance.tag_final_value }}</div>
             <div style="margin-left: 3%" class="ui celled list">
                 <div class="item">
                     <div class="content">
-                        <div class="header"><span style="color: green">{{ order.tag_all_values.0 }}</span> -- <span style="color: red">{{ order.tag_all_values.3 }}</span> - {{ order.taxes_modifier }} %</div>
+                        <div class="header">
+                            <span style="color: green">{{ instance.tag_clean_value }}</span> -- <span style="color: red">{{ instance.tag_total_taxes }}</span> - {{ instance.taxes_modifier }} %</div>
                         Καθαρή Αξία - ΦΠΑ - % ΦΠΑ
                     </div>
                 </div>
                 <div class="item">
                     <div class="content">
-                        <div class="header">{{ order.tag_all_values.1 }} - {{ order.tag_all_values.2 }}</div>
+                        <div class="header">{{ instance.tag_all_values.1 }} - {{ instance.tag_all_values.2 }}</div>
                         'Εκπτωση - Αξία μετά την Εκπτωση
                     </div>
                 </div>
@@ -50,12 +55,12 @@
                 </div>
                 <div class="item">
                     <div class="content">
-                        <div class="green header"><a href="{% url 'reports:vendor_detail' order.vendor.id %}">{{ order.vendor }}</a>  -- {{ order.payment_method }}</div>
+                        <div class="green header"><a href="">{{ instance.vendor }}</a>  -- {{ instance.payment_method }}</div>
                         Προμηθευτής -- Τροπος Πληρωμής
                     </div>
                 </div>
             </div>
-            <div style='text-align: center' class="ui red header segment">Πληρωμές --Υπόλοιπο {{ order.tag_remaining_value }}</div>
+            <div style='text-align: center' class="ui red header segment">Πληρωμές --Υπόλοιπο {{ instance.tag_remaining_value }}</div>
             <div style="margin-left: 3%" class="ui celled list">
                 {% for ele in pay_info %}
                 <div class="item">

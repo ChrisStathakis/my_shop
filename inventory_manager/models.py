@@ -163,6 +163,7 @@ class Order(DefaultOrderModel):
 
     class Meta:
         verbose_name_plural = "1. Τιμολόγια"
+        ordering = ['-date_expired']
 
     def __str__(self):
         return self.title
@@ -203,6 +204,9 @@ class Order(DefaultOrderModel):
 
     def update_warehouse(self):
         self.vendor.save()
+
+    def get_report_url(self):
+        return reverse('reports:warehouse_order_detail', kwargs={'pk': self.id})
         
 
     @staticmethod

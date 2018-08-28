@@ -19,7 +19,9 @@ from site_settings.constants import *
 from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
-from .tools import initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, warehouse_vendors_analysis, get_filters_get_data
+from .tools import (initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, 
+                    warehouse_vendors_analysis, get_filters_get_data, balance_sheet_chart_analysis
+                    )
 
 
 from itertools import chain
@@ -182,7 +184,7 @@ class CheckOrderPage(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CheckOrderPage, self).get_context_data(**kwargs)
-        vendors = Supply.objects.filter(active=True)
+        vendors = Vendor.objects.filter(active=True)
         context.update(locals())
         return context
 
@@ -251,7 +253,7 @@ class CategorySiteView(DetailView):
 
 @staff_member_required
 def warehouse_orders(request):
-    vendors, payment_method, currency = Supply.objects.all(), PaymentMethod.objects.all(), CURRENCY
+    vendors, payment_method, currency = Vendor.objects.all(), PaymentMethod.objects.all(), CURRENCY
     orders = Order.objects.all()
     orders = Order.filter_data(request, queryset=orders)
 
@@ -262,14 +264,15 @@ def warehouse_orders(request):
                                                          request.GET.get('paid_name')
                                                          ]
 
-    order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('total_price'))[
-        'total_price__sum'] \
+    order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('final_value'))[
+        'final_value__sum'] \
         if orders else 0, orders.aggregate(Sum('paid_value'))[
                                                'paid_value__sum'] if orders else 0
     diff = total_value - paid_value
-    warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'total_price')
-    warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('total_price'),
-                                                                          paid_val=Sum('paid_value')).order_by(
+    warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'final_value')
+    warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('final_value'),
+                                                                paid_val=Sum('paid_value')
+                                                                ).order_by(
         '-value_total')
     paginator = Paginator(orders, 100)
     page = request.GET.get('page', 1)
@@ -279,12 +282,12 @@ def warehouse_orders(request):
 
 
 @staff_member_required
-def order_id(request, dk):
+def order_id(request, pk):
     currency = CURRENCY
-    order = get_object_or_404(Order, id=dk)
-    order_items = order.orderitem_set.all()
-    orders_files = order.warehouseorderimage_set.all()
-    payments_orders = order.payment_orders
+    instance = get_object_or_404(Order, id=pk)
+    order_items = instance.order_items.all()
+    orders_files = instance.warehouseorderimage_set.all()
+    payments_orders = instance.payment_orders.all()
     context = locals()
     return render(request, 'report/details/orders_id.html', context)
 

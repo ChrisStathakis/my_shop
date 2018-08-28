@@ -117,10 +117,10 @@ class Bill(DefaultOrderModel):
     def filters_data(request, queryset):
         paid_name = request.GET.getlist('paid_name', None)
         search_name = request.GET.get('search_name', None)
-        category_name = request.GET.getlist('bill_name', None)
+        cate_name = request.GET.getlist('cate_name', None)
         queryset = queryset.filter(is_paid=True) if 'paid' in paid_name else queryset.filter(is_paid=False)\
             if 'not_paid' in paid_name else queryset
-        queryset = queryset.filter(category__id__in=category_name) if category_name else queryset
+        queryset = queryset.filter(category__id__in=cate_name) if cate_name else queryset
         queryset = queryset.filter(Q(title__icontains=search_name)|
                                    Q(category__title__icontains=search_name)
                                    ).distinct() if search_name else queryset
@@ -313,9 +313,9 @@ class Payroll(DefaultOrderModel):
         person_name = request.GET.getlist('person_name', None)
         occup_name = request.GET.getlist('occup_name', None)
         paid_name = request.GET.getlist('paid_name', None)
-        bill_group_name = request.GET.getlist('bill_group_name', None)
+        cate_name = request.GET.getlist('cate_name', None)
 
-        queryset = queryset.filter(category__in=bill_group_name) if bill_group_name else queryset
+        queryset = queryset.filter(category__in=bill_group_name) if cate_name else queryset
         queryset = queryset.filter(person__id__in=person_name) if person_name else queryset
         queryset = queryset.filter(person__occupation__id__in=occup_name) if occup_name else queryset
         queryset = queryset.filter(Q(title__icontains=search_name) |
@@ -381,7 +381,7 @@ class GenericExpense(DefaultOrderModel):
     payments_orders = GenericRelation(PaymentOrders)
 
     class Meta:
-        ordering = ['is_paid', 'date_expired']
+        ordering = ['is_paid', '-date_expired']
 
     def __str__(self):
         return self.title
@@ -432,9 +432,11 @@ class GenericExpense(DefaultOrderModel):
     @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
-        category_name = request.GET.getlist('category_name', None)
+        cate_name = request.GET.getlist('cate_name', None)
+        paid_name = request.GET.getlist('paid_name', None)
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
-        queryset = queryset.fitler(category__id__in=category_name) if category_name else queryset
+        queryset = queryset.filter(category__id__in=cate_name) if category_name else queryset
+        queryset = queryset.filter(is_paid=True) if paid_name == 'paid' else queryset.filter(is_paid=False) if paid_name == 'not_paid' else queryset
         return queryset
     
     

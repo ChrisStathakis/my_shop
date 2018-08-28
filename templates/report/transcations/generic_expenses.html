@@ -1,10 +1,241 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "report/transcations/homepage.html" %}
 
-</body>
-</html>
+
+{% block content %}
+    <div class="row">
+        <div class="six wide column"></div>
+        <div class="six wide column">
+            <h2 class="ui green icon header">
+                <i class="green calendar icon"></i>
+                <div class="green content">
+                    Γενικά Έξοδα
+                </div>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="eleven wide column">
+            <div class="ui styled fluid accordion">
+              <div class="title">
+                <i class="dropdown icon"></i>
+                Filters
+              </div>
+              <div class="content">
+                <div style="margin-top: 5%" class="ui segment">
+                    <form id="form_filters" class="ui form" method="get">
+                        <div class="two fields">
+                            <div class="field">
+                                <div class="pagination">
+                                    <span class="step-links">
+                                        {% if queryset.has_previous %}
+                                            <button onclick="this.form.submit()" class="ui tiny blue button" type="input" name="page" value="{{ queryset.previous_page_number }}">{{ queryset.previous_page_number }}</button>
+                                        {% endif %}
+                                        <span class="current">
+                                            <label>Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}. </label>
+                                        </span>
+                                        {% if queryset.has_next %}
+                                            <button onclick="this.form.submit()" class="ui tiny blue button" type="input" name="page" value="{{ queryset.next_page_number }}">{{ queryset.next_page_number }}</button>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field"></div>
+                        </div>
+                        {% include 'snippets/search_date_filter.html' %}
+                        {% include 'snippets/bills_filters.html' %}
+                        <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
+                    </form>
+                    <a href="{{ request.path }}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
+                        <i class="trash icon"></i>
+                        Καθαρισμός Φίλτρων
+                    </a>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+        <div class="ui one wide column"></div>
+        <div class="ui twelve wide column">
+        <canvas id="myChart1" width="400" height="150"></canvas>
+        <script>
+        var ctx = document.getElementById("myChart1").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    {% for bill in analysis_per_bill  %}
+                        {% if forloop.last %}
+                            "Total {{ bill.category__title }}",  "Paid {{ bill.category__title }}"
+                        {% else %}
+                            "Total {{ bill.category__title }}",  "Paid {{ bill.category__title }}",
+                        {% endif %}
+                    {% endfor %}
+                    ],
+                datasets: [{
+                    label: '# Euro',
+                    data: [
+                        {% for bill in analysis_per_bill  %}
+                        {% if forloop.last %} "{{ bill.value }}", {{ bill.paid_value_ }} {% else %} "{{ bill.value }}", {{ bill.paid_value_ }}, {% endif %}
+                    {% endfor %}
+                    ],
+                    backgroundColor: [
+                        {% for bill in analysis_per_bill  %}
+                        {% if forloop.last %}
+                            'blue', 'green'
+                        {% else %}
+                            'blue', 'green',
+                        {% endif %}
+                    {% endfor %}
+
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+        </script>
+        <br>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="one wide column"></div>
+    <div class="eight wide column">
+        <h4>Παραστατικά</h4>
+        <div class="row">
+            <table class="ui selectable  table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ημερομηνία</th>
+                        <th>Τύπος Πληρωμής</th>
+                        <th>Υπάλληλος</th>
+                        <th>Επάγγελμα</th>
+                        <th>Σχολια- Τίτλος</th>
+                        <th>Αξία</th>
+                        <th>Κατάσταση</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ invoice.date_expired|date }}</td>
+                            <td>{{ invoice.get_category_display }}</td>
+                            <td>{{ invoice.person }}</td>
+                            <td>{{ invoice.person.occupation }}</td>
+                            <td>{{ invoice.title }}</td>
+                            <td>{{ invoice.tag_final_value }}</td>
+                            <td {% if invoice.is_paid %} class="positive" {% else %} class="negative" {% endif %} >{{ invoice.tag_is_paid }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="one wide column"></div>
+    <div class="four wide column">
+        <div class="row">
+            
+            <h4>Ανάλυση Ανά Κατηγορία</h4>
+            <table class="ui inverted table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Κατηγορία</th>
+                        <th>Συνολική Αξία</th>
+                        <th>Υπόλοιπο</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in analysis_per_category %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ bill.category__title }}</td>
+                            <td>{{ bill.total_value }} {{ currency }}</td>
+                            <td>{{ bill.remaining_value }} {{ currency }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4>Παραστατικα Πληρωμών</h4>
+            <table class="ui inverted table">
+                <thead>
+                    <tr>
+                        <th>Ημερομηνία</th>
+                        <th>Τίτλος</th>
+                        <th>Τρόπος Πληρωμής</th>
+                        <th>Αξία</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments_orders %}
+                        <tr>
+                            <td>{{ payment.date_expired|date }}</td>
+                            <td>{{ payment.title }}</td>
+                            <td>{{ payment.payment_method }}</td>
+                            <td>{{ payment.tag_final_value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    <div class="row" style="margin-top: 5%"></div>
+
+
+    <script type="text/javascript">
+        $('#payment_analysis').click(function() {
+            console.log('woeks!!')
+            var btn= $(this);
+            var form = $('#form_filters').serialize();
+            $.ajax({
+                url: btn.attr('data-url'),
+                data: form,
+                dataType: 'json',
+                success: function(data) {
+                    $('#analysis-container').html(data.payment_analysis)
+                }
+            })
+        })
+
+        $('#store_analysis').click(function () {
+            var btn = $(this);
+            var form = $('#form_filters').serialize();
+            $.ajax({
+                url: btn.attr('data-url'),
+                data: form,
+                dataType: 'json',
+                success: function (data) {
+                    $('#analysis-container').html(data.store_analysis_per_month)
+
+                }
+            })
+        })
+    </script>
+
+{% endblock %}

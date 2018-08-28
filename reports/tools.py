@@ -11,6 +11,10 @@ from inventory_manager.models import Vendor, Order, OrderItem
 from point_of_sale.models import *
 
 
+def diff_month(date_start, date_end):
+    return (date_end.year - date_start.year)*12 + (date_end.month - date_start.month)
+
+
 def get_filters_get_data(request):
     search_name = request.GET.get('search_name', None)
     category_name = request.GET.getlist('category_name', None)
@@ -113,3 +117,23 @@ def warehouse_vendors_analysis(request, date_start, date_end):
                                                                       )
     # print(current_vendor_analysis)
     return [current_vendor_analysis]
+
+
+def balance_sheet_chart_analysis(start_year, day_now, orders, value):
+    get_data = []
+    months = diff_month(start_year, day_now)
+    string, string_sum = '%s' % value, '%s__sum' % value
+    for month in range(months+1):
+        new_date = day_now - relativedelta(months=month)
+        string_month, month, year = new_date.strftime('%B'), new_date.month, new_date.year
+        try:
+            get_orders = orders.filter(date_expired__month=month, date_expired__year=year).aggregate(Sum(string))[
+                string_sum] if orders.filter(date_expired__month=month, date_expired__year=year) else 0
+        except:
+            get_orders_ = orders.filter(date_expired__month=month, date_expired__year=year)
+            get_orders = orders.filter(date_expired__month=month, date_expired__year=year).aggregate(Sum(string))[
+                string_sum] if orders.filter(date_expired__month=month, date_expired__year=year) else 0
+        get_orders = get_orders if get_orders else 0
+        get_data.append((string_month, get_orders))
+    get_data.reverse()
+    return get_data

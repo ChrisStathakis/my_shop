@@ -1,4 +1,4 @@
-{% extends 'report/outcome.html' %}{% load staticfiles %}
+{% extends 'report/warehouse.html' %}{% load static %}
 
 
 {% block content %}
@@ -205,7 +205,7 @@
                 <table class="ui celled striped table">
                     <thead>
                         <tr>
-                            <th colspan="7">
+                            <th colspan="9">
                                 Συνολική Αξία {{ order.tag_total_value }}
                             </th>
                         </tr>
@@ -214,27 +214,25 @@
                             <th>Ημερομηνία</th>
                             <th>Σχολια- Τίτλος</th>
                             <th>Προμηθεύτης</th>
-                            <th>Κατάσταση</th>
-                            <th class="warning">Υπόλοιπο</th>
-                            <th>Συνολικα Τεμάχια</th>
+                            <th>Είδος</th>
                             <th>Καθαρή Αξία</th>
                             <th>ΦΠΑ</th>
                             <th>Συνολική Αξία</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for order in orders %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ order.day_created }}</td>
-                                <td><a href="{% url 'reports:warehouse_order_detail' order.id %}" >{{ order }}</a> </td>
+                                <td>{{ order.date_expired|date }}</td>
+                                <td>{{ order }}</td>
                                 <td><a href="{% url 'reports:vendor_detail' order.vendor.id %}">{{ order.vendor }}</a></td>
-                                <td>{{ order.get_status_display }}</td>
-                                <td class="warning">{{ order.tag_remaining_value }}</td>
-                                <td>{{ order.items_count }} </td>
-                                <td>{{ order.tag_all_values.0 }} </td>
-                                <td>{{ order.tag_all_values.3 }}</td>
-                                <td>{{ order.tag_all_values.4 }}</td>
+                                <td>{{ order.get_order_type_display }}</td>
+                                <td>{{ order.tag_clean_value }} </td>
+                                <td>{{ order.tag_total_taxes }}</td>
+                                <td>{{ order.tag_final_value }}</td>
+                                <td><a href='{{ order.get_report_url }}' {% if order.is_paid %} class="ui teal button" {% else %} class="ui red button" {% endif %}>Λεπτομέριες</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -300,7 +298,7 @@
          $("#analyse_vendor").click(function () {
              console.log('clicked');
              $.ajax({
-                 url:'{% url 'reports:ajax_analyse_vendors' %}',
+                 url:'',
                  type: 'get',
                  dataType: 'json',
                  data: {

@@ -36,8 +36,8 @@ urlpatterns = [
     path('site-categories/', WarehouseCategoriesView.as_view(), name='site_categories'),
     # path('site-category/<int:pk>', WarehouseCategoryReport.as_view(), name='site_category_detail'),
 
-    path('orders/$', view=warehouse_orders, name='warehouse_orders'),
-    path('orders/<int:dk>', view=order_id, name='warehouse_order_detail'),
+    path('orders/', view=warehouse_orders, name='warehouse_orders'),
+    path('orders/<int:pk>/', view=order_id, name='warehouse_order_detail'),
     path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
 
     # transcations

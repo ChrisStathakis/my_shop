@@ -105,12 +105,19 @@ class GenericExpenseView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        context = super(GenericExpense, self).get_context_data(**kwargs)
+        context = super(GenericExpenseView, self).get_context_data(**kwargs)
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        search_name, bill_name, paid_name = [self.request.GET.get('search_name'),
-                                             self.request.GET.getlist('bill_name'),
-                                             self.request.GET.get('paid_name')
-                                            ]
-
+        search_name, bill_name, paid_name, cate_name = [self.request.GET.get('search_name'),
+                                                        self.request.GET.getlist('bill_name'),
+                                                        self.request.GET.get('paid_name'),
+                                                        self.request.GET.getlist('cate_name')
+                                                        ]
+        categories = GenericExpenseCategory.objects.all()
+        analysis_per_category = self.object_list.values('category__title').annotate(total_value=Sum('final_value'),
+                                                                                    remaining_value=Sum(F('final_value')-F('paid_value'))
+                                                                                   ).order_by('final_value')
+        payments_orders = PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(GenericExpense), object_id__in=self.object_list.values('id'))
         context.update(locals())
+        return context
+
 

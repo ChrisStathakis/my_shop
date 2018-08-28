@@ -247,7 +247,7 @@ def warehouse_orders(request):
         if orders else 0, orders.aggregate(Sum('paid_value'))[
                                                'paid_value__sum'] if orders else 0
     diff = total_value - paid_value
-    warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'total_price')
+    # warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'total_price')
     warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('total_price'),
                                                                           paid_val=Sum('paid_value')).order_by(
         '-value_total')
