@@ -220,7 +220,7 @@ class Payroll(DefaultOrderModel):
     payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = PayrollInvoiceManager()
-    payment_orders = GenericRelation(PaymentOrders)
+
 
     class Meta:
         ordering = ['is_paid', '-date_expired', ]
@@ -351,6 +351,13 @@ class GenericExpenseCategory(models.Model):
     def __str__(self):
         return self.title
 
+    def update_balance(self):
+        queryset = self.expenses.all()
+        value = queryset.aggregate(Sum('final_value'))['final_value__sum'] if queryset else 0
+        paid_value = queryset.aggregate(Sum('paid_value'))['paid_value__sum'] if queryset else 0
+        self.balance = value - paid_value
+        self.save()
+
     def tag_balance(self):
         return f'{self.balance} {CURRENCY}'
 
@@ -366,29 +373,56 @@ class GenericExpenseCategory(models.Model):
 
  
 class GenericExpense(DefaultOrderModel):
-    category = models.ForeignKey(GenericExpenseCategory, null=True, on_delete=models.SET_NULL)
-    payment_orders = GenericRelation(PaymentOrders)
+    category = models.ForeignKey(GenericExpenseCategory,
+                                 null=True,
+                                 on_delete=models.SET_NULL,
+                                 related_name='expenses'
+                                 )
+    payments_orders = GenericRelation(PaymentOrders)
 
     class Meta:
         ordering = ['is_paid', 'date_expired']
 
-    def get_dashboard_save_as_url(self):
-        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'payroll'})
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.is_paid:
+            for payment in self.payments_orders.all():
+                payment.delete()
+        if self.is_paid:
+            get_value = self.get_remaining_value()
+            if get_value > 0:
+                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
+                                                                 value=self.get_remaining_value(),
+                                                                 payment_method=self.payment_method,
+                                                                 is_paid=True,
+                                                                 object_id=self.id,
+                                                                 content_type=ContentType.objects.get_for_model(self),
+                                                                 is_expense=True
+                                                                 )
+
+        super().save(*args, **kwargs)
+        self.category.update_balance()
 
     def get_dashboard_url(self):
-        return reverse('billings:expense_detail', kwargs={'pk': self.id})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'edit', 'mymodel': 'expense'})
 
     def get_paid_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug': 'paid'})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'paid', 'mymodel': 'expense'})
 
     def get_delete_url(self):
-        return reverse('billings:edit_bill', kwargs={'pk': self.id, 'slug':'delete'})
+        return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'delete', 'mymodel': 'expense'})
+
+    def get_dashboard_save_as_url(self):
+        return reverse('billings:save_as_view', kwargs={'pk': self.id, 'slug': 'expense'})
 
     def get_dashboard_list_url(self):
-        return reverse('billings:payment_list')
+        return reverse('billings:expenses_list')
+
 
     def update_category(self):
-        self.person.update_balance()
+        self.category.update_balance()
 
     def destroy_payments(self):
         queryset = self.payment_orders.all()

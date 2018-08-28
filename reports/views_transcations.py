@@ -7,6 +7,7 @@ from transcations.models import *
 
 from site_settings.constants import PAYROLL_CHOICES, CURRENCY
 
+
 def transcations_homepage(request):
     bills = BillCategory.my_query.get_queryset().is_active()
     payrolls = Person.my_query.get_queryset().is_active()

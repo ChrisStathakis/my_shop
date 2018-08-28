@@ -40,8 +40,8 @@ def create_generic_category_popup(request):
     if form.is_valid():
         instance = form.save()
         return HttpResponse(f'<script>opener.closePopup(window, "{instance.pk}", "{instance.title}", '
-                            f'"#id_genericexpensecategory");</script>')
-    return render(request, '', context={'form': form})
+                            f'"#id_category");</script>')
+    return render(request, 'dashboard/ajax_calls/popup_form.html', context={'form': form})
 
 
 def save_as_function(pk, model, slug):
@@ -51,6 +51,7 @@ def save_as_function(pk, model, slug):
     new_instance.is_paid = False
     new_instance.save()
     new_instance.refresh_from_db()
+
 
 
 def fast_report(request, slug):
@@ -80,7 +81,7 @@ def save_as_view(request, pk, slug):
                                                     'slug': 'edit',
                                                     'mymodel': slug})
                                     )
-    elif slug == 'expenses':
+    elif slug == 'expense':
         save_as_function(pk, GenericExpense, slug)
         return HttpResponseRedirect(reverse('billings:edit_page',
                                             kwargs={'pk': GenericExpense.objects.latest('id').id,

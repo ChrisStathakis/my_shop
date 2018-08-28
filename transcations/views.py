@@ -68,9 +68,9 @@ def edit_page(request, mymodel, pk, slug):
         page_title, button_title, data_url = 'Payroll', 'Create Payroll', reverse('billings:ajax_payroll_person_popup')
         my_form = PayrollForm
     if mymodel == 'expense':
-        instance = get_object_or_404(Bill, id=pk)
+        instance = get_object_or_404(GenericExpense, id=pk)
         page_title, button_title, data_url = 'Expense', 'Create Expense', reverse('billings:ajax_generic_cate_popup')
-        my_form = PayrollForm
+        my_form = GenericExpenseForm
     if slug == 'delete':
         instance.destroy_payments()
         instance.delete()
@@ -93,14 +93,14 @@ def edit_page(request, mymodel, pk, slug):
 
 @staff_member_required
 def expenses_list_view(request):
-    page_title, button_title, data_url= 'General Expenses', 'Create Expense Category', reverse('billings:ajax_payroll_person_popup')
+    page_title, button_title, data_url= 'General Expenses', 'Create Expense Category', reverse('billings:ajax_generic_cate_popup')
     queryset = GenericExpense.objects.all()
     categories = GenericExpenseCategory.objects.all()
     form = GenericExpenseForm(request.POST or None)
     if form.is_valid():
         form.save()
         messages.success(request, 'New expense added')
-        return HttpResponseRedirect(reverse('billings:payroll_list'))
+        return HttpResponseRedirect(reverse('billings:expenses_list'))
     context = locals()
     return render(request, 'transcations/page_list.html', context)
 

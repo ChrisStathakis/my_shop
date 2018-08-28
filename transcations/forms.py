@@ -64,6 +64,7 @@ class OccupationForm(forms.ModelForm):
             
 
 class GenericExpenseForm(forms.ModelForm):
+    date_expired = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
         model = GenericExpense
