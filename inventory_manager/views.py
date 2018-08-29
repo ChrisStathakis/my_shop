@@ -123,6 +123,7 @@ def delete_order_item(request, dk):
     instance.delete()
     return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.order.id}))
 
+
 @staff_member_required
 def order_payment_manager(request, pk):
     instance = get_object_or_404(Order, id=pk)
@@ -427,3 +428,4 @@ def check_order_paid(request, pk):
     instance.save()
     messages.success(request, 'The order is paid.')
     return HttpResponseRedirect(reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id}))
+

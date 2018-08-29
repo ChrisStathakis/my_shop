@@ -98,9 +98,6 @@ class DefaultOrderModel(models.Model):
         return self.final_value - self.paid_value
 
     
-    
-
-
 class DefaultOrderItemModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
@@ -116,6 +113,7 @@ class DefaultOrderItemModel(models.Model):
 
 class PaymentOrders(DefaultOrderModel):
     is_expense = models.BooleanField(default=True)
+    is_check = models.BooleanField(default=False)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

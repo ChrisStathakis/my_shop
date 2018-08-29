@@ -31,5 +31,7 @@ urlpatterns = [
 
     path('settings/expenses-list/', GenericExpenseCategoryListView.as_view(), name='expense_cate_list'),
     path('settings/occup-detail/<int:pk>/', GenericExpenseCategoryDetailView.as_view(), name='expense_cate_detail'),
+
+    path('check-list/', CheckOrderView.as_view(), name='check_order_view'),
    
 ]

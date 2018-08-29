@@ -30,4 +30,7 @@ urlpatterns = [
     path('payment/detail/delete-payment/<int:pk>/', view=warehouse_order_paid_delete, name='ware_order_paid_delete'),
 
     
+    
+
+    
 ]

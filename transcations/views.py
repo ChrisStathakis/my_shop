@@ -5,12 +5,15 @@ from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Person, Occupation, Bill, BillCategory, GenericExpenseCategory, GenericExpense, Payroll
 from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm, GenericExpenseForm,\
     GenericExpenseCategoryForm
+
 from site_settings.forms import PaymentForm
 from site_settings.models import PaymentOrders
+from inventory_manager.models import Vendor
 from dateutil.relativedelta import relativedelta
 
 
@@ -282,3 +285,23 @@ class GenericExpenseCategoryDetailView(DetailView, UpdateView):
         form.save()
         messages.success(self.request, 'The Person is edited')
         return super().form_valid(form)
+
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CheckOrderView(ListView):
+    model = PaymentOrders
+    template_name = 'transcations/class_page_list.html'
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Vendor))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page_title = 'Checks'
+        vendors = Vendor.objects.filter(active=True)
+        vendor_name, search_name = self.request.GET.getlist('vendor_name', None), self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
