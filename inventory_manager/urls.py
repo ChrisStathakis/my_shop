@@ -29,7 +29,7 @@ urlpatterns = [
     path('payment/detail/edit-payment/<int:dk>/<int:pk>/', view=warehouse_edit_paid_order, name='ware_order_paid_edit'),
     path('payment/detail/delete-payment/<int:pk>/', view=warehouse_order_paid_delete, name='ware_order_paid_delete'),
 
-    
+    path('check-orders/', CheckOrdersView.as_view(), name='check_orders')
     
 
     

@@ -253,7 +253,6 @@ class CategorySiteManagerView(ListView):
         return context
     
 
-
 @method_decorator(staff_member_required, name='dispatch')
 class RelatedProductsView(ListView):
     model = Product

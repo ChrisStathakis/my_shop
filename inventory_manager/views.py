@@ -429,3 +429,24 @@ def check_order_paid(request, pk):
     messages.success(request, 'The order is paid.')
     return HttpResponseRedirect(reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id}))
 
+
+@method_decorator(staff_member_required, name='dispatch')
+class CheckOrdersView(ListView):
+    template_name = 'inventory_manager/checkOrders.html'
+    model = PaymentOrders
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = PaymentOrders.objects.all()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        print('hello world!')
+        context = super(CheckOrdersView, self).get_context_data(**kwargs)
+        vendors = Vendor.objects.filter(active=True)
+        vendor_name, search_name, check_name = [self.request.GET.getlist('vendor_name', None),
+                                                self.request.GET.get('search_name', None),
+                                                self.request.GET.get('check_name', None)
+                                                ]
+        context.update(locals())
+        return context

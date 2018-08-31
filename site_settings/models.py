@@ -128,6 +128,11 @@ class PaymentOrders(DefaultOrderModel):
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
 
+    @staticmethod
+    def filters_data(request, queryset):
+        search_name = request.GET.get('search_name', None)
+        vendor_name = request.GET.getlist('vendor_name')
+
 
 @receiver(post_delete, sender=PaymentOrders)
 def update_on_delete(sender, instance, *args, **kwargs):

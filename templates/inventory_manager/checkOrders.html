@@ -1,0 +1,75 @@
+{% extends 'inventory_manager/index.html' %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="header">
+                            <div class="title">Check Order List</div>
+                        </div>
+                        <div class="content">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Title</th>
+                                        <th>Related</th>
+                                        <th>Is Paid</th>
+                                        <th>Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ele in object_list %}
+                                        <tr>
+                                            <td>{{ ele.date_expired|date }}</td>
+                                            <td>{{ ele }}</td>
+                                            <td>model</td>
+                                            <td>{{ ele.is_paid }}</td>
+                                            <td>{{ ele.tag_final_value }}</td>
+                                            <td><a href="" class="btn btn-primary">Edit</a> </td>
+                                        </tr>
+                                    {% empty %}
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="header">
+                            <div class="title">Filters</div>
+                        </div>
+                        <div class="content">
+                            <form class="form" method="get">
+                                <div class="form-group">
+                                   <input type="text" {% if search_name %}value=""{% endif %}
+                                          placeholder="Search" class="form-control" name="search_name"
+                                   />
+                                </div>
+                                <br>
+                                <div class="form-control">
+                                    <input type="checkbox" class="form-control" name="check_name">
+                                    <label>Only Checks</label>
+                                </div>
+                                <br>
+                                <h4>Vendor</h4>
+                                {% for vendor in vendors %}
+                                    <div class="form-group">
+                                        <input type="checkbox" class="form-control" id="vendor_{{ vendor.id }}">
+                                        <label for="vendor_{{ vendor.id }}">{{ vendor }}</label>
+                                    </div>
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
