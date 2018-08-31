@@ -88,6 +88,7 @@ class Vendor(models.Model):
     balance = models.DecimalField(default=0, max_digits=100, decimal_places=2, verbose_name="Υπόλοιπο")
     payment_orders = GenericRelation(PaymentOrders)
 
+
     class Meta:
         verbose_name_plural = '9. Προμηθευτές'
         ordering = ['title', ]
@@ -135,6 +136,9 @@ class Vendor(models.Model):
 
     def get_absolute_url_form(self):
         return reverse('edit_vendor_id', kwargs={'dk':self.id})
+
+    def define_payment(self):
+        return f'Vendor {self.title}'
 
 
 class OrderManager(models.Manager):

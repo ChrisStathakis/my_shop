@@ -27,10 +27,10 @@
                                         <tr>
                                             <td>{{ ele.date_expired|date }}</td>
                                             <td>{{ ele }}</td>
-                                            <td>model</td>
+                                            <td>{{ ele.content_object.define_payment }}</td>
                                             <td>{{ ele.is_paid }}</td>
                                             <td>{{ ele.tag_final_value }}</td>
-                                            <td><a href="" class="btn btn-primary">Edit</a> </td>
+                                            <td><a href="{{ ele.get_dashboard_url }}" class="btn btn-primary">Edit</a> </td>
                                         </tr>
                                     {% empty %}
 

@@ -11,7 +11,7 @@ class PaymentForm(forms.ModelForm):
 
     class Meta:
         model = PaymentOrders
-        fields = ['date_expired', 'value', 'title', 'payment_method', 'is_paid', 'content_type', 'object_id']
+        fields = ['date_expired', 'value', 'title', 'payment_method', 'is_check', 'is_paid', 'content_type', 'object_id']
         exclude = ['date_created', ]
 
     def __init__(self, *args, **kwargs):

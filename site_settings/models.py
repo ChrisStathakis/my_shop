@@ -8,18 +8,7 @@ from django.db.models import Sum, Q
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .constants import BANKS, CURRENCY
-
-
-class DefaultBasicModel(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(max_length=150)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.DateTimeField(auto_now=True)
-    user_account = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    costum_ordering = models.IntegerField(default=1)
-
-    class Meta:
-        abstract = True
+from django.shortcuts import reverse
 
 
 class PaymentMethodManager(models.Manager):
@@ -49,6 +38,18 @@ class PaymentMethod(models.Model):
 
     def tag_limit_value(self):
         return '%s %s' % (self.limit_value, CURRENCY)
+
+
+class DefaultBasicModel(models.Model):
+    active = models.BooleanField(default=True)
+    title = models.CharField(max_length=150)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    edited = models.DateTimeField(auto_now=True)
+    user_account = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    costum_ordering = models.IntegerField(default=1)
+
+    class Meta:
+        abstract = True
 
 
 class Store(models.Model):
@@ -83,6 +84,7 @@ class DefaultOrderModel(models.Model):
     is_paid = models.BooleanField(default=False)
     printed = models.BooleanField(default=False)
     objects = models.Manager()
+    
 
     class Meta:
         abstract = True
@@ -119,6 +121,8 @@ class PaymentOrders(DefaultOrderModel):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
+        if self.is_check:
+            return f'Check: {self.title}'
         return f"Επιταγη {self.title}"
 
     def save(self, *args, **kwargs):
@@ -128,10 +132,19 @@ class PaymentOrders(DefaultOrderModel):
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
 
+    def get_dashboard_url(self):
+        return reverse('inventory:check_order_detail', kwargs={'pk': self.id})
+
     @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
-        vendor_name = request.GET.getlist('vendor_name')
+        vendor_name = request.GET.getlist('vendor_name', None)
+        paid_name = request.GET.getlist('paid_name', None)
+        check_name = request.GET.get('check_name', None)
+
+        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+        queryset = queryset.filter(is_check=True) if check_name == 'check' else queryset.filter(is_check=False) if check_name == 'no_check' else queryset
+        return queryset
 
 
 @receiver(post_delete, sender=PaymentOrders)

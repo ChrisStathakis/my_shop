@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, redirect, reverse, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, FormView, CreateView, TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
@@ -373,6 +374,7 @@ class WarehousePaymentOrderCreate(CreateView):
         initial['title'] = '%s' % instance.title
         initial['is_expense'] = True
         initial['value'] = instance.balance
+        initial['is_check'] = True
         return initial
 
     def get_context_data(self, **kwargs):
@@ -441,7 +443,6 @@ class CheckOrdersView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        print('hello world!')
         context = super(CheckOrdersView, self).get_context_data(**kwargs)
         vendors = Vendor.objects.filter(active=True)
         vendor_name, search_name, check_name = [self.request.GET.getlist('vendor_name', None),
@@ -450,3 +451,31 @@ class CheckOrdersView(ListView):
                                                 ]
         context.update(locals())
         return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CheckOrderUpdateView(UpdateView):
+    model = PaymentOrders
+    template_name = 'inventory_manager/form.html'
+    form_class = PaymentForm
+    success_url = reverse_lazy('inventory:check_orders')
+
+    def get_initial(self):
+        initial = super(CheckOrderUpdateView, self).get_initial()
+        instance = get_object_or_404(PaymentOrders, id=self.kwargs['pk'])
+        initial['object_id'] = instance.id
+        initial['content_type'] = instance.content_type
+        initial['is_expense'] = instance.is_expense
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(CheckOrderUpdateView, self).get_context_data(**kwargs)
+        back_url = self.success_url
+        page_title = 'Edit Payment'
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'The Payment is edited')
+        return super().form_valid(form)
