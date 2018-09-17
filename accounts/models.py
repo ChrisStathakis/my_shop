@@ -15,8 +15,8 @@ class CostumerAccountManager(models.Manager):
 
 
 class CostumerAccount(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name='profile')
+    name = models.CharField(blank=True, null=True, max_length=150, help_text='Only needed if not user related')
     #  shipping_information
     shipping_address_1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='Διεύθυνση Αποστολής')
     shipping_city = models.CharField(max_length=50, blank=True, null=True, verbose_name='Πόλη')
@@ -44,7 +44,7 @@ class CostumerAccount(models.Model):
         return '%s  %s'%(self.user.first_name, self.user.last_name)
 
     def __str__(self):
-        return self.user.username
+        return self.user.username if self.user else self.name
 
     def save(self, *args, **kwargs):
         '''

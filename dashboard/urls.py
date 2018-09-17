@@ -120,7 +120,12 @@ urlpatterns = [
 
     # user urls
     path('users-list/', UserListView.as_view(), name='users_list'),
-    path('costumers-list', CostumerListView.as_view(), name='costumers_list'),
+    path('users/create/', UserCreateView.as_view(), name='user_create'), 
+    path('users/edit/<int:pk>/', edit_user_view, name='edit_user'),
+
+    path('costumers-list/', CostumerListView.as_view(), name='costumers_list'),
+    path('costumer/create/', CostumerAccountCreateView.as_view(), name='costumer_create'),
+    path('costumer/<int:pk>/', CostumerAccountEditView.as_view(), name='costumer_edit'),
 
     #tools
     path('tools/discount-manager/', discount_manager, name='discount_manager'),

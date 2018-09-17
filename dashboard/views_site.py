@@ -5,13 +5,14 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import F
 from django.contrib import  messages
+
 from frontend.models import Banner
 from carts.models import Coupons
 from frontend.forms import BannerForm
 from frontend.models import FirstPage, Banner
 from frontend.forms import BannerForm, FirstPageForm
 from accounts.models import User, CostumerAccount
-from accounts.forms import CostumerAccountAdminForm, CreateUserAdmin
+from accounts.forms import CostumerAccountAdminForm, CreateUserAdmin, CostumerAccountDashboardForm
 from products.models import Product, CategorySite, Brands, Gifts
 from products.forms import GiftCreateForm, GiftEditForm
 from .tools import product_filters_data, product_filters_get
@@ -99,45 +100,46 @@ class CouponCreate(CreateView):
 @method_decorator(staff_member_required, name='dispatch')
 class UserListView(ListView):
     template_name = 'dashboard/site_templates/users_list.html'
-    model = CostumerAccount
+    model = User
     paginate_by = 50
 
     def get_queryset(self):
-        queryset = CostumerAccount.objects.filter(user__is_staff=False)
+        queryset = User.objects.filter(is_staff=False)
         return queryset
-
-    
-@method_decorator(staff_member_required, name='dispatch')
-class UserUpdateView(UpdateView):
-    template_name = 'dash_ware/form.html'
-    model = CostumerAccount
-    form_class = CostumerAccountAdminForm
-    success_url = reverse_lazy('accounts:dash_list')
-
-    def get_initial(self):
-        initial = super(UserUpdateView,self).get_initial()
-        initial['email'] = self.object.user.email
-        print(self.object.user.email)
-        return initial
-
-    def get_context_data(self, **kwargs):
-        context = super(UserUpdateView, self).get_context_data(**kwargs)
-        page_title = f'{self.object}'
-        back_url = self.success_url
-        context.update(locals())
-        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
 class UserCreateView(CreateView):
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/form_view.html'
     model = User
     form_class = CreateUserAdmin
- 
+    success_url = reverse_lazy('dashboard:users_list')
 
-    def get_success_url(self):
-        get_last_object = User.objects.last()
-        return reverse('accounts:dash_update', kwargs={'pk': get_last_object.id})
+    def get_context_data(self, **kwargs):
+        context = super(UserCreateView, self).get_context_data(**kwargs)
+        page_title, back_url = 'Create New User', self.success_url
+        context.update(locals())
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+@staff_member_required
+def edit_user_view(request, pk):
+    instance = get_object_or_404(User, id=pk)
+    profile = CostumerAccount.objects.filter(user=instance).first()
+    account_form = CreateUserAdmin(request.POST or None, instance=instance)
+    profile_form = CostumerAccountDashboardForm(request.POST or None, instance=profile)
+    if 'account' in request.POST:
+        account_form.save()
+        return HttpResponseRedirect(reverse('dashboard:edit_user', kwargs={'pk': pk}))
+    if 'profile' in request.POST:
+        profile_form.save()
+        return HttpResponseRedirect(reverse('dashboard:edit_user', kwargs={'pk': pk}))
+    context = locals()
+    return render(request, 'dashboard/site_templates/edit_user.html', context)
 
 
 @staff_member_required
@@ -157,8 +159,29 @@ class CostumerListView(ListView):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class CostumerCreateView(CreateView):
+class CostumerAccountCreateView(CreateView):
     model = CostumerAccount
+    form_class = CostumerAccountDashboardForm
+    success_url = reverse_lazy('dashboard:costumers_list')
+    template_name = 'dashboard/form_view.html'
+
+    def valid_form(self, form):
+        form.save()
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CostumerAccountEditView(UpdateView):
+    model = CostumerAccount
+    form = CostumerAccountDashboardForm
+    success_url = reverse_lazy('')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CostumerAccountEditView, self).get_context_data(**kwargs)
+        return context
 
 
 @staff_member_required
