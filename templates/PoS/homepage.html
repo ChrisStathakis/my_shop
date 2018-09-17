@@ -1,57 +1,59 @@
-{% extends 'index.html' %}
-
-{% block down_menu %}
-
-{% endblock %}
+{% extends 'dashboard/dashboard.html' %}
 
 {% block content %}
-    <div class="row">
-        <div style="padding-left: 3%" class="three wide column">
-            <h4 class="center aligned header">Παραστατικά Αποθήκης</h4>
-            <a href="{% url 'pos:warehouse_in_create' %}" class="ui green button">Παραστατικό Εισαγωγής</a>
-            <br><br>
-            <a href="" class="ui red button">Παραστατικό Εξαγωγής</a>
-        </div>
-        <div class="ten wide column">
-            <a class="ui big green fluid button" href="{% url 'pos:create_sale' %}">Πωλήσεις</a>
-            <table class="ui table">
-                <thead>
-                     <tr>
-                        <th></th>
-                        <th>Date</th>
-                        <th>Title</th>
-                        <th>Seller</th>
-                         <th>Costumer</th>
-                        <th>Type</th>
-                         <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in object_list %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ order.date_created }}</td>
-                            <td><a class="ui button" href="{% url 'pos:sales' order.id %}">{{ order.title }}</a></td>
-                            <td>{{ order.seller_account|default_if_none:"No seller" }}</td>
-                            <td>{{ order.costumer_account|default_if_none:"No costumer" }}</td>
-                            <td>{% if order.is_sale %}<label class="ui green label">Πώληση</label> {% else %}<label class="ui label red">Επιστροφή</label> {% endif %} </td>
-                            <td>{{ order.tag_final_price }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <a class="ui big red fluid button" href="{% url 'pos:create_return_sale' %}">Επιστροφές</a>
-        </div>
-        <div class="three wide column">
-             <h4 class="center aligned header">Παραστατικά Eshop</h4>
-            <a href="{% url 'pos:warehouse_in_create' %}" class="ui green button">Παραγγελία Eshop</a>
-            <br><br>
-
+<div class="content">
+    <div class="container-fluid">
+        <div class='row'>
+            <div class='card'>
+                <div class='header text-center'>
+                    <h2 class="title">POS Homepage</h2>
+                </div>
+                <div class="content text-center">
+                    <div class="row">
+                        <div class="col-md-6"><a href="" class="btn btn-danger">New Return Order</a></div>
+                        <div class="col-md-6"><a href="{% url 'POS:create_sale' %}" class="btn btn-success">New Order</a></div>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class='header'>
+                        <h4>Last 30 Orders</h4>
+                    </div>
+                    <div class="content">
+                        <table class='table'>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <td>Order Type</td>
+                                    <td>Value</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in object_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ order.date_expired|date }}</td>
+                                        <td>{{ order.get_order_type_display }}</td>
+                                        <td>{{ order.tag_final_value }}</td>
+                                        <td><a href="{% url 'POS:sales' order.id %}" class="btn btn-primary">Edit</a> </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan='5'>No data</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-
-
+</div>
 
 
 {% endblock content %}

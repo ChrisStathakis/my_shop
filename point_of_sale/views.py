@@ -24,8 +24,6 @@ from products.models import Product, SizeAttribute
 from site_settings.forms import PaymentForm
 
 
-
-
 # Retail Pos
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -34,7 +32,7 @@ class HomePage(ListView):
     model = RetailOrder
 
     def get_queryset(self):
-        queryset = RetailOrder.objects.all()[:50]
+        queryset = RetailOrder.objects.filter(order_type__in=['r', 'b'])
         return queryset
 
 
@@ -46,7 +44,7 @@ def create_new_sales_order(request):
         new_order.user_account = user
     new_order.title = 'Sale %s' % new_order.id
     new_order.save()
-    return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': new_order.id}))
+    return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': new_order.id}))
 
 
 @staff_member_required
@@ -81,13 +79,13 @@ def create_eshop_order(request):
 
 @staff_member_required
 def sales(request, pk):
-    # initial_data
-    object_list = Product.my_query.active_warehouse()
-    object = get_object_or_404(RetailOrder, id=pk)
-    is_sale = object.is_sale()
-    form = SalesForm(instance=object)
+    object_list = Product.my_query.active_with_qty()[:10]
+    instance = get_object_or_404(RetailOrder, id=pk)
+    form = SalesForm(instance=instance)
+    if 'barcode' in request.GET:
+        RetailOrderItem.barcode(request, instance)
     if request.POST:
-        form = SalesForm(request.POST, instance=object)
+        form = SalesForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': pk}))
@@ -102,49 +100,32 @@ def sales(request, pk):
 
 @staff_member_required
 def add_product_to_order_(request, dk, pk, qty=1):
-    order = get_object_or_404(RetailOrder, id=dk)
+    instance = get_object_or_404(RetailOrder, id=dk)
     product = get_object_or_404(Product, id=pk)
-    item_exists = RetailOrderItem.check_if_exists(order, product)
-    if item_exists:
-        item_exists.qty += 1
-        item_exists.save()
-    else:
-        new_order_item = RetailOrderItem.objects.create(title=product, order=order, )
-    if order.order_type in ['wa', 'wr']:
+    RetailOrderItem.create_or_edit_item(instance, product, 1, 'ADD')
+    if instance.order_type in ['wa', 'wr']:
         return HttpResponseRedirect(reverse('pos:warehouse_in', kwargs={'dk': dk}))
     return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': dk}))
 
 
-class SalesPoS(ListView):
-    model = Product
-    form_class = SalesForm
-    template_name = 'PoS/sales.html'
-    paginate_by = 10
-    object = None
+@staff_member_required
+def edit_product_item_view(request, pk, qty, type):
+    instance = get_object_or_404(RetailOrderItem, id=pk)
+    RetailOrderItem.create_or_edit_item(instance.order, instance.title, qty, type)
+    return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': instance.order.id}))
 
-    def get_queryset(self):
-        queryset = Product.my_query.active_warehouse()
-        return queryset
 
-    def get_context_data(self, **kwargs):
-        context = super(SalesPoS, self).get_context_data(**kwargs)
-        self.object = object = get_object_or_404(RetailOrder, id=self.kwargs['pk'])
-        is_sale = True if self.object.order_type == 'r' else False
-        payment_orders = self.object.payorders.all()
-        form = self.form_class(instance=self.object)
-        context.update(locals())
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form_order = SalesForm(request.POST, instance=self.object)
-        if form_order.is_valid():
-            form_order.save()
-            return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': self.kwargs['pk']}))
-        form = PaymentForm(request.POST, None)
-        if form.is_valid():
-            print('form_payment')
-            form.save()
-        return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': self.kwargs['pk']}))
+@staff_member_required
+def delete_order_view(request, dk):
+    instance = get_object_or_404(RetailOrder, id=dk)
+    for item in instance.order_items.all():
+        item.remove_item(item.qty)
+        item.delete()
+    for item in instance.payorders.all():
+        item.delete()
+    instance.delete()
+    messages.warning(request, 'The Retail Order Deleted!')
+    return HttpResponseRedirect(reverse('POS:homepage'))
 
 
 @staff_member_required()
@@ -255,16 +236,6 @@ def delete_payment_order(request, dk, pk):
     return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': dk}))
 
 
-@staff_member_required
-def delete_order(request, dk):
-    instance = get_object_or_404(RetailOrder, id=dk)
-    for item in instance.retailorderitem_set.all():
-        item.delete()
-    for item in instance.payorders.all():
-        item.delete()
-    instance.delete()
-    messages.warning(request, 'The Retail Order Deleted!')
-    return HttpResponseRedirect(reverse('pos:homepage'))
 
 
 def AuthorCreatePopup(request):

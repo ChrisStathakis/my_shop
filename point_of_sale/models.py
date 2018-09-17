@@ -342,7 +342,6 @@ class RetailOrderItem(DefaultOrderItemModel):
         self.total_value = self.final_value*self.qty
         self.total_cost_value = self.cost*self.qty
         super(RetailOrderItem, self).save(*args, **kwargs)
-    
 
     def update_warehouse(self, transcation, qty):
         if RETAIL_TRANSCATIONS:
@@ -356,8 +355,7 @@ class RetailOrderItem(DefaultOrderItemModel):
 
     def update_order_item(self):
         self.order.update_order()
-        
-    
+
     def add_item(self, qty):
         get_total_value = self.total_value
         get_total_cost = self.total_cost_value
@@ -372,7 +370,7 @@ class RetailOrderItem(DefaultOrderItemModel):
             costumer.balance += get_total_cost
             costumer.save() 
 
-    def remove_item(self):
+    def remove_item(self, qty):
         get_total_value = self.total_value
         get_total_cost = self.total_cost_value
         self.order.update_order()
@@ -412,7 +410,7 @@ class RetailOrderItem(DefaultOrderItemModel):
         return '%s %s' % (self.value, CURRENCY)
 
     def tag_total_taxes(self):
-        return '%s %s' %(round(self.price*self.qty*(Decimal(self.order.taxes)/100), 2), CURRENCY)
+        return '%s %s' %(round(self.value*self.qty*(Decimal(self.order.taxes)/100), 2), CURRENCY)
 
     def type_of_order(self):
         return self.order.order_type
@@ -422,7 +420,7 @@ class RetailOrderItem(DefaultOrderItemModel):
 
     def price_for_vendor_page(self):
         #returns silimar def for price in vendor_id page
-        return self.price
+        return self.value
 
     def absolute_url_vendor_page(self):
         return reverse('retail_order_section', kwargs={'dk': self.order.id})
@@ -431,6 +429,39 @@ class RetailOrderItem(DefaultOrderItemModel):
     def check_if_exists(order, product):
         exists = RetailOrderItem.objects.filter(title=product, order=order)
         return exists.first() if exists else None
+
+    @staticmethod
+    def barcode(request, instance):
+        barcode = request.GET.get('barcode')
+        barcode_string = barcode.split(' ')
+        if len(barcode_string) == 1:
+            product_id = barcode_string[0]
+        RetailOrderItem.create_or_edit_item(instance, Product.objects.get(id=product_id), 1, 'ADD')
+
+    @staticmethod
+    def create_or_edit_item(order, product, qty, transation_type):
+        instance = RetailOrderItem.check_if_exists(order, product)
+        if instance and transation_type == 'ADD':
+            instance.qty += qty
+            instance.add_item(qty)
+            instance.save()
+        elif not instance and transation_type == 'ADD':
+            instance = RetailOrderItem.objects.create(title=product,
+                                                      order=order,
+                                                      cost=product.price_buy,
+                                                      value=product.price,
+                                                      discount_value=product.price_discount,
+                                                      qty=qty
+                                                      )
+            instance.add_item(qty)
+        elif instance and transation_type == 'REMOVE':
+            instance.qty -= qty
+            instance.remove_item(qty)
+            instance.save()
+        elif instance and transation_type == 'DELETE':
+            instance.remove_item(instance.qty)
+            instance.delete()
+        order.update_order()
 
 
 def create_destroy_title():
@@ -470,8 +501,9 @@ class GiftRetailItem(models.Model):
             if can_be_gift.exists:
                 for gift in can_be_gift:
                     new_gift = GiftRetailItem.objects.create(product_related=gift.products_gift,
-                                                            order_related=order,
-                                                            qty=item.qty
+                                                             order_related=order,
+                                                             qty=item.qty,
+
                                                             )
                     if cart:
                         new_gift.cart_related = cart

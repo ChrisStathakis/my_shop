@@ -119,7 +119,8 @@ urlpatterns = [
 
 
     # user urls
-    path('users-list/', UsersPage.as_view(), name='users_list'),
+    path('users-list/', UserListView.as_view(), name='users_list'),
+    path('costumers-list', CostumerListView.as_view(), name='costumers_list'),
 
     #tools
     path('tools/discount-manager/', discount_manager, name='discount_manager'),

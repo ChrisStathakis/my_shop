@@ -27,14 +27,18 @@
                     <p>Warehouse Home</p>
                 </a>
             </li>
-            {% comment reports %}
+            <li>
+                <a href="{% url 'POS:homepage' %}">
+                    <i class="ti-panel"></i>
+                    <p>PoS</p>
+                </a>
+            </li>
             <li {% if dashboard %}class="active" {% endif %}>
                 <a href="{% url 'inventory:warehouse_home' %}">
                     <i class="ti-panel"></i>
                     <p>Warehouse Home</p>
                 </a>
             </li>
-            {% endcomment %}
         </ul>
     </div>
 </div>

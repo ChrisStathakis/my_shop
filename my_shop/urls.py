@@ -12,6 +12,7 @@ urlpatterns = [
     path('warehouse/', include('inventory_manager.urls', namespace='inventory')),
     path('billings/', include('transcations.urls', namespace='billings')),
     path('cart/', include('carts.urls', namespace='cart')),
+    path('POS/', include('point_of_sale.urls', namespace='POS')),
     path('', include('frontend.urls')),
 
     path('cookie-gdpr/', include('gdpr.urls')),

@@ -1,18 +1,19 @@
 from django.conf.urls import url
 from .views import *
 from django.urls import path
-from .views_warehouse import *
 from .api.views import RetailOrderListApi
 
-app_name = 'pos'
+app_name = 'POS'
 
 urlpatterns = [
     path('', HomePage.as_view(), name='homepage'),
     path('create-sale/', view=create_new_sales_order, name='create_sale'),
     path('sales/<int:pk>/', view=sales, name='sales'),
+    path('sales/action/<int:pk>/<int:qty>/<slug:type>/', edit_product_item_view, name='edit_product_item'),
+
     path('sales/<int:pk>/pay-order/', view=order_paid, name='order_paid'),
     path('sales/delete-payment/<int:dk>/<int:pk>/', view=delete_payment_order, name='delete_payment_order'),
-    path('sales/delete-order/<int:dk>/', view=delete_order, name='delete_order'),
+    path('sales/delete-order/<int:dk>/', view=delete_order_view, name='delete_order'),
 
     #actions
     path('sales/add/<int:dk>/<int:pk>/<int:qty>/', view=add_product_to_order_, name='add_to_order'),
@@ -35,12 +36,5 @@ urlpatterns = [
     url(r'^payment/(?P<pk>\d+)/create/', ajax_payment_add, name="PaymentCreate"),
     url(r'^payment/(?P<pk>\d+)/edit', AuthorEditPopup, name="AuthorEdit"),
     url(r'^payment/ajax/get_author_id', get_author_id, name="get_author_id"),
-
-    # warehouse orders urls
-    path('warehouse/order-in/create/', view=create_warehouse_income_order, name='warehouse_in_create'),
-    path('warehouse/order-in/<int:dk>/', view=warehouse_order_in, name='warehouse_in'),
-
-
-   
 
     ]

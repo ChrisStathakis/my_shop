@@ -15,11 +15,11 @@
 <body>
 <div class="ui six item top fixed menu">
     <a href="{% url 'reports:homepage' %}" class=" item">Home</a>
-    <a href="{% url 'reports:products' %}" class=" item">Αποθήκη</a>
-    <a href="{% url 'reports:homepage' %}" class="green item">Πωλήσεις</a>
-    <a href="{% url 'reports:homepage' %}" class=" item">Αγορες</a>
-    <a href="{% url 'reports:transcation_homepage' %}" class="red item">Εξοδα</a>
-    <a href="{% url 'reports:homepage' %}" class=" item">Ισολογισμός</a>
+    <a href="{% url 'reports:products' %}" class=" item">Warehouse</a>
+    <a href="{% url 'reports:homepage' %}" class="green item">Sells</a>
+    <a href="{% url 'reports:homepage' %}" class=" item">Buys</a>
+    <a href="{% url 'reports:transcation_homepage' %}" class="red item">Expenses</a>
+    <a href="{% url 'reports:homepage' %}" class=" item">Balance Sheet</a>
 </div>
 {% block test %}
 
@@ -27,10 +27,10 @@
 
 {% block down_menu %}
 <div class="ui  four item bottom fixed menu">
-    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Κεντρική Σελίδα</a>
-    <a href="" class="item">Υπόλοιπο Απόθηκης</a>
-    <a href="" style="background-color: red" class="item">Πληρωμές - Εισπράξεις</a>
-    <a class="item">Μηνύματα</a>
+    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Homepage</a>
+    <a href="" class="item">Warning Remaining</a>
+    <a href="" style="background-color: red" class="item">Incomes - Outcomes</a>
+    <a class="item">Messaging(Not Yet)</a>
 </div>
 {% endblock %}
 
@@ -41,9 +41,9 @@
         <div class="six wide column"></div>
         <div class="four wide column">
             <h2 style="text-align: center" class="ui header">
-                <i class="cart green icon"></i>
-                <div class="content">
-                    Κεντρική Σελίδα.
+                <i class="folder outline blue icon"></i>
+                <div class="blue content">
+                    Homepage
                 </div>
             </h2>
         </div>
@@ -53,7 +53,7 @@
             <h2 style="margin-left: 15%" class="ui icon header">
                 <i class="green checked cart icon"></i>
                 <div class="content">
-                    Πωλήσεις Λιανικής
+                    Last 30 Sells
                     <div class="sub header"></div>
                 </div>
             </h2>
@@ -84,7 +84,7 @@
             <h2 style="margin-left: 15%" class="ui icon header">
                 <i class="red checked calendar icon"></i>
                 <div class="content">
-                    Τιμολόγια Αγοράς
+                    Last 30 Warehouse Invoice
                     <div class="sub header"></div>
                 </div>
             </h2>
@@ -115,7 +115,7 @@
             <h2 style="margin-left: 15%" class="ui icon header">
                 <i class="blue checked visa icon"></i>
                 <div class="content">
-                    Αποδεικτικά Πληρωμής
+                    Last 30 Payments
                     <div class="sub header">{{ last_seven_days }}</div>
                 </div>
             </h2>

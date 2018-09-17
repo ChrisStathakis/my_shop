@@ -96,12 +96,15 @@ class CouponCreate(CreateView):
 
 #  dashboard urls
 
-
 @method_decorator(staff_member_required, name='dispatch')
 class UserListView(ListView):
-    template_name = 'accounts/dash_user_list.html'
+    template_name = 'dashboard/site_templates/users_list.html'
     model = CostumerAccount
     paginate_by = 50
+
+    def get_queryset(self):
+        queryset = CostumerAccount.objects.filter(user__is_staff=False)
+        return queryset
 
     
 @method_decorator(staff_member_required, name='dispatch')
@@ -143,14 +146,19 @@ def delete_user(request, pk):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class UsersPage(ListView):
+class CostumerListView(ListView):
     model = CostumerAccount
-    template_name = 'dashboard/user_section/index.html'
+    template_name = 'dashboard/site_templates/costumer_list.html'
+    paginate_by = 50
 
-    def get_context_data(self, **kwargs):
-        context = super(UsersPage, self).get_context_data(**kwargs)
+    def get_queryset(self):
+        queryset = CostumerAccount.objects.filter(user__is_staff=False)
+        return queryset
 
-        return context
+
+@method_decorator(staff_member_required, name='dispatch')
+class CostumerCreateView(CreateView):
+    model = CostumerAccount
 
 
 @staff_member_required
