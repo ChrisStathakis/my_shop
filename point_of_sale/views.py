@@ -38,11 +38,17 @@ class HomePage(ListView):
 
 @staff_member_required()
 def create_new_sales_order(request):
+    id = RetailOrder.objects.last().id + 1 if RetailOrder.objects.exists() else 0 + 1
+    title = f'Retail Order {self.id}'
+    costumer = CostumerAccount.objects.filter(user=False)
     user = request.user
-    new_order = RetailOrder.objects.create(costumer_account=CostumerAccount.objects.first())
-    if user:
-        new_order.user_account = user
-    new_order.title = 'Sale %s' % new_order.id
+    new_order = RetailOrder.objects.create(title=title,
+                                           costumer_account=CostumerAccount.objects.first(),
+                                           user_account=request.user,
+
+                                           )
+    if costumer:
+        new_order.costumer_account = costumer
     new_order.save()
     return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': new_order.id}))
 
@@ -79,10 +85,15 @@ def create_eshop_order(request):
 
 @staff_member_required
 def sales(request, pk):
-    object_list = Product.my_query.active_with_qty()[:10]
+    object_list = Product.my_query.active_with_qty()
     instance = get_object_or_404(RetailOrder, id=pk)
     form = SalesForm(instance=instance)
-    if 'barcode' in request.GET:
+    search_name = request.GET.get('search_name', None)
+    barcode = request.GET.get('barcode', None)
+    object_list = object_list.filter(Q(title__icontains=search_name) |
+                                     Q(sku__icontains=search_name)
+                                     ).distinct() if search_name else object_list
+    if barcode:
         RetailOrderItem.barcode(request, instance)
     if request.POST:
         form = SalesForm(request.POST, instance=instance)

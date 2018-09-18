@@ -3,7 +3,7 @@ from django.shortcuts import reverse, get_object_or_404, HttpResponseRedirect, g
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.db.models import F
+from django.db.models import F, Q
 from django.contrib import  messages
 
 from frontend.models import Banner
@@ -105,7 +105,15 @@ class UserListView(ListView):
 
     def get_queryset(self):
         queryset = User.objects.filter(is_staff=False)
+        search_name = self.request.GET.get('search_name', None)
+        queryset = queryset.filter(username__icontains=search_name) if search_name else queryset
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        search_name = self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -143,6 +151,16 @@ def edit_user_view(request, pk):
 
 
 @staff_member_required
+def user_delete_view(request, pk):
+    instance = get_object_or_404(User, id=pk)
+    profiles = CostumerAccount.objects.filter(user=instance)
+    for profile in profiles:
+        profile.delete()
+    instance.delete()
+    return HttpResponseRedirect(reverse('dashboard:users_list'))
+
+
+@staff_member_required
 def delete_user(request, pk):
     pass
 
@@ -154,8 +172,20 @@ class CostumerListView(ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        queryset = CostumerAccount.objects.filter(user__is_staff=False)
+        queryset = CostumerAccount.objects.all()
+        search_name = self.request.GET.get('search_name', None)
+        queryset = queryset.filter(Q(name__icontains=search_name) |
+                                   Q(user__username__icontains=search_name) |
+                                   Q(user__last_name__icontains=search_name) |
+                                   Q(user__first_name__icontains=search_name)
+                                   ).distinct() if search_name else queryset
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CostumerListView, self).get_context_data(**kwargs)
+        search_name = self.request.GET.get('search_name', None)
+        context.update(locals())
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -165,15 +195,24 @@ class CostumerAccountCreateView(CreateView):
     success_url = reverse_lazy('dashboard:costumers_list')
     template_name = 'dashboard/form_view.html'
 
-    def valid_form(self, form):
+    def form_valid(self, form):
+        print('i ma here!')
         form.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CostumerAccountCreateView, self).get_context_data(**kwargs)
+        page_title, back_url = 'Create New Profile', self.success_url
+        context.update(locals())
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
 class CostumerAccountEditView(UpdateView):
     model = CostumerAccount
-    form = CostumerAccountDashboardForm
-    success_url = reverse_lazy('')
+    form_class = CostumerAccountDashboardForm
+    success_url = reverse_lazy('dashboard:costumers_list')
+    template_name = 'dashboard/form_view.html'
 
     def form_valid(self, form):
         form.save()
@@ -181,7 +220,20 @@ class CostumerAccountEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(CostumerAccountEditView, self).get_context_data(**kwargs)
+        page_title, back_url, delete_url = 'Create New Profile', self.success_url, \
+                                           reverse('dashboard:delete_profile', kwargs={'pk': self.kwargs['pk']})
+        context.update(locals())
         return context
+
+
+@staff_member_required
+def delete_profile_view(request, pk):
+    instance = get_object_or_404(CostumerAccount, id=pk)
+    if instance.user:
+        messages.warning(request, 'You need to delete the user first')
+        return HttpResponseRedirect(reverse('dashboard:delete_profile', kwargs={'pk': pk}))
+    instance.delete()
+    return HttpResponseRedirect(reverse('dashboard:costumers_list'))
 
 
 @staff_member_required
@@ -201,7 +253,6 @@ def discount_manager(request):
         elif remove_discount:
             queryset.update(price_discount=0)
     return render(request, 'dashboard/site_templates/discount_page.html', context=locals())
-
 
 
 @method_decorator(staff_member_required, name='dispatch')

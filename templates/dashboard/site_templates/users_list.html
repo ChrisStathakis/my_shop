@@ -9,6 +9,23 @@
                         <div class="header">
                             <h4 class="title text-center">Users</h4>
                             <p class="category"><a href="{% url 'dashboard:user_create' %}" class="btn btn-success">Create</a></p>
+                            <br><br>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form method="get">
+                                        <input name="search_name"
+                                               type="text"
+                                               class="form-control"
+                                               placeholder="Search"
+                                               {% if search_name %} value="{{ search_name }}" {% endif %}
+                                        >
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+
+                                </div>
+                            </div>
+
                         </div>
                         <div class="content table-responsive table-full-width">
                             <table class="table table-striped">
@@ -17,7 +34,7 @@
                                          <th>#</th>
                                          <th>Username</th>
                                          <th>Full Name</th>
-                                         <th>Balance</th>
+                                         <th>Active</th>
                                          <th>Actions</th>
                                      </tr>
                                 </thead>
@@ -26,8 +43,8 @@
                                      <tr>
                                          <td>{{ forloop.counter }}</td>
                                          <td>{{ object }}</td>
-                                         <td>{{ object.tag_full_name }}</td>
-                                         <td>{{ object.first.tag_balance }}</td>
+                                         <td>{{ object.profile }}</td>
+                                         <td>{{ object.is_active }}</td>
                                          <td><a href="{% url 'dashboard:edit_user' object.id %}" class="btn btn-primaty">Edit</a></td>
                                      </tr>
                                  {% empty %}

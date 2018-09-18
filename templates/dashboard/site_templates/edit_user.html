@@ -8,8 +8,14 @@
                     <div class="card">
                         <div class="header">
                             <h4 class="title text-center">Edit {{ instance }}</h4>
-                            <a href="{% url 'dashboard:users_list' %}" class="btn btn-warning">Back</a>
+                            <div class="row">
+                                <div class="col-lg-4"><a href="{% url 'dashboard:users_list' %}" class="btn btn-warning">Back</a></div>
+                                <div class="col-lg-4"></div>
+                                <div class="col-lg-4"><a onclick="return confirm('Are you sure?')" href="{% url 'dashboard:delete_user' instance.id %}" class="btn btn-danger">Delete</a></div>
+                            </div>
+
                         </div>
+
                         <div class="content"></div>
                     </div>
                 </div>
@@ -42,9 +48,6 @@
                     
                 </div>
             </div>
-                        
- 
-         
         </div>
     </div>
 {% endblock content %}

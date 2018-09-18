@@ -62,7 +62,18 @@
                             <div class="title text-center">
                                 <h4>Products</h4>
                                 <form class='form' method='GET'>
-                                    <input class='form-control' type='text' placeholder="Search" value=''>
+                                    <div class="row">
+                                        <div class="col-md-6"><input style="background-color: orangered" name="barcode" class="form-control" placeholder="Barcode"></div>
+                                        <div class="col-md-6">
+                                            <input style="background-color: limegreen" class='form-control'
+                                                   name="search_name"
+                                                   type='text'
+                                                   placeholder="Search"
+                                                    {% if search_name %} value="{{ search_name }}" {% endif %}
+                                            >
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-raised">Search</button>
                                 </form>
                             </div>
                         </div>
@@ -97,7 +108,7 @@
                     <div class="card">
                         <div class="header">
                             <div class="title">Order Items</div>
-                             <form method="get"><input name="barcode" class="form-control" placeholder="Barcode"> </form>
+
                         </div>
                         <div class="content">
                             <table class='table'>

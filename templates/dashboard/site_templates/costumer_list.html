@@ -9,6 +9,35 @@
                         <div class="header">
                             <h4 class="title text-center">Costumers</h4>
                             <p class="category"><a href="{% url 'dashboard:costumer_create' %}" class="btn btn-success">Create New Costumer</a></p>
+                            <div class="row">
+                                <form method="get">
+                                <div class="col-md-6">
+                                    <input name="search_name"
+                                           class="form-control"
+                                           placeholder="Search"
+                                           {% if search_name %} value="{{ search_name }}" {% endif %}
+                                    >
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="pagination">
+                                        <span class="step-links">
+                                            {% if page_obj.has_previous %}
+                                                <a href="?page=1">&laquo; first</a>
+                                                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                            {% endif %}
+                                            <span class="current">
+                                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                            </span>
+
+                                            {% if page_obj.has_next %}
+                                                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                                                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                </form>
+                            </div>
                         </div>
                         <div class="content table-responsive table-full-width">
                             <table class="table table-striped">
@@ -17,7 +46,7 @@
                                          <th>#</th>
                                          <th>Full Name</th>
                                          <th>Full Address</th>
-                                         <th>City</th>
+                                         <th>Phones</th>
                                          <th>Balance</th>
                                          <th>Actions</th>
                                      </tr>
@@ -26,9 +55,9 @@
                                  {% for object in object_list %}
                                      <tr>
                                          <td>{{ forloop.counter }}</td>
-                                         <td>{{ object.tag_full_name }}</td>
-                                         <td>{{ object.tag_active }}</td>
-                                         <td>{{ object.city }}</td>
+                                         <td>{{ object }}</td>
+                                         <td>{{ object.tag_full_address }}</td>
+                                         <td>{{ object.tag_phones }}</td>
                                          <td>{{ object.tag_balance }}</td>
                                          <td><a href="{% url 'dashboard:costumer_edit' object.id %}" class="btn btn-primaty">Edit</a>
                                              

@@ -58,9 +58,17 @@ class CostumerAccount(models.Model):
         '''
         super(CostumerAccount, self).save(*args, **kwargs)
 
-    
     def template_tag_balance(self):
         return '%s %s' % ('{0:2f}'.format(round(self.balance, 2)),CURRENCY)
+
+    def tag_balance(self):
+        return f'{self.balance} {CURRENCY}'
+
+    def tag_phones(self):
+        return f'{self.phone} - {self.phone1}'
+
+    def tag_full_address(self):
+        return f'{self.shipping_address_1} - {self.shipping_city}'
 
     @property
     def get_content_type(self):
