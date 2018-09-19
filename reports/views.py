@@ -45,8 +45,12 @@ class HomepageReport(LoginRequiredMixin, TemplateView):
 
 class HomepageProductWarning(ListView):
     model = Product
-    template_name = ''
-    paginate_by = 50
+    template_name = 'report/homepage/product_warning.html'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(qty__lte=0)
+        return queryset
 
 
 @method_decorator(staff_member_required, name='dispatch')

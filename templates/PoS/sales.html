@@ -25,11 +25,7 @@
                                         <li class="list-group-item"><h6>Payment Method <span class="badge badge-secondary">
                                                 {{ instance.payment_method }}</span>
                                             </h6></li>
-                                        <li class="list-group-item">
-                                            <h6>Costumer <span class="badge badge-secondary">
-                                                {{ instance.costumer_account }}</span>
-                                            </h6></li>
-                                        <li class="list-group-item"><h6>Date Created <span class="badge badge-secondary">
+                                        <li class="list-group-item"><h6>Timestamp <span class="badge badge-secondary">
                                                 {{ instance.timestamp }}</span>
                                             </h6></li>
                                     </ul>
@@ -45,8 +41,7 @@
                                         <li class="list-group-item"><h6>Costumer info <span class="badge badge-secondary">
                                                 {{ instance.tag_fullname }}</span>
                                             </h6></li>
-                                        <li class="list-group-item">Porta ac consectetur ac</li>
-                                        <li class="list-group-item">Vestibulum at eros</li>
+                                        <li class="list-group-item">Date {{ instance.date_expired|date }}</li>
                                     </ul>
                                 </div>
 
@@ -108,6 +103,13 @@
                     <div class="card">
                         <div class="header">
                             <div class="title">Order Items</div>
+                            {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}><label class="badge badge-danger">{{ message }}</label></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
 
                         </div>
                         <div class="content">
@@ -119,21 +121,21 @@
                                         <th>Qty</th>
                                         <th>Price</th>
                                         <th>Total</th>
-                                        <th>Actions</th>
+                                        <th colspan="2">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for order_item in instance.order_items.all %}
                                         <tr>
                                             <td>{{ order_item.title.sku }}</td>
-                                            <td>{{ order_item.title }}</td>
+                                            <td>{{ order_item.title|truncatechars:25 }}</td>
                                             <td>{{ order_item.qty }}</td>
                                             <td>{{ order_item.tag_final_value }}</td>
                                             <td>{{ order_item.tag_total_value  }}</td>
-                                            <td>
-                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'REMOVE' %}" class="btn btn-warning"><i class="fa fa-arrow-down"></i></a>
-                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'ADD' %}" class="btn btn-success"><i class="fa fa-arrow-up"></i></a>
-                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'DELETE' %}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                            <td colspan="2">
+                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'REMOVE' %}" class="btn btn-sm btn-warning"><i class="fa fa-arrow-down"></i></a>
+                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'ADD' %}" class="btn btn-sm btn-success"><i class="fa fa-arrow-up"></i></a>
+                                                <a href="{% url 'POS:edit_product_item' order_item.id 1 'DELETE' %}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     {% empty %}
@@ -167,6 +169,34 @@
                         <div class="content">
                             <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
                             <a href="" class="btn btn-success btn-lg btn-raised right">Done</a>
+                            <br><br>
+                            <div class="row">
+                                <button class="btn btn-primary">Paid</button>
+                                <button class="btn btn-primary">Change Costumer</button>
+                                <button class="btn btn-primary">Change Payment</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="header">
+                            <h4 class="text-center">Edit Details</h4>
+                        </div>
+                        <div class="content">
+                            <h5>Payment Orders</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Value</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

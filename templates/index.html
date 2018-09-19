@@ -28,7 +28,7 @@
 {% block down_menu %}
 <div class="ui  four item bottom fixed menu">
     <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Homepage</a>
-    <a href="" class="item">Warning Remaining</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Warning Remaining</a>
     <a href="" style="background-color: red" class="item">Incomes - Outcomes</a>
     <a class="item">Messaging(Not Yet)</a>
 </div>

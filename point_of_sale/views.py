@@ -38,17 +38,16 @@ class HomePage(ListView):
 
 @staff_member_required()
 def create_new_sales_order(request):
-    id = RetailOrder.objects.last().id + 1 if RetailOrder.objects.exists() else 0 + 1
-    title = f'Retail Order {self.id}'
-    costumer = CostumerAccount.objects.filter(user=False)
+    id = RetailOrder.objects.count() + 1 if RetailOrder.objects.all().exists() else 0 + 1
+    title = f'Retail Order {id}'
+    payment, costumer = RetailOrder.new_order_payment_and_costumer()
     user = request.user
     new_order = RetailOrder.objects.create(title=title,
-                                           costumer_account=CostumerAccount.objects.first(),
                                            user_account=request.user,
-
+                                           payment_method=payment,
+                                           costumer_account=costumer,
+                                           order_type='r'
                                            )
-    if costumer:
-        new_order.costumer_account = costumer
     new_order.save()
     return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': new_order.id}))
 
@@ -115,29 +114,31 @@ def add_product_to_order_(request, dk, pk, qty=1):
     product = get_object_or_404(Product, id=pk)
     RetailOrderItem.create_or_edit_item(instance, product, 1, 'ADD')
     if instance.order_type in ['wa', 'wr']:
-        return HttpResponseRedirect(reverse('pos:warehouse_in', kwargs={'dk': dk}))
-    return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': dk}))
+        return HttpResponseRedirect(reverse('POS:warehouse_in', kwargs={'dk': dk}))
+    return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': dk}))
 
 
 @staff_member_required
 def edit_product_item_view(request, pk, qty, type):
     instance = get_object_or_404(RetailOrderItem, id=pk)
     RetailOrderItem.create_or_edit_item(instance.order, instance.title, qty, type)
-    return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': instance.order.id}))
+    return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': instance.order.id}))
 
 
 @staff_member_required
 def delete_order_view(request, dk):
     instance = get_object_or_404(RetailOrder, id=dk)
-    for item in instance.order_items.all():
-        item.remove_item(item.qty)
-        item.delete()
-    for item in instance.payorders.all():
-        item.delete()
     instance.delete()
     messages.warning(request, 'The Retail Order Deleted!')
     return HttpResponseRedirect(reverse('POS:homepage'))
 
+
+@staff_member_required
+def retail_order_done(request, pk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    instance.is_paid = True
+    instance.save()
+    return HttpResponseRedirect(reverse('POS:sales'))
 
 @staff_member_required()
 def ajax_products_search(request, pk):

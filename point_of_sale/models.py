@@ -214,7 +214,10 @@ class RetailOrder(DefaultOrderModel):
 
     def tag_fullname(self):
         if self.costumer_account:
-            return f'{self.first_name} {self.last_name}, Account: {self.costumer_account.user.username}'
+            if not self.costumer_account.user:
+                return f'{self.costumer_account.name}'
+            if self.costumer_account.user:
+                return f'Account: {self.costumer_account.user.username}'
         return f'{self.first_name} {self.last_name}'
     
     def tag_full_address(self):
@@ -248,7 +251,15 @@ class RetailOrder(DefaultOrderModel):
         shipping_cost = shipping.cost if shipping.active_minimum_cost < order_value else 0
         payment_cost = payment.additional_cost if payment.limit_value < order_value else 0
         return [shipping_cost, payment_cost]
-    
+
+    @staticmethod
+    def new_order_payment_and_costumer():
+        payments = PaymentMethod.objects.filter(title='Cash')
+        costumers = CostumerAccount.objects.filter(name='Retail Costumer')
+        payment = payments.first() if payments.exists() else PaymentMethod.objects.create(title='Cash')
+        costumer = costumers.first() if costumers.exists() else CostumerAccount.objects.create(name='Retail Costumer')
+        return payment, costumer
+
     @staticmethod
     def create_order_from_cart(form, cart, cart_items):
         payment_method = form.cleaned_data.get('payment_method', None)
@@ -312,8 +323,7 @@ def update_on_delete_retail_order(sender, instance, *args, **kwargs):
     payments_order = instance.payorders.all()
     for order in payments_order:
         order.delete()
-    order_items = instance.get_order_items
-    for order in order_items:
+    for order in instance.order_items.all():
         order.delete()
 
 
@@ -433,10 +443,14 @@ class RetailOrderItem(DefaultOrderItemModel):
     @staticmethod
     def barcode(request, instance):
         barcode = request.GET.get('barcode')
-        barcode_string = barcode.split(' ')
-        if len(barcode_string) == 1:
-            product_id = barcode_string[0]
-        RetailOrderItem.create_or_edit_item(instance, Product.objects.get(id=product_id), 1, 'ADD')
+        print(barcode)
+        try:
+            barcode_string = barcode.split(' ')
+            if len(barcode_string) == 1:
+                product_id = barcode_string[0]
+                RetailOrderItem.create_or_edit_item(instance, Product.objects.get(id=product_id), 1, 'ADD')
+        except:
+            messages.warning(request, 'No Product Found')
 
     @staticmethod
     def create_or_edit_item(order, product, qty, transation_type):
