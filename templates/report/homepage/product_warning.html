@@ -1,5 +1,81 @@
 {% extends 'index.html' %}
 
 {% block content %}
-
+    <div class="row">
+        <div class="six wide column"></div>
+        <div class="six wide column">
+            <h2 class="ui red header">
+              <i class="red calendar icon"></i>
+              <div class="red content">
+                Qty Warning
+              </div>
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="six wide column">
+            <h4 class="ui header">Products</h4>
+            <table class="ui table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Vendor</th>
+                        <th>Qty</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product }}</td>
+                            <td>{{ product.category|default_if_none:'No Category' }}</td>
+                            <td>{{ product.vendor|default_if_none:"No Vendor" }}</td>
+                            <td>{{ product.qty }}</td>
+                            <td><a href='{{ product.get_edit_url }}' class="ui red button">Edit</a> </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No data</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="six wide column">
+            <h4 class="ui header">Sizes Qty</h4>
+            <table class="ui table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products_with_sizes %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product.product_related }}</td>
+                            <td>{{ product.product_related.category|default_if_none:'No Category' }}</td>
+                            <td>{{ product.title }}</td>
+                            <td>{{ product.qty }}</td>
+                            <td><a href='{{ product.product_related.get_edit_url }}' class="ui red button">Edit</a> </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No data</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="ui row" style='margin-bottom:5%'><br> <br></div>
+    </div>
 {% endblock %}

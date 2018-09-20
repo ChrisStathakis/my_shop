@@ -15,7 +15,7 @@ def diff_month(date_start, date_end):
     return (date_end.year - date_start.year)*12 + (date_end.month - date_start.month)
 
 
-def get_filters_get_data(request):
+def get_filters_data(request):
     search_name = request.GET.get('search_name', None)
     category_name = request.GET.getlist('category_name', None)
     vendor_name = request.GET.getlist('vendor_name', None)

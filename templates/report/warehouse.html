@@ -3,13 +3,12 @@
 
 {% block down_menu %}
 
-<div class="ui six item bottom fixed menu">
-    <a style="background-color: red"  href="{% url 'reports:products' %}" class="item">Προϊόντα</a>
+<div class="ui five item bottom fixed menu">
+    <a style="background-color: red"  href="{% url 'reports:products' %}" class="item">Products</a>
+    <a href="{% url 'reports:warehouse_orders' %}" class="item">Characteristic Analysis</a>
     <a href="{% url 'reports:brands' %}" class="item">Brands</a>
-    <a style="background-color: green" href="{% url 'reports:vendors' %}" class="item">Προμηθευτές</a>
-    <a style="background-color: dodgerblue"  href="{% url 'reports:warehouse_categories' %}" class="item">Κατηγορίες</a>
-    <a href="{% url 'reports:warehouse_orders' %}" class="item">Τιμολόγια</a>
-    <a href="{% url 'reports:warehouse_order_items_flow' %}" class="item">Κίνηση Προϊόντων</a>
+    <a style="background-color: dodgerblue"  href="{% url 'reports:warehouse_categories' %}" class="item">Categories</a>
+    <a href="{% url 'reports:warehouse_categories' %}" class="item">Site Categories</a>
 </div>
 {% endblock %}
 

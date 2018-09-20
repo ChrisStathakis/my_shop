@@ -20,7 +20,7 @@ from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
 from .tools import (initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, 
-                    warehouse_vendors_analysis, get_filters_get_data, balance_sheet_chart_analysis
+                    warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis
                     )
 
 
@@ -43,19 +43,26 @@ class HomepageReport(LoginRequiredMixin, TemplateView):
         return context
 
 
+@method_decorator(staff_member_required, name='dispatch')
 class HomepageProductWarning(ListView):
     model = Product
     template_name = 'report/homepage/product_warning.html'
     paginate_by = 20
 
     def get_queryset(self):
-        queryset = Product.objects.filter(qty__lte=0)
-        return queryset
+        queryset = Product.objects.filter(qty__lte=0, active=True)
+        return queryset[:30]
+
+    def get_content_data(self, **kwargs):
+        context = super(HomepageProductWarning, self).get_content_data(**kwargs)
+        products_with_sizes = SizeAttribute.objects.filter(qty__lte=0, active=True)[:30]
+        context.update(locals())
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
 class ReportProducts(ListView):
-    template_name = 'report/products.html'
+    template_name = 'report/warehouse/products.html'
     model = Product
     paginate_by = 100
 
@@ -68,7 +75,11 @@ class ReportProducts(ListView):
         context = super(ReportProducts, self).get_context_data(**kwargs)
         currency = CURRENCY
         vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
-        products_count = self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0
+        product_count_qty, product_count = (self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0,
+                                            self.object_list.count()
+                                            )
+        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
+        discount_name, qty_name = get_filters_data(self.request)
         context.update(locals())
         return context
 
@@ -77,9 +88,23 @@ class ReportProducts(ListView):
 class ProductSizeView(ListView):
     model = SizeAttribute
     template_name = ''
+    paginate_by = 100
 
     def get_queryset(self):
-        queryset = SizeAttribute.objects.filter(product=True)
+        products = Product.my_query.active_warehouse()
+        products = Product.filters_data(self.request, products)
+        queryset = SizeAttribute.objects.filter(product__in=products)
+        queryset = SizeAttribute.filters_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductSizeView, self).get_context_data(**kwargs)
+        vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
+        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
+        discount_name, qty_name = get_filters_data(self.request)
+        context.update(locals())
+        return context
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class ProductDetail(LoginRequiredMixin, DetailView):

@@ -352,6 +352,12 @@ class SizeAttribute(models.Model):
         return '%s %s' % (final_price, CURRENCY)
     tag_final_price.short_description = 'Τιμή Αγοράς'
 
+    @staticmethod
+    def filters_data(request, queryset):
+        size_name = request.GET.getlist('size_name', None)
+        queryset = queryset.filter(title__id__in=size_name) if size_name else queryset
+        return queryset
+
 
 class ProductPhotos(models.Model):
     image = models.ImageField()

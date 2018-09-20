@@ -5,7 +5,7 @@
 {% block content %}
     <div class="sixteen wide column">
         <h2 class="ui center aligned icon header">
-            <i class="circular blue file icon"></i> Προϊόντα
+            <i class="circular blue file icon"></i> Products
         </h2>
     </div>
 
@@ -26,16 +26,16 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
              <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="warehouse_analysis" id="button-analysis">Υπολογισμός Υπόλοιπου
+                    data-slug="warehouse_analysis" id="button-analysis">Calculate Qty Analysis
             </button>
             <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="brand_analysis" id="button-analysis">Ανάλυση Ανά Brand
+                    data-slug="brand_analysis" id="button-analysis">Analysis Per Brand
             </button>
             <button class="ui green button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="sells_analysis" id="button-analysis">Πωλήσεις Περιόδου
+                    data-slug="sells_analysis" id="button-analysis">Sells Selected
             </button>
             <button class="ui red button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="vendor_analysis" id="button-analysis">Αγορές Περιόδου
+                    data-slug="vendor_analysis" id="button-analysis">Buys Selected
             </button>
         </div>
         <div class="two wide column"></div>
@@ -49,20 +49,20 @@
     <div class="row">
         <div class="one wide column"></div>
         <div class="fourteen wide column">
-            <h2 class="ui header">Όλα τα προϊόντα</h2>
+            <h2 class="ui header">Total Product - {{ product_count }}, Total Qty - {{ product_count_qty }}</h2>
             <table class="ui small single line selectable table">
             <thead>
                 <tr>
 
                     <th>Id</th>
-                    <th><a href="">Κωδικός Προϊόντος</a></th>
-                    <th colspan="2"><a href="">Προιόν</a></th>
-                    <th><a href="">Τιμή Αγοράς</a></th>
-                    <th><a href="">Τιμή Λιανικής/Αρχική Τιμή</a></th>
+                    <th><a href="">Sku</a></th>
+                    <th colspan="2"><a href="">Product</a></th>
+                    <th><a href="">Price Buy</a></th>
+                    <th><a href="">Price / First Price</a></th>
                     <th>Brand</th>
-                    <th><a href="">Προμηθευτής</a></th>
-                    <th><a href="">Κατηγορία<br>Κατηγορία Site</a></th>
-                    <th><a href="">Υπόλοιπο</a></th>
+                    <th><a href="">Vendor</a></th>
+                    <th><a href="">Category<br>Category Site</a></th>
+                    <th><a href="">Qty</a></th>
                 </tr>
             </thead>
             <tbody>
