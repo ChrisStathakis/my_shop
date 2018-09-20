@@ -42,4 +42,7 @@ class ProductManager(models.Manager):
     def get_site_queryset(self):
         return ProductSiteQuerySet(self.model, using=self._db)
 
+    def active_warehouse_with_attr(self):
+        return self.active_warehouse().filter(size=True)
+
 

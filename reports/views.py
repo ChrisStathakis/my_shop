@@ -86,15 +86,13 @@ class ReportProducts(ListView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class ProductSizeView(ListView):
-    model = SizeAttribute
-    template_name = ''
+    model = Product
+    template_name = 'report/warehouse/products_with_size.html'
     paginate_by = 100
 
     def get_queryset(self):
-        products = Product.my_query.active_warehouse()
-        products = Product.filters_data(self.request, products)
-        queryset = SizeAttribute.objects.filter(product__in=products)
-        queryset = SizeAttribute.filters_data(self.request, queryset)
+        queryset = Product.my_query.active_warehouse_with_attr()
+        queryset = Product.filters_data(self.request, queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -155,7 +153,7 @@ class BrandsPage(ListView):
     def get_context_data(self, **kwargs):
         context = super(BrandsPage, self).get_context_data(**kwargs)
         search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name,\
-        discount_name, qty_name = get_filters_get_data(self.request)
+        discount_name, qty_name = get_filters_data(self.request)
         context.update(locals())
         return context
 

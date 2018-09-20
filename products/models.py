@@ -244,10 +244,18 @@ class Product(DefaultBasicModel):
         except:
             pass
 
-    
     @property
     def sizes(self):
         return SizeAttribute.objects.filter(product_related=self, qty__gte=1)
+    
+    def tag_sizes(self):
+        if self.product_sizes:
+            sizes_ = ''
+            for size in self.product_sizes.all():
+                sizes_ += f'{size.title} - {size.qty} | '
+            return sizes_
+        else:
+            return 'No sizes added'
 
     def get_all_images(self):
         return ProductPhotos.objects.filter(active=True, product=self)

@@ -133,10 +133,13 @@ def product_detail(request, pk):
     form = UpdateProductForm(request.POST or None, instance=instance)
 
     if 'save_' in request.POST:
+        print('here')
         if form.is_valid():
             form.save()
             messages.success(request, 'The products %s is saves!')
             return HttpResponseRedirect(reverse('dashboard:products'))
+        else:
+            print('form_invalid', form.errors)
 
     if 'update_' in request.POST:
         form.save()

@@ -9,7 +9,7 @@ from ..tools import warehouse_filters
 
 from inventory_manager.models import Vendor
 from point_of_sale.models import RetailOrderItem
-from products.models import Product, Category, CategorySite
+from products.models import Product, Category, CategorySite, SizeAttribute
 from frontend.models import Brands
 from ..tools import initial_date
 CURRENCY = settings.CURRENCY
@@ -129,7 +129,19 @@ def ajax_warehouse_category_analysis(request):
     return JsonResponse(data)
 
 
-
+def ajax_size_analysis(request):
+    data = dict()
+    products = Product.my_query.active_warehouse_with_attr()
+    products = Product.filters_data(request, products)
+    queryset = SizeAttribute.objects.filter(product_related__in=products)
+    analysis_per_size = queryset.values('title__title').annotate(total_qty=Sum('qty'),
+                                                                 total_value=Sum(F('qty')*F('product_related__final_value'))
+                                                                ).order_by('title__title')
+    data['results'] = render_to_string(template_name='', 
+                                       context={'analysis': analysis_per_size},
+                                       request=request
+                                       )
+    return JsonResponse(data)
 
 
 

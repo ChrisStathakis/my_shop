@@ -15,6 +15,7 @@ urlpatterns = [
 
     # warehouse
     path('products/', ReportProducts.as_view(), name='products'),
+    path('characteristic-analysis/', ProductSizeView.as_view(), name='products_size'),
     path('warehouse/products/ajax-analysis', view=ajax_products_analysis, name='ajax_products_analysis'),
     path('products/ajax-search/', view=ajax_product_search, name='ajax_product_search'),
 

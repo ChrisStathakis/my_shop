@@ -1,10 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'report/warehouse.html' %}
 
-</body>
-</html>
+{% block content %}
+    <div class="sixteen wide column">
+        <h2 class="ui center aligned icon header">
+            <i class="circular blue file icon"></i> Characteristrics
+        </h2>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title"><i class="dropdown icon"></i> Filters</div>
+                <div class="content">
+                    {% include 'snippets/filter_form.html' %}
+                </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <button class="ui blue button warehouse_analysis" 
+                    data-url=''
+                    data-slug='warehouse_analysis'
+            >Qty Analysis</button>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <h2 class="ui header">Sizes</h2>
+            <table class="ui table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th colspan="3">Sizes</th>
+                        <th>Prices</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product }}</td>
+                            <td>{{ product.vendor }}</td>
+                            <td>{{ product.category }}</td>
+                            <td colspan="3"> {{ product.tag_sizes }}</td>
+                            <td>{{ product.tag_final_price }}</td>
+                        </tr>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock  %}
+
+{% block extra_js %}
+    <script>
+        $('.warehouse_analysis').click(function() {
+            const btn = $(this);
+            const url = btn.attr('data-url')
+            const my_form = $('#filters_form').serialize()
+            $.ajax({
+                dataType: 'json',
+                url: url,
+                data: my_form,
+                success: function(data) {
+                    $('.ajax_container').html(data.results)
+                }
+
+            })
+        })
+    </script>
+
+{% endblock extra_js %}
