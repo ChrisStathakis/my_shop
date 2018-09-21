@@ -242,11 +242,12 @@ def vendor_detail(request, pk):
 @method_decorator(staff_member_required, name='dispatch')
 class WarehouseCategoriesView(ListView):
     model = Category
-    template_name = 'report/category_report.html'
+    template_name = 'report/warehouse/category_report.html'
     paginate_by = 50
     
     def get_context_data(self, **kwargs):
         context = super(WarehouseCategoriesView, self).get_context_data(**kwargs)
+        title = 'Warehouse Categories'
         search_name = self.request.GET.get('search_name', None)
         context.update(locals())
         return context
@@ -265,12 +266,18 @@ class WarehouseCategoryView(DetailView):
         return context
 
 
-
 @method_decorator(staff_member_required, name='dispatch')
 class CategoriesSiteView(ListView):
     model = CategorySite
-    template_name = ''
+    template_name = 'report/warehouse/category_report.html'
     paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        content = super(CategoriesSiteView, self).get_context_data(**kwargs)
+        title = 'Categories Site'
+
+        content.update(locals())
+        return content
 
 @method_decorator(staff_member_required, name='dispatch')
 class CategorySiteView(DetailView):

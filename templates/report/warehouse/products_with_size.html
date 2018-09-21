@@ -24,11 +24,15 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
             <button class="ui blue button warehouse_analysis" 
-                    data-url=''
+                    data-url='{% url "reports:ajax_size_analysis" %}'
                     data-slug='warehouse_analysis'
             >Qty Analysis</button>
-
         </div>
+    </div>
+
+    <div class="ui grid container">
+        <div class="four wide column"></div>
+        <div class="twelve wide column" id='ajax_container'></div>
     </div>
 
     <div class="row">
@@ -76,7 +80,7 @@
                 url: url,
                 data: my_form,
                 success: function(data) {
-                    $('.ajax_container').html(data.results)
+                    $('#ajax_container').html(data.results)
                 }
 
             })

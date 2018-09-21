@@ -1,0 +1,99 @@
+{% extends 'report/warehouse.html' %}
+
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div class="column">
+            <h2 class="ui icon header">
+                <i class="settings icon"></i>
+                <div class="content">
+                    {{ title }}
+                    <div class="sub header">Επιλεγμένο Διάστημα... {{ date_range }}</div>
+                </div>
+            </h2>
+        </div>
+        <div class="column">
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title">
+                    Filters
+                </div>
+    
+            <div class="content">
+                <form method="post" class="ui form">{% csrf_token %}
+                    {% include 'snippets/search_date_filter.html' %}
+                    <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
+                </form>
+            </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+    <div class="eight wide column">
+        <div style="text-align: center" class="ui  medium header">Κατηγορίες ΑποΘήκης</div>
+        <table style="margin-left: 1%" class="ui selectable striped table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Κατηγορία</th>
+                    <th>Ενέργεια</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in object_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ category }}</td>
+                        <td><a href='{% url 'reports:warehouse_category' category.id %}' class='ui green button'>Go</a> </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No data</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <div  class="eight wide column">
+        <div style="text-align: center" class="ui medium header">Ενέργειες</div>
+        <div class="row">
+            <button data-type="warehouse" data-url="{% url 'reports:ajax_ware_cate_ana' %}" class='ui blue button ajax_button'>Vendor Analysis</button>
+        </div>
+        <div class='row' id='ajax_container'>
+            <p>Hello!</p>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        $('.ajax_button').click(function () {
+            const btn = $(this);
+            const data_type = btn.attr('data-type');
+            const my_form = $('#filter_form').serialize();
+            $('#ajax_container').html('<h4>Loading</h4>');
+            $.ajax({
+                url: btn.attr('data-url'),
+                dataType: 'json',
+                data: my_form + '&data_type='+ data_type,
+                before: function () {
+                    $('#ajax_container').html('<h4>Loading</h4>')
+                },
+                success: function(data) {
+                    $('#ajax_container').html(data.results)
+                }
+            })
+        })
+    </script>
+{% endblock %}
+

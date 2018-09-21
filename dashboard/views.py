@@ -118,7 +118,7 @@ class ProductsList(ListView):
         if new_vendor:
             queryset = Product.objects.all()
             queryset = Product.filters_data(self.request, queryset)
-            queryset.update(supply=new_vendor)
+            queryset.update(vendor=new_vendor)
             messages.success(self.request, 'The Vendor Updated!')
         return render(self.request, self.template_name)
 

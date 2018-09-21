@@ -1,0 +1,24 @@
+
+<div class="row">
+    <h4>Size Analysis</h4>
+    <table class="ui table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for size in analysis %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ size.title }}</td>
+                    <td>{{ size.total_qty }} Unit</td>
+                    <td>{{ size.total_value}} {{ currency }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -233,7 +233,7 @@ class VendorPageDetail(UpdateView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class VendorPageCreate(FormView):
-    template_name = 'dash_ware/form.html'
+    template_name = 'dashboard/page_create.html'
     form_class = VendorForm
 
     def get_context_data(self, **kwargs):

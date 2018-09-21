@@ -112,20 +112,23 @@ def ajax_product_detail(request, pk):
 
 def ajax_warehouse_category_analysis(request):
     data = {}
-    data_type = request.GET.get('data_type')
-    date_start, date_end, date_range = initial_date(request)
-    category_name = request.GET.getlist('category_name')
-    vendor_name = request.GET.getlist('vendor_name')
-
-    if data_type == 'warehouse':
-        queryset = OrderItem.objects.filter(order__date_expired__range=[date_start, date_end])
-        queryset = OrderItem.filters_data(request, queryset)
-        results = queryset.values('product__category__title').annotate(total_qty=Sum('qty'))
-        
-        data['result'] = render_to_string(request=request,
-                                          template_name='report/ajax/warehouse/ajax_warehouse_category_analysis.html',
-                                          context={'results': results}
-                                          )
+    queryset = Product.objects.all()
+    for ele in queryset:
+        print(ele, ele.category)
+    queryset = Product.filters_data(request, queryset)
+    results = queryset.values('category__title').annotate(total_qty=Sum('qty'),
+                                                          total_value=Sum(F('qty')*F('final_price'))
+                                                        ).order_by('category__title')
+    for ele in queryset:
+        print(ele.category)                                                 
+    for ele in results:
+        ele['title'] = ele['category__title']                                                         
+    data['results'] = render_to_string(request=request,
+                                      template_name='report/ajax/warehouse/ajax_product_size.html',
+                                      context={'analysis': results,
+                                               'currency': CURRENCY,   
+                                            }
+                                    )
     return JsonResponse(data)
 
 
@@ -135,12 +138,17 @@ def ajax_size_analysis(request):
     products = Product.filters_data(request, products)
     queryset = SizeAttribute.objects.filter(product_related__in=products)
     analysis_per_size = queryset.values('title__title').annotate(total_qty=Sum('qty'),
-                                                                 total_value=Sum(F('qty')*F('product_related__final_value'))
-                                                                ).order_by('title__title')
-    data['results'] = render_to_string(template_name='', 
-                                       context={'analysis': analysis_per_size},
+                                                                 total_value=Sum(F('qty')*F('product_related__final_price'))
+                                                                ).order_by('title__title')                                                           
+    for ele in analysis_per_size:
+        ele['title'] = ele['title__title']
+    data['results'] = render_to_string(template_name='report/ajax/warehouse/ajax_product_size.html',
+                                       context={'analysis': analysis_per_size,
+                                                'currency': CURRENCY,   
+                                            },
                                        request=request
                                        )
+
     return JsonResponse(data)
 
 
