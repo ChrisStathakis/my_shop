@@ -27,7 +27,6 @@
                                     <tr>
                                         <th>id - sku</th>
                                         <th>Product</th>
-                                        <th>Category</th>
                                         <th colspan="4">Actions</th>
                                     </tr>
                                 </thead>
@@ -35,8 +34,7 @@
                                     {% for product in products %}
                                         <tr>
                                             <td>{{ product.id }} - {{ product.sku }}</td>
-                                            <td>{{ product.title }}</td>
-                                            <td>{{ product.category }}</td>
+                                            <td><a href="{{ product.edit_url }}">{{ product.title }}</a> </td>
                                             <td><label>Add</label><input type='checkbox' class="form-control" value="{{ product.id }}" name='ids'></td>
                                             <td><label>Τιμή</label><input type='number' class="form-control" step='0.01' name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
                                             <td><label>'Εκπτωση</label><input type='number' class="form-control" name='discount_{{ product.order_discount }}' value="{{ product.order_discount }}" placeholder="0"></td>

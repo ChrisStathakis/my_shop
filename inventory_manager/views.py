@@ -70,8 +70,8 @@ def warehouse_order_detail(request, dk):
     instance = get_object_or_404(Order, id=dk)
     queryset = Product.my_query.get_site_queryset().active_warehouse().filter(vendor=instance.vendor)
     if 'search_name' in request.GET:
-        queryset  = queryset.filter(title__icontains=request.GET.get('search_name', None))
-    products = queryset.filter(size=False)
+        queryset = queryset.filter(title__icontains=request.GET.get('search_name', None))
+    products = queryset.filter(size=False)[:10]
     products_with_size = queryset.filter(size=True)
     form = WarehouseOrderForm(instance=instance)
     

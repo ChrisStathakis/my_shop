@@ -1,6 +1,6 @@
 <div class="three fields">
     <div class="field">
-        <label>Προμηθευτές</label>
+        <label>Vendors</label>
         {% for vendor in vendors %}
             {% if vendor.id|stringformat:"s" in request.GET.vendor_name %}
                 <div class="ui slider checkbox">
@@ -16,19 +16,15 @@
         {% endfor %}
     </div>
     <div class="field">
-        <label>Κατηγορίες Αποθήκης</label>
+        <label>Warehouse Caregories</label>
         {% for cate in categories %}
-            {% if cate.id|stringformat:"s" in request.GET.category_name %}
-                <div class="ui slider checkbox">
-                    <input type="checkbox" checked name="category_name" value="{{ cate.id }}">
-                    <label>{{ cate }}</label>
-                </div>
-            {% else %}
-                <div class="ui slider checkbox">
-                    <input type="checkbox" name="category_name" value="{{ cate.id }}">
-                    <label>{{ cate }}</label>
-                </div>
-            {% endif %}
+            <div class="ui slider checkbox">
+                <input type="checkbox"
+                       name="cate_name"
+                       value="{{ cate.id }}"
+                       {% if cate.id|stringformat:"s" in cate_name %} checked {% endif %}
+                ><label>{{ cate }}</label>
+            </div>
         {% endfor %}
     </div>
     <div class="field">
@@ -49,7 +45,7 @@
         </div>
 </div>
 <div class="field">
-        <label>Κατηγορίες Site</label>
+        <label>Site Categories</label>
          {% for cate in categories_site %}
             {% if cate.id|stringformat:"s" in request.GET.category_site_name %}
                 <div class="ui slider checkbox">

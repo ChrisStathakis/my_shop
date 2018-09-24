@@ -3,6 +3,7 @@ from django.urls import path
 from .views import *
 from .views_transcations import *
 from .ajax_calls.ajax_warehouse_calls import *
+from .view_sells import OrderRetailReportView, HomepageSellView
 
 
 app_name = 'reports'
@@ -46,8 +47,13 @@ urlpatterns = [
     path('transcations/payroll-list/', PayrollReportView.as_view(), name='payroll_report_view'),
     path('transcations/expenses-list/', GenericExpenseView.as_view(), name='generic_expenses_view'),
 
-    #ajax_calls
+    # sells
+    path('report-sales/', HomepageSellView.as_view(), name='homepage_sales'),
+
+    # ajax_calls
     path('ajax/characteristics/analysis', ajax_size_analysis, name='ajax_size_analysis'),
+
+
 
    
     ]

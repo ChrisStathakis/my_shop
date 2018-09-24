@@ -1,0 +1,254 @@
+{% extends 'report/warehouse/products.html' %} {% load staticfiles %}
+
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div class="column">
+            <h2 class="ui icon header">
+                <img class="ui small image"
+                        {% if object.image %} src="{{ object.image.url }}"{% else %}
+                     src="{% static 'home/no_image.png' %}"{% endif %}>
+                <div class="content">
+                    {{ object }}
+                    <div class="sub header">{{ object.category|default_if_none:"No Category Selected" }}</div>
+                </div>
+            </h2>
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title">
+                    Filters Date range.. {{ date_start|date }} - {{ date_end|date }}
+                </div>
+                <div class="content">
+                    <form id="filters_form" method="get" class="ui form">
+                        {% include 'snippets/search_date_filter.html' %}
+                        <button type="submit" class="ui green fluid inverted button">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <button class="ui green button analysis_button" data-url="{% url 'reports:ajax_product_analysis' product.id %}" data-slug="buy">Buys per month</button>
+        </div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column" id="ajax_container"></div>
+        <div class="two wide column"></div>
+    </div>
+
+    <div class="row">
+    <div class="one wide column"></div>
+    <div class="three wide column">
+        <div class="ui segments">
+            <div style='text-align: center' class="ui inverted blue segment">Info</div>
+            <div style='text-align: center' class="ui blue header segment">Warehouse data</div>
+            <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="header">Vendor</h4>
+                    </td>
+                    <td>{{ product.vendor|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Warehouse Category</h4>
+                    </td>
+                    <td>{{ product.category|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Category Site</h4>
+                    </td>
+                    <td>{{ product.category_site.all|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Brand</h4>
+                    </td>
+                    <td>{{ product.brand|default_if_none:'No data' }}</td>
+                </tr><tr>
+                    <td>
+                        <h4 class="header">Sku</h4>
+                    </td>
+                    <td>{{ product.sku|default_if_none:'No data' }}</td>
+                </tr><tr>
+                    <td>
+                        <h4 class="header">Invoice code</h4>
+                    </td>
+                    <td>{{ product.order_code|default_if_none:'No data' }}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style='text-align: center' class="ui blue header segment">Prices</div>
+            <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="header">Price buy - Final</h4>
+                    </td>
+                    <td>{{ product.tag_price_buy }} - {{ product.tag_price_buy_final }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Price - Final Price</h4>
+                    </td>
+                    <td>{{ product.tag_price }} - {{ product.tag_final_price }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Qty</h4>
+                    </td>
+                    <td>{{ product.qty }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Sizes</h4>
+                    </td>
+                    <td>No added</td>
+                </tr>
+                </tbody>
+            </table>
+            <div style='text-align: center' class="ui blue header segment">Date range analysis<br>
+                <a class='ui green label'>Incomes  {{ retail_items_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
+                <a class='ui red label'>Buys {{ order_items_analysis.0.total_tax|floatformat:2 }} {{ currency }}</a>
+                <a class='ui blue label'>REturns {{ return_products_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
+            </div>
+            
+            <div style='text-align: center' class="ui  segment">Balance Sheet {{ win_or_loss }} {{ currency }} </div>
+        </div>
+        <div style="margin-bottom: 10%" class="ui segment"></div>
+    </div>
+    <div class="eleven wide column">
+        <div class="ui two column grid">
+            <div style="text-align: center" class="column">
+               <h2 class="ui blue header">
+                   <i class="education_paper icon"></i>
+                   <div class="content">
+                       Warehouse Invoices
+                       <div class="sub header">Total</div>
+                   </div>
+               </h2>
+                <div class="ui feed">
+                    {% for order in order_items %}
+                        <div class="event">
+                            <div class="label">
+                                {{ order.tag_final_value }}
+                            </div>
+                            <div class="content">
+                                <div class="summary">
+                                    <a class="user">{{ order.order.get_order_type_display }}</a>
+                                    <div class="date">
+                                        {{ order.order.date_expired|date }}
+                                    </div>
+                                </div>
+                                <div class="meta">
+                                    <a class="like">
+                                        <i class="like icon"></i> {{ order.qty }} {{ order.get_unit_display }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="event">
+                            <div class="label"></div>
+                            <div class="content">
+                                <p>No data</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="column">
+               <h2 class="ui green header">
+                   <i class="settings icon"></i>
+                   <div class="content">
+                       Sells
+                       <div class="sub header">Total</div>
+                   </div>
+               </h2>
+                <div class="ui feed">
+                    {% for order in retail_items %}
+                        <div class="event">
+                            <div class="label">
+                                {{ order.tag_final_value }}
+                            </div>
+                            <div class="content">
+                                <div class="summary">
+                                    <a class="user">{{ order.order.get_order_type_display }}</a>
+                                    <div class="date">
+                                        {{ order.order.date_expired|date }}
+                                    </div>
+                                </div>
+                                <div class="meta">
+                                    <a class="like">
+                                        <i class="like icon"></i> {{ order.qty }} {{ order.title.get_measure_unit_display }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="event">
+                            <div class="label"></div>
+                            <div class="content">
+                                <p>No data</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="one wide column"></div>
+
+    <div style="margin-bottom: 10%" class="row"></div>
+
+    <script type="text/javascript">
+        $('.analysis_button').click(function () {
+            var btn = $(this);
+            var my_form = $('#filters_form').serialize();
+            $('#ajax_container').html('<h2>Waiting....</h2>');
+            $.ajax({
+                url: btn.attr('data-url'),
+                dataType: 'json',
+                data: my_form + '&switch='+ btn.attr('data-slug'),
+                success: function (data) {
+                    $('#ajax_container').html(data.results)
+                }
+            })
+        })
+    </script>
+
+
+{% endblock %}
+
+
+

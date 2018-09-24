@@ -40,6 +40,12 @@
         </div>
         <div class="two wide column"></div>
     </div>
+    <div class="row" >
+        <div class="two wide column"></div>
+        <div class="twelve wide column" id="ajax_container"></div>
+        <div class="two wide column"></div>
+
+    </div>
 
     
 
@@ -73,7 +79,7 @@
                     <td><a href='{{ ele.brand.get_report_url }}'>{{ ele.tag_brand }}</a></td>
                     <td><a href="">{{ ele.vendor|default_if_none:"Δε έχει επιλεγεί Προμηθευτής" }}</a></td>
                     <td><a href="">{{ ele.category|default_if_none:"Δε έχει επιλεγεί Κατηγορία" }}<br></a></td>
-                    <td {% if ele.show_warehouse_remain %} class="negative" {% else %} class="positive" {% endif %}>{{ ele.show_warehouse_remain|floatformat:2 }} {{ ele.get_measure_unit_display }}</td>
+                    <td {% if ele.show_warehouse_remain %} class="positive" {% else %} class="negative" {% endif %}>{{ ele.show_warehouse_remain|floatformat:2 }} {{ ele.get_measure_unit_display }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

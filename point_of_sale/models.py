@@ -158,6 +158,9 @@ class RetailOrder(DefaultOrderModel):
                     (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
         self.discount = total_value
 
+    def get_report_url(self):
+        pass
+
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False
 

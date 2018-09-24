@@ -78,7 +78,7 @@ class ReportProducts(ListView):
         product_count_qty, product_count = (self.object_list.aggregate(Sum('qty'))['qty__sum'] if self.object_list else 0,
                                             self.object_list.count()
                                             )
-        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
+        search_name, cate_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
         discount_name, qty_name = get_filters_data(self.request)
         context.update(locals())
         return context
@@ -106,7 +106,7 @@ class ProductSizeView(ListView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class ProductDetail(LoginRequiredMixin, DetailView):
-    template_name = 'report/details/products_id.html'
+    template_name = 'report/warehouse/products_id.html'
     model = Product
 
     def get_context_data(self, **kwargs):
@@ -118,23 +118,28 @@ class ProductDetail(LoginRequiredMixin, DetailView):
                                                order__date_expired__range=[date_start, date_end]
                                                )
         order_items_analysis = order_items.values('product').annotate(total_clean=Sum('total_clean_value'),
-                                                                      total_tax=Sum('total_value_with_taxes', output_field=models.FloatField()),
+                                                                      total_tax=Sum('total_value_with_taxes',
+                                                                      output_field=models.FloatField()),
                                                                       qty_count=Sum('qty'),
-                                                                      )
+                                                                    )
         # retail orders
         retail_items_all = RetailOrderItem.objects.filter(title=self.object,
-                                                      order__date_expired__range=[date_start, date_end]
-                                                      )
+                                                          order__date_expired__range=[date_start, date_end]
+                                                          )
         retail_items = retail_items_all.filter(order__order_type__in=['r', 'e','wa'])
-        retail_items_analysis = retail_items.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),output_field=models.FloatField()),
-                                                                                 total_qty=Sum('qty'),
-                                                                                 ).order_by('title')
+        retail_items_analysis = retail_items.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),
+                                                                      output_field=models.FloatField()),
+                                                                      total_qty=Sum('qty'),
+                                                                    ).order_by('title')
         return_products = retail_items_all.filter(order__order_type__in=['b', 'd'])
-        return_products_analysis = return_products.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),output_field=models.FloatField()),
-                                                                                 total_qty=Sum('qty'),
-                                                                                 ).order_by('title')
-                                                                                 
-        win_or_loss = retail_items_analysis[0]['total_incomes'] - order_items_analysis[0]['total_tax'] - return_products_analysis[0]['total_incomes']                                                                      
+        return_products_analysis = return_products.values('title').annotate(total_incomes=Sum(F('qty')*F('final_value'),
+                                                                            output_field=models.FloatField()),
+                                                                            total_qty=Sum('qty'),
+                                                                            ).order_by('title')
+        win_or_loss = retail_items_analysis[0]['total_incomes'] if retail_items_analysis else 0 - \
+                      order_items_analysis[0]['total_tax'] if order_items_analysis else 0 - \
+                      return_products_analysis[0]['total_incomes'] if return_products_analysis else 0
+        win_or_loss = round(win_or_loss, 2)
         context.update(locals())
         return context
 
@@ -152,7 +157,7 @@ class BrandsPage(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(BrandsPage, self).get_context_data(**kwargs)
-        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name,\
+        search_name, category_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
         discount_name, qty_name = get_filters_data(self.request)
         context.update(locals())
         return context
@@ -278,6 +283,7 @@ class CategoriesSiteView(ListView):
 
         content.update(locals())
         return content
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class CategorySiteView(DetailView):

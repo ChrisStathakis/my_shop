@@ -384,7 +384,6 @@ class OrderItem(DefaultOrderItemModel):
         return queryset
 
 
-
 @receiver(post_delete, sender=OrderItem)
 def update_qty_on_delete(sender, instance, *args, **kwargs):
     product, order, self = instance.product,instance.order, instance
