@@ -34,8 +34,15 @@
                                     {% for product in products %}
                                         <tr>
                                             <td>{{ product.id }} - {{ product.sku }}</td>
-                                            <td><a href="{{ product.edit_url }}">{{ product.title }}</a> </td>
-                                            <td><label>Add</label><input type='checkbox' class="form-control" value="{{ product.id }}" name='ids'></td>
+                                            <td><a target="_blank" href="{{ product.edit_url }}">{{ product.title }}</a></td>
+                                            <td>
+                                                {% if product.size %}
+                                                    <a href="{% url 'inventory:order_create_size_chart' instance.id product.id %}" class="btn btn-raised">Add</a>
+                                                {% else %}
+                                                    <label for="add_">Add</label>
+                                                    <input type="checkbox" class="form-control" value="{{ product.id }}" id="add_">
+                                                {% endif %}
+                                            </td>
                                             <td><label>Τιμή</label><input type='number' class="form-control" step='0.01' name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
                                             <td><label>'Εκπτωση</label><input type='number' class="form-control" name='discount_{{ product.order_discount }}' value="{{ product.order_discount }}" placeholder="0"></td>
                                             <td><label>Ποσότητα</label><input type='number' class="form-control" name='qty_{{product.id}}' placeholder="0"></td>

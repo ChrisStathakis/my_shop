@@ -142,6 +142,10 @@ class Vendor(models.Model):
 
 
 class OrderManager(models.Manager):
+
+    def filter_by_date(self, date_start, date_end):
+        return super(OrderManager, self).filter(date_expired__range=[date_start, date_end])
+
     def pending_orders(self):
         return super(OrderManager, self).filter(is_paid=False).order_by('day_created')
 
@@ -205,13 +209,11 @@ class Order(DefaultOrderModel):
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.update_warehouse()
 
-
     def update_warehouse(self):
         self.vendor.save()
 
     def get_report_url(self):
         return reverse('reports:warehouse_order_detail', kwargs={'pk': self.id})
-        
 
     @staticmethod
     def filter_data(request, queryset):

@@ -86,6 +86,29 @@ def initial_date(request, months=3):
     return [date_start, date_end, date_range]
 
 
+# thats the corect after the update
+def filter_date(request):
+    date_start, date_end = datetime.datetime.now().replace(day=1, month=1), datetime.datetime.now().replace(day=31,
+                                                                                                            month=12
+                                                                                                            )
+    date_pick = request.GET.get('date_pick', None)
+    date_range = None
+    try:
+        date_range = date_pick.split('-')
+        date_range[0] = date_range[0].replace(' ', '')
+        date_range[1] = date_range[1].replace(' ', '')
+        date_start = datetime.datetime.strptime(date_range[0], '%m/%d/%Y')
+        date_end = datetime.datetime.strptime(date_range[1], '%m/%d/%Y')
+    except:
+        date_start, date_end, date_range = [date_start, date_end, date_range] if date_start and date_end else \
+            initial_date(request)
+    if date_start > date_end:
+        date_start, date_end = datetime.datetime.now().replace(day=1, month=1), datetime.datetime.now().replace(day=31,
+                                                                                                                month=12
+                                                                                                                )
+    return date_start, date_end
+
+
 def clean_date_filter(request, date_pick, date_start=None, date_end=None, date_range=None):
     try:
         date_range = date_pick.split('-')
@@ -104,7 +127,7 @@ def estimate_date_start_end_and_months(request):
     day_now, start_year = datetime.datetime.now(), datetime.datetime(datetime.datetime.now().year, 2, 1)
     date_pick = request.GET.get('date_pick', None)
     start_year, day_now, date_range = clean_date_filter(request, date_pick, date_start=start_year, date_end=day_now)
-    months_list=12
+    months_list = 12
     return [start_year, day_now, date_range, months_list]
 
 

@@ -1,19 +1,29 @@
 {% extends 'report/warehouse.html' %}{% load static %}
 
+{% block down_menu %}
+<div class="ui three item bottom fixed menu">
+    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Homepage</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Vendors</a>
+    <a href="" style="background-color: red" class="item">Item Flow</a>
+</div>
+{% endblock %}
+
 
 {% block content %}
+
     <div class="row">
         <div class="six wide column"></div>
         <div class="six wide column">
             <h2 class="ui blue icon header">
                 <i class="blue calendar icon"></i>
                 <div class="blue content">
-                    Τιμολόγια Αγοράς
-                    <div class="sub header">Ανάλυση Τιμολογίων Αγοράς</div>
+                    Warehouse Orders
+                    <div class="sub header">Date Range... {{ date_start|date }} - {{ date_end|date }}</div>
                 </div>
             </h2>
         </div>
     </div>
+
     <div class="row">
         <div class="two wide column"></div>
         <div class="twelve wide column">
@@ -25,32 +35,40 @@
                     <form class="ui form" method="get">
                         <div class="two fields">
                             <div class="field">
-                                {% if search_pro %} <input type="text" class="ui text" name="search_pro" value="{{ search_pro }}" placeholder="{{ search_pro }}"> {% else %} <input type="text" class="ui text" name="search_pro" placeholder="Αναζήτηση"> {% endif %}
+                                <input 
+                                    type="text" 
+                                    class="ui text" 
+                                    name="search_pro" 
+                                    {% if search_pro %} value="{{ search_pro }}"  {% else %} value="" {% endif %}
+                                    {% if search_pro %} placeholder="{{ search_pro }}"  {% else %} placeholder="Search" {% endif %}
+                                >
                             </div>
                             <div class="field">
-                            {% if date_pick %} <input  name="date_pick" value="{{ date_pick }}" placeholder="{{ date_pick }}" >
-                            {% else %} <input  name="date_pick" placeholder="Ημερομηνία" > {% endif %}
-
+                                <input  
+                                    name="date_pick" 
+                                    {% if date_pick %}  value="{{ date_pick }}" {% endif %}
+                                    {% if date_pick %} placeholder="{{ date_pick }}" {% else %} placeholder="Pick Date" {% endif %}
+                                >
                             </div>
                         </div>
                         <div class="two fields">
                             <div class="field">
                                 <div class="grouped fields">
-                                    <label>Εξόφληση</label>
+                                    <label>Paid Satus</label>
                                     <div class="field">
                                         <div class="ui radio checkbox">
                                             <input type="radio" name="is_paid_name" value="a"{% if is_paid_name == 'a' %} checked {% endif %}>
-                                            <label>Πληρωμένο</label>
+                                            <label>Is Paid</label>
                                         </div>
                                     </div>
                                     <div class="field">
                                         <div class="ui radio checkbox">
                                             <input type="radio"  name="is_paid_name" value="b" {% if is_paid_name == 'b' %} checked {% endif %}>
-                                            <label>Μη Πληρωμένο</label>
+                                            <label>Not Paid</label>
                                         </div>
                                     </div>
                                 </div>
-                                <label>Επέλεξε Τρόπο Πληρωμής</label>
+                                <label>Payment Method</label>
                                 {% for payment in payment_method %}
                                     {% if vendor.0|stringformat:"s" in vendor_name %}
                                         <div class="ui slider checkbox">
@@ -66,7 +84,7 @@
                                 {% endfor %}
                             </div>
                             <div class="field">
-                                <label>Επέλεξε Προμηθευτή</label>
+                                <label>Choose Vendor</label>
                                 {% for vendor in vendors %}
                                     {% if vendor.id|stringformat:"s" in vendor_name %}
                                         <div class="ui slider checkbox">
@@ -83,27 +101,28 @@
                             </div>
                         </div>
 
-                        <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
+                        <button style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">Save</button>
                     </form>
                     <a href="{% url 'reports:warehouse_orders' %}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
                         <i class="trash icon"></i>
-                        Καθαρισμός Φίλτρων
+                        Clear Filters
                     </a>
                 </div>
             </div>
         </div>
         <div class="two wide column"></div>
     </div>
+
     <div class="row">
         <div class="one wide column"></div>
-        <div class="four wide column">
+        <div class="three wide column">
         <canvas id="myChart1" width="400" height="400"></canvas>
         <script>
         var ctx = document.getElementById("myChart1").getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ["Συνολική Αξία Παραγγελιών", "Πληρωμές", "Οφειλωμενα"],
+                labels: ["Total Value", "Paid Value", "Remaining"],
                 datasets: [{
                     label: '# Euro',
                     data: [{{ total_value }}, {{ paid_value }}, {{ diff }}],
@@ -138,6 +157,43 @@
             }
         });
         </script>
+            <div class="ui segments">
+                <div style='text-align: center' class="ui blue header segment">Sells Analysis</div>
+                <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="blue header">Total Value</h4>
+                    </td>
+                    <td>{{ total_value }} {{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="green header">Payments</h4>
+                    </td>
+                    <td>{{ paid_value }} {{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="red header">Remaining</h4>
+                    </td>
+                    <td> {{ diff }}{{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Orders Qty</h4>
+                    </td>
+                    <td>{{ orders.count }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
         </div>
         <div class="ten wide column">
             <canvas id="myChart2" width="800" height="400"></canvas>
@@ -188,9 +244,8 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
             <div class="row">
-                <button class="ui blue button" id="analyse_vendor">Σύγκριση Προμηθευτών</button>
-                <button class="ui blue button">Σύγκριση Περιόδου</button>
-                {{ vendor_name }}, {{ date_pick }}
+                <button class="ui blue button" id="analyse_vendor">Vendor Analysis</button>
+
                 <div class="row" id="data-show">
 
                 </div>
@@ -200,25 +255,27 @@
     </div>
     <div class="row">
         <div class="one wide column"></div>
-        <div class="twelve wide column">
+        <div class="fourteen wide column">
             <div class="row">
                 <table class="ui celled striped table">
                     <thead>
                         <tr>
-                            <th colspan="9">
-                                Συνολική Αξία {{ order.tag_total_value }}
+                            <th colspan="11">
+                                Orders
                             </th>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th>Ημερομηνία</th>
-                            <th>Σχολια- Τίτλος</th>
-                            <th>Προμηθεύτης</th>
-                            <th>Είδος</th>
-                            <th>Καθαρή Αξία</th>
-                            <th>ΦΠΑ</th>
-                            <th>Συνολική Αξία</th>
-                            <th></th>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Vendor</th>
+                            <th>Order Type</th>
+                            <th>Payment Type</th>
+                            <th>Clean Value</th>
+                            <th>Taxes</th>
+                            <th>Value</th>
+                            <th>Paid Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -229,65 +286,17 @@
                                 <td>{{ order }}</td>
                                 <td><a href="{% url 'reports:vendor_detail' order.vendor.id %}">{{ order.vendor }}</a></td>
                                 <td>{{ order.get_order_type_display }}</td>
+                                <td>{{ order.payment_method }}</td>
                                 <td>{{ order.tag_clean_value }} </td>
                                 <td>{{ order.tag_total_taxes }}</td>
                                 <td>{{ order.tag_final_value }}</td>
-                                <td><a href='{{ order.get_report_url }}' {% if order.is_paid %} class="ui teal button" {% else %} class="ui red button" {% endif %}>Λεπτομέριες</a></td>
+                                <td>{{ order.tag_paid_status }}</td>
+                                <td><a href='{{ order.get_report_url }}' class="ui teal button">Details</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="three wide column">
-            <div class="ui segments">
-                <div style='text-align: center' class="ui inverted blue segment">Πληροφορίες</div>
-                <div style='text-align: center' class="ui blue header segment">Ανάλυση Παραγγελιών</div>
-                <div style="margin-left: 3%" class="ui celled list">
-                    <div class="item">
-                        <div class=" green content">
-                            <div class="green header">{{ total_value  }} {{ currency }}</div>
-                            Συνολική Αξία Παραγγελιών
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ paid_value }} {{ currency }}</div>
-                            Πληρωμές
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ diff }} {{ currency }}</div>
-                            Οφειλωμενα
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ order_count }}</div>
-                            Παραγγελίες
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <table class="ui tiny table">
-                <thead>
-                    <tr>
-                        <th>Προμηθευτής</th>
-                        <th>Συνολική Αξία</th>
-                        <th>Υπόλοιπο</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for vendor in warehouse_vendors %}
-                        <tr>
-                            <td>{{ vendor.vendor__title }}</td>
-                            <td>{{ vendor.value_total }} {{ currency }}</td>
-                            <td>{{ vendor.paid_val }} {{ currency }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
         </div>
     </div>
     <div style="margin-bottom: 5%" class="row">

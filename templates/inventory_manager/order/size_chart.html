@@ -1,0 +1,51 @@
+{% extends 'inventory_manager/index.html' %} {% load static %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10 col-md-10">
+                    <div class="card">
+                        <div class="header">Add Sizes to {{ instance }}, {{ product }}</div>
+                        <div class="content">
+                            <h4>{{ product }}</h4>
+                            <form method="post">{% csrf_token %}
+                                 <div class="form-group">
+                                     <label for="exampleInputEmail1">Price</label>
+                                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                                     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                 </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Discount</label>
+                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                </div>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Size</th>
+                                            <th>Qty</th>
+                                            <th>Add</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for size in sizes %}
+                                            <tr>
+                                                <td>{{ size }}</td>
+                                                <td><input class="form-control" type="number" name="qty_{{ size.id }}" placeholder="0"></td>
+                                                <td><input type="checkbox" class="form-control" name="add_{{ size.id }}"></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <button style="width: 100%" class="btn btn-raised btn-dark" type="submit">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}

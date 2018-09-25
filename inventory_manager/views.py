@@ -69,9 +69,10 @@ def quick_vendor_create(request):
 def warehouse_order_detail(request, dk):
     instance = get_object_or_404(Order, id=dk)
     queryset = Product.my_query.get_site_queryset().active_warehouse().filter(vendor=instance.vendor)
+
     if 'search_name' in request.GET:
         queryset = queryset.filter(title__icontains=request.GET.get('search_name', None))
-    products = queryset.filter(size=False)[:10]
+    products = queryset[:10]
     products_with_size = queryset.filter(size=True)
     form = WarehouseOrderForm(instance=instance)
     
@@ -92,6 +93,17 @@ def warehouse_order_detail(request, dk):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     context = locals()
     return render(request, 'inventory_manager/order_detail.html', context)
+
+
+@staff_member_required
+def order_add_sizechart(request, pk, dk):
+    instance = get_object_or_404(Order, id=pk)
+    product = get_object_or_404(Product, id=dk)
+    sizes = Size.objects.all()
+    if request.POST:
+        pass
+    content = locals()
+    return render(request, 'inventory_manager/order/size_chart.html', content)
 
 
 @staff_member_required

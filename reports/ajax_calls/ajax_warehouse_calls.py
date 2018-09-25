@@ -11,7 +11,7 @@ from inventory_manager.models import Vendor
 from point_of_sale.models import RetailOrderItem
 from products.models import Product, Category, CategorySite, SizeAttribute
 from frontend.models import Brands
-from ..tools import initial_date
+from ..tools import initial_date, filter_date
 CURRENCY = settings.CURRENCY
 
 
@@ -150,12 +150,6 @@ def ajax_size_analysis(request):
                                        )
 
     return JsonResponse(data)
-
-
-
-
-
-
 
 
 #-------------------------------------------------------#

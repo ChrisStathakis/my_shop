@@ -6,6 +6,7 @@ from .ajax_calls.ajax_warehouse_calls import *
 from .view_sells import OrderRetailReportView, HomepageSellView
 
 
+
 app_name = 'reports'
 
 urlpatterns = [
@@ -37,15 +38,17 @@ urlpatterns = [
     path('site-categories/', CategoriesSiteView.as_view(), name='site_categories'),
     # path('site-category/<int:pk>', WarehouseCategoryReport.as_view(), name='site_category_detail'),
 
-    path('orders/', view=warehouse_orders, name='warehouse_orders'),
-    path('orders/<int:pk>/', view=order_id, name='warehouse_order_detail'),
-    path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
-
+    
     # transcations
     path('transcations/', transcations_homepage, name='transcation_homepage'),
     path('transcations/bill-list/', BillsReportView.as_view(), name='bills_report_view'),
     path('transcations/payroll-list/', PayrollReportView.as_view(), name='payroll_report_view'),
     path('transcations/expenses-list/', GenericExpenseView.as_view(), name='generic_expenses_view'),
+
+    # buys
+    path('orders/', WarehouseOrderView.as_view(), name='warehouse_orders'),
+    path('orders/<int:pk>/', WarehouseDetailView.as_view(), name='warehouse_order_detail'),
+    path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
 
     # sells
     path('report-sales/', HomepageSellView.as_view(), name='homepage_sales'),

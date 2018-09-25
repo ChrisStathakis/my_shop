@@ -20,7 +20,7 @@ from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
 from .tools import (initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, 
-                    warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis
+                    warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis, filter_date
                     )
 
 
@@ -289,47 +289,43 @@ class CategoriesSiteView(ListView):
 class CategorySiteView(DetailView):
     model = CategorySite
     template_name = ''
-    
-
-@staff_member_required
-def warehouse_orders(request):
-    vendors, payment_method, currency = Vendor.objects.all(), PaymentMethod.objects.all(), CURRENCY
-    orders = Order.objects.all()
-    orders = Order.filter_data(request, queryset=orders)
-
-    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
-    search_name, vendor_name, balance_name, paid_name = [request.GET.get('search_name'),
-                                                         request.GET.getlist('vendor_name'),
-                                                         request.GET.get('balance_name'),
-                                                         request.GET.get('paid_name')
-                                                         ]
-
-    order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('final_value'))[
-        'final_value__sum'] \
-        if orders else 0, orders.aggregate(Sum('paid_value'))[
-                                               'paid_value__sum'] if orders else 0
-    diff = total_value - paid_value
-    warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'final_value')
-    warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('final_value'),
-                                                                paid_val=Sum('paid_value')
-                                                                ).order_by(
-        '-value_total')
-    paginator = Paginator(orders, 100)
-    page = request.GET.get('page', 1)
-    orders = paginator.get_page(page)
-    context = locals()
-    return render(request, 'report/orders.html', context)
 
 
-@staff_member_required
-def order_id(request, pk):
-    currency = CURRENCY
-    instance = get_object_or_404(Order, id=pk)
-    order_items = instance.order_items.all()
-    orders_files = instance.warehouseorderimage_set.all()
-    payments_orders = instance.payment_orders.all()
-    context = locals()
-    return render(request, 'report/details/orders_id.html', context)
+@method_decorator(staff_member_required, name='dispatch')
+class WarehouseOrderView(ListView):
+    template_name = 'report/warehouse/orders.html'
+    model = Order
+    paginate_by = 50
+
+    def get_queryset(self):
+        date_start, date_end = filter_date(self.request)
+        queryset = Order.my_query.filter_by_date(date_start, date_end)
+        queryset = Order.filter_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        content = super(WarehouseOrderView, self).get_context_data(**kwargs)
+        date_start, date_end = filter_date(self.request)
+        orders, currency = self.object_list, CURRENCY
+        search_name, cate_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
+        discount_name, qty_name = get_filters_data(self.request)
+        order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('final_value'))[
+            'final_value__sum'] \
+            if orders else 0, orders.aggregate(Sum('paid_value'))[
+                                                   'paid_value__sum'] if orders else 0
+        diff = total_value - paid_value
+        warehouse_analysis = balance_sheet_chart_analysis(date_start, date_end, orders, 'final_value')
+        warehouse_vendors = orders.values('vendor__title').annotate(value_total=Sum('final_value'),
+                                                                    paid_val=Sum('paid_value')
+                                                                    ).order_by('-value_total')
+        content.update(locals())
+        return content
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class WarehouseDetailView(DetailView):
+    model = Order
+    template_name = 'report/warehouse/orders_id.html'
 
 
 @staff_member_required

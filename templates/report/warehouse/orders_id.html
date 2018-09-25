@@ -1,0 +1,176 @@
+{% extends 'report/warehouse/orders.html' %}
+
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div style="text-align: center" class="column">
+            <h2 class="ui blue icon header">
+                <i class="blue cart icon"></i>
+                <div class="content">
+                    {{ object }}
+                    <div class="sub header">{{ object.date_expired|date }} {{ object.vendor }}</div>
+                </div>
+            </h2>
+        </div>
+        <div class="column">
+            <ul>
+                {% for file in orders_files %}
+                    <li><a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a> </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="one wide column"></div>
+    <div class="four wide column">
+        <div class="ui segments">
+            <div style='text-align: center' class="ui blue header segment">Details</div>
+                <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="blue header">Date</h4>
+                    </td>
+                    <td>{{ object.date_expired|date }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="green header">Title</h4>
+                    </td>
+                    <td>{{ object }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="red header">Vendor</h4>
+                    </td>
+                    <td> {{ object.vendor }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Payment Method</h4>
+                    </td>
+                    <td>{{ order.payment_method }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Discount</h4>
+                    </td>
+                    <td>{{ order.discount }} %</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Clean Value</h4>
+                    </td>
+                     <td>{{ object.tag_final_value }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Taxes</h4>
+                    </td>
+                     <td>{{ object.tag_taxes }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Final Value</h4>
+                    </td>
+                    <td>{{ object.tag_final_value }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Timestamp - Last Edit</h4>
+                    </td>
+                    <td>{{ object.timestamp }} <br> {{ object.edited }}</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="ten wide column">
+        <table class="ui celled striped table">
+          <thead>
+            <tr>
+                <th colspan="4">Order Items</th>
+                <th colspan="2">Unit Prices</th>
+                <th colspan="2">Total Values</th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>Order code</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price - Discount</th>
+                <th>Final Price</th>
+                <th>Total Value No Taxes</th>
+                <th>Final Value</th>
+            </tr>
+          </thead>
+            <tbody>
+            {% for item in object.order_items.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product.order_code|default_if_none:"---" }}</td>
+                    <td><a href="{% url 'reports:products_detail' item.product.id %}">{{ item }}</a></td>
+                    <td>{{ item.qty }} {{ item.get_unit_display }}</td>
+                    <td>{{ item.tag_value }} - {{ item.discount_value }} %</td>
+                    <td>{{ item.tag_final_value }}</td>
+                    <td>{{ item.tag_total_clean_value }}</td>
+                    <td>{{ item.tag_total_final_value }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8">No data</td> </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+        <table style="margin-top: 20%" class="ui red celled striped table">
+            <thead>
+            <tr>
+                <th colspan="6">
+                    Payment Orders
+                </th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Notes</th>
+                <th>Value</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in object.payments_orders.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.date_expired|date }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.tag_value }}</td>
+                    <td>{{ item.tag_payment }}</td>
+                    <td>{{ item.status }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No data</td> </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div class="one wide column"></div>
+
+
+    <div style="margin-bottom: 10%;" class="row"></div>
+
+
+
+
+{% endblock %}
+
+
+
