@@ -12,7 +12,7 @@ from django.db.models import ExpressionWrapper, DecimalField
 from django.template.context_processors import csrf
 from django.contrib.admin.views.decorators import staff_member_required
 
-from account.models import CostumerAccount
+from accounts.models import CostumerAccount
 from itertools import chain
 from operator import attrgetter
 from dateutil.relativedelta import relativedelta

@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, HttpResponseRedirect, redirect, get_object_or_404
+from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.context_processors import csrf
 from django.db.models import Avg, Max, Min, Sum, Count
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, TemplateView, View
+from django.views.generic import ListView, DetailView, TemplateView
 from django.db.models.functions import TruncMonth
 
 

@@ -159,7 +159,7 @@ class RetailOrder(DefaultOrderModel):
         self.discount = total_value
 
     def get_report_url(self):
-        pass
+        return reverse('reports:retail_order_detail', kwargs={'pk': self.id})
 
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False
@@ -187,13 +187,13 @@ class RetailOrder(DefaultOrderModel):
         for ele in TAXES_CHOICES:
             if ele[0] == self.taxes:
                 choice = ele[1]
-        return self.final_price * (Decimal(choice)/100)
+        return self.final_value * (Decimal(choice)/100)
 
     def tag_total_taxes(self):
         return '%s %s' % (self.get_total_taxes, CURRENCY)
 
     def tag_clean_value(self):
-        return '%s %s' % (self.final_price - self.get_total_taxes, CURRENCY)
+        return '%s %s' % (self.final_value - self.get_total_taxes, CURRENCY)
 
     def tag_shipping_value(self):
         return '%s %s' % (self.shipping_cost, CURRENCY)
@@ -203,11 +203,11 @@ class RetailOrder(DefaultOrderModel):
 
     @property
     def get_order_items(self):
-        return self.retailorderitem_set.all()
+        return self.order_items.all()
 
     @property
     def tag_remain_value(self):
-        return '%s %s' % (round(self.final_price - self.paid_value, 2), CURRENCY)
+        return '%s %s' % (round(self.final_value - self.paid_value, 2), CURRENCY)
 
     def is_printed(self):
         return 'Printed' if self.printed else 'Not Printed'

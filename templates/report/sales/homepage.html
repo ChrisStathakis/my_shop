@@ -1,5 +1,13 @@
 {% extends 'index.html' %}
 
+{% block down_menu %}
+<div class="ui three item bottom fixed menu">
+    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Retail Orders</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Costumers</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Sellers</a>
+</div>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="six wide column"></div>
@@ -97,47 +105,37 @@
     <div class="row">
         <div class="one wide column"></div>
         <div class="four wide column">
-        <canvas id="myChart1" width="400" height="400"></canvas>
-        <script>
-        var ctx = document.getElementById("myChart1").getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["Συνολική Αξία Παραγγελιών", "Πληρωμές", "Οφειλωμενα"],
-                datasets: [{
-                    label: '# Euro',
-                    data: [{{ total_value }}, {{ paid_value }}, {{ diff }}],
-                    backgroundColor: [
-                        'blue',
-                        'green',
-                        'yellow',
-                        'rgba(255,99,132,1)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }
-                ]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
-            }
-        });
-        </script>
+        <div class="ui segments">
+            <div style='text-align: center' class="ui blue header segment">Sells Analysis</div>
+            <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="header">Sells - Paid</h4>
+                    </td>
+                    <td>{{ total_sells }} {{ currency }} - {{ paid_sells }} {{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Returns - Paid</h4>
+                    </td>
+                    <td>{{ total_returns }} {{ currency }} - {{ paid_returns }} {{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Total - Paid Total</h4>
+                    </td>
+                    <td>{{ total }} {{ currency }} - {{ paid_total }} {{ currency }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
         </div>
         <div class="ten wide column">
             <canvas id="myChart2" width="800" height="400"></canvas>
@@ -148,7 +146,7 @@
                 data: {
                     labels: [{% for month in warehouse_analysis %}"{{ month.0 }}", {% endfor %}],
                     datasets: [{
-                        label: '# Τιμολόγια',
+                        label: '# Sells',
                         data: [{% for month in warehouse_analysis %}{{ month.1 }}, {% endfor %}],
                         fill:false,
                         backgroundColor: [
@@ -189,8 +187,8 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
             <div class="row">
-                <button class="ui blue button" id="analyse_vendor">Σύγκριση Προμηθευτών</button>
-                <button class="ui blue button">Σύγκριση Περιόδου</button>
+                <button class="ui blue button" id="analyse_vendor">Payment Analysis</button>
+                <button class="ui blue button">Store Analysis</button>
                 {{ vendor_name }}, {{ date_pick }}
                 <div class="row" id="data-show">
 
@@ -201,94 +199,50 @@
     </div>
     <div class="row">
         <div class="one wide column"></div>
-        <div class="twelve wide column">
+        <div class="fourteen wide column">
             <div class="row">
                 <table class="ui celled striped table">
                     <thead>
                         <tr>
                             <th colspan="9">
-                                Συνολική Αξία {{ order.tag_total_value }}
+                                All Retail Orders
                             </th>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th>Ημερομηνία</th>
-                            <th>Σχολια- Τίτλος</th>
-                            <th>Προμηθεύτης</th>
-                            <th>Είδος</th>
-                            <th>Καθαρή Αξία</th>
-                            <th>ΦΠΑ</th>
-                            <th>Συνολική Αξία</th>
-                            <th></th>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Costumer</th>
+                            <th>Order Type</th>
+                            <th>Seller</th>
+                            <th>Payment Type</th>
+                            <th>Value</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in orders %}
+                        {% for order in object_list %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ order.date_expired|date }}</td>
                                 <td>{{ order }}</td>
-                                <td><a href="{% url 'reports:vendor_detail' order.vendor.id %}">{{ order.vendor }}</a></td>
+                                <td><a href="">{{ order.costumer_account }}</a></td>
                                 <td>{{ order.get_order_type_display }}</td>
-                                <td>{{ order.tag_clean_value }} </td>
-                                <td>{{ order.tag_total_taxes }}</td>
+                                <td>{{ order.user_account }} </td>
+                                <td>{{ order.payment_method }}</td>
                                 <td>{{ order.tag_final_value }}</td>
-                                <td><a href='{{ order.get_report_url }}' {% if order.is_paid %} class="ui teal button" {% else %} class="ui red button" {% endif %}>Λεπτομέριες</a></td>
+                                <td><a href='{{ order.get_report_url }}' {% if order.is_return %} class="ui teal button" {% else %} class="ui red button" {% endif %}>Details</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9">No Data</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="three wide column">
-            <div class="ui segments">
-                <div style='text-align: center' class="ui inverted blue segment">Πληροφορίες</div>
-                <div style='text-align: center' class="ui blue header segment">Ανάλυση Παραγγελιών</div>
-                <div style="margin-left: 3%" class="ui celled list">
-                    <div class="item">
-                        <div class=" green content">
-                            <div class="green header">{{ total_value  }} {{ currency }}</div>
-                            Συνολική Αξία Παραγγελιών
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ paid_value }} {{ currency }}</div>
-                            Πληρωμές
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ diff }} {{ currency }}</div>
-                            Οφειλωμενα
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="content">
-                            <div class="header">{{ order_count }}</div>
-                            Παραγγελίες
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <table class="ui tiny table">
-                <thead>
-                    <tr>
-                        <th>Προμηθευτής</th>
-                        <th>Συνολική Αξία</th>
-                        <th>Υπόλοιπο</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for vendor in warehouse_vendors %}
-                        <tr>
-                            <td>{{ vendor.vendor__title }}</td>
-                            <td>{{ vendor.value_total }} {{ currency }}</td>
-                            <td>{{ vendor.paid_val }} {{ currency }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <div class="one wide column"></div>
     </div>
+    <div class="row" style="margin-bottom: 10%"></div>
 {% endblock %}

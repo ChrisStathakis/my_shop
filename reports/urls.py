@@ -49,6 +49,7 @@ urlpatterns = [
 
     # sells
     path('report-sales/', HomepageSellView.as_view(), name='homepage_sales'),
+    path('report-sales/detail/<int:pk>/', OrderRetailReportView.as_view(), name='retail_order_detail'),
 
     # ajax_calls
     path('ajax/characteristics/analysis', ajax_size_analysis, name='ajax_size_analysis'),
