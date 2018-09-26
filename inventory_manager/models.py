@@ -294,7 +294,6 @@ class OrderItem(DefaultOrderItemModel):
                                 )
     unit = models.CharField(max_length=1, choices=UNIT, default='1')
     taxes = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
-    size = models.ForeignKey('products.SizeAttribute', verbose_name='Size', null=True, blank=True, on_delete=models.CASCADE)
     total_clean_value = models.DecimalField(default=0, max_digits=15, decimal_places=2,
                                             verbose_name='Συνολική Αξία χωρίς Φόρους')
     total_value_with_taxes = models.DecimalField(default=0, max_digits=14, decimal_places=2,
@@ -308,6 +307,9 @@ class OrderItem(DefaultOrderItemModel):
         return f'{self.product}'
 
     def save(self, *args, **kwargs):
+        if self.product.size:
+            queryset = self.attributes.all()
+            self.qty = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
         self.final_value = Decimal(self.value) * (100-self.discount_value)/100 if self.discount_value > 0 else self.value
         self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
         self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100+self.get_taxes_display()) / 100)
@@ -333,7 +335,6 @@ class OrderItem(DefaultOrderItemModel):
 
     @staticmethod
     def add_to_order(request, product, order):
-        print(product, order)
         get_order_item = OrderItem.objects.filter(product=product, order=order)
         qty = request.GET.get('qty_%s' % product.id, 0)
         qty = int(qty) if qty else 0
@@ -395,6 +396,22 @@ def update_qty_on_delete(sender, instance, *args, **kwargs):
     self.order.save()
 
 
+class OrderItemSize(models.Model):
+    order_item_related = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, null=True, related_name='attributes')
+    size_related = models.ForeignKey('products.Size', on_delete=models.SET_NULL, null=True)
+    qty = models.IntegerField(default=0)
+    value = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0)
+    final_value = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+
+    class Meta:
+        unique_together = ['order_item_related', 'size_related']
+
+    def save(self, *args, **kwargs):
+        super(OrderItemSize, self).save(*args, **kwargs)
+        self.order_item_related.save()
+
+# no used atm
 class PreOrder(models.Model):
     STATUS = (('a', 'Active'), ('b', 'Used'))
     title = models.CharField(max_length=100)

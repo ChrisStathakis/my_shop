@@ -15,7 +15,7 @@ from .models import Order, OrderItem, Vendor, Category
 from .models import PaymentOrders
 from site_settings.forms import PaymentForm
 from inventory_manager.models import Order, OrderItem, Vendor
-from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm
+from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
 
 import datetime
 import decimal
@@ -101,10 +101,35 @@ def order_add_sizechart(request, pk, dk):
     product = get_object_or_404(Product, id=dk)
     sizes = Size.objects.all()
     if request.POST:
-        pass
+        price = request.POST.get('price', None)
+        discount = request.POST.get('discount', None)
+        order_item = OrderItem.objects.get_or_create(order=instance,
+                                                     product=product
+                                                     )
+        print(order_item, price, discount)
+        order_item.value = price
+        order_item.discount_value = discount
+        order_item.save()
+        for id in request.POST.getlist('ids', []):
+            size = get_object_or_404(Size, id=id)
+            qty_ = request.POST.get(f'qty_{id}', None)
+            if qty_:
+                qs_exists = OrderItemSize.objects.filter(order_item_related=order_item,
+                                                         size_related=size,
+                                                         qty=int(qty_),
+                                                         value=order_item.value,
+                                                         discount=order_item.discount_value,
+                                                         final_value=order_item.final_value
+                                                         )
+        return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'pk': instance.id}))
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
 
+
+@staff_member_required
+def edit_order_item_size(request, pk):
+    instance = get_object_or_404(OrderItem, id=pk)
+    pass
 
 @staff_member_required
 def order_update_warehouse(request, pk):
@@ -156,6 +181,7 @@ def order_payment_manager(request, pk):
         instance.save()
     context = locals()
     return render(request, 'inventory_manager/order_manage_payments.html', context)
+
 
 @staff_member_required
 def order_payment_manager_add_or_remove(request, pk, dk, slug):

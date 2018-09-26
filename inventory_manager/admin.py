@@ -7,6 +7,12 @@ from .models import *
 class OrderItemAdmin(admin.ModelAdmin):
     pass
 
+
 @admin.register(Vendor)
 class VendorAdmin(ImportExportModelAdmin):
+    pass
+
+
+@admin.register(OrderItemSize)
+class OrderItemSixeAdmin(admin.ModelAdmin):
     pass
