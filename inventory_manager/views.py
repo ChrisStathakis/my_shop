@@ -7,12 +7,13 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
-
+from django.forms import formset_factory
 
 from products.models import Product,  Color, Size
 from products.forms import VendorForm
 from .models import Order, OrderItem, Vendor, Category
 from .models import PaymentOrders
+from .forms import OrderItemSizeForm, OrderItemSizeFormSet
 from site_settings.forms import PaymentForm
 from inventory_manager.models import Order, OrderItem, Vendor
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
@@ -139,9 +140,10 @@ def order_add_sizechart(request, pk, dk):
 
 @staff_member_required
 def order_edit_sizechart(request, pk):
-    order_item = get_object_or_404(OrderItem, id=pk)
-    sizes = Size.objects.all()
-
+    edit = True
+    instance = get_object_or_404(OrderItem, id=pk)
+    initial = {}
+    formset = OrderItemSizeFormSet()
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
 

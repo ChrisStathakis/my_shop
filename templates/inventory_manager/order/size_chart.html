@@ -72,9 +72,12 @@
                             {% if edit %}
                                 <form method="post" class="form">
                                     {% csrf_token %}
-
+                                    {% for form in formset %}
+                                        {{ form.as_table }}
+                                        
+                                    {% endfor %}
+                                    <button class="btn btn-raised" type="input">Save</button>
                                 </form>
-
                             {% endif %}
                         </div>
                     </div>
