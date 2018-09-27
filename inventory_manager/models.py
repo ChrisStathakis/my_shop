@@ -310,7 +310,7 @@ class OrderItem(DefaultOrderItemModel):
         if self.product.size:
             queryset = self.attributes.all()
             self.qty = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
-        self.final_value = Decimal(self.value) * (100-self.discount_value)/100 if self.discount_value > 0 else self.value
+        self.final_value = Decimal(self.value) * (100-self.discount_value)/100
         self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
         self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100+self.get_taxes_display()) / 100)
         super(OrderItem, self).save(*args, **kwargs)
@@ -400,7 +400,7 @@ class OrderItemSize(models.Model):
     order_item_related = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, null=True, related_name='attributes')
     size_related = models.ForeignKey('products.Size', on_delete=models.SET_NULL, null=True)
     qty = models.IntegerField(default=0)
-    value = models.IntegerField(default=0)
+    value = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     discount = models.IntegerField(default=0)
     final_value = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
@@ -410,6 +410,11 @@ class OrderItemSize(models.Model):
     def save(self, *args, **kwargs):
         super(OrderItemSize, self).save(*args, **kwargs)
         self.order_item_related.save()
+
+    @staticmethod
+    def create_new_size(request, order, product):
+        pass
+
 
 # no used atm
 class PreOrder(models.Model):

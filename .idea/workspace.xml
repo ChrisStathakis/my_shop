@@ -5,36 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72c4f91b-add1-49b2-a03b-d6581d9e94b3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0014_auto_20180926_0733.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0015_auto_20180926_0734.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0016_auto_20180926_0751.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0017_auto_20180926_0759.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0018_auto_20180926_0800.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0019_auto_20180926_0801.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0013_auto_20180926_0733.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0014_auto_20180926_0734.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0015_auto_20180926_0751.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0016_auto_20180926_0759.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0017_auto_20180926_0800.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0018_auto_20180926_0801.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0012_auto_20180926_0733.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0013_auto_20180926_0734.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0014_auto_20180926_0751.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0015_auto_20180926_0759.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0016_auto_20180926_0800.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0017_auto_20180926_0801.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0012_auto_20180926_0733.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0013_auto_20180926_0734.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0014_auto_20180926_0751.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0015_auto_20180926_0759.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0016_auto_20180926_0800.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0017_auto_20180926_0801.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0020_auto_20180927_0801.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0019_auto_20180927_0801.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/site_settings/migrations/0018_auto_20180927_0801.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/transcations/migrations/0018_auto_20180927_0801.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/admin.py" afterPath="$PROJECT_DIR$/inventory_manager/admin.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/models.py" afterPath="$PROJECT_DIR$/inventory_manager/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/urls.py" afterPath="$PROJECT_DIR$/inventory_manager/urls.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/views.py" afterPath="$PROJECT_DIR$/inventory_manager/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html" afterPath="$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" afterPath="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -52,11 +33,21 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/inventory_manager/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="477">
-              <caret line="131" column="8" lean-forward="false" selection-start-line="131" selection-start-column="8" selection-end-line="131" selection-end-column="8" />
+            <state relative-caret-position="340">
+              <caret line="146" column="0" lean-forward="true" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
               <folding>
                 <element signature="e#0#109#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="order_detail.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order_detail.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="173" column="118" lean-forward="false" selection-start-line="173" selection-start-column="118" selection-end-line="173" selection-end-column="118" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -65,7 +56,7 @@
         <entry file="file://$PROJECT_DIR$/inventory_manager/admin.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="153">
-              <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -76,9 +67,11 @@
       <file leaf-file-name="size_chart.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="68" lean-forward="false" selection-start-line="8" selection-start-column="68" selection-end-line="8" selection-end-column="68" />
-              <folding />
+            <state relative-caret-position="272">
+              <caret line="74" column="0" lean-forward="false" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+              <folding>
+                <element signature="e#194#3767#0#HTML" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -86,8 +79,8 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inventory_manager/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="85" lean-forward="false" selection-start-line="9" selection-start-column="63" selection-end-line="9" selection-end-column="85" />
+            <state relative-caret-position="272">
+              <caret line="16" column="92" lean-forward="false" selection-start-line="16" selection-start-column="72" selection-end-line="16" selection-end-column="92" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -98,8 +91,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2433">
-              <caret line="412" column="0" lean-forward="true" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
+            <state relative-caret-position="2110">
+              <caret line="399" column="116" lean-forward="false" selection-start-line="399" selection-start-column="106" selection-end-line="399" selection-end-column="116" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
                 <element signature="e#6432#12378#0" expanded="false" />
@@ -143,6 +136,7 @@
       <find>month</find>
       <find>attr_related</find>
       <find>size</find>
+      <find>get_or</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -195,13 +189,13 @@
         <option value="$PROJECT_DIR$/reports/views.py" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/orders.html" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/orders_id.html" />
-        <option value="$PROJECT_DIR$/inventory_manager/urls.py" />
-        <option value="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" />
         <option value="$PROJECT_DIR$/inventory_manager/migrations/0016_auto_20180926_0751.py" />
-        <option value="$PROJECT_DIR$/inventory_manager/models.py" />
         <option value="$PROJECT_DIR$/inventory_manager/admin.py" />
-        <option value="$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html" />
         <option value="$PROJECT_DIR$/inventory_manager/views.py" />
+        <option value="$PROJECT_DIR$/inventory_manager/urls.py" />
+        <option value="$PROJECT_DIR$/inventory_manager/models.py" />
+        <option value="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" />
+        <option value="$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html" />
       </list>
     </option>
   </component>
@@ -235,6 +229,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -258,13 +253,30 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="my_shop" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="my_shop" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="inventory_manager" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -784,7 +796,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -827,9 +838,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
           <caret line="138" column="14" lean-forward="true" selection-start-line="107" selection-start-column="7" selection-end-line="138" selection-end-column="14" />
-          <folding>
-            <element signature="e#5775#6965#0#HTML" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -901,19 +909,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order_detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="33" column="65" lean-forward="false" selection-start-line="33" selection-start-column="65" selection-end-line="33" selection-end-column="65" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/migrations/0019_auto_20180926_0801.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="364">
           <caret line="35" column="10" lean-forward="true" selection-start-line="35" selection-start-column="10" selection-end-line="35" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -921,7 +920,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -929,7 +927,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -937,42 +934,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
           <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="85" lean-forward="false" selection-start-line="9" selection-start-column="63" selection-end-line="9" selection-end-column="85" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="68" lean-forward="false" selection-start-line="8" selection-start-column="68" selection-end-line="8" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2433">
-          <caret line="412" column="0" lean-forward="true" selection-start-line="412" selection-start-column="0" selection-end-line="412" selection-end-column="0" />
+        <state relative-caret-position="2110">
+          <caret line="399" column="116" lean-forward="false" selection-start-line="399" selection-start-column="106" selection-end-line="399" selection-end-column="116" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
             <element signature="e#6432#12378#0" expanded="false" />
@@ -981,10 +959,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/inventory_manager/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="92" lean-forward="false" selection-start-line="16" selection-start-column="72" selection-end-line="16" selection-end-column="92" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="173" column="118" lean-forward="false" selection-start-line="173" selection-start-column="118" selection-end-line="173" selection-end-column="118" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="74" column="0" lean-forward="false" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+          <folding>
+            <element signature="e#194#3767#0#HTML" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="131" column="8" lean-forward="false" selection-start-line="131" selection-start-column="8" selection-end-line="131" selection-end-column="8" />
+        <state relative-caret-position="340">
+          <caret line="146" column="0" lean-forward="true" selection-start-line="146" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
           <folding>
             <element signature="e#0#109#0" expanded="true" />
           </folding>

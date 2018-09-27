@@ -170,11 +170,21 @@
                                         <td>{{ item }}</td>
                                         <td>{{ item.qty }}</td>
                                         <td>{{  item.tag_value }} - {{ item.discount_value }} % - {{ item.tag_final_value }}</td>
-                                        <td> 
-                                            <a href="{% url 'inventory:edit_order_item' item.id %}" class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></a>
+                                        <td>
+                                            <a {% if item.product.size %} href="{% url 'inventory:order_edit_sizechart' item.id %}" {% else %} href="{% url 'inventory:edit_order_item' item.id %}" {% endif %}
+                                               class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></a>
                                             <a href="{% url 'inventory:delete_order_item' item.id %}" class="btn btn-sm  btn-warning btn-icon"><i class="fa fa-remove"></i></a>
                                         </td>
-                                        <td>{{ item.product.qty }} {{ item.product.get_measure_unit_display }}</td>
+                                        <td>
+                                            {% if item.attributes %}
+                                                <p>Total Qty: {{ item.qty }}</p>
+                                                {% for size in item.attributes.all %}
+                                                    Attr: {{ size.size_related }} - Qty: {{ size.qty }} |
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ item.product.qty }} {{ item.product.get_measure_unit_display }}
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% empty %}
                                     <tr>

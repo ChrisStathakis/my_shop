@@ -4,7 +4,7 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-10 col-md-10">
+                <div class="col-lg-8 col-md-8">
                     <div class="card">
                         <div class="header">Add Sizes to {{ instance }}, {{ product }}</div>
                         <div class="content">
@@ -53,13 +53,29 @@
                                             <tr>
                                                 <td>{{ size }}</td>
                                                 <td><input class="form-control" type="number" name="qty_{{ size.id }}" placeholder="0"></td>
-                                                <td><input type="checkbox" class="form-control" value="{{ size_id }}" name="ids"></td>
+                                                <td><input type="checkbox" class="form-control" value="{{ size.id }}" name="ids"></td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
                                 <button style="width: 100%" class="btn btn-raised btn-dark" type="submit">Save</button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="card">
+                        <div class="header">
+                            <a href="" class="btn btn-raised">Back</a>
+                        </div>
+                        <div class="content">
+                            {% if edit %}
+                                <form method="post" class="form">
+                                    {% csrf_token %}
+
+                                </form>
+
+                            {% endif %}
                         </div>
                     </div>
                 </div>

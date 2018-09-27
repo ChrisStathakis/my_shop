@@ -14,6 +14,7 @@ urlpatterns = [
     path('order/<int:pk>/order-payment-manager/', order_payment_manager, name='order_payment_manager'),
     path('order/<int:pk>/order-payment-manager/<int:dk>/<slug:slug>/', order_payment_manager_add_or_remove, name='order_payment_manager_add_or_remove'),
     path('order/size-chart/create/<int:pk>/<int:dk>/', order_add_sizechart, name='order_create_size_chart'),
+    path('order/size-chart/edit/<int:pk>/', order_edit_sizechart, name='order_edit_sizechart'),
 
     path('vendor-list/',  VendorPageList.as_view(), name='vendor_list'),
     path('vendor-detail/<int:pk>/', VendorPageDetail.as_view(), name='vendor_detail'),
