@@ -7,13 +7,14 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
-from django.forms import formset_factory
+from django.forms import inlineformset_factory
+
 
 from products.models import Product,  Color, Size
 from products.forms import VendorForm
 from .models import Order, OrderItem, Vendor, Category
 from .models import PaymentOrders
-from .forms import OrderItemSizeForm, OrderItemSizeFormSet
+from .forms import OrderItemSizeForm, OrderItemForm
 from site_settings.forms import PaymentForm
 from inventory_manager.models import Order, OrderItem, Vendor
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
@@ -115,7 +116,6 @@ def order_add_sizechart(request, pk, dk):
         order_item.save()
         id_list = request.POST.getlist('ids', [])
         for id in id_list:
-            print(id)
             size = get_object_or_404(Size, id=int(id))
             qty_ = request.POST.get(f'qty_{id}', None)
             qs_exists = OrderItemSize.objects.filter(order_item_related=order_item, size_related=size)
@@ -125,7 +125,7 @@ def order_add_sizechart(request, pk, dk):
                 order_size.value = price
                 order_item.discount = discount
                 order_item.save()
-            if qty_:
+            elif qty_:
                 order_size = OrderItemSize.objects.create(order_item_related=order_item,
                                                           size_related=size,
                                                           qty=int(qty_),
@@ -133,6 +133,8 @@ def order_add_sizechart(request, pk, dk):
                                                           discount=order_item.discount_value,
                                                           final_value=order_item.final_value
                                                           )
+            else:
+                continue
         return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
@@ -140,10 +142,30 @@ def order_add_sizechart(request, pk, dk):
 
 @staff_member_required
 def order_edit_sizechart(request, pk):
-    edit = True
-    instance = get_object_or_404(OrderItem, id=pk)
-    initial = {}
-    formset = OrderItemSizeFormSet()
+    edit, instance_ = True, get_object_or_404(OrderItem, id=pk)
+    instance, product, instance_sizes, initial = instance_.order, instance_.product, instance_.attributes.all(), []
+    for size in instance_sizes:
+        initial.append({ 'order_item_related': size.order_item_related, 
+                         'size_related': size.size_related,
+                          'qty': size.qty,
+                'value': size.value }
+                )
+    order_item_form = OrderItemForm(instance=instance_)
+    OrderItemSizeFormSet = inlineformset_factory(OrderItem, OrderItemSize, extra=0, form=OrderItemSizeForm)
+    formset = OrderItemSizeFormSet(instance=instance_)
+
+    if 'order_item' in request.POST:
+        order_item_form = OrderItemForm(request.POST, instance=instance_)
+        if order_item_form.is_valid():
+            order_item_form.save()
+            return HttpResponseRedirect(reverse('inventory:order_edit_sizechart', kwargs={'pk': pk}))
+    
+    if request.POST:
+        formset = OrderItemSizeFormSet(request.POST, initial=initial, instance=instance_)
+        
+        if formset.is_valid():
+            formset.save()
+            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
 

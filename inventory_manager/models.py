@@ -215,6 +215,9 @@ class Order(DefaultOrderModel):
     def get_report_url(self):
         return reverse('reports:warehouse_order_detail', kwargs={'pk': self.id})
 
+    def get_edit_url(self):
+        return reverse('inventory:warehouse_order_detail', kwargs={'dk': self.id})
+
     @staticmethod
     def filter_data(request, queryset):
         search_name = request.GET.get('search_name', None)
@@ -317,6 +320,10 @@ class OrderItem(DefaultOrderItemModel):
         self.product.price_buy = self.value
         self.product.order_discount = self.discount_value
         self.product.save()
+        if self.product.size:
+            queryset = self.attributes.all()
+            queryset.update(value=self.value, discount=self.discount_value, final_value=self.final_value)
+        
 
     def remove_from_order(self, qty):
         if WAREHOUSE_ORDERS_TRANSCATIONS:
@@ -375,6 +382,10 @@ class OrderItem(DefaultOrderItemModel):
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)
+
+    def tag_total_taxes(self):
+        taxes = self.total_value_with_taxes - self.total_clean_value
+        return f'{taxes} {CURRENCY}'
 
     @staticmethod
     def filters_data(request, queryset):

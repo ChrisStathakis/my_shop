@@ -1,7 +1,6 @@
 from django import forms
 from django.db.models import Sum, F
 from django.forms import inlineformset_factory
-from django.forms.models import BaseInlineFormSet
 
 from products.models import *
 from site_settings.models import PaymentMethod, PaymentOrders
@@ -157,20 +156,17 @@ class CategoryForm(forms.ModelForm):
 
 
 class OrderItemSizeForm(forms.ModelForm):
-
+    
     class Meta:
         model = OrderItemSize
         fields = '__all__'
+        exlude = ['final_value', 'value', 'discount']
 
     def __init__(self, *args, **kwargs):
         super(OrderItemSizeForm, self).__init__(*args, **kwargs)
+        self.fields['size_related'].widget.attrs['readonly'] = True
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+     
 
-
-class BaseOrderItemSizeFormset(BaseInlineFormSet):
-    pass
-
-        
-OrderItemSizeFormSet = inlineformset_factory(OrderItem, OrderItemSize, extra=3, form=OrderItemSizeForm)

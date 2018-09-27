@@ -22,7 +22,7 @@
                     </div>
                     <div class="content">
                         <form class='form' method="get">
-                            <table class="table table-responsive table-bordered">
+                            <table class="table table-responsive table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>id - sku</th>
@@ -152,15 +152,19 @@
                         <h4 class="title">Order Items</h4>
                     </div>
                     <div class="content">
-                        <table class="table table-bordered">
+                        <table class="table table-sm table-hover table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Product</th>
                                     <th>Qty</th>
                                     <th>Value - Discount- Final Value</th>
+                                    <th colspan="3">
+                                        <span class="badge badge-secondary">Clean Value</span>
+                                        <span style="background-color:red" class="badge badge-danger">Taxes</span>
+                                        <span style="background-color:green" class="badge badge-light">Final Value</span></th>
                                     <th>Actions</th>
-                                    <th>Remaining in Warehouse</th>
+                                    <th>Qty Store</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -169,12 +173,19 @@
                                         <td>{{ item.order_code }}</td>
                                         <td>{{ item }}</td>
                                         <td>{{ item.qty }}</td>
-                                        <td>{{  item.tag_value }} - {{ item.discount_value }} % - {{ item.tag_final_value }}</td>
+                                        <td colspan="3">{{  item.tag_value }} - {{ item.discount_value }} % - {{ item.tag_final_value }}</td>
+                                        <td>
+                                            <span class="badge badge-secondary">{{ item.tag_total_clean_value }}</span>
+                                            <span style="background-color:red" class="badge badge-danger">{{ item.tag_total_taxes }}</span>
+                                            <span style="background-color:green" class="badge badge-light">{{ item.tag_total_final_value }}</span>
+                                        </td>
+                                        
                                         <td>
                                             <a {% if item.product.size %} href="{% url 'inventory:order_edit_sizechart' item.id %}" {% else %} href="{% url 'inventory:edit_order_item' item.id %}" {% endif %}
                                                class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></a>
                                             <a href="{% url 'inventory:delete_order_item' item.id %}" class="btn btn-sm  btn-warning btn-icon"><i class="fa fa-remove"></i></a>
                                         </td>
+                                       
                                         <td>
                                             {% if item.attributes %}
                                                 <p>Total Qty: {{ item.qty }}</p>
