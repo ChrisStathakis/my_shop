@@ -10,11 +10,11 @@ from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 from django.forms import inlineformset_factory
 
 
-from products.models import Product,  Color, Size
+from products.models import Product,  Color, Size, SizeAttribute
 from products.forms import VendorForm
 from .models import Order, OrderItem, Vendor, Category
 from .models import PaymentOrders
-from .forms import OrderItemSizeForm, OrderItemForm
+from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm
 from site_settings.forms import PaymentForm
 from inventory_manager.models import Order, OrderItem, Vendor
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
@@ -77,7 +77,7 @@ def warehouse_order_detail(request, dk):
     products = queryset[:10]
     products_with_size = queryset.filter(size=True)
     form = WarehouseOrderForm(instance=instance)
-    
+    image_form = WarehouseOrderImageForm(initial={'order_related': instance})
     if 'add_products' in request.GET:
         ids = request.GET.getlist('ids', None)
         if ids:
@@ -101,15 +101,13 @@ def warehouse_order_detail(request, dk):
 def order_add_sizechart(request, pk, dk):
     instance = get_object_or_404(Order, id=pk)
     product = get_object_or_404(Product, id=dk)
+    order_item, created = OrderItem.objects.get_or_create(order=instance,
+                                                          product=product,
+                                                          )
     sizes = Size.objects.all()
     if request.POST:
         price = request.POST.get('price', None)
         discount = request.POST.get('discount', None)
-        order_item, created = OrderItem.objects.get_or_create(order=instance,
-                                                              product=product,
-                                                              discount_value=0,
-                                                              value=0
-                                                              )
         order_item.value = price
         if discount:
             order_item.discount_value = discount
@@ -118,23 +116,18 @@ def order_add_sizechart(request, pk, dk):
         for id in id_list:
             size = get_object_or_404(Size, id=int(id))
             qty_ = request.POST.get(f'qty_{id}', None)
-            qs_exists = OrderItemSize.objects.filter(order_item_related=order_item, size_related=size)
-            if qs_exists.exists() and qty_:
-                order_size = qs_exists.first()
-                order_size.qty += int(qty_)
-                order_size.value = price
-                order_item.discount = discount
-                order_item.save()
-            elif qty_:
-                order_size = OrderItemSize.objects.create(order_item_related=order_item,
-                                                          size_related=size,
-                                                          qty=int(qty_),
-                                                          value=order_item.value,
-                                                          discount=order_item.discount_value,
-                                                          final_value=order_item.final_value
-                                                          )
-            else:
-                continue
+            product_size, created = SizeAttribute.objects.get_or_create(title=size,
+                                                                        product=order_item.product
+                                                                        )
+            order_size, size_created = OrderItemSize.objects.get_or_create(order_item_related=order_item,
+                                                                      size_related=size
+                                                                      )
+            if size_created:
+                order_size.product_attr_related = product_size
+            order_size.qty += int(qty_)
+            order_size.value = price
+            order_item.discount = discount
+            order_item.save()
         return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
@@ -168,6 +161,7 @@ def order_edit_sizechart(request, pk):
             return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     content = locals()
     return render(request, 'inventory_manager/order/size_chart.html', content)
+
 
 @staff_member_required
 def edit_order_item_size(request, pk):

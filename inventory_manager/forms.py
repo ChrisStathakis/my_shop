@@ -109,13 +109,24 @@ class WarehouseOrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['date_expired', 'title', 'payment_method', 'total_discount', 'taxes_modifier']
+        fields = ['date_expired', 'title', 'payment_method', 'total_discount', 'taxes_modifier',]
 
     def __init__(self, *args, **kwargs):
         super(WarehouseOrderForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+
+class WarehouseOrderImageForm(forms.ModelForm):
+
+    class Meta:
+        model = WarehouseOrderImage
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(WarehouseOrderImageForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 class VendorQuickForm(forms.ModelForm):
 

@@ -217,7 +217,23 @@
                             <button name='update_form' type="submit" class="btn btn-success">Save</button>
                         </form>
                     </div>
-                </div>  
+                </div>
+
+                <div class="card">
+                    <div class="header">Images</div>
+                    <div class="content">
+                        {% for image in instance.images %}
+
+                        {% empty %}
+                            <p>No image</p>
+                        {% endfor %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form_image }}
+                            <button class="btn btn-raised" type="input" name="image">Save</button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
         </div>

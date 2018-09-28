@@ -281,7 +281,7 @@ class Order(DefaultOrderModel):
 
 
 class WarehouseOrderImage(models.Model):
-    order_related = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order_related = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='images')
     file = models.FileField(upload_to=upload_image, null=True, validators=[validate_file, ])
     is_first = models.BooleanField(default=True)
 
@@ -323,7 +323,6 @@ class OrderItem(DefaultOrderItemModel):
         if self.product.size:
             queryset = self.attributes.all()
             queryset.update(value=self.value, discount=self.discount_value, final_value=self.final_value)
-        
 
     def remove_from_order(self, qty):
         if WAREHOUSE_ORDERS_TRANSCATIONS:
@@ -410,6 +409,7 @@ def update_qty_on_delete(sender, instance, *args, **kwargs):
 class OrderItemSize(models.Model):
     order_item_related = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, null=True, related_name='attributes')
     size_related = models.ForeignKey('products.Size', on_delete=models.SET_NULL, null=True)
+    product_attr_related = models.OneToOneField('products.SizeAttribute', on_delete=models.SET_NULL, null=True)
     qty = models.IntegerField(default=0)
     value = models.DecimalField(default=0, decimal_places=2, max_digits=20)
     discount = models.IntegerField(default=0)
@@ -422,9 +422,8 @@ class OrderItemSize(models.Model):
         super(OrderItemSize, self).save(*args, **kwargs)
         self.order_item_related.save()
 
-    @staticmethod
-    def create_new_size(request, order, product):
-        pass
+
+
 
 
 # no used atm
