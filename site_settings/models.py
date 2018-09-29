@@ -143,7 +143,10 @@ class PaymentOrders(DefaultOrderModel):
         check_name = request.GET.get('check_name', None)
 
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
-        queryset = queryset.filter(is_check=True) if check_name == 'check' else queryset.filter(is_check=False) if check_name == 'no_check' else queryset
+        queryset = queryset.filter(is_check=True) if check_name == 'check' else queryset.filter(is_check=False) \
+            if check_name == 'no_check' else queryset
+        queryset = queryset.filter(is_paid=True) if 'paid' in paid_name else queryset.filter(is_paid=False)\
+            if 'not_paid' in paid_name else queryset
         return queryset
 
 

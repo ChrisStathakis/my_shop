@@ -28,7 +28,7 @@ urlpatterns = [
     path('vendors/', VendorsPage.as_view(), name='vendors'),
     path('vendors/ajax_analysis', view=ajax_vendors_page_analysis, name='ajax_vendors_page_analysis'),
     path('vendors/check-orders/', CheckOrderPage.as_view(), name='check_orders'),
-    url(r'vendors/(?P<pk>\d+)/$', view=vendor_detail, name='vendor_detail'),
+    url(r'vendors/(?P<pk>\d+)/$', VendorDetailReportView.as_view(), name='vendor_detail'),
 
     path('warehouse-categories/', WarehouseCategoriesView.as_view(), name='warehouse_categories'),
     path('warehouse-categories/detail/<int:pk>/', WarehouseCategoryView.as_view(), name='warehouse_category'),

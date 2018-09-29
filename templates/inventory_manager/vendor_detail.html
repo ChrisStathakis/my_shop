@@ -10,7 +10,7 @@
                             <h4 class="text-center title">{{ object }}</h4>
                         </div>
                         <div class="content">
-                            <h5>Balance.. {{ object.tag_balance }}  Not paid Check...{{ object.tag_deposit }}</h5>
+                            <h5>Balance.. {{ object.tag_balance }}.   Deposit...{{ object.tag_deposit }}</h5>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -29,9 +29,9 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ order.date_expired|date }}</td>
                                             <td>{{ order }}</td>
-                                            <td>{{ order.tag_payment }}</td>
-                                            <td>{{ order.tag_value }}</td>
-                                            <td>{{ order.status }}</td>
+                                            <td>{{ order.payment_method }}</td>
+                                            <td>{{ order.tag_final_value }}</td>
+                                            <td>{{ order.tag_is_paid }}</td>
                                             <td>
                                                 <a href="{% url 'inventory:edit_check' order.id %}" class="btn btn-info">Edit</a>
                                                 <a href="{% url 'inventory:delete_check' order.id %}" class="btn btn-warning">Delete</a>

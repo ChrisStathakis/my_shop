@@ -1,0 +1,167 @@
+{% extends 'report/warehouse.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="six wide column"></div>
+        <div class="six wide column">
+            <h2 class="ui blue icon header">
+                <i class="blue money bill alternate outline icon"></i>
+                <div class="blue content">
+                   Deposits, checks etc...
+                    <div class="sub header">Date range {{ date_string }}</div>
+                </div>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title"><h4>Filters</h4></div>
+                <div class="content">
+                    <div class="ui segment">
+                        <form method="get" class="ui form">
+                            {% include 'snippets/search_date_filter.html' %}
+                            <div class="two fields">
+                                <div class="field">
+                                    <label>Vendors</label>
+                                    {% for vendor in vendors %}
+                                        {% if vendor.id|stringformat:"s" in vendor_name %}
+                                            <div class="ui slider checkbox">
+                                                <input type="checkbox" checked name="vendor_name" value="{{ vendor.id }}">
+                                                <label>{{ vendor }}</label>
+                                            </div>
+                                        {% else %}
+                                            <div class="ui slider checkbox">
+                                                <input type="checkbox" name="vendor_name" value="{{ vendor.id }}">
+                                                <label>{{ vendor }}</label>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="field">
+                                    <label>Paid Status</label>
+                                    <div class="ui checkbox">
+                                        <input type="checkbox" name="paid_name" value="paid">
+                                        <label>Paid</label>
+                                    </div>
+                                    <div class="ui checkbox">
+                                        <input type="checkbox" name="paid_name" value="not_paid">
+                                        <label>Not Paid</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <button type="submit" class="ui fluid green button">Save</button>
+                        </form>
+
+                        <br>
+                        <a href="{{ request.path }}" class="ui red button">Reset Filters</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="one wide column"></div>
+        <div class="six wide column">
+            <h4 class="ui red header">Not Paid Checks per Payment Method</h4>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="one wide column"></div>
+        <div class="ten wide column">
+            <table class="ui table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Vendor</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ order.date_expired|date }}</td>
+                            <td>{{ order }}</td>
+                            <td>{{ order.content_object }}</td>
+                            <td>{{ order.payment_method }}</td>
+                            <td {% if order.is_paid %} class="positive" {% else %} class="negative" {% endif %}>{{ order.tag_is_paid }}</td>
+                            <td>{{ order.tag_final_value }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">No data</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="four wide column">
+            <h4>Analysis Per Payment Method</h4>
+
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-bottom: 10%"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+var ctx = document.getElementById("myChart").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+        labels: [{% for payment in not_paid_chart_analysis %}
+            {% if forloop.last %} '{{ payment.payment_method__title }}' {% else %} '{{ payment.payment_method__title }}', {% endif %}
+            {% endfor %}
+        ],
+        datasets: [{
+            label: '# of Votes',
+            data: [{% for payment in not_paid_chart_analysis %}
+                    {% if forloop.last %} {{ payment.total_value }} {% else %} {{ payment.total_value }}, {% endif %}
+                    {% endfor %}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+
+{% endblock %}

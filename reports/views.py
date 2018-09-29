@@ -168,82 +168,7 @@ class BrandDetailView(DetailView):
     template_name = 'report/brands_detail_view.html'
     model = Brands
 
-    def get_context_data(self, **kwargs):
-        pass
-        
-
-@method_decorator(staff_member_required, name='dispatch')
-class VendorsPage(ListView):
-    model = Vendor
-    template_name = 'report/vendors.html'
-    paginate_by = 50
-
-    def get_queryset(self):
-        queryset = Vendor.objects.all()
-        queryset = Vendor.filter_data(self.request, queryset)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super(VendorsPage, self).get_context_data(**kwargs)
-        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
-        date_start_last_year, date_end_last_year = date_start- relativedelta(year=1), date_end-relativedelta(year=1)
-        date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
-        vendor_name, balance_name, search_name =[self.request.GET.getlist('vendor_name'),
-                                                 self.request.GET.get('balance_name'),
-                                                 self.request.GET.get('search_name'),
-                                                ]
-
-        orders = Order.objects.filter(timestamp__range=[date_start, date_end])
-        chart_data = [Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all() else 0,
-                      orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0,
-                      orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
-                  ]
-        analysis = warehouse_vendors_analysis(self.request, date_start, date_end)
-        analysis_last_year = warehouse_vendors_analysis(self.request, date_start_last_year, date_end_last_year)
-        context.update(locals())
-        return context
-
-
-@method_decorator(staff_member_required, name='dispatch')
-class CheckOrderPage(ListView):
-    template_name = 'report/check_orders.html'
-    model = PaymentOrders
-    paginate_by = 30
-
-    def get_queryset(self):
-        queryset = PaymentOrders.objects.all()
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super(CheckOrderPage, self).get_context_data(**kwargs)
-        vendors = Vendor.objects.filter(active=True)
-        context.update(locals())
-        return context
-
-
-@staff_member_required
-def vendor_detail(request, pk):
-    instance = get_object_or_404(Vendor, id=pk)
-    # filters_data
-    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
-    vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
-    date_pick = request.GET.get('date_pick', None)
-
-    # data
-    products = Product.my_query.active().filter(vendor=instance)[:20]
-    warehouse_orders = Order.objects.filter(vendor=instance, date_expired__range=[date_start, date_end])[:20]
-    
-    paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
-                           PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
-                                                        object_id__in=warehouse_orders.values('id'),
-                                                        ) 
-                          )
-                    )[:20]
-    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_expired__range=[date_start, date_end])[:20]
-    context = locals()
-    return render(request, 'report/details/vendors_id.html', context)
-
-
+   
 @method_decorator(staff_member_required, name='dispatch')
 class WarehouseCategoriesView(ListView):
     model = Category
@@ -326,6 +251,106 @@ class WarehouseOrderView(ListView):
 class WarehouseDetailView(DetailView):
     model = Order
     template_name = 'report/warehouse/orders_id.html'
+
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class VendorsPage(ListView):
+    model = Vendor
+    template_name = 'report/warehouse/vendors_list.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        queryset = Vendor.objects.all()
+        queryset = Vendor.filter_data(self.request, queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorsPage, self).get_context_data(**kwargs)
+        date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
+        date_start_last_year, date_end_last_year = date_start- relativedelta(year=1), date_end-relativedelta(year=1)
+        date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
+        vendor_name, balance_name, search_name =[self.request.GET.getlist('vendor_name'),
+                                                 self.request.GET.get('balance_name'),
+                                                 self.request.GET.get('search_name'),
+                                                ]
+
+        orders = Order.objects.filter(timestamp__range=[date_start, date_end])
+        chart_data = [Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all() else 0,
+                      orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0,
+                      orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
+                  ]
+        analysis = warehouse_vendors_analysis(self.request, date_start, date_end)
+        analysis_last_year = warehouse_vendors_analysis(self.request, date_start_last_year, date_end_last_year)
+        context.update(locals())
+        return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class VendorDetailReportView(ListView):
+    template_name = 'report/warehouse/vendor_detail.html'
+    model = Order
+
+    def get_queryset(self):
+        self.object = get_object_or_404(Vendor, id=self.kwargs['pk'])
+        queryset = Order.objects.filter(vendor=self.object)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        content = super(VendorDetailReportView, self).get_context_data(**kwargs)
+        object = self.object
+        payment_orders = PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
+                                                      object_id__in=self.object_list.values('id')
+                                                      )
+        content.update(locals())
+        return content
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CheckOrderPage(ListView):
+    template_name = 'report/warehouse/check_orders.html'
+    model = PaymentOrders
+    paginate_by = 30
+
+    def get_queryset(self):
+        queryset_o = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Order))
+        queryset_1 = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Vendor))
+        queryset = queryset_o|queryset_1
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CheckOrderPage, self).get_context_data(**kwargs)
+        vendors = Vendor.objects.filter(active=True)
+
+        not_paid_checks = self.object_list.filter(is_paid=False)
+        not_paid_chart_analysis = not_paid_checks.values('payment_method__title').\
+            annotate(total_value=Sum('final_value')).order_by('payment_method__title')
+        context.update(locals())
+        return context
+
+
+@staff_member_required
+def vendor_detail(request, pk):
+    instance = get_object_or_404(Vendor, id=pk)
+    # filters_data
+    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
+    vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
+    date_pick = request.GET.get('date_pick', None)
+
+    # data
+    products = Product.my_query.active().filter(vendor=instance)[:20]
+    warehouse_orders = Order.objects.filter(vendor=instance, date_expired__range=[date_start, date_end])[:20]
+    
+    paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
+                           PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
+                                                        object_id__in=warehouse_orders.values('id'),
+                                                        ) 
+                          )
+                    )[:20]
+    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_expired__range=[date_start, date_end])[:20]
+    context = locals()
+    return render(request, 'report/details/vendors_id.html', context)
+
 
 
 @staff_member_required

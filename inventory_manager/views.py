@@ -12,7 +12,7 @@ from django.forms import inlineformset_factory
 
 from products.models import Product,  Color, Size, SizeAttribute
 from products.forms import VendorForm
-from .models import Order, OrderItem, Vendor, Category
+from .models import Order, OrderItem, Vendor, Category, WarehouseOrderImage
 from .models import PaymentOrders
 from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm
 from site_settings.forms import PaymentForm
@@ -71,22 +71,42 @@ def quick_vendor_create(request):
 def warehouse_order_detail(request, dk):
     instance = get_object_or_404(Order, id=dk)
     queryset = Product.my_query.get_site_queryset().active_warehouse().filter(vendor=instance.vendor)
-
     if 'search_name' in request.GET:
         queryset = queryset.filter(title__icontains=request.GET.get('search_name', None))
     products = queryset[:10]
     products_with_size = queryset.filter(size=True)
+    # forms
     form = WarehouseOrderForm(instance=instance)
-    image_form = WarehouseOrderImageForm(initial={'order_related': instance})
-    if 'add_products' in request.GET:
-        ids = request.GET.getlist('ids', None)
-        if ids:
-            for id in ids:
-                get_product = get_object_or_404(Product, id=id)
-                OrderItem.add_to_order(request, product=get_product, order=instance)
+    form_image = WarehouseOrderImageForm(initial={'order_related': instance})
+    form_payment = PaymentForm(initial={'payment_method': instance.payment_method,
+                                        'value': instance.get_remaining_value,
+                                        'title': f'{instance.title}',
+                                        'date_expired': datetime.datetime.now(),
+                                        'is_paid': True,
+                                        'is_expense': True,
+                                        'object_id': dk,
+                                        'content_type': ContentType.objects.get_for_model(Order)
+                                        })
+    if 'payment' in request.POST:
+        form_payment = PaymentForm(request.POST)
+        if form_payment.is_valid():
+            form_payment.save()
             instance.save()
             return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
-                    
+    if 'image' in request.POST:
+        form_image = WarehouseOrderImageForm(request.POST, request.FILES, initial={'order_related': instance})
+        if form_image.is_valid():
+            form_image.save()
+            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
+    if 'add_products' in request.POST:
+        ids = request.POST.getlist('add_', [])
+        print(ids)
+        for id in ids:
+            get_product = get_object_or_404(Product, id=id)
+            OrderItem.add_to_order(request, product=get_product, order=instance)
+        instance.save()
+        return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
+
     if request.POST:
         form = WarehouseOrderForm(request.POST, instance=instance)
         if form.is_valid():
@@ -138,10 +158,10 @@ def order_edit_sizechart(request, pk):
     edit, instance_ = True, get_object_or_404(OrderItem, id=pk)
     instance, product, instance_sizes, initial = instance_.order, instance_.product, instance_.attributes.all(), []
     for size in instance_sizes:
-        initial.append({ 'order_item_related': size.order_item_related, 
-                         'size_related': size.size_related,
-                          'qty': size.qty,
-                'value': size.value }
+        initial.append({'order_item_related': size.order_item_related,
+                        'size_related': size.size_related,
+                        'qty': size.qty,
+                        'value': size.value }
                 )
     order_item_form = OrderItemForm(instance=instance_)
     OrderItemSizeFormSet = inlineformset_factory(OrderItem, OrderItemSize, extra=0, form=OrderItemSizeForm)
@@ -164,9 +184,12 @@ def order_edit_sizechart(request, pk):
 
 
 @staff_member_required
-def edit_order_item_size(request, pk):
-    instance = get_object_or_404(OrderItem, id=pk)
-    pass
+def delete_warehouse_image(request, pk):
+    instance = get_object_or_404(WarehouseOrderImage, id=pk)
+    order = instance.order_related
+    instance.delete()
+    return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': order.id}))
+
 
 
 @staff_member_required
@@ -201,77 +224,27 @@ def delete_order_item(request, dk):
 
 
 @staff_member_required
-def order_payment_manager(request, pk):
-    instance = get_object_or_404(Order, id=pk)
-    payments = instance.payment_orders.all()
-    vendor_payments = instance.vendor.payment_orders.all()
-    form = PaymentForm(request.POST or None, 
-                       initial={
-                           'value': instance.get_remaining_value,
-                           'title': 'Hello',
-                           'object_id': instance.id,
-                           'content_type': ContentType.objects.get_for_model(instance),
-                           'is_expense': True,
-                           
-                       })
-    if form.is_valid():
-        form.save()
-        instance.save()
-    context = locals()
-    return render(request, 'inventory_manager/order_manage_payments.html', context)
+def order_payment_manager_edit_or_remove(request, pk):
+    instance = get_object_or_404(PaymentOrders, id=pk)
+    form = PaymentForm(instance=instance, initial={'is_expense': True})
+    if request.POST:
+        form = PaymentForm(request.POST, instance=instance, initial={'is_expense': True})
+        if form.is_valid():
+            form.save()
+            instance.content_object.save()
+            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.object_id}))
+    page_title = f'Edit {instance.title} payment'
+    back_url = ''
+    return render(request, 'inventory_manager/form.html', context=locals())
 
 
 @staff_member_required
-def order_payment_manager_add_or_remove(request, pk, dk, slug):
-    instance = get_object_or_404(Order, id=pk)
-    payment = get_object_or_404(PaymentOrders, id=dk)
-
-    if slug == 'add':
-        difference = instance.get_remaining_value
-        if difference > 0 and payment.final_value >= difference:
-            if payment.final_value == difference:
-                payment.object_id = pk
-                payment.content_type = ContentType.objects.get_for_model(instance)
-                payment.save()
-                instance.save()
-            else:
-                payment.final_value -= difference
-                payment.save()
-                new_check = payment
-                new_check.pk = None
-                new_check.object_id = pk
-                new_check.content_type = ContentType.objects.get_for_model(instance)
-                new_check.final_value = difference
-                new_check.save()
-                instance.save()
-        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
-
-    if slug == 'delete':
-        payment.delete()
-        instance.save()
-        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
-
-    if slug == 'paid':
-        payment.is_paid = True
-        payment.save()
-        instance.save()
-        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
-    form = PaymentForm(request.POST or None, 
-                       instance=payment,
-                       initial = {
-                           'object_id': payment.object_id,
-                           'content_object': payment.content_object,
-                           'is_expense': payment.is_expense,
-                           'date_expired': payment.date_expired
-                        }
-                    )
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(reverse('inventory:order_payment_manager', kwargs={'pk': pk}))
-    instance.save()
-    page_title = f'Edit {instance.title} payment'
-    back_url = reverse('inventory:order_payment_manager', kwargs={'pk': pk})
-    return render(request, 'inventory_manager/form.html', context=locals())
+def order_delete_payment(request, pk):
+    instance = get_object_or_404(PaymentOrders, id=pk)
+    order = instance.content_object
+    instance.delete()
+    order.save()
+    return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': order.id}))
 
 
 @method_decorator(staff_member_required, name='dispatch')

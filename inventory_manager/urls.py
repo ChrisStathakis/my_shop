@@ -11,10 +11,11 @@ urlpatterns = [
     path('order/add-item/<int:dk>/edit/', view=edit_order_item, name='edit_order_item'),
     path('order/add-item/<int:dk>/delete/', view=delete_order_item, name='delete_order_item'),
     path('order/<int:pk>/update/', order_update_warehouse, name='order_update_warehouse'),
-    path('order/<int:pk>/order-payment-manager/', order_payment_manager, name='order_payment_manager'),
-    path('order/<int:pk>/order-payment-manager/<int:dk>/<slug:slug>/', order_payment_manager_add_or_remove, name='order_payment_manager_add_or_remove'),
+    path('order/<int:pk>/order-payment-manager/', order_payment_manager_edit_or_remove, name='order_payment_edit_or_remove'),
+    path('order/delete/payment/<int:pk>/', order_delete_payment, name='order_delete_payment'),
     path('order/size-chart/create/<int:pk>/<int:dk>/', order_add_sizechart, name='order_create_size_chart'),
     path('order/size-chart/edit/<int:pk>/', order_edit_sizechart, name='order_edit_sizechart'),
+    path('order/image/delete/<int:pk>/', delete_warehouse_image, name='order_delete_image'),
 
     path('vendor-list/',  VendorPageList.as_view(), name='vendor_list'),
     path('vendor-detail/<int:pk>/', VendorPageDetail.as_view(), name='vendor_detail'),

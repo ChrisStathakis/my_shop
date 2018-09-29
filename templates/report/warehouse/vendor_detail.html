@@ -1,0 +1,184 @@
+{% extends 'report/warehouse/vendors_list.html' %}
+
+{% block content %}
+    <div class="three column row">
+        <div class="column"></div>
+        <div style="text-align: center" class="column">
+            <h2 class="ui blue icon header">
+                <i class="blue cart icon"></i>
+                <div class="content">
+                    {{ object }}
+                    <div class="sub header">{{ object.phones }}</div>
+                </div>
+            </h2>
+        </div>
+        <div class="column">
+            <ul>
+                {% for file in object.images.all %}
+                    <li>
+                        <img class="img img-thumbnail" width="80px" height="80px" src="{{ file.file.url }}">
+                        <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a> </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="one wide column"></div>
+    <div class="four wide column">
+        <div class="ui segments">
+            <div style='text-align: center' class="ui blue header segment">Details</div>
+                <table style="text-align: center" class="ui table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <h4 class="blue header">Title</h4>
+                    </td>
+                    <td>{{ object.title }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="green header">Address</h4>
+                    </td>
+                    <td>{{ object.address|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="red header">City</h4>
+                    </td>
+                    <td> {{ object.city|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Zipcode</h4>
+                    </td>
+                    <td>{{ order.zip_code|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Phones</h4>
+                    </td>
+                     <td>{{ object.tag_phones|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Taxes Data</h4>
+                    </td>
+                    <td>Taxes id: {{ object.afm|default_if_none:'No data' }}, Taxes City: {{ object.doy|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Emal</h4>
+                    </td>
+                    <td>{{ object.email|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Site</h4>
+                    </td>
+                     <td><a href="{{ object.site }}" target="_blank"></a> {{ object.site|default_if_none:'No data' }}</td>
+                </tr>
+                <tr>
+                    <td class="negative" >
+                        <h4 class="header">Balance</h4>
+                    </td>
+                        <td class="negative">{{ object.tag_balance }}</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <h4 class="positive header">Deposit</h4>
+                    </td>
+                    <td class="positive">{{ object.tag_deposit }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="ten wide column">
+        <table class="ui celled striped table">
+            <thead>
+                <tr>
+                    <th colspan="4">Order Data</th>
+                    <th colspan="3">Prices</th>
+                    <th colspan="2">Total Values</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Order</th>
+                    <th>Type</th>
+                    <th>Clean Value</th>
+                    <th>Taxes</th>
+                    <th>Final Value</th>
+                    <th>Paid Status</th>
+                    <th>Payment Method</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for order in object_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order.date_expired|date }}</td>
+                    <td>{{ order }}</td>
+                    <td>{{ order.get_order_type_display }}</td>
+                    <td>{{ order.tag_clean_value }}</td>
+                    <td class="negative">{{ order.tag_total_taxes }}</td>
+                    <td class="positive">{{ order.tag_final_value }}</td>
+                    <td>{{ order.tag_is_paid }}</td>
+                    <td>{{ order.payment_method }}</td>
+                    <td><a href="{{ order.get_report_url }}" class="ui teal button">Details</a> </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8">No data</td> </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+        <table style="margin-top: 20%" class="ui red celled striped table">
+            <thead>
+            <tr>
+                <th colspan="6">
+                    Payment Orders
+                </th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Notes</th>
+                <th>Value</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in object.payment_orders.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.date_expired|date }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.tag_final_value }}</td>
+                    <td>{{ item.payment_method }}</td>
+                    <td {% if item.is_paid%} class='positive' {% endif %}>{{ item.tag_is_paid }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No data</td> </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div class="one wide column"></div>
+
+
+    <div style="margin-bottom: 10%;" class="row"></div>
+
+
+
+
+{% endblock %}

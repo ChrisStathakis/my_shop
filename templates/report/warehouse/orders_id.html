@@ -5,18 +5,30 @@
     <div class="three column row">
         <div class="column"></div>
         <div style="text-align: center" class="column">
-            <h2 class="ui blue icon header">
-                <i class="blue cart icon"></i>
-                <div class="content">
-                    {{ object }}
-                    <div class="sub header">{{ object.date_expired|date }} {{ object.vendor }}</div>
-                </div>
-            </h2>
+            {% if object.is_paid %}
+                <h2 class="ui green icon header">
+                    <i class="green cart icon"></i>
+                    <div class="content">
+                        {{ object }}
+                        <div class="sub header">{{ object.date_expired|date }} {{ object.vendor }}</div>
+                    </div>
+                </h2>
+            {% else %}
+                <h2 class="ui red icon header">
+                    <i class="red cart icon"></i>
+                    <div class="content">
+                        {{ object }}
+                        <div class="sub header">{{ object.date_expired|date }} {{ object.vendor }}</div>
+                    </div>
+                </h2>
+            {% endif %}
         </div>
         <div class="column">
             <ul>
-                {% for file in orders_files %}
-                    <li><a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a> </li>
+                {% for file in object.images.all %}
+                    <li>
+                        <img class="img img-thumbnail" width="80px" height="80px" src="{{ file.file.url }}">
+                        <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a> </li>
                 {% endfor %}
             </ul>
         </div>
@@ -59,35 +71,47 @@
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Discount</h4>
-                    </td>
-                    <td>{{ order.discount }} %</td>
-                </tr>
-                <tr>
-                    <td>
                         <h4 class="header">Clean Value</h4>
                     </td>
-                     <td>{{ object.tag_final_value }}</td>
+                     <td>{{ object.tag_clean_value }}</td>
                 </tr>
                 <tr>
                     <td>
+                        <h4 class="header">Discount</h4>
+                    </td>
+                    <td>{{ order.tag_discount }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Value after Discount</h4>
+                    </td>
+                    <td>{{ order.tag_discount }}</td>
+                </tr>
+                <tr>
+                    <td class="warning">
                         <h4 class="header">Taxes</h4>
                     </td>
-                     <td>{{ object.tag_taxes }}</td>
+                     <td class="warning">{{ object.tag_total_taxes }}</td>
                 </tr>
                 <tr>
-                    <td>
+                    <td {% if object.is_paid %} class="positive" {% endif %} >
                         <h4 class="header">Final Value</h4>
                     </td>
-                    <td>{{ object.tag_final_value }}</td>
-                </tr>
+                        <td {% if object.is_paid %} class="positive" {% endif %}>{{ object.tag_final_value }}</td>
+                    </tr>
                 <tr>
                     <td>
                         <h4 class="header">Timestamp - Last Edit</h4>
                     </td>
                     <td>{{ object.timestamp }} <br> {{ object.edited }}</td>
                 </tr>
-
+                
+                <tr>
+                    <td>
+                        <h4 class="header">Paid Value</h4>
+                    </td>
+                    <td>{{ order.tag_paid_value }}</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -147,14 +171,14 @@
             </tr>
             </thead>
             <tbody>
-            {% for item in object.payments_orders.all %}
+            {% for item in object.payment_orders.all %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ item.date_expired|date }}</td>
                     <td>{{ item.title }}</td>
-                    <td>{{ item.tag_value }}</td>
-                    <td>{{ item.tag_payment }}</td>
-                    <td>{{ item.status }}</td>
+                    <td>{{ item.tag_final_value }}</td>
+                    <td>{{ item.payment_method }}</td>
+                    <td {% if item.is_paid%} class='positive' {% endif %}>{{ item.tag_is_paid }}</td>
                 </tr>
                 {% empty %}
                 <tr><td colspan="6">No data</td> </tr>

@@ -109,7 +109,7 @@ class WarehouseOrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['date_expired', 'title', 'payment_method', 'total_discount', 'taxes_modifier',]
+        fields = ['date_expired', 'title', 'payment_method', 'total_discount', 'taxes_modifier']
 
     def __init__(self, *args, **kwargs):
         super(WarehouseOrderForm, self).__init__(*args, **kwargs)
@@ -118,15 +118,17 @@ class WarehouseOrderForm(forms.ModelForm):
 
 
 class WarehouseOrderImageForm(forms.ModelForm):
+    order_related = forms.ModelChoiceField(queryset=Order.objects.all(), widget=forms.HiddenInput())
 
     class Meta:
         model = WarehouseOrderImage
-        fields = '__all__'
+        fields = ['file', 'order_related']
 
     def __init__(self, *args, **kwargs):
         super(WarehouseOrderImageForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
 
 class VendorQuickForm(forms.ModelForm):
 

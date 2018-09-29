@@ -23,12 +23,13 @@ from decimal import Decimal
 
 WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
+
 def upload_image(instance, filename):
-    return f'/warehouse_images/{instance.title}/{filename}'
+    return f'warehouse_images/{instance.order_related.title}/{instance.order_related.id}/{filename}'
 
 
 def validate_file(value):
-    if value.file.size > 1024*1024*0.5:
+    if value.file.size > 1024 * 1024 * 0.5:
         raise ValidationError('this file is bigger than 0.5mb')
     return value
 
@@ -40,8 +41,8 @@ from site_settings.models import PaymentOrders, PaymentMethod
 
 
 class Category(models.Model):
-    title = models.CharField(unique=True,max_length=70,verbose_name='Τίτλος Κατηγορίας')
-    description = models.TextField(null=True,blank=True, verbose_name='Περιγραφή')
+    title = models.CharField(unique=True, max_length=70, verbose_name='Τίτλος Κατηγορίας')
+    description = models.TextField(null=True, blank=True, verbose_name='Περιγραφή')
 
     class Meta:
         ordering = ['title']
@@ -56,10 +57,10 @@ class Category(models.Model):
 
 
 class TaxesCity(models.Model):
-    title = models.CharField(max_length=64,unique=True)
+    title = models.CharField(max_length=64, unique=True)
 
     class Meta:
-        verbose_name="ΔΟΥ   "
+        verbose_name = "ΔΟΥ   "
 
     def __str__(self):
         return self.title
@@ -88,20 +89,18 @@ class Vendor(models.Model):
     balance = models.DecimalField(default=0, max_digits=100, decimal_places=2, verbose_name="Υπόλοιπο")
     payment_orders = GenericRelation(PaymentOrders)
 
-
     class Meta:
         verbose_name_plural = '9. Προμηθευτές'
         ordering = ['title', ]
-        
-     
+
     def save(self, *args, **kwargs):
-        orders = self.order_set.all()
+        orders = self.vendor_orders.all()
         self.balance = orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0
         self.balance -= orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
         # self.balance -= self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))['value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-        self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))['value__sum'] if self.payment_orders.filter(is_paid=False) else 0
+        self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))[
+            'value__sum'] if self.payment_orders.filter(is_paid=False) else 0
         super(Vendor, self).save(*args, **kwargs)
-    
 
     @staticmethod
     def filter_data(request, queryset):
@@ -119,8 +118,8 @@ class Vendor(models.Model):
     def __str__(self):
         return self.title
 
-    def get_absolute_url(self):
-        return reverse('reports:vendor_detail', args={'dk': self.id})
+    def get_report_url(self):
+        return reverse('reports:vendor_detail', kwargs={'pk': self.id})
 
     def template_tag_remaining_deposit(self):
         return ("{0:.2f}".format(round(self.remaining_deposit, 2))) + ' %s' % (CURRENCY)
@@ -132,17 +131,19 @@ class Vendor(models.Model):
         return "%s %s" % (self.remaining_deposit, CURRENCY)
 
     def tag_phones(self):
-        return '%s' % self.phone if self.phone else ' ' + ', %s' % self.phone1 if self.phone1 else ' '     
+        return '%s' % self.phone if self.phone else ' ' + ', %s' % self.phone1 if self.phone1 else ' '
 
     def get_absolute_url_form(self):
-        return reverse('edit_vendor_id', kwargs={'dk':self.id})
+        return reverse('edit_vendor_id', kwargs={'dk': self.id})
 
     def define_payment(self):
         return f'Vendor {self.title}'
 
+    def tag_vendor_payment(self):
+        return f'{self.title}'
+
 
 class OrderManager(models.Manager):
-
     def filter_by_date(self, date_start, date_end):
         return super(OrderManager, self).filter(date_expired__range=[date_start, date_end])
 
@@ -154,57 +155,46 @@ class OrderManager(models.Manager):
 
 
 class Order(DefaultOrderModel):
-    vendor = models.ForeignKey(Vendor, verbose_name="Προμηθευτής", on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, verbose_name="Vendor", on_delete=models.SET_NULL, null=True, related_name='vendor_orders')
     total_price_no_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
-                                                  verbose_name="Καθαρή Αξία")
-    total_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Αξία έκπτωσης")
+                                                  verbose_name="Clean Value")
+    total_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Order Discount")
     total_price_after_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
-                                                     verbose_name="Αξία μετά την έκπτωση")
+                                                     verbose_name="Value after Discount")
     taxes_modifier = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
-    total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Φ.Π.Α")
+    total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Taxes")
     order_type = models.CharField(default=1, max_length=1, choices=WAREHOUSE_ORDER_TYPE)
 
     objects = models.Manager()
     my_query = OrderManager()
     payment_orders = GenericRelation(PaymentOrders)
-    update_warehouse= models.BooleanField(default=False)
+    update_warehouse = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name_plural = "1. Τιμολόγια"
+        verbose_name_plural = "1. Warehouse Invoice"
         ordering = ['-date_expired']
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        order_items= self.order_items.all()
-        self.total_price_no_discount = order_items.aggregate(total=Sum(F('qty')*F('value'), output_field=models.FloatField()))['total'] if order_items else 0
-        self.total_price_after_discount = order_items.aggregate(total=Sum(F('qty')*F('final_value'), output_field=models.DecimalField()))['total'] if order_items else 0 
-        self.total_taxes = (self.total_price_after_discount - self.total_discount) * (Decimal(self.get_taxes_modifier_display()) / 100)
-        self.final_value = self.total_price_after_discount + self.total_taxes -self.total_discount
-        if self.is_paid:
-            get_orders = self.payment_orders.all()
-            get_orders.update(is_paid=True)
+        order_items = self.order_items.all()
+        self.total_price_no_discount = \
+        order_items.aggregate(total=Sum(F('qty') * F('value'), output_field=models.FloatField()))[
+            'total'] if order_items else 0
+        self.total_price_after_discount = \
+        order_items.aggregate(total=Sum(F('qty') * F('final_value'), output_field=models.DecimalField()))[
+            'total'] if order_items else 0
+        self.total_taxes = (self.total_price_after_discount - self.total_discount) * (
+        Decimal(self.get_taxes_modifier_display()) / 100)
+        self.final_value = self.total_price_after_discount + self.total_taxes - self.total_discount
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
             'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         self.paid_value = self.paid_value if self.paid_value else 0
-
         if self.paid_value >= self.final_value and self.paid_value > 0.5:
             self.is_paid = True
-
-        '''
-        if self.is_paid and self.paid_value < self.final_value:
-            get_diff = self.total_price - self.paid_value
-            new_payment = PaymentOrders.objects.create(date_expired=self.day_created,
-                                                       value=get_diff,
-                                                       payment_type=self.payment_method,
-                                                       is_paid=True,
-                                                       title='%s' % self.code if self.code else 'Τιμολόγιο %s' % self.id,
-                                                       content_type=ContentType.objects.get_for_model(Order),
-                                                       object_id=self.id
-                                                       )
-        '''
-
+        else:
+            self.is_paid = False
         super(Order, self).save(*args, **kwargs)
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.update_warehouse()
@@ -217,6 +207,9 @@ class Order(DefaultOrderModel):
 
     def get_edit_url(self):
         return reverse('inventory:warehouse_order_detail', kwargs={'dk': self.id})
+
+    def tag_vendor_payment(self):
+        return self.vendor.tag_vendor_payment()
 
     @staticmethod
     def filter_data(request, queryset):
@@ -255,6 +248,7 @@ class Order(DefaultOrderModel):
 
     def tag_paid_value(self):
         return '%s %s' % (self.paid_value, CURRENCY)
+
     tag_paid_value.short_description = 'Πληρωμένη Αξία'
 
     def tag_is_paid(self):
@@ -268,10 +262,11 @@ class Order(DefaultOrderModel):
 
     def tag_clean_value(self):
         return f'{self.total_price_after_discount} {CURRENCY}'
+
     tag_clean_value.short_description = 'Αξία Μετά την έκπτωση'
 
     def tag_total_taxes(self):
-        return f'{self.total_taxes} {CURRENCY}'    
+        return f'{self.total_taxes} {CURRENCY}'
 
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
@@ -313,9 +308,9 @@ class OrderItem(DefaultOrderItemModel):
         if self.product.size:
             queryset = self.attributes.all()
             self.qty = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
-        self.final_value = Decimal(self.value) * (100-self.discount_value)/100
+        self.final_value = Decimal(self.value) * (100 - self.discount_value) / 100
         self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
-        self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100+self.get_taxes_display()) / 100)
+        self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100 + self.get_taxes_display()) / 100)
         super(OrderItem, self).save(*args, **kwargs)
         self.product.price_buy = self.value
         self.product.order_discount = self.discount_value
@@ -341,28 +336,18 @@ class OrderItem(DefaultOrderItemModel):
 
     @staticmethod
     def add_to_order(request, product, order):
-        get_order_item = OrderItem.objects.filter(product=product, order=order)
-        qty = request.GET.get('qty_%s' % product.id, 0)
+        get_order_item, created = OrderItem.objects.get_or_create(product=product, order=order)
+        qty = request.POST.get('qty_%s' % product.id, 0)
+        print('qty_addeed', qty)
         qty = int(qty) if qty else 0
-        value = request.GET.get(f'price_{product.id}', product.price_buy)
-        discount = request.GET.get(f'discount_{product.id}', product.order_discount)
+        value = request.POST.get(f'price_{product.id}', product.price_buy)
+        discount = request.POST.get(f'discount_{product.id}', product.order_discount)
         discount = Decimal(discount) if discount else 0
-        if get_order_item.exists() and qty > 0:
-            item = get_order_item.last()
-            item.qty += qty
-            item.value = value
-            item.discount_value = discount
-            item.save()
-            if WAREHOUSE_ORDERS_TRANSCATIONS:
-                product.qty += qty
-                product.save()
-        elif qty > 0:
-            item = OrderItem.objects.create(product=product,
-                                            order=order,
-                                            qty=qty,
-                                            value=value,
-                                            discount_value=discount
-                                            )
+        if qty > 0:
+            get_order_item.qty += qty
+            get_order_item.value = value
+            get_order_item.discount_value = discount
+            get_order_item.save()
             if WAREHOUSE_ORDERS_TRANSCATIONS:
                 product.qty += qty
                 product.save()
@@ -399,7 +384,7 @@ class OrderItem(DefaultOrderItemModel):
 
 @receiver(post_delete, sender=OrderItem)
 def update_qty_on_delete(sender, instance, *args, **kwargs):
-    product, order, self = instance.product,instance.order, instance
+    product, order, self = instance.product, instance.order, instance
     if WAREHOUSE_ORDERS_TRANSCATIONS:
         product.qty -= instance.qty
         product.save()
@@ -421,9 +406,6 @@ class OrderItemSize(models.Model):
     def save(self, *args, **kwargs):
         super(OrderItemSize, self).save(*args, **kwargs)
         self.order_item_related.save()
-
-
-
 
 
 # no used atm
