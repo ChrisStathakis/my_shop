@@ -4,7 +4,7 @@
 <div class="ui three item bottom fixed menu">
     <a href="{% url 'reports:warehouse_orders' %}" class="item">Homepage</a>
     <a href="{% url 'reports:vendors' %}" style="background-color: green" class="active item">Vendors</a>
-    <a href=""  class="item">Item Flow</a>
+    <a href="{% url 'reports:order_items_flow' %}"  class="item">Item Flow</a>
 </div>
 {% endblock %}
 

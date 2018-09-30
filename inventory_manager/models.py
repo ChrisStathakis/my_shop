@@ -338,13 +338,14 @@ class OrderItem(DefaultOrderItemModel):
     def add_to_order(request, product, order):
         get_order_item, created = OrderItem.objects.get_or_create(product=product, order=order)
         qty = request.POST.get('qty_%s' % product.id, 0)
-        print('qty_addeed', qty)
         qty = int(qty) if qty else 0
         value = request.POST.get(f'price_{product.id}', product.price_buy)
         discount = request.POST.get(f'discount_{product.id}', product.order_discount)
         discount = Decimal(discount) if discount else 0
         if qty > 0:
             get_order_item.qty += qty
+            if created:
+                get_order_item.qty -= 1  # because when we get_or_create we have default of 1 qty
             get_order_item.value = value
             get_order_item.discount_value = discount
             get_order_item.save()

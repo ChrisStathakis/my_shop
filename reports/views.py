@@ -253,7 +253,6 @@ class WarehouseDetailView(DetailView):
     template_name = 'report/warehouse/orders_id.html'
 
 
-
 @method_decorator(staff_member_required, name='dispatch')
 class VendorsPage(ListView):
     model = Vendor
@@ -350,6 +349,25 @@ def vendor_detail(request, pk):
     order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_expired__range=[date_start, date_end])[:20]
     context = locals()
     return render(request, 'report/details/vendors_id.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class OrderItemFlowView(ListView):
+    template_name = 'report/warehouse_order_items_movements.html'
+    model = OrderItem
+    paginate_by = 100
+    
+    def get_queryset(self):
+        date_start, date_end = filter_date(self.request)
+        queryset = OrderItem.objects.filter(order__date_expired__range=[date_start, date_end])
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super(OrderItemFlowView, self).get_context_data(**kwargs)
+        date_start, date_end = filter_date(self.request)
+        vendors = Vendor.objects.filter(active=True)
+        context.update(locals())
+        return context
 
 
 

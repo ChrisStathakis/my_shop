@@ -61,7 +61,38 @@
                 <div class="card">
                     <div class="header">Payments</div>
                     <div class="content">
-                        <table class="table table-responsive-sm">
+                    <h4>User Vendor Payment</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Title</th>
+                                    <th>Payment Method</th>
+                                    <th>Paid Status</th>
+                                    <th>Value</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in instance.vendor.payment_orders.all %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ payment.date_expired|date }}</td>
+                                        <td>{{ payment }}</td>
+                                        <td>{{ payment.payment_method }}</td>
+                                        <td>{{ payment.tag_is_paid }}</td>
+                                        <td>{{ payment.tag_final_value }}</td>
+                                        <td><a href="" class="btn btn-dark">Use this</a> </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td colspan="7">No data</td> </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br> <br>
+                        <h4>Create new payment</h4>
+                        <table class="table table-responsive-sm table-bordered">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -89,12 +120,13 @@
                                     </tr>
                                 {% empty %}
                                     <tr>
-                                        <td colspan="5">No Payments</td>
+                                        <td colspan="7">No Payments</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <h4>Create new payment</h4>
+
+
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form_payment }}

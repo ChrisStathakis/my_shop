@@ -48,7 +48,7 @@ urlpatterns = [
     # buys
     path('orders/', WarehouseOrderView.as_view(), name='warehouse_orders'),
     path('orders/<int:pk>/', WarehouseDetailView.as_view(), name='warehouse_order_detail'),
-    path('warehouse-products-flow/$', view=warehouse_order_items_movements, name='warehouse_order_items_flow'),
+    path('warehouse-products-flow/', OrderItemFlowView.as_view(), name='order_items_flow'),
 
     # sells
     path('report-sales/', HomepageSellView.as_view(), name='homepage_sales'),

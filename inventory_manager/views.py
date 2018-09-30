@@ -100,7 +100,6 @@ def warehouse_order_detail(request, dk):
             return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     if 'add_products' in request.POST:
         ids = request.POST.getlist('add_', [])
-        print(ids)
         for id in ids:
             get_product = get_object_or_404(Product, id=id)
             OrderItem.add_to_order(request, product=get_product, order=instance)
@@ -189,7 +188,6 @@ def delete_warehouse_image(request, pk):
     order = instance.order_related
     instance.delete()
     return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': order.id}))
-
 
 
 @staff_member_required
@@ -448,6 +446,7 @@ class WarehousePaymentOrderCreate(CreateView):
 @staff_member_required
 def edit_check_order(request, pk):
     instance = get_object_or_404(PaymentOrders, id=pk)
+    back_url = reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id})
     form = PaymentForm(request.POST or None, instance=instance, initial={'is_expense': True})
     if form.is_valid():
         form.save()
@@ -456,7 +455,7 @@ def edit_check_order(request, pk):
     print(form.errors)
     page_title = 'Edit %s' % instance.title
     context = locals()
-    return render(request, 'dash_ware/form.html', context)
+    return render(request, 'inventory_manager/form.html', context)
 
 
     def get_success_url(self):
