@@ -20,6 +20,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from urllib.parse import urlencode
 
+from accounts.models import User, CostumerAccount
 from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
 from .models import FirstPage, Banner, Brands, CategorySite
@@ -32,7 +33,6 @@ from carts.views import check_if_cart_id, cart_data, check_or_create_cart, initi
 from carts.models import CartItem, Coupons, CartGiftItem
 from carts.forms import CartItemCreate, CartItemCreateWithAttrForm
 from .forms import CheckoutForm
-from accounts.models import CostumerAccount
 from accounts.forms import CostumerAccountForm
 
 
@@ -354,6 +354,17 @@ def delete_coupon(request, dk):
     messages.success(request, 'The coupon %s have been removed from cart' % coupon.code)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
+@method_decorator(login_required, name='dispatch')
+class UserProfileView(DetailView, FormView):
+    model = User
+    template_name = ''
+    form_class = ''
+    success_url = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileView, self).get_context_data(**kwargs)
+        profile = CostumerAccount.get
 
 @login_required
 def user_profile_page(request):
