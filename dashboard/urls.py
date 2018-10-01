@@ -88,6 +88,8 @@ urlpatterns = [
     path('eshop-orders/gifts/', gifts_view, name='gift_view'),
     path('eshop-orders/gifts/<int:pk>/', gifts_edit, name='gift_detail'),
     path('eshop-orders/gifts/actions/<int:pk>/<int:dk>/<int:type>/<int:sub>/', gift_edit_products, name='gift_detail_pro'),
+    path('carts/', CartListPage.as_view(), name='carts'),
+    path('carts-details/<int:pk>/', CartDetailView.as_view(), name='cart_detail'),
 
     path('warehouse/order/shipping/', ShippingPage.as_view(), name='shipping_view'),
     path('warehouse/order/shipping/detail/<int:pk>/', ShippingEditPage.as_view(), name='shipping_edit_view'),

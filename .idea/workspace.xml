@@ -5,20 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72c4f91b-add1-49b2-a03b-d6581d9e94b3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test_db.sqlite3" afterPath="$PROJECT_DIR$/test_db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/my_shop.iml" afterPath="$PROJECT_DIR$/.idea/my_shop.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/models.py" afterPath="$PROJECT_DIR$/inventory_manager/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/urls.py" afterPath="$PROJECT_DIR$/inventory_manager/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory_manager/views.py" afterPath="$PROJECT_DIR$/inventory_manager/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/urls.py" afterPath="$PROJECT_DIR$/reports/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/views.py" afterPath="$PROJECT_DIR$/reports/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" afterPath="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/inventory_manager/vendor_detail.html" afterPath="$PROJECT_DIR$/templates/inventory_manager/vendor_detail.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/report/warehouse/check_orders.html" afterPath="$PROJECT_DIR$/templates/report/warehouse/check_orders.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/report/warehouse/vendors_list.html" afterPath="$PROJECT_DIR$/templates/report/warehouse/vendors_list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html" afterPath="$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html" />
+      <change beforePath="$PROJECT_DIR$/.idea/my_shop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/my_shop.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/carts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboard/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboard/view_sells.py" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/view_sells.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory_manager/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_shop/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_shop/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/dashboard/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/dashboard/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/dashboard/order_section/cart_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/dashboard/order_section/cart_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/my_site/include/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/my_site/include/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/test_db.sqlite3" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,170 +29,8 @@
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/reports/views.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="5814">
-                  <caret line="389" column="0" lean-forward="false" selection-start-line="389" selection-start-column="0" selection-end-line="389" selection-end-column="0" />
-                  <folding>
-                    <marker date="1538292577918" expanded="true" signature="17031:18301" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="18359:20203" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="18786:20033" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="19422:19524" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="19550:19690" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="20258:22563" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="20973:21783" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="21234:21782" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="21813:22472" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="21851:22471" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="22626:23600" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="22676:23454" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="22760:23042" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="22819:22908" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="22942:23042" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="23056:23178" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="23101:23176" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="23196:23336" ph="..." />
-                    <marker date="1538292577918" expanded="true" signature="23466:23600" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="vendors_list.html" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/templates/report/warehouse/vendors_list.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-                  <folding>
-                    <marker date="1538292269707" expanded="true" signature="409:9480" ph="{% block content ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="449:840" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="531:829" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="576:814" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="666:796" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="863:4604" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="948:4548" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1000:4533" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1134:4514" ph="..." />
-                    <marker date="1538292269707" expanded="false" signature="1168:1182" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1202:4491" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1279:4203" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1327:1652" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1392:1617" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1473:1514" ph="{% if balance_name ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="1781:4051" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1833:2884" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="1930:2846" ph="{% for vendor in vendors ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="1998:2797" ph="{% if vendor.id|stringformat:&quot;s&quot; in vendor_name ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="2124:2374" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="2502:2744" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="2936:4016" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="3040:3978" ph="{% for payment in payments ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="3110:3929" ph="{% if payment.id|stringformat:&quot;s&quot; in payment_name ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="3238:3497" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="3625:3876" ph="..." />
-                    <marker date="1538292269707" expanded="false" signature="4096:4123" ph="..." />
-                    <marker date="1538292269707" expanded="false" signature="4265:4315" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="4338:4464" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="4627:6390" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="4717:6378" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="4807:6363" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="4926:6340" ph="{&quot;type&quot;: 'bar'...}" />
-                    <marker date="1538292269707" expanded="true" signature="4979:6051" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="5096:6033" ph="[...]" />
-                    <marker date="1538292269707" expanded="true" signature="5097:6011" ph="{&quot;label&quot;: '## Euro'...}" />
-                    <marker date="1538292269707" expanded="true" signature="5273:5568" ph="[...]" />
-                    <marker date="1538292269707" expanded="true" signature="5607:5949" ph="[...]" />
-                    <marker date="1538292269707" expanded="true" signature="6078:6326" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="6108:6308" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="6141:6286" ph="[...]" />
-                    <marker date="1538292269707" expanded="true" signature="6142:6285" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="6179:6259" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="6413:7226" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="6498:7013" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="6576:6694" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="6774:6893" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7249:8806" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7334:8751" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7422:8736" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7446:7823" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7471:7798" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7847:8715" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="7869:8691" ph="{% for key in object_list ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="7925:8657" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="8133:8177" ph="{% if key.phone ... %}" />
-                    <marker date="1538292269707" expanded="true" signature="8179:8225" ph="{% if key.phone1 ... %}" />
-                    <marker date="1538292269707" expanded="false" signature="8826:8843" ph="..." />
-                    <marker date="1538292269707" expanded="true" signature="8949:9450" ph="{...}" />
-                    <marker date="1538292269707" expanded="true" signature="9158:9439" ph="{&quot;dataType&quot;: 'json'...}" />
-                    <marker date="1538292269707" expanded="true" signature="9346:9425" ph="{...}" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="tools.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/reports/tools.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="799">
-                  <caret line="88" column="35" lean-forward="false" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
-                  <folding>
-                    <element signature="e#1289#1618#0" expanded="false" />
-                    <element signature="e#1667#3239#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="17">
-                  <caret line="370" column="23" lean-forward="false" selection-start-line="370" selection-start-column="8" selection-end-line="370" selection-end-column="23" />
-                  <folding>
-                    <element signature="e#0#32#0" expanded="true" />
-                    <element signature="e#6542#11888#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/reports/urls.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="765">
-                  <caret line="45" column="63" lean-forward="false" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
-                  <folding>
-                    <element signature="e#0#32#0" expanded="true" />
-                    <marker date="1538292326520" expanded="true" signature="268:3044" ph="..." />
-                    <marker date="1538292326520" expanded="true" signature="3047:4232" ph="'''...'''" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="warehouse_order_items_movements.html" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="858">
-                  <caret line="137" column="36" lean-forward="false" selection-start-line="137" selection-start-column="36" selection-end-line="137" selection-end-column="36" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -241,19 +78,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/dashboard/site_templates/homepage.html" />
-        <option value="$PROJECT_DIR$/templates/dashboard/site_templates/edit_user.html" />
-        <option value="$PROJECT_DIR$/templates/dashboard/site_templates/users_list.html" />
-        <option value="$PROJECT_DIR$/accounts/models.py" />
-        <option value="$PROJECT_DIR$/accounts/admin.py" />
-        <option value="$PROJECT_DIR$/dashboard/urls.py" />
-        <option value="$PROJECT_DIR$/templates/dashboard/site_templates/costumer_list.html" />
-        <option value="$PROJECT_DIR$/dashboard/views_site.py" />
-        <option value="$PROJECT_DIR$/point_of_sale/views.py" />
-        <option value="$PROJECT_DIR$/templates/PoS/sales.html" />
-        <option value="$PROJECT_DIR$/products/models.py" />
-        <option value="$PROJECT_DIR$/templates/report/homepage/product_warning.html" />
-        <option value="$PROJECT_DIR$/templates/report/warehouse/products_with_size.html" />
         <option value="$PROJECT_DIR$/dashboard/views.py" />
         <option value="$PROJECT_DIR$/products/forms.py" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/products.html" />
@@ -281,17 +105,30 @@
         <option value="$PROJECT_DIR$/templates/dashboard/order_section/order_detail.html" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/vendor_detail.html" />
         <option value="$PROJECT_DIR$/site_settings/models.py" />
-        <option value="$PROJECT_DIR$/my_shop/settings.py" />
         <option value="$PROJECT_DIR$/inventory_manager/models.py" />
         <option value="$PROJECT_DIR$/templates/inventory_manager/order_detail.html" />
         <option value="$PROJECT_DIR$/inventory_manager/urls.py" />
-        <option value="$PROJECT_DIR$/inventory_manager/views.py" />
         <option value="$PROJECT_DIR$/templates/inventory_manager/vendor_detail.html" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/check_orders.html" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/vendors_list.html" />
         <option value="$PROJECT_DIR$/reports/urls.py" />
         <option value="$PROJECT_DIR$/reports/views.py" />
         <option value="$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html" />
+        <option value="$PROJECT_DIR$/templates/my_site/include/navbar.html" />
+        <option value="$PROJECT_DIR$/templates/accounts/login.html" />
+        <option value="$PROJECT_DIR$/my_shop/settings.py" />
+        <option value="$PROJECT_DIR$/templates/accounts/profile_page.html" />
+        <option value="$PROJECT_DIR$/accounts/forms.py" />
+        <option value="$PROJECT_DIR$/accounts/views.py" />
+        <option value="$PROJECT_DIR$/inventory_manager/views.py" />
+        <option value="$PROJECT_DIR$/point_of_sale/views.py" />
+        <option value="$PROJECT_DIR$/templates/dashboard/dashboard.html" />
+        <option value="$PROJECT_DIR$/templates/dashboard/order_section/cart _detail.html" />
+        <option value="$PROJECT_DIR$/dashboard/urls.py" />
+        <option value="$PROJECT_DIR$/templates/dashboard/order_section/cart_page.html" />
+        <option value="$PROJECT_DIR$/carts/models.py" />
+        <option value="$PROJECT_DIR$/dashboard/view_sells.py" />
+        <option value="$PROJECT_DIR$/templates/dashboard/order_section/cart_detail.html" />
       </list>
     </option>
   </component>
@@ -320,19 +157,22 @@
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="my_shop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="my_shop" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
@@ -341,19 +181,19 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\my_site" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\report\warehouse" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\report" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Zefarak\Desktop\my_shop\my_site\static\home" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\my_site" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\templates" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static\boot_datepicker" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\report\warehouse" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\report" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\dashboard\templates" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -390,34 +230,9 @@
       <option name="runNoReload" value="false" />
       <option name="useCustomRunCommand" value="false" />
       <option name="customRunCommand" value="" />
-      <method />
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <gulpfile />
-      <tasks />
-      <arguments />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Unittests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
+    <configuration name="my_shop" type="Python.DjangoServer" factoryName="Django server">
       <module name="my_shop" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;.&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method />
-    </configuration>
-    <configuration default="false" name="my_shop" type="Python.DjangoServer" factoryName="Django server">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -428,7 +243,6 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="my_shop" />
       <option name="launchJavascriptDebuger" value="false" />
       <option name="port" value="8000" />
       <option name="host" value="" />
@@ -438,14 +252,29 @@
       <option name="runNoReload" value="false" />
       <option name="useCustomRunCommand" value="false" />
       <option name="customRunCommand" value="" />
-      <method />
     </configuration>
-    <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="Django server.my_shop" />
-    </list>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <module name="my_shop" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;.&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -461,32 +290,35 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.11145833" />
+      <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="manage.py@my_shop" order="8" visible="true" weight="0.19640972" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" id="Data View" order="3" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="processedProjectFiles" value="true" />
+    <option name="version" value="1" />
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -525,121 +357,8 @@
       </breakpoints>
       <option name="time" value="11" />
     </breakpoint-manager>
-    <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/reports/tools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="88" column="35" lean-forward="false" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
-          <folding>
-            <element signature="e#1289#1618#0" expanded="false" />
-            <element signature="e#1667#3239#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order_detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2074">
-          <caret line="122" column="54" lean-forward="false" selection-start-line="122" selection-start-column="54" selection-end-line="122" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/homepage/product_warning.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="59" column="24" lean-forward="true" selection-start-line="59" selection-start-column="24" selection-end-line="59" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/products_with_size.html" />
-    <entry file="file://$PROJECT_DIR$/dashboard/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="14" column="42" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/dashboard/product_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="36" column="30" lean-forward="true" selection-start-line="36" selection-start-column="30" selection-end-line="36" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/products/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="52" lean-forward="false" selection-start-line="10" selection-start-column="52" selection-end-line="10" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/snippets/vendor_cate_filter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="22" lean-forward="true" selection-start-line="8" selection-start-column="22" selection-end-line="8" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/snippets/filter_form.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="35" lean-forward="true" selection-start-line="17" selection-start-column="35" selection-end-line="17" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/products.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="44" column="59" lean-forward="false" selection-start-line="44" selection-start-column="59" selection-end-line="44" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/reports/view_sells.py.html" />
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/orders.html" />
-    <entry file="file://$PROJECT_DIR$/site_settings/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="84" column="37" lean-forward="false" selection-start-line="84" selection-start-column="37" selection-end-line="84" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/products_id.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="145" column="14" lean-forward="true" selection-start-line="55" selection-start-column="8" selection-end-line="145" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="161" column="75" lean-forward="false" selection-start-line="161" selection-start-column="75" selection-end-line="161" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/managers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="33" column="97" lean-forward="false" selection-start-line="33" selection-start-column="97" selection-end-line="33" selection-end-column="97" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-168">
-          <caret line="23" column="16" lean-forward="true" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/reports/views_transcations.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-636">
@@ -652,7 +371,7 @@
     <entry file="file://$PROJECT_DIR$/reports/view_sells.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="790">
-          <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <caret line="55" selection-start-line="55" selection-end-line="55" />
         </state>
       </provider>
     </entry>
@@ -667,18 +386,18 @@
     <entry file="file://$PROJECT_DIR$/reports/ajax_calls/ajax_warehouse_calls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
-          <caret line="152" column="0" lean-forward="false" selection-start-line="152" selection-start-column="0" selection-end-line="152" selection-end-column="0" />
+          <caret line="152" selection-start-line="152" selection-end-line="152" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
-            <element signature="e#640#4763#0" expanded="false" />
-            <element signature="e#4804#5474#0" expanded="false" />
-            <element signature="e#5519#6390#0" expanded="false" />
-            <element signature="e#6444#7509#0" expanded="false" />
-            <element signature="e#7549#8618#0" expanded="false" />
-            <element signature="e#8725#9751#0" expanded="false" />
-            <element signature="e#9817#11469#0" expanded="false" />
-            <element signature="e#11521#11946#0" expanded="false" />
-            <element signature="e#11999#12059#0" expanded="false" />
+            <element signature="e#640#4763#0" />
+            <element signature="e#4804#5474#0" />
+            <element signature="e#5519#6390#0" />
+            <element signature="e#6444#7509#0" />
+            <element signature="e#7549#8618#0" />
+            <element signature="e#8725#9751#0" />
+            <element signature="e#9817#11469#0" />
+            <element signature="e#11521#11946#0" />
+            <element signature="e#11999#12059#0" />
           </folding>
         </state>
       </provider>
@@ -690,28 +409,28 @@
     <entry file="file://$PROJECT_DIR$/inventory_manager/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order/size_chart.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
-          <caret line="74" column="0" lean-forward="false" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+          <caret line="74" selection-start-line="74" selection-end-line="74" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/products/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-583">
-          <caret line="281" column="0" lean-forward="false" selection-start-line="281" selection-start-column="0" selection-end-line="281" selection-end-column="0" />
+          <caret line="281" selection-start-line="281" selection-end-line="281" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="37">
-          <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+          <caret line="117" selection-start-line="117" selection-end-line="117" />
         </state>
       </provider>
     </entry>
@@ -726,7 +445,7 @@
     <entry file="file://$PROJECT_DIR$/templates/report/warehouse/orders_id.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
-          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="196" selection-end-column="14" />
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="196" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -734,28 +453,21 @@
     <entry file="file://$PROJECT_DIR$/site_settings/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="522">
-          <caret line="146" column="12" lean-forward="false" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
+          <caret line="146" column="12" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dashboard/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="369" column="22" lean-forward="false" selection-start-line="369" selection-start-column="22" selection-end-line="369" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/my_shop/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="95" column="47" lean-forward="false" selection-start-line="95" selection-start-column="47" selection-end-line="95" selection-end-column="47" />
+          <caret line="369" column="22" selection-start-line="369" selection-start-column="22" selection-end-line="369" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="271">
-          <caret line="24" column="76" lean-forward="false" selection-start-line="24" selection-start-column="60" selection-end-line="24" selection-end-column="76" />
+          <caret line="24" column="76" selection-start-line="24" selection-start-column="60" selection-end-line="24" selection-end-column="76" />
         </state>
       </provider>
     </entry>
@@ -769,29 +481,7 @@
     <entry file="file://$PROJECT_DIR$/templates/inventory_manager/order_detail.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="781">
-          <caret line="164" column="54" lean-forward="false" selection-start-line="164" selection-start-column="54" selection-end-line="164" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="448" column="82" lean-forward="false" selection-start-line="448" selection-start-column="82" selection-end-line="448" selection-end-column="82" />
-          <folding>
-            <element signature="e#0#109#0" expanded="true" />
-            <marker date="1538291376542" expanded="true" signature="2926:3454" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/reports/tools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="88" column="35" lean-forward="false" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
-          <folding>
-            <element signature="e#1289#1618#0" expanded="false" />
-            <element signature="e#1667#3239#0" expanded="false" />
-          </folding>
+          <caret line="164" column="54" selection-start-line="164" selection-start-column="54" selection-end-line="164" selection-end-column="54" />
         </state>
       </provider>
     </entry>
@@ -802,132 +492,217 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/vendors_list.html">
+    <entry file="file://$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding>
-            <marker date="1538292269707" expanded="true" signature="409:9480" ph="{% block content ... %}" />
-            <marker date="1538292269707" expanded="true" signature="449:840" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="531:829" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="576:814" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="666:796" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="863:4604" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="948:4548" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1000:4533" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1134:4514" ph="..." />
-            <marker date="1538292269707" expanded="false" signature="1168:1182" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1202:4491" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1279:4203" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1327:1652" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1392:1617" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1473:1514" ph="{% if balance_name ... %}" />
-            <marker date="1538292269707" expanded="true" signature="1781:4051" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1833:2884" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="1930:2846" ph="{% for vendor in vendors ... %}" />
-            <marker date="1538292269707" expanded="true" signature="1998:2797" ph="{% if vendor.id|stringformat:&quot;s&quot; in vendor_name ... %}" />
-            <marker date="1538292269707" expanded="true" signature="2124:2374" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="2502:2744" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="2936:4016" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="3040:3978" ph="{% for payment in payments ... %}" />
-            <marker date="1538292269707" expanded="true" signature="3110:3929" ph="{% if payment.id|stringformat:&quot;s&quot; in payment_name ... %}" />
-            <marker date="1538292269707" expanded="true" signature="3238:3497" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="3625:3876" ph="..." />
-            <marker date="1538292269707" expanded="false" signature="4096:4123" ph="..." />
-            <marker date="1538292269707" expanded="false" signature="4265:4315" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="4338:4464" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="4627:6390" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="4717:6378" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="4807:6363" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="4926:6340" ph="{&quot;type&quot;: 'bar'...}" />
-            <marker date="1538292269707" expanded="true" signature="4979:6051" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="5096:6033" ph="[...]" />
-            <marker date="1538292269707" expanded="true" signature="5097:6011" ph="{&quot;label&quot;: '## Euro'...}" />
-            <marker date="1538292269707" expanded="true" signature="5273:5568" ph="[...]" />
-            <marker date="1538292269707" expanded="true" signature="5607:5949" ph="[...]" />
-            <marker date="1538292269707" expanded="true" signature="6078:6326" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="6108:6308" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="6141:6286" ph="[...]" />
-            <marker date="1538292269707" expanded="true" signature="6142:6285" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="6179:6259" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="6413:7226" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="6498:7013" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="6576:6694" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="6774:6893" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7249:8806" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7334:8751" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7422:8736" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7446:7823" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7471:7798" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7847:8715" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="7869:8691" ph="{% for key in object_list ... %}" />
-            <marker date="1538292269707" expanded="true" signature="7925:8657" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="8133:8177" ph="{% if key.phone ... %}" />
-            <marker date="1538292269707" expanded="true" signature="8179:8225" ph="{% if key.phone1 ... %}" />
-            <marker date="1538292269707" expanded="false" signature="8826:8843" ph="..." />
-            <marker date="1538292269707" expanded="true" signature="8949:9450" ph="{...}" />
-            <marker date="1538292269707" expanded="true" signature="9158:9439" ph="{&quot;dataType&quot;: 'json'...}" />
-            <marker date="1538292269707" expanded="true" signature="9346:9425" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/reports/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5814">
-          <caret line="389" column="0" lean-forward="false" selection-start-line="389" selection-start-column="0" selection-end-line="389" selection-end-column="0" />
-          <folding>
-            <marker date="1538292577918" expanded="true" signature="17031:18301" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="18359:20203" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="18786:20033" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="19422:19524" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="19550:19690" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="20258:22563" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="20973:21783" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="21234:21782" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="21813:22472" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="21851:22471" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="22626:23600" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="22676:23454" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="22760:23042" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="22819:22908" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="22942:23042" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="23056:23178" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="23101:23176" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="23196:23336" ph="..." />
-            <marker date="1538292577918" expanded="true" signature="23466:23600" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="370" column="23" lean-forward="false" selection-start-line="370" selection-start-column="8" selection-end-line="370" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#6542#11888#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="552">
+          <caret line="119" column="27" selection-start-line="119" selection-start-column="27" selection-end-line="137" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/reports/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
-          <caret line="45" column="63" lean-forward="false" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
+          <caret line="45" column="63" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
-            <marker date="1538292326520" expanded="true" signature="268:3044" ph="..." />
-            <marker date="1538292326520" expanded="true" signature="3047:4232" ph="'''...'''" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html">
+    <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="137" column="36" lean-forward="false" selection-start-line="137" selection-start-column="36" selection-end-line="137" selection-end-column="36" />
-          <folding />
+        <state relative-caret-position="380">
+          <caret line="415" column="72" lean-forward="true" selection-start-line="415" selection-start-column="72" selection-end-line="415" selection-end-column="72" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#6542#11888#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="88" column="35" selection-start-line="88" selection-start-column="35" selection-end-line="88" selection-end-column="35" />
+          <folding>
+            <element signature="e#1289#1618#0" />
+            <element signature="e#1667#3239#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/vendors_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="2" selection-start-line="2" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="389" selection-start-line="389" selection-end-line="389" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="32" column="59" selection-start-line="32" selection-start-column="49" selection-end-line="32" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/my_site/include/navbar.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="43" column="26" lean-forward="true" selection-start-line="43" selection-start-column="26" selection-end-line="43" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/my_site/include/product.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/my_site/product_list.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="103" column="20" selection-start-line="103" selection-start-column="20" selection-end-line="103" selection-end-column="38" />
+          <folding>
+            <element signature="e#490#5650#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-510">
+          <folding>
+            <element signature="e#0#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/my_site/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="49" column="4" lean-forward="true" selection-start-line="49" selection-start-column="4" selection-end-line="67" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/accounts/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-623" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/accounts/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="139" column="56" lean-forward="true" selection-start-line="139" selection-start-column="56" selection-end-line="139" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my_shop/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="244">
+          <caret line="154" lean-forward="true" selection-start-line="154" selection-end-line="154" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/accounts/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1321">
+          <caret line="11" column="102" selection-start-line="11" selection-start-column="102" selection-end-line="11" selection-end-column="102" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/my_site/profile_page.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="16" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/accounts/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inventory_manager/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4987">
+          <caret line="457" column="66" selection-start-line="457" selection-start-column="66" selection-end-line="457" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#109#0" expanded="true" />
+            <marker date="1538318527635" expanded="true" signature="2926:3454" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/dashboard/dashboard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="935">
+          <caret line="55" column="59" selection-start-line="55" selection-start-column="59" selection-end-line="55" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dashboard/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="482">
+          <caret line="91" column="33" selection-start-line="91" selection-start-column="33" selection-end-line="91" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/carts/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="99" column="38" lean-forward="true" selection-start-line="99" selection-start-column="38" selection-end-line="99" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/dashboard/order_section/cart_page.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="29" lean-forward="true" selection-start-line="3" selection-start-column="3" selection-end-line="5" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/dashboard/order_section/cart_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="63" column="40" lean-forward="true" selection-start-line="63" selection-start-column="40" selection-end-line="63" selection-end-column="40" />
+          <folding>
+            <element signature="e#235#305#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dashboard/view_sells.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="79" column="71" selection-start-line="79" selection-start-column="71" selection-end-line="79" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#95#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -63,10 +63,24 @@ def order_choices(request):
     return JsonResponse({})
 
 
+@method_decorator(staff_member_required, name='dispatch')
 class CartListPage(ListView):
     model = Cart
     template_name = 'dashboard/order_section/cart_page.html'
     paginate_by = 30
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class CartDetailView(DetailView):
+    model = Cart
+    template_name = 'dashboard/order_section/cart_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CartDetailView, self).get_context_data(**kwargs)
+        qs_exists = RetailOrder.objects.filter(cart_related=self.object)
+        retail_order = qs_exists.first() if qs_exists else None
+        context.update(locals())
+        return context
 
 
 class OrderSettingsPage(TemplateView):

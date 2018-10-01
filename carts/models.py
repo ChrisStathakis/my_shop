@@ -6,7 +6,7 @@ from django.db.models import Sum, F
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 from django.contrib import messages
-
+from django.shortcuts import reverse
 from decimal import Decimal
 import datetime
 # Create your models here.
@@ -96,7 +96,7 @@ class Cart(models.Model):
         try:
             all_coupons = self.coupon.all()
             price = self.value
-            order_items = self.cartitem_set.all()
+            order_items = self.cart_items.all()
             for coupon in all_coupons:
                 # priority
                 limit_price = coupon.cart_total_value if coupon.cart_total_value else 0
@@ -114,6 +114,9 @@ class Cart(models.Model):
 
     def __str__(self):
         return '%s %s' % ('Cart ', self.id)
+
+    def get_dashboard_url(self):
+        return reverse('dashboard:cart_detail', kwargs={'pk': self.id})
 
     def save(self, *args, **kwargs):
         get_items = self.cart_items.all()
@@ -133,6 +136,9 @@ class Cart(models.Model):
 
     def tag_shipping_cost(self):
         return '%s %s' % (round(self.shipping_method.estimate_cost(self.value),2), CURRENCY) if self.shipping_method else 0
+
+    def tag_to_order(self):
+        return 'Done' if self.is_complete else 'Not Done'
 
     @property
     def get_total_value(self):

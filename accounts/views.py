@@ -30,7 +30,9 @@ def register_or_login(request):
             return HttpResponseRedirect(reverse('profile-page'))
     if 'register_button' in request.POST:
         register_form = RegisterForm(request.POST or None)
+        print('register')
         if register_form.is_valid():
+            print('register works!')
             user = register_form.save()
             username = register_form.cleaned_data.get('username')
             password = register_form.cleaned_data.get('password')
@@ -41,11 +43,10 @@ def register_or_login(request):
     return render(request, 'accounts/login.html', context)
 
 
-
 def create_user(request):
     username = request.POST['username']
     password = request.POST['password']
-    email =request.POST['email']
+    email = request.POST['email']
     user_auth = auth.authenticate(username=username,password=password)
     if user_auth is not None:
         auth.login(request,user_auth)

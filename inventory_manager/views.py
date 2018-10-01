@@ -457,12 +457,6 @@ def edit_check_order(request, pk):
     context = locals()
     return render(request, 'inventory_manager/form.html', context)
 
-
-    def get_success_url(self):
-        instance = get_object_or_404(PaymentOrders, id=self.kwargs['pk'])
-        return reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id })
-
-
 @staff_member_required
 def delete_check_order(request, pk):
     instance = get_object_or_404(PaymentOrders, id=pk)

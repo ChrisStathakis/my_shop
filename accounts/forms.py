@@ -49,7 +49,6 @@ class CostumerAccountAdminForm(forms.ModelForm):
 
 class CostumerAccountDashboardForm(forms.ModelForm):
 
-
     class Meta:
         model = CostumerAccount
         fields = '__all__'
@@ -71,7 +70,6 @@ class CreateUserAdmin(UserCreationForm):
         super(CreateUserAdmin, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-
 
 
 class RegisterForm(forms.ModelForm):
