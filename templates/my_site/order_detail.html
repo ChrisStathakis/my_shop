@@ -25,7 +25,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for item in order_items %}
+                                        {% for item in instance.order_items.all %}
                                         <tr>
                                             <td class="cart_product_img">
                                                 {% if item.product_related.image %}

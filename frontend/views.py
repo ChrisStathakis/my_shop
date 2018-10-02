@@ -337,7 +337,7 @@ def checkout_page(request):
                 messages.success(request, 'Your Order Have Completed!')
                 GiftRetailItem.check_retail_order(new_order, cart)
                 del request.session['cart_id']
-                return HttpResponseRedirect(reverse('order_detail', kwargs={'dk': new_order.id}))
+                return HttpResponseRedirect(reverse('order_view', kwargs={'dk': new_order.id}))
             except:
                 del request.session['cart_id']
                 return HttpResponseRedirect('/')
@@ -369,10 +369,9 @@ def user_profile_page(request):
     return render(request, 'my_site/profile_page.html', context)  
 
 
-class OrderView(DetailView):
-    model = RetailOrder
-    template_name = ''
-
+def order_detail_view(request, pk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    return render(request, 'my_site/order_detail.html', context={'instance': instance})
 
 
 @method_decorator(login_required, name='dispatch')

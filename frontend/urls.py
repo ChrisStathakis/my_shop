@@ -23,11 +23,10 @@ urlpatterns = [
     path('cart-page/', CartPage.as_view(), name='cart_page'),
     path('cart-page/ajax/update/<int:pk>/<int:qty>/', view=update_cart_page, name='update_cart_page'),
     path('checkout/',  view=checkout_page, name='checkout_page'),
-    path('order-view/', OrderView.as_view(), name='order_view'),
+    path('order-view/<slug:pk>/', order_detail_view, name='order_view'),
 
 
     path('profile-page/', user_profile_page, name='profile-page'),
-    path('eshop-order/<int:dk>', view=order_detail_page, name='order_detail'),
     path('login-page/', register_or_login, name='login_page'),
     path('logout/', logout, {'next_page': '/',}, name='log_out'),
 
