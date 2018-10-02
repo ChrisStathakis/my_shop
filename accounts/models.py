@@ -79,8 +79,7 @@ class CostumerAccount(models.Model):
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, *args, **kwargs):
-    get_profile = CostumerAccount.objects.filter(user=instance)
-    if not get_profile:
-        new_profile = CostumerAccount.objects.create(user=instance)
+    get_profile, created = CostumerAccount.objects.get_or_create(user=instance)
+
 
 

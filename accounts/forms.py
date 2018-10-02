@@ -7,11 +7,12 @@ from .models import CostumerAccount
 
 
 class CostumerAccountForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput())
 
     class Meta:
         model = CostumerAccount
         fields = '__all__'
-        exclude = ['is_retail', 'is_eshop', 'balance', 'DOY', 'user']
+        exclude = ['is_retail', 'is_eshop', 'balance', 'DOY',]
     
     def __init__(self, *args, **kwargs):
         super(CostumerAccountForm, self).__init__(*args, **kwargs)

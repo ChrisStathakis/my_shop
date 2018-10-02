@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.db.models import Q, Sum
 from django.contrib.auth import login, authenticate
@@ -355,28 +355,24 @@ def delete_coupon(request, dk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@method_decorator(login_required, name='dispatch')
-class UserProfileView(DetailView, FormView):
-    model = User
-    template_name = ''
-    form_class = ''
-    success_url = ''
-
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileView, self).get_context_data(**kwargs)
-        profile = CostumerAccount.get
-
 @login_required
 def user_profile_page(request):
     user = request.user
-    profile = get_object_or_404(CostumerAccount, user=user)
+    profile, created = CostumerAccount.objects.get_or_create(user=user)
     orders_list = RetailOrder.objects.filter(costumer_account=profile)
-    profile_form = CostumerAccountForm(request.POST or None, instance=profile)
-    if profile_form.is_valid():
-        profile_form.save()
+    form = CostumerAccountForm(request.POST or None, instance=profile)
+    orders = RetailOrder.objects.filter(costumer_account=profile)
+    if form.is_valid():
+        form.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     context = locals()
     return render(request, 'my_site/profile_page.html', context)  
+
+
+class OrderView(DetailView):
+    model = RetailOrder
+    template_name = ''
+
 
 
 @method_decorator(login_required, name='dispatch')
