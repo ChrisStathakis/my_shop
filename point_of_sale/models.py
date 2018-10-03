@@ -161,6 +161,9 @@ class RetailOrder(DefaultOrderModel):
     def get_report_url(self):
         return reverse('reports:retail_order_detail', kwargs={'pk': self.id})
 
+    def get_dashboard_url(self):
+        return reverse('dashboard:order_detail', kwargs={'pk': self.id} )
+
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False
 

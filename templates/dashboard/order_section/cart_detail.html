@@ -30,7 +30,7 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ product }}</td>
                                             <td>{{ product.qty }}</td>
-                                            <td>{{ product.tag_final_value }}</td>
+                                            <td>{{ product.tag_total_value }}</td>
                                         </tr>
                                     {% empty %}
                                         <tr><td colspan="4">No data</td> </tr>
@@ -46,13 +46,14 @@
                     <div class="card">
                         <div class="header">
                             <div class="title">
-                                <h4>{{ retail_order|default_if_none:'Create Order' }}</h4>
-                                <p>Timestamp... {{ retail_order.timestamp }}</p>
+                                <a href='{% url "dashboard:carts" %}' class='btn btn-warning'>Back</a>
+                                <h4>{{ retail_order|default_if_none:'No order' }}</h4>
+                                <p>Timestamp... {{ retail_order.timestamp|default_if_none:' ' }}</p>
                             </div>
                         </div>
                         <div class="content">
                             <h6>Order Items</h6>
-                            {% if retal_order %}
+                            {% if retail_order %}
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -75,6 +76,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            <a href="{{ retail_order.get_dashboard_url }}" class="btn btn-primary">Go to Order</a>
                             {% else %}
                                 <br>
                                 <a href="" class="btn btn-primary">Create Order</a>

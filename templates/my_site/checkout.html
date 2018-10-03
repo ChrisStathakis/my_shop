@@ -48,10 +48,12 @@
                                         </div>
     
                                         <div class="col-12">
+                                            {% if not request.user.is_authenticated %}
                                             <div class="custom-control custom-checkbox d-block mb-2">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck2">
                                                 <label class="custom-control-label" for="customCheck2">Create an accout</label>
                                             </div>
+                                            {% endif %}
                                             <div class="custom-control custom-checkbox d-block">
                                                 <input name='agreed' type="checkbox" class="custom-control-input" id="customCheck3" required>
                                                 <label class="custom-control-label" for="customCheck3">Agree to Rules</label>
@@ -64,9 +66,11 @@
                             <div class="cart-summary">
                                 <h5>Cart Total</h5>
                                 <ul class="summary-table">
-                                    <li><span>subtotal:</span> <span>$140.00</span></li>
-                                    <li><span>delivery:</span> <span>Free</span></li>
-                                    <li><span>total:</span> <span>$140.00</span></li>
+                                    <li><span>subtotal:</span> <span>{{ cart.tag_value }}</span></li>
+                                    <li><span>Delivery Cost:</span> <span>{{ cart.tag_shipping_cost|default_if_none:'free' }}</span></li>
+                                    <li><span>Cost Cash:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
+                                    <li><span>Coupon Discount:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
+                                    <li><span>total:</span> <span>{{ cart.tag_total_value }}</span></li>
                                 </ul>
     
                                 <div class="payment-method">

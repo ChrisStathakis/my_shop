@@ -126,16 +126,16 @@ class Cart(models.Model):
         super(Cart, self).save(*args, **kwargs)
 
     def tag_value(self):
-        return '%s %s' % (self.value, CURRENCY)
+        return '%s %s' % (round(self.value, 2), CURRENCY)
 
     def tag_final_value(self):
-        return '%s %s' % (self.final_value, CURRENCY)
+        return '%s %s' % (round(self.final_value, 2), CURRENCY)
 
     def tag_payment_cost(self):
-        return '%s %s' % (round(self.payment_method.cost, 2), CURRENCY) if self.payment_method else 0
+        return '%s %s' % (round(self.payment_method.cost, 2), CURRENCY) if self.payment_method else f'0 {CURRENCY}'
 
     def tag_shipping_cost(self):
-        return '%s %s' % (round(self.shipping_method.estimate_cost(self.value),2), CURRENCY) if self.shipping_method else 0
+        return '%s %s' % (round(self.shipping_method.estimate_cost(self.value),2), CURRENCY) if self.shipping_method else f'0 {CURRENCY}'
 
     def tag_to_order(self):
         return 'Done' if self.is_complete else 'Not Done'
@@ -152,7 +152,7 @@ class Cart(models.Model):
         return get_value
 
     def tag_total_value(self):
-        return '%s %s' % (self.get_total_value, CURRENCY)
+        return '%s %s' % (round(self.get_total_value,2), CURRENCY)
 
     def remove_cart_item(self, cart_item):
         self.value -= cart_item.get_total_price

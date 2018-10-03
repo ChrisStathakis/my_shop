@@ -77,8 +77,8 @@ class CartDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CartDetailView, self).get_context_data(**kwargs)
-        qs_exists = RetailOrder.objects.filter(cart_related=self.object)
-        retail_order = qs_exists.first() if qs_exists else None
+        qs_exists = RetailOrder.objects.filter(eshop_session_id=self.object.id_session)
+        retail_order = qs_exists.first() if qs_exists else False
         context.update(locals())
         return context
 

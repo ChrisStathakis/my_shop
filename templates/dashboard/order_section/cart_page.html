@@ -15,7 +15,9 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Date</th>
+                                    <th>Id</th>
+                                    <th>Date Created</th>
+                                    <th>Date Updated</th>
                                     <th>User</th>
                                     <th>Value</th>
                                     <th>Status</th>
@@ -26,9 +28,11 @@
                                 {% for cart in object_list %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
+                                        <td>{{ cart.id_session|truncatechars:30 }}</td>
                                         <td>{{ cart.timestamp }}</td>
+                                        <td>{{ cart.updated }}</td>
                                         <td>{{ cart.user }}</td>
-                                                <td>{{ cart.tag_final_value }}</td>
+                                        <td>{{ cart.tag_total_value }}</td>
                                         <td>{{ cart.tag_to_order }}</td>
                                         <td><a href="{{ cart.get_dashboard_url }}" class="btn btn-default">Details</a> </td>
                                     </tr>

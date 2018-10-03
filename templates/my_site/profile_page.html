@@ -39,7 +39,7 @@
                                     <td>{{ order }}</td>
                                     <td>{{ order.tag_final_value }}</td>
                                     <td>{{ order.get_status_display }}</td>
-                                    <td><a href="{% url 'order_view' %}" class="btn btn-dark">Details</a> </td>
+                                    <td><a href="{% url 'order_view' order.id %}" class="btn btn-dark">Details</a> </td>
                                </tr>
 
                            {% empty %}

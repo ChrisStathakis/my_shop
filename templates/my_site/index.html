@@ -33,17 +33,30 @@
 
     {% block messages %}
         {% if messages %}
-        <div class="main-content-wrapper d-flex clearfix">
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    <div class="alert alert-success">
-                        {{ message }}
+        <!-- Modal -->
+        <div class="modal fade" id="memberModal" tabindex="-1" role="dialog" aria-labelledby="memberModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="memberModalLabel">Message!</h4>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
+                    <div class="modal-body">
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                                    <div class="alert alert-success">{{ message }}</div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
+
         {% endif %}
     {% endblock %}
 
@@ -143,7 +156,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
     </footer>
     <!-- ##### Footer Area End ##### -->
-
+    
     {% include 'my_site/include/js.html' %}
     {% block extra_js %} {% endblock %}
 </body>

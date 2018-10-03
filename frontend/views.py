@@ -304,8 +304,7 @@ def checkout_page(request):
     shippings = Shipping.objects.filter(active=True)
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
     if user:
-        profile = CostumerAccount.objects.get(user=user)
-        print(profile)
+        profile, created = CostumerAccount.objects.get_or_create(user=user)
         form = CheckoutForm(initial={'email': profile.user.email,
                                      'first_name': profile.user.first_name,
                                      'last_name': profile.user.last_name,
@@ -340,7 +339,7 @@ def checkout_page(request):
                 return HttpResponseRedirect(reverse('order_view', kwargs={'dk': new_order.id}))
             except:
                 del request.session['cart_id']
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/')       
             
     context = locals()
     return render(request, 'my_site/checkout.html', context)
