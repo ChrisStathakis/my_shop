@@ -69,8 +69,8 @@
                                     <li><span>subtotal:</span> <span>{{ cart.tag_value }}</span></li>
                                     <li><span>Delivery Cost:</span> <span>{{ cart.tag_shipping_cost|default_if_none:'free' }}</span></li>
                                     <li><span>Cost Cash:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
-                                    <li><span>Coupon Discount:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
-                                    <li><span>total:</span> <span>{{ cart.tag_total_value }}</span></li>
+                                    <li><span>Coupon Discount:</span> <span>0.00</span></li>
+                                    <li><span>total:</span> <span>{{ cart.tag_final_value }}</span></li>
                                 </ul>
     
                                 <div class="payment-method">
@@ -78,7 +78,14 @@
                                         {% for payment in payment_methods %}
                                         <!-- Cash on delivery -->
                                         <div class="custom-control mr-sm-2">
-                                            <label><input type="radio" name="payment_method" value="{{ payment.id }}" required>{{ payment }}</label>
+                                            <label>
+                                                <input type="radio" 
+                                                       name="payment_method" 
+                                                       value="{{ payment.id }}" 
+                                                       {% if payment.id == cart.payment_method.id %} checked {% endif %}
+                                                       required
+                                                    >{{ payment }}
+                                            </label>
                                         </div>
                                         {% endfor %}
                                 </div>
@@ -86,9 +93,15 @@
                                 <div class="payment-method">
                                     <h6>Shipping Method</h6>
                                     {% for shipping in shippings %}
-                                        <!-- Cash on delivery -->
                                         <div class="custom-control mr-sm-2">
-                                            <label><input type="radio" name="shipping_method" value="{{ shipping.id }}" required>{{ shipping }}</label>
+                                            <label>
+                                                <input type="radio" 
+                                                          name="shipping_method" 
+                                                          value="{{ shipping.id }}" 
+                                                          required
+                                                          {% if shipping.id == cart.shipping_method.id %} checked {% endif %}
+                                                >{{ shipping }}
+                                            </label>
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -106,3 +119,22 @@
     <!-- ##### Main Content Wrapper End ##### -->
 
     {% endblock %}
+
+{% block extra_js %}
+    <script>
+        $('.trigger_button').change(function(event){
+            event.preventDefault();
+            const btn = $(this);
+            const id = btn.attr('value')
+
+            $.ajax({
+               dataType: 'json',
+               url: '',
+               success: function(response) {
+                   $('#cart_data').html(response.table_data)
+               }
+
+            })
+        })
+    </script>
+{% endblock %}

@@ -8,6 +8,7 @@ from django.contrib import  messages
 
 from frontend.models import Banner
 from carts.models import Coupons
+from carts.forms import CouponForm
 from frontend.forms import BannerForm
 from frontend.models import FirstPage, Banner
 from frontend.forms import BannerForm, FirstPageForm
@@ -88,11 +89,20 @@ class CouponsView(ListView):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class CouponCreate(CreateView):
+class CouponCreateView(CreateView):
     model = Coupons
-    form_class = ''
-    template_name = ''
+    form_class = CouponForm
+    template_name = 'dashboard/form_view.html'
     success_url = reverse_lazy('dashboard:coupons_view')
+
+    def get_context_data(self, **kwargs):
+        context = super(CouponCreateView, self).get_context_data(**kwargs)
+        back_url = reverse('dashboard:coupons_view')
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 #  dashboard urls

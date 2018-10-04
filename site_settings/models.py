@@ -7,8 +7,23 @@ from django.utils import timezone
 from django.db.models import Sum, Q
 from django.contrib.auth.models import User
 from django.utils import timezone
-from .constants import BANKS, CURRENCY
 from django.shortcuts import reverse
+from django.core.exceptions import ValidationError
+
+from .constants import BANKS, CURRENCY
+
+def validate_positive_decimal(value):
+    if value < 0:
+        return ValidationError('This number is negative!')
+    return value
+
+
+class Country(models.Model):
+    active = models.BooleanField(default=True)
+    title = models.CharField(unique=True, max_length=100)
+
+    def __str__(self):
+        return self.title
 
 
 class PaymentMethodManager(models.Manager):
@@ -20,13 +35,50 @@ class PaymentMethodManager(models.Manager):
         return super(PaymentMethodManager, self).filter(active=True, site_active=True)
 
 
+class ShippingManager(models.Manager):
+
+    def active_and_site(self):
+        return super(ShippingManager, self).filter(active=True, for_site=True)
+        
+
+class Shipping(models.Model):
+    active = models.BooleanField(default=True)
+    title = models.CharField(unique=True, max_length=100)
+    additional_cost = models.DecimalField(max_digits=6, default=0, decimal_places=2, validators=[validate_positive_decimal, ])
+    limit_value = models.DecimalField(default=40, max_digits=6, decimal_places=2,
+                                              validators=[validate_positive_decimal, ])
+    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
+    first_choice = models.BooleanField(default=False)
+    ordering_by = models.IntegerField(default=1)
+
+    class Meta:
+        ordering = ['-ordering_by', ]
+
+    def __str__(self):
+        return self.title
+
+    def estimate_additional_cost(self, value):
+        if value <= 0 or value >= self.limit_value:
+            return 0
+        return self.additional_cost
+
+    def tag_active_cost(self):
+        return f'{self.additional_cost} {CURRENCY}'
+
+    def tag_active_minimum_cost(self):
+        return f'{self.limit_value} {CURRENCY}'
+
+    def tag_active(self):
+        return 'Active' if self.active else 'No Active'
+
+
 class PaymentMethod(models.Model):
     title = models.CharField(unique=True, max_length=100)
     active = models.BooleanField(default=True)
     site_active = models.BooleanField(default=False)
     additional_cost = models.DecimalField(decimal_places=2, max_digits=10, default=0)
     limit_value = models.DecimalField(decimal_places=2, max_digits=10, default=0)
-
+    first_choice = models.BooleanField(default=False)
     objects = models.Manager()
     my_query = PaymentMethodManager()
 
@@ -38,6 +90,11 @@ class PaymentMethod(models.Model):
 
     def tag_limit_value(self):
         return '%s %s' % (self.limit_value, CURRENCY)
+
+    def estimate_additional_cost(self, value):
+        if value <= 0 or value >= self.limit_value:
+            return 0
+        return self.additional_cost
 
 
 class DefaultBasicModel(models.Model):
@@ -55,14 +112,6 @@ class DefaultBasicModel(models.Model):
 class Store(models.Model):
     title = models.CharField(unique=True, max_length=100)
     active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.title
-
-
-class Country(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(unique=True, max_length=100)
 
     def __str__(self):
         return self.title

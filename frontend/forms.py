@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 
 from site_settings.models import PaymentMethod
-from .models import Shipping
+from site_settings.models import Shipping
 from .validators import validate_cellphone, validate_number
 
 

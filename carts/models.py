@@ -13,8 +13,8 @@ import datetime
 
 from site_settings.constants import CURRENCY, RETAIL_TRANSCATIONS
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from site_settings.models import PaymentMethod
-from frontend.models import Shipping, validate_positive_decimal, CategorySite
+from site_settings.models import PaymentMethod, Shipping
+from frontend.models import validate_positive_decimal, CategorySite
 from products.models import Product, SizeAttribute, Gifts
 
 
@@ -119,10 +119,17 @@ class Cart(models.Model):
         return reverse('dashboard:cart_detail', kwargs={'pk': self.id})
 
     def save(self, *args, **kwargs):
+        if not self.shipping_method:
+            self.shipping_method = Shipping.objects.filter(first_choice=True).last() if Shipping.objects.filter(first_choice=True) else self.shipping_method
+        if not self.payment_method:
+            self.payment_method = PaymentMethod.objects.filter(first_choice=True).last() if PaymentMethod.objects.filter(first_choice=True) else self.payment_method
         get_items = self.cart_items.all()
-        self.value = get_items.aggregate(total=(Sum(F('final_price') * F('qty'), output_field=models.DecimalField())))['total'] if get_items else 0
+        self.value = get_items.aggregate(total=(Sum(F('final_value') * F('qty'), output_field=models.DecimalField())))['total'] if get_items else 0
+        current_value = self.value
         self.check_coupons()
-        self.final_price = self.value - self.coupon_discount
+        current_value += self.payment_method.estimate_additional_cost(self.value) if self.payment_method else 0
+        current_value += self.shipping_method.estimate_additional_cost(self.value) if self.shipping_method else 0
+        self.final_value = current_value - self.coupon_discount
         super(Cart, self).save(*args, **kwargs)
 
     def tag_value(self):
@@ -132,31 +139,15 @@ class Cart(models.Model):
         return '%s %s' % (round(self.final_value, 2), CURRENCY)
 
     def tag_payment_cost(self):
-        return '%s %s' % (round(self.payment_method.cost, 2), CURRENCY) if self.payment_method else f'0 {CURRENCY}'
+        cost = self.payment_method.estimate_additional_cost(self.value) if self.payment_method else 0
+        return '%s %s' % (round(cost, 2), CURRENCY) 
 
     def tag_shipping_cost(self):
-        return '%s %s' % (round(self.shipping_method.estimate_cost(self.value),2), CURRENCY) if self.shipping_method else f'0 {CURRENCY}'
+        cost = self.shipping_method.estimate_additional_cost(self.value) if self.shipping_method else 0
+        return '%s %s' % (round(cost,2), CURRENCY) 
 
     def tag_to_order(self):
         return 'Done' if self.is_complete else 'Not Done'
-
-    @property
-    def get_total_value(self):
-        get_value = self.value
-        if self.shipping_method:
-            get_value = self.value + self.shipping_method.cost if\
-                self.shipping_method.active_cost and self.value < self.shipping_method.active_minimum_cost \
-                else self.value
-        if self.payment_method:
-            get_value = get_value + self.payment_method.cost
-        return get_value
-
-    def tag_total_value(self):
-        return '%s %s' % (round(self.get_total_value,2), CURRENCY)
-
-    def remove_cart_item(self, cart_item):
-        self.value -= cart_item.get_total_price
-        self.save()
 
     def to_order(self, payment_method, shipping_method):
         self.active, self.is_complete = False, True
@@ -164,7 +155,17 @@ class Cart(models.Model):
                                                     Shipping.objects.get(id=int(shipping_method))
         self.save()
 
-    
+    @staticmethod
+    def costumer_changes(request, cart):
+        payment_method = request.POST.get('payment_method', cart.payment_method)
+        shipping_method = request.POST.get('shipping_method', cart.shipping_method)
+        add_coupon = request.POST.get('coupon', None)
+        print('just before the storm')
+        if isinstance(int(payment_method), int):
+            cart.payment_method = PaymentMethod.objects.get(id=payment_method)
+        if isinstance(int(shipping_method), int):
+            cart.shipping_method = Shipping.objects.get(id=shipping_method)
+        cart.save()
 
 class CartItemManager(models.Manager):
 
@@ -185,7 +186,7 @@ class CartItem(models.Model):
     price_discount = models.DecimalField(default=0, decimal_places=2, max_digits=10,
                                          validators=[validate_positive_decimal, ]
                                          )
-    final_price = models.DecimalField(default=0, decimal_places=2, max_digits=10, validators=[validate_positive_decimal,])
+    final_value = models.DecimalField(default=0, decimal_places=2, max_digits=10, validators=[validate_positive_decimal,])
     my_query = CartItemManager()
     objects = models.Manager()
 
@@ -195,34 +196,30 @@ class CartItem(models.Model):
         return self.product_related.title
 
     def save(self, *args, **kwargs):
-        self.final_price = self.price_discount if self.price_discount > 0 else self.price
+        self.final_value = self.price_discount if self.price_discount > 0 else self.price
         super(CartItem, self).save(*args, **kwargs)
         self.order_related.save()
 
     @property
-    def get_price(self):
-        return Decimal(self.price) * ((100-Decimal(self.price_discount))/100)
-
-    @property
-    def get_total_price(self):
-        return self.get_price*Decimal(self.qty)
+    def get_total_value(self):
+        return self.final_value*Decimal(self.qty)
 
     def tag_price(self):
-        return '%s %s' % (round(self.get_price, 2), CURRENCY)
-
-    def tag_total_price(self):
-        return '%s %s' % (round(self.get_total_price, 2), CURRENCY)
-
-    def tag_final_price(self):
-        return '%s %s' % (self.final_price, CURRENCY)
+        return '%s %s' % (round(self.price, 2), CURRENCY)
 
     def tag_total_value(self):
-        total_value = self.qty*self.final_price
+        return '%s %s' % (round(self.get_total_value, 2), CURRENCY)
+
+    def tag_final_value(self):
+        return '%s %s' % (self.final_value, CURRENCY)
+
+    def tag_total_value(self):
+        total_value = self.qty*self.final_value
         return '%s %s' % (total_value, CURRENCY)
 
     def update_order(self):
         items_query = CartItem.objects.filter(order_related=self.order_related)
-        self.order_related.value += items_query.aggregate(total=Sum(F('qty')*F('final_price')))['total'] if items_query.exists() else 0
+        self.order_related.value += items_query.aggregate(total=Sum(F('qty')*F('final_value')))['total'] if items_query.exists() else 0
         self.order_related.save()
 
     def edit_cart_item(self, old_price):

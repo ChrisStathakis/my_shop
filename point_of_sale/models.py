@@ -16,10 +16,10 @@ from accounts.models import CostumerAccount
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from site_settings.models import PaymentMethod, PaymentOrders
+from site_settings.models import PaymentMethod, PaymentOrders, Shipping
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
-from frontend.models import Shipping
+
 
 
 RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIONS, settings.PRODUCT_ATTRITUBE_TRANSCATION 
@@ -253,9 +253,9 @@ class RetailOrder(DefaultOrderModel):
         return queryset
     
     @staticmethod
-    def estimate_shipping_and_payment_cost(order_value, shipping, payment):
-        shipping_cost = shipping.cost if shipping.active_minimum_cost < order_value else 0
-        payment_cost = payment.additional_cost if payment.limit_value < order_value else 0
+    def estimate_shipping_and_payment_cost(cart, payment_method, shipping_method):
+        payment_cost = payment_method.estimate_additional_cost(cart.value) if payment_method else 0
+        shipping_cost = shipping_method.estimate_additional_cost(cart.value) if shipping_method else 0
         return [shipping_cost, payment_cost]
 
     @staticmethod
@@ -270,10 +270,7 @@ class RetailOrder(DefaultOrderModel):
     def create_order_from_cart(form, cart, cart_items):
         payment_method = form.cleaned_data.get('payment_method', None)
         shipping_method = form.cleaned_data.get('shipping_method', None)
-        shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart.final_value,
-                                                                                    shipping_method,
-                                                                                    payment_method
-                                                                                    )
+        shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart, payment_method, shipping_method)
         new_order = RetailOrder.objects.create(order_type='e',
                                                title=f'EshopOrder1{cart.id}',
                                                payment_method=form.cleaned_data.get('payment_method'),

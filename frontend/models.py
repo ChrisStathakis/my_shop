@@ -4,11 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.core.exceptions import ValidationError
-
-
 from site_settings.models import DefaultBasicModel
-from site_settings.models import Country
 from site_settings.constants import MEDIA_URL, CURRENCY
 
 
@@ -142,40 +138,6 @@ class Brands(models.Model):
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
         queryset = queryset.filter(active=True) if active_name else queryset
         return queryset
-
-
-class ShippingManager(models.Manager):
-
-    def active_and_site(self):
-        return super(ShippingManager, self).filter(active=True, for_site=True)
-        
-
-class Shipping(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(unique=True, max_length=100)
-    cost = models.DecimalField(max_digits=6, default=0, decimal_places=2, validators=[validate_positive_decimal, ])
-    active_minimum_cost = models.DecimalField(default=40, max_digits=6, decimal_places=2,
-                                              validators=[validate_positive_decimal, ])
-    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
-    ordering_by = models.IntegerField(default=1)
-
-    class Meta:
-        ordering = ['-ordering_by', ]
-
-    def __str__(self):
-        return self.title
-
-    def estimate_cost(self, price):
-        return self.cost if price < self.active_minimum_cost and self.active_cost else 0
-
-    def tag_active_cost(self):
-        return f'{self.cost} {CURRENCY}'
-
-    def tag_active_minimum_cost(self):
-        return f'{self.active_minimum_cost} {CURRENCY}'
-
-    def tag_active(self):
-        return 'Active' if self.active else 'No Active'
 
 
 class FirstPage(models.Model):

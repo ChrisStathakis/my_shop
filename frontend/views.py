@@ -26,12 +26,12 @@ from .mixins import custom_redirect, SearchMixin
 from .models import FirstPage, Banner, Brands, CategorySite
 from products.models import Product, Color, ProductPhotos, Gifts
 from point_of_sale.models import RetailOrder, RetailOrderItem, GiftRetailItem
-from frontend.models import Shipping
+from site_settings.models import Shipping
 from site_settings.models import PaymentMethod
 from site_settings.constants import CURRENCY, PAYMENT_METHOD
 from carts.views import check_if_cart_id, cart_data, check_or_create_cart, initial_data
-from carts.models import CartItem, Coupons, CartGiftItem
-from carts.forms import CartItemCreate, CartItemCreateWithAttrForm
+from carts.models import CartItem, Coupons, CartGiftItem, Cart
+from carts.forms import CartItemCreate, CartItemCreateWithAttrForm, CartCostumerForm
 from .forms import CheckoutForm
 from accounts.forms import CostumerAccountForm
 
@@ -239,6 +239,9 @@ class CartPage(SearchMixin, TemplateView):
         context = super(CartPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
         gifts = CartGiftItem.objects.filter(cart_related=cart)
+        cart_form = CartCostumerForm(initial={'payment_method': cart.payment_method,
+                                              'shipping_method': cart.shipping_method    
+                                            })
         context.update(locals())
         return context
 
@@ -254,8 +257,11 @@ class CartPage(SearchMixin, TemplateView):
                 messages.success(self.request, 'Coupon %s added in your cart!' % code)
             else:
                 messages.warning(self.request, 'This code is not a valid coupon')
-
-        if self.request.POST:
+        if 'my_cart' in self.request.POST:
+            print('release the cracken!')
+            Cart.costumer_changes(self.request, cart)
+            
+        if 'my_cart' not in self.request.POST:
             data = self.request.POST
             for key, value in data.items():
                 print(key, value)
@@ -330,20 +336,36 @@ def checkout_page(request):
         form = CheckoutForm(request.POST)
         print(form.errors, request.POST.get('phone', 'wtf'))
         if form.is_valid():
-            cart_items = CartItem.objects.filter(order_related=cart)
             try:
                 new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
                 messages.success(request, 'Your Order Have Completed!')
                 GiftRetailItem.check_retail_order(new_order, cart)
                 del request.session['cart_id']
-                return HttpResponseRedirect(reverse('order_view', kwargs={'dk': new_order.id}))
+                return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
             except:
+                print('something is wrong!')
                 del request.session['cart_id']
                 return HttpResponseRedirect('/')       
             
     context = locals()
     return render(request, 'my_site/checkout.html', context)
 
+
+def ajax_update_checkout(request):
+    data = {}
+    menu_categories, cart, cart_items = initial_data(request)
+    payment_id = request.POST.get('', cart.payment_method.id)
+    shipping_id = request.POST.get('', cart.shippign_method.id)
+    cart.payment_method = ''
+    cart.shipping_method = ''
+    cart.save()
+    cart.refresh_from_db()
+    data['table_data'] = render_to_string(request=request,
+                                          template_name='',
+                                          context={'cart': cart}
+    )
+    return JsonResponse(data)
+                            
 
 def delete_coupon(request, dk):
     coupon = get_object_or_404(Coupons, id=dk)

@@ -24,6 +24,7 @@ urlpatterns = [
     path('cart-page/ajax/update/<int:pk>/<int:qty>/', view=update_cart_page, name='update_cart_page'),
     path('checkout/',  view=checkout_page, name='checkout_page'),
     path('order-view/<slug:pk>/', order_detail_view, name='order_view'),
+    path('checkout/ajax-view/', '', ''),
 
 
     path('profile-page/', user_profile_page, name='profile-page'),

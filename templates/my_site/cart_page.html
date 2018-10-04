@@ -38,7 +38,7 @@
                                                 <h5>{{ item }}</h5>
                                             </td>
                                             <td class="price">
-                                                <span>{{ item.tag_final_price }}</span> / <span>{{ item.tag_total_price }}</span>
+                                                <span>{{ item.tag_final_value }}</span> / <span>{{ item.tag_total_value }}</span>
                                             </td>
                                             <td class="qty">
                                                 <div class="qty-btn d-flex">
@@ -62,10 +62,10 @@
                         <div class="col-12 col-lg-4">
                             <div id='cart_data' class="cart-summary ">
                                 <h5>Add Coupon</h5>
-                                <form method='post'>{% csrf_token %}
-                                    <input type="text" class="form-control" name='coupon' placeholder='Add Coupon'>
+                                <form class='form' method='post'>{% csrf_token %}
+                                    {{ cart_form.as_ul }}
                                     <br>
-                                    <button type="submit" class="btn amado-btn w-100">Save</button>
+                                    <button value='my_cart' name='my_cart' type="submit" class="btn amado-btn w-100">Save</button>
                                 </form>
                         
                             </div>
@@ -73,9 +73,10 @@
                             <div id='cart_data' class="cart-summary ">
                                 <h5>Cart Total</h5>
                                 <ul class="summary-table">
-                                    <li><span>subtotal:</span> <span>{{ cart.tag_value }}</span></li>
-                                    <li><span>delivery:</span> <span>Not Selected yet</span></li>
-                                    <li><span>total:</span> <span>{{ cart.tag_total_value }}</span></li>
+                                    <li><span>Product Value:</span> <span>{{ cart.tag_value }}</span></li>
+                                    <li><span>Additional Cost: Shipping - Payment</span> <span> {{ cart.tag_shipping_cost }},  {{ cart.tag_payment_cost }}</span></li>
+                                    <li><span>Coupons :</span> <span> 0.00</span></li>
+                                    <li><span>total:</span> <span>{{ cart.tag_final_value }}</span></li>
                                 </ul>
                                 <div class="cart-btn mt-100">
                                     <a href="{% url 'checkout_page' %}" class="btn amado-btn w-100">Checkout</a>

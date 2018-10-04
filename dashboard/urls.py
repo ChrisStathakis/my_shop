@@ -117,7 +117,8 @@ urlpatterns = [
     path('site-settings/banners/edit/<int:pk>/', BannerEditView.as_view(), name='banner_edit'),
     path('site-settings/banners/delete/<int:pk>/', view=banner_delete, name='banner_delete'),
 
-    path('site-settings/coupons', CouponsView.as_view(), name='coupons_view'),
+    path('site-settings/coupons/', CouponsView.as_view(), name='coupons_view'),
+    path('site-settings/coupons/create/', CouponCreateView.as_view(), name='coupons_create'),
 
 
     # user urls
