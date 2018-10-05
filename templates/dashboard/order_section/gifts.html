@@ -1,4 +1,4 @@
-{% extends 'dashboard/dashboard.html' %}
+{% extends 'dashboard/site_templates/homepage.html' %}
 
 
 {% block content %}
@@ -15,22 +15,20 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Ordering</th>
+                                                <th>#</th>
                                                 <th>Title</th>
+                                                <th>Gift Message</th>
                                                 <th>Status</th>
-                                                <th>Cost</th>
-                                                <th>Order Limit</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for order in object_list %}
                                             <tr>
-                                                <td>{{ order.ordering_by }}</td>
+                                                <td>{{ forloop.counter }}</td>
                                                 <td>{{ order }}</td>
-                                                <td>{{ order.tag_active }}</td>
-                                                <th>{{ order.tag_active_cost }}</th>
-                                                <td>{{ order.tag_active_minimum_cost }}</td>
+                                                <td>{{ order.gift_message }}</td>
+                                                <th>{{ order.tag_status }}</th>
                                                 <td><a class="btn btn-primary" href="{% url 'dashboard:gift_detail' order.id %}">Edit</a></td>
                                             </tr>
                                             {% endfor %}

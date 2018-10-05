@@ -414,6 +414,8 @@ class Gifts(models.Model):
     def __str__(self):
         return self.title
     
+    def tag_status(self):
+        return 'Active' if self.status else 'Non Active'
 
 
 

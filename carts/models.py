@@ -32,7 +32,7 @@ class Coupons(models.Model):
     '''
     How works, if you pick whole_order, ovverides the products, categories option and the discount goes to cart
     If you dont goes to products related
-    If toy pick discount_value and discount_percent, value will be picked!
+    If you pick discount_value and discount_percent, value will be picked!
     '''
 
     active = models.BooleanField(default=True)
@@ -72,6 +72,11 @@ class Coupons(models.Model):
         if self.discount_percent > 0:
             return f'{self.discount_percent} %'
         return 'No data selected'
+
+    def estimate_addiotional_cost(value):
+        # not fixed
+        value = 0
+        return value
 
     def check_coupon(self, order_type, order, order_items, coupons):
         # order_type 'cart' or 'eshop'
@@ -117,6 +122,22 @@ class Cart(models.Model):
         ordering = ['-id']
 
     def check_coupons(self):
+        total_coupon_discount = 0
+        items = self.cart_items.all()
+        coupons = self.coupon.all()
+        for coupon in coupons:
+            if coupon.whole_order:
+                if self.value >= coupon.limit_price:
+                    total_coupon_discount += coupon.estimate_addiotional_cost(value)
+                else:
+                    total_coupon_discount += coupon.estimate_additional_cost(value)
+            else:
+                for item in items:
+                    categories = item.category_site.all()
+                    if categories in coupon.categories:
+                        total_coupon_discount += coupon.estimate_additional_cost()
+        return total_coupon_discount
+                
         try:
             all_coupons = self.coupon.all()
             price = self.value
@@ -198,6 +219,13 @@ class Cart(models.Model):
                     cart.coupon.add(coupon)
                     cart.save()
                 elif coupon.categories:
+                    items = cart.order_items.all()
+                    categories = items.values('category_site')
+                    for category in coupon.categories:
+                        if category in categories:
+                            cart.coupon.add(coupon)
+                            break
+            cart.save()
 
 
 

@@ -1,4 +1,4 @@
-from django.views.generic import ListView, TemplateView, CreateView, UpdateView, DeleteView, View
+from django.views.generic import ListView, TemplateView, CreateView, UpdateView, DeleteView, View, FormView
 from django.shortcuts import reverse, get_object_or_404, HttpResponseRedirect, get_list_or_404, render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
@@ -8,7 +8,7 @@ from django.contrib import  messages
 
 from frontend.models import Banner
 from carts.models import Coupons
-from carts.forms import CouponForm
+from carts.forms import CouponForm, CouponQuickForm
 from frontend.forms import BannerForm
 from frontend.models import FirstPage, Banner
 from frontend.forms import BannerForm, FirstPageForm
@@ -83,39 +83,33 @@ def banner_delete(request, pk):
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class CouponsView(ListView):
+class CouponsView(ListView, FormView):
     model = Coupons
     template_name = 'dashboard/site_templates/coupons.html'
+    form_class = CouponQuickForm
 
+    def get_success_url(self):
+        last_created = Coupons.objects.last()
+        return reverse('dashboard:coupons_edit_view', kwargs={'pk': last_created.id})
 
-@method_decorator(staff_member_required, name='dispatch')
-class CouponCreateView(CreateView):
-    model = Coupons
-    form_class = CouponForm
-    template_name = 'dashboard/form_view.html'
-    success_url = reverse_lazy('dashboard:coupons_view')
-
-    def get_context_data(self, **kwargs):
-        context = super(CouponCreateView, self).get_context_data(**kwargs)
-        back_url = reverse('dashboard:coupons_view')
-        context.update(locals())
-        return context
 
     def form_valid(self, form):
         form.save()
+        messages.success(self.request, 'New form added!')
         return super().form_valid(form)
-
 
 @method_decorator(staff_member_required, name='dispatch')
 class CouponEditView(UpdateView):
     model = Coupons
     form_class = CouponForm
-    template_name = 'dashboard/form_view.html'
+    template_name = 'dashboard/site_templates/coupon_detail.html'
     success_url = reverse_lazy('dashboard:coupons_view')
 
     def get_context_data(self, **kwargs):
         context = super(CouponEditView, self).get_context_data(**kwargs)
         back_url = reverse('dashboard:coupons_view')
+        categories = CategorySite.objects.all()
+        products = Product.my_query.active_for_site()
         context.update(locals())
         return context
 

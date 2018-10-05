@@ -1,0 +1,25 @@
+{% extends "dashboard/site_templates/homepage.html" %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card">
+                    <div class="header">Edit {{ instance }}</div>
+                    <div class="content">
+                        <form method="post"> {% csrf_token %}
+                            {{ form }}
+                            <button class="btn btn-success" type='submit'>Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">Products</div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

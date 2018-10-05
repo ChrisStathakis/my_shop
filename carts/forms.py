@@ -41,6 +41,20 @@ class CartItemNoAttrForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
+class CouponQuickForm(forms.ModelForm):
+    date_created = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+    date_end = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Coupons
+        fields = ['active', 'title', 'code', 'date_created', 'date_end']
+
+    def __init__(self, *args, **kwargs):
+        super(CouponQuickForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
+
 class CouponForm(forms.ModelForm):
     date_created = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
     date_end = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
