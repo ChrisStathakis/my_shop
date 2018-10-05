@@ -28,16 +28,27 @@ class CouponManager(models.Manager):
 
 
 class Coupons(models.Model):
+
+    '''
+    How works, if you pick whole_order, ovverides the products, categories option and the discount goes to cart
+    If you dont goes to products related
+    If toy pick discount_value and discount_percent, value will be picked!
+    '''
+
     active = models.BooleanField(default=True)
     title = models.CharField(unique=True, max_length=50)
     code = models.CharField(unique=True, null=True, max_length=50)
     date_created = models.DateTimeField()
     date_end = models.DateTimeField()
     cart_total_value = models.DecimalField(blank=True, null=True, max_digits=10, decimal_places=2)
+    whole_order = models.BooleanField(default=False)
     products = models.ManyToManyField(Product, blank=True)
     categories = models.ManyToManyField(CategorySite, blank=True)
-    discount_value = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=10)
-    discount_percent = models.PositiveIntegerField(blank=True, null=True)
+    discount_value = models.DecimalField(verbose_name='Discount in Value',
+                                         decimal_places=2, max_digits=10, default=0,
+                                         help_text='Value gets a priority vs percent. Period'
+                                         )
+    discount_percent = models.PositiveIntegerField(default=0)
 
     objects = models.Manager()
     my_query = CouponManager()
@@ -48,6 +59,19 @@ class Coupons(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_dashboard_url(self):
+        return reverse('dashboard:coupons_edit_view', kwargs={'pk': self.id})
+
+    def tag_cart_total_value(self):
+        return f'{self.cart_total_value} {CURRENCY}'
+
+    def tag_value(self):
+        if self.discount_value > 0:
+            return f'{self.discount_value} {CURRENCY}'
+        if self.discount_percent > 0:
+            return f'{self.discount_percent} %'
+        return 'No data selected'
 
     def check_coupon(self, order_type, order, order_items, coupons):
         # order_type 'cart' or 'eshop'
@@ -159,13 +183,24 @@ class Cart(models.Model):
     def costumer_changes(request, cart):
         payment_method = request.POST.get('payment_method', cart.payment_method)
         shipping_method = request.POST.get('shipping_method', cart.shipping_method)
-        add_coupon = request.POST.get('coupon', None)
+        add_coupon = request.POST.get('add_coupon', None)
         print('just before the storm')
         if isinstance(int(payment_method), int):
             cart.payment_method = PaymentMethod.objects.get(id=payment_method)
         if isinstance(int(shipping_method), int):
             cart.shipping_method = Shipping.objects.get(id=shipping_method)
         cart.save()
+        if add_coupon:
+            coupons = Coupons.objects.filter(code=add_coupon)
+            if coupons.exists():
+                coupon = coupons.first()
+                if coupon.whole_order:
+                    cart.coupon.add(coupon)
+                    cart.save()
+                elif coupon.categories:
+
+
+
 
 class CartItemManager(models.Manager):
 

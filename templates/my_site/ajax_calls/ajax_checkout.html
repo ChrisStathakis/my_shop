@@ -1,0 +1,8 @@
+
+
+<li><span>subtotal:</span> <span>{{ cart.tag_value }}</span></li>
+<li><span>Delivery Cost:</span> <span>{{ cart.tag_shipping_cost|default_if_none:'free' }}</span></li>
+<li><span>Cost Cash:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
+<li><span>Coupon Discount:</span> <span>0.00</span></li>
+<li><span>total:</span> <span>{{ cart.tag_final_value }}</span></li>
+

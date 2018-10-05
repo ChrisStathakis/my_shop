@@ -258,7 +258,6 @@ class CartPage(SearchMixin, TemplateView):
             else:
                 messages.warning(self.request, 'This code is not a valid coupon')
         if 'my_cart' in self.request.POST:
-            print('release the cracken!')
             Cart.costumer_changes(self.request, cart)
             
         if 'my_cart' not in self.request.POST:
@@ -351,18 +350,20 @@ def checkout_page(request):
     return render(request, 'my_site/checkout.html', context)
 
 
-def ajax_update_checkout(request):
+def ajax_update_checkout(request, type, pk):
     data = {}
     menu_categories, cart, cart_items = initial_data(request)
-    payment_id = request.POST.get('', cart.payment_method.id)
-    shipping_id = request.POST.get('', cart.shippign_method.id)
-    cart.payment_method = ''
-    cart.shipping_method = ''
+    if type == 'payment':
+        new_payment = get_object_or_404(PaymentMethod, id=pk)
+        cart.payment_method = new_payment
+    if type == 'shipping':
+        new_shipping = get_object_or_404(Shipping, id=pk)
+        cart.shipping_method = new_shipping
     cart.save()
     cart.refresh_from_db()
-    data['table_data'] = render_to_string(request=request,
-                                          template_name='',
-                                          context={'cart': cart}
+    data['cart_data'] = render_to_string(request=request,
+                                         template_name='my_site/ajax_calls/ajax_checkout.html',
+                                         context={'cart': cart}
     )
     return JsonResponse(data)
                             
@@ -429,6 +430,7 @@ def order_detail_page(request, dk):
 def reset_cart(request):
     del request.session['cart_id']
     return HttpResponseRedirect('/')
+
 
 @login_required
 def user_download_page(request):

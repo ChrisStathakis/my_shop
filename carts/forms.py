@@ -42,19 +42,18 @@ class CartItemNoAttrForm(forms.ModelForm):
 
 
 class CouponForm(forms.ModelForm):
-    # date_created = forms.DateField(wid)
+    date_created = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+    date_end = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
         model = Coupons
         fields = '__all__'
         exclude = ['products', ]
 
-
     def __init__(self, *args, **kwargs):
         super(CouponForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
- 
 
 
 class CartItemCreate(forms.Form):

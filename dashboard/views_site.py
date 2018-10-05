@@ -98,6 +98,7 @@ class CouponCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(CouponCreateView, self).get_context_data(**kwargs)
         back_url = reverse('dashboard:coupons_view')
+        context.update(locals())
         return context
 
     def form_valid(self, form):
@@ -105,7 +106,23 @@ class CouponCreateView(CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(staff_member_required, name='dispatch')
+class CouponEditView(UpdateView):
+    model = Coupons
+    form_class = CouponForm
+    template_name = 'dashboard/form_view.html'
+    success_url = reverse_lazy('dashboard:coupons_view')
+
+    def get_context_data(self, **kwargs):
+        context = super(CouponEditView, self).get_context_data(**kwargs)
+        back_url = reverse('dashboard:coupons_view')
+        context.update(locals())
+        return context
+
+
+
 #  dashboard urls
+
 
 @method_decorator(staff_member_required, name='dispatch')
 class UserListView(ListView):
@@ -338,7 +355,6 @@ def delete_first_page(request, dk):
     get_object = get_object_or_404(FirstPage, id=dk)
     get_object.delete()
     return HttpResponseRedirect(reverse('dashboard:page_config'))
-
 
 
 @staff_member_required

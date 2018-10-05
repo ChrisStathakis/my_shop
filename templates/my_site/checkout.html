@@ -62,10 +62,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-4">
+                        <div class="col-12 col-lg-4" >
                             <div class="cart-summary">
                                 <h5>Cart Total</h5>
-                                <ul class="summary-table">
+                                <ul class="summary-table" id="cart_container">
                                     <li><span>subtotal:</span> <span>{{ cart.tag_value }}</span></li>
                                     <li><span>Delivery Cost:</span> <span>{{ cart.tag_shipping_cost|default_if_none:'free' }}</span></li>
                                     <li><span>Cost Cash:</span> <span>{{ cart.tag_payment_cost|default_if_none:'free' }}</span></li>
@@ -79,11 +79,15 @@
                                         <!-- Cash on delivery -->
                                         <div class="custom-control mr-sm-2">
                                             <label>
-                                                <input type="radio" 
-                                                       name="payment_method" 
-                                                       value="{{ payment.id }}" 
-                                                       {% if payment.id == cart.payment_method.id %} checked {% endif %}
-                                                       required
+                                                <input
+                                                    class="form-control trigger_button"
+                                                    data-url="{% url 'ajax_checkout' 'payment' payment.id %}"
+                                                    type="radio"
+                                                    class="form-control trigger_button"
+                                                    name="payment_method"
+                                                    value="{{ payment.id }}"
+                                                        {% if payment.id == cart.payment_method.id %} checked {% endif %}
+                                                    required
                                                     >{{ payment }}
                                             </label>
                                         </div>
@@ -95,11 +99,14 @@
                                     {% for shipping in shippings %}
                                         <div class="custom-control mr-sm-2">
                                             <label>
-                                                <input type="radio" 
-                                                          name="shipping_method" 
-                                                          value="{{ shipping.id }}" 
-                                                          required
-                                                          {% if shipping.id == cart.shipping_method.id %} checked {% endif %}
+                                                <input
+                                                    class="form-control trigger_button"
+                                                    data-url="{% url 'ajax_checkout' 'shipping' shipping.id %}"
+                                                    type="radio"
+                                                    name="shipping_method"
+                                                    value="{{ shipping.id }}"
+                                                    required
+                                                        {% if shipping.id == cart.shipping_method.id %} checked {% endif %}
                                                 >{{ shipping }}
                                             </label>
                                         </div>
@@ -107,7 +114,7 @@
                                 </div>
     
                                 <div class="cart-btn mt-100">
-                                    <button type='submit' class="btn amado-btn w-100">Checkout</a>
+                                    <button type='submit' class="btn amado-btn w-100">Checkout</button>
                                 </div>
                             </div>
                         </div>
@@ -122,17 +129,15 @@
 
 {% block extra_js %}
     <script>
-        $('.trigger_button').change(function(event){
-            event.preventDefault();
-            const btn = $(this);
-            const id = btn.attr('value')
-
+        $('.trigger_button').click(function (event) {
+            var btn = $(this);
+            var href = btn.attr('data-url');
             $.ajax({
-               dataType: 'json',
-               url: '',
-               success: function(response) {
-                   $('#cart_data').html(response.table_data)
-               }
+                dataType: 'json',
+                url: href,
+                success: function (response) {
+                    $('#cart_container').html(response.cart_data)
+                }
 
             })
         })
