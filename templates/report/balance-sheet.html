@@ -1,15 +1,7 @@
 {% extends 'report/warehouse.html' %}
 
-{% block down_menu %}
 
-<div class="ui six item bottom fixed menu">
-    <a  href="{% url 'reports:balance_sheet' %}" class="active green item">Balance Sheet</a>
-    <a  href="{% url 'reports:payment_flow' %}" class="item">Ροή Πληρωμών</a>
-    <a  href="" class="item">Ανάλυση Προμηθευτών</a>
-    <a  href="" class="item">Ανάλυση Πελατών</a>
-    <a  href="" class="item">Ανάλυση Κατηγοριών</a>
-</div>
-{% endblock %}
+
 
 {% block content %}
 
@@ -353,7 +345,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <button id="ware_order_vendor" data-url="{% url 'reports:ajax_balance_sheet_ware_orders' %}" class="ui blue button"> Ανα Προμηθευτή</button>
+                            <button id="ware_order_vendor" data-url="" class="ui blue button"> Ανα Προμηθευτή</button>
                         </div>
                         <div class="title">
                             <i class="dropdown icon"></i>
@@ -378,8 +370,8 @@
                                     {% endfor %}
                                 </tbody>
                           </table>
-                          <button id='btn_people' data-url="{% url 'reports:ajax_balance_sheet_payroll' %}" class="ui blue button">Ανάλυση Ανά Άτομο</button> 
-                          <button id='btn_occup' data-url="{% url 'reports:ajax_balance_sheet_payroll' %}" class="ui blue button">Ανάλυση Ανά Επάγγελμα</button>
+                          <button id='btn_people' data-url="" class="ui blue button">Ανάλυση Ανά Άτομο</button> 
+                          <button id='btn_occup' data-url="" class="ui blue button">Ανάλυση Ανά Επάγγελμα</button>
                       </div>
                       <div class="title">
                           <i class="dropdown icon"></i>

@@ -118,8 +118,8 @@ urlpatterns = [
     path('site-settings/banners/delete/<int:pk>/', view=banner_delete, name='banner_delete'),
 
     path('site-settings/coupons/', CouponsView.as_view(), name='coupons_view'),
-    path('size-settings/coupons/edit/<int:pk>/', CouponEditView.as_view(), name='coupons_edit_view'),
-
+    path('size-settings/coupons/edit/<int:pk>/', view=edit_coupon_view, name='coupons_edit_view'),
+    path('size-settings/coupons/ajax/<int:pk>/<int:dk>/<slug:slug>/', ajax_edit_coupon_view, name='ajax_coupon_edit'),
 
     # user urls
     path('users-list/', UserListView.as_view(), name='users_list'),

@@ -4,7 +4,7 @@ from .views import *
 from .views_transcations import *
 from .ajax_calls.ajax_warehouse_calls import *
 from .view_sells import OrderRetailReportView, HomepageSellView
-
+from .balance_sheet_views import balance_sheet
 
 
 app_name = 'reports'
@@ -57,7 +57,7 @@ urlpatterns = [
     # ajax_calls
     path('ajax/characteristics/analysis', ajax_size_analysis, name='ajax_size_analysis'),
 
-
+    path('balance-sheet/', balance_sheet, name='balance\-sheet'),
 
    
     ]

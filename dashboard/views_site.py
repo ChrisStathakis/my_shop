@@ -5,6 +5,8 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.db.models import F, Q
 from django.contrib import  messages
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 
 from frontend.models import Banner
 from carts.models import Coupons
@@ -98,21 +100,36 @@ class CouponsView(ListView, FormView):
         messages.success(self.request, 'New form added!')
         return super().form_valid(form)
 
-@method_decorator(staff_member_required, name='dispatch')
-class CouponEditView(UpdateView):
-    model = Coupons
-    form_class = CouponForm
-    template_name = 'dashboard/site_templates/coupon_detail.html'
-    success_url = reverse_lazy('dashboard:coupons_view')
 
-    def get_context_data(self, **kwargs):
-        context = super(CouponEditView, self).get_context_data(**kwargs)
-        back_url = reverse('dashboard:coupons_view')
-        categories = CategorySite.objects.all()
-        products = Product.my_query.active_for_site()
-        context.update(locals())
-        return context
+@staff_member_required
+def edit_coupon_view(request, pk):
+    instance = get_object_or_404(Coupons, id=pk)
+    categories = CategorySite.objects.all()
+    form = CouponForm(instance=instance)
+    if 'coupon_form' in request.POST:
+        form = CouponForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard:coupons_edit_view', kwargs={'pk', instance.id}))
 
+    context = locals()
+    return render(request, 'dashboard/site_templates/coupon_detail.html', context)
+
+
+@staff_member_required
+def ajax_edit_coupon_view(request, pk, dk, slug):
+    data = {}
+    instance = get_object_or_404(Coupons, id=pk)
+    category = get_object_or_404(CategorySite, id=dk)
+    if slug == 'add':
+        instance.categories.add(category)
+    if slug == 'delete':
+        instance.categories.remove(category)
+    data['table_data'] = render_to_string(request=request, 
+                                          template_name='dashboard/ajax_calls/ajax_coupon.html', 
+                                          context={'instance': instance}
+                                          )
+    return JsonResponse(data)
 
 
 #  dashboard urls

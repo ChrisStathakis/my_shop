@@ -62,7 +62,7 @@ class CouponForm(forms.ModelForm):
     class Meta:
         model = Coupons
         fields = '__all__'
-        exclude = ['products', ]
+        exclude = ['products', 'categories']
 
     def __init__(self, *args, **kwargs):
         super(CouponForm, self).__init__(*args, **kwargs)
