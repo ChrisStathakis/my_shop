@@ -39,6 +39,8 @@ urlpatterns = [
 
     # test using
     path('reset-cart/', view=reset_cart),
+
+    path('test/', test_view),
 ] 
 
 

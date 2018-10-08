@@ -452,3 +452,7 @@ def user_download_page(request):
     p.save()
     return response
 
+
+def test_view(request):
+
+    return render(request, 'my_site/test.html')

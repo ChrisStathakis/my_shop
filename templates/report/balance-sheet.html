@@ -11,7 +11,7 @@
             <h2 class="ui blue header">
               <i class="blue calendar icon"></i>
               <div class="blue content">
-                Ισολογισμός
+                Balance Sheet {{ balance_sheet}} {{ currency }}
               </div>
             </h2>
         </div>
@@ -24,19 +24,18 @@
                 <div class="content">
                     <form id="form_filter" class="ui form" method="get">
                         {% include 'snippets/search_date_filter.html' %}
-                        <button class="ui fluid green button" type="submit">Search</button>
-                        
+                        <button class="ui fluid green button" type="submit">Search</button>     
                     </form>
                 </div>
             </div>
         </div>
         <div class="two wide column"></div> 
     </div>
-
+    
     <div class="row">
         <div class="one wide column"></div>
         <div class="fourteen wide column">
-            <h4 class="ui blue header"> Ανάλυση Εσόδων Εξόδων</h4>
+            <h4 class="ui blue header"> Warehouse Analysis</h4>
             <div class="row">
                 <canvas id="myChart3" width="400" height="100"></canvas>
                     <script>
@@ -65,10 +64,10 @@
                                     pointColor: "#fff"
                                     },
                                 {
-                                    label: '{{ currency }} Έσοδα ',
+                                    label: '{{ currency }} Incomes ',
                                     data: [
-                                        {% for ele in clean_incomes_per_month %}
-                                            {{ ele.1.0 }},
+                                        {% for ele in chart_incomes %}
+                                            {% if forloop.last %} {{ ele.final_value }} {% else %} {{ ele.final_value }}, {% endif %}
                                         {% endfor %}
                                     ],
                                     fill:false,
@@ -108,8 +107,8 @@
                             {
                                     label: '{{ currency }} Αποπληρωμές Τιμολογίου',
                                     data: [
-                                        {% for ele in warehouse_orders_by_month %}
-                                            {{ ele.total_cost }},
+                                        {% for ele in chart_invoice %}
+                                            {% if forloop.last %} {{ ele.final_value }} {% else %} {{ ele.final_value }}, {% endif %}
                                         {% endfor %}
                                     ],
                                     fill:false,
@@ -282,57 +281,58 @@
             <h2 class="ui center aligned red header">
                 <i class="plug icon"></i>
                 <div class="content">
-                    Εξοδα
+                    Expenses {{ total_cost_value  }} {{ currency }}
                 </div>
             </h2>
             <div class="ui tiny four statistics">
                 <div class="blue statistic">
                     <div class="value">
-                        {{ total_expenses.0 }} {{ currency }}
+                        {{ total_invoice_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Αγορές Τιμολογίων
+                      Warehouse Invoices
                     </div>
                 </div>
                 <div class="blue statistic">
                     <div class="value">
-                        {{ total_expenses.1 }} {{ currency }}
+                        {{ total_bills_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Λογαριασμοί
+                      Bills
                     </div>
                 </div>
                 <div class="blue statistic">
                     <div class="value">
-                        {{ total_expenses.2 }} {{ currency }}
+                        {{ total_payroll_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Έξοδα Προσωπικού
+                      Payroll
                     </div>
                 </div>
-                <div class="red statistic">
+                <div class="blue statistic">
                     <div class="value">
-                        {{ total_expenses.3 }} {{ currency }}
+                        {{ total_expenses_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Σύνολο
+                      Generic Expenses
                     </div>
                 </div>
+               
             </div>
             <div class="ui segments">
                 <div class="ui segment">
                     <div class="ui styled fluid accordion">
                         <div class="title">
                             <i class="dropdown icon"></i>
-                            Έξοδα από Τιμολόγια
+                                Warehouse Invoice Analysis
                         </div>
                         <div id="warehouse_order_container" class="content">
                             <table class="ui fixed single line celled table">
                                 <thead>
                                     <tr>
-                                        <th>Μήνας</th>
-                                        <th>Πίστωση</th>
-                                        <th>Πληρωμές</th>
+                                        <th>Month</th>
+                                        <th>Value</th>
+                                        <th>Paid Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -405,40 +405,40 @@
             <h2 class="ui center aligned green header">
                 <i class="plug icon"></i>
                 <div class="content">
-                    Έσοδα
+                    Incomes {{ total_sell_value }} {{ currency }}
                 </div>
             </h2>
             <div class="ui tiny four statistics">
                 <div class="blue statistic">
                     <div class="value">
-                        {{ total_incomes.0 }} {{ currency }}
+                        {{ total_eshop_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Έσοδα
+                      Eshop Sales
                     </div>
                 </div>
                 <div class="blue statistic">
                     <div class="value">
-                        {{ total_incomes.1 }} {{ currency }}
+                        {{ total_retail_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Επιστροφές
+                      Retail Sales
                     </div>
                 </div>
-                <div class="blue statistic">
+                <div class="red statistic">
                     <div class="value">
-                        {{ total_incomes.2 }} {{ currency }}
+                        {{ total_cost_value }} {{ currency }}
                     </div>
                     <div class="label">
-                      Ελλατωματικά
+                      Product Cost
                     </div>
                 </div>
                 <div class="green statistic">
                     <div class="value">
-                        {{ total_incomes.3 }} {{ currency }}
+                        {{ diff }} {{ currency }}
                     </div>
                     <div class="label">
-                       Καθαρά Κέρδη
+                       Difference
                     </div>
                 </div>
             </div>

@@ -57,7 +57,7 @@ urlpatterns = [
     # ajax_calls
     path('ajax/characteristics/analysis', ajax_size_analysis, name='ajax_size_analysis'),
 
-    path('balance-sheet/', balance_sheet, name='balance\-sheet'),
+    path('balance-sheet/', balance_sheet, name='balance_sheet'),
 
    
     ]
