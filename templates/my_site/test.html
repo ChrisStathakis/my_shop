@@ -7,8 +7,11 @@
         {% include 'my_site/include/navbar.html' %}
 
         <div class="shop_sidebar_area">
-            <form method='get'>
-                <input type="file" accept="audio/*" capture id="recorder">
+            <form enctype="multipart/form-data" method='post'> {% csrf_token %}
+                <input type="text" name='test' />
+                <input name='voice_data' type="file" accept="audio/*" capture id="recorder">
+                <button type='submit' class="btn btn-success">Go</button>
+            </form>
 <audio id="player" controls></audio>
 <script>
   var recorder = document.getElementById('recorder');

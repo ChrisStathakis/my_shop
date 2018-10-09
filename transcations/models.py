@@ -71,6 +71,7 @@ class Bill(DefaultOrderModel):
                 ele.delete()
         self.final_value = self.value
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
+        super().save(*args, **kwargs)
         if self.is_paid:
             get_value = self.get_remaining_value()
             if get_value > 0:
@@ -82,8 +83,6 @@ class Bill(DefaultOrderModel):
                                                          content_type=ContentType.objects.get_for_model(self),
                                                          is_expense=True
                                                         )
-        
-        super().save(*args, **kwargs)
         self.category.update_balance()
     
 
@@ -231,17 +230,7 @@ class Payroll(DefaultOrderModel):
             for ele in self.payment_orders.all():
                 ele.delete()
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-        if self.is_paid:
-            get_value = self.get_remaining_value()
-            if get_value > 0:
-                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
-                                                         value=self.get_remaining_value(),
-                                                         payment_method=self.payment_method,
-                                                         is_paid=True,
-                                                         object_id=self.id,
-                                                         content_type=ContentType.objects.get_for_model(self),
-                                                         is_expense=True
-                                                        )
+        
         
 
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
@@ -260,6 +249,17 @@ class Payroll(DefaultOrderModel):
                                                      date_expired=self.date_expired,
                                                      )
         super(Payroll, self).save(*args, **kwargs)
+        if self.is_paid:
+            get_value = self.get_remaining_value()
+            if get_value > 0:
+                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
+                                                         value=self.get_remaining_value(),
+                                                         payment_method=self.payment_method,
+                                                         is_paid=True,
+                                                         object_id=self.id,
+                                                         content_type=ContentType.objects.get_for_model(self),
+                                                         is_expense=True
+                                                        )
         self.person.save()
 
     def __str__(self):
@@ -315,7 +315,7 @@ class Payroll(DefaultOrderModel):
         paid_name = request.GET.getlist('paid_name', None)
         cate_name = request.GET.getlist('cate_name', None)
 
-        queryset = queryset.filter(category__in=bill_group_name) if cate_name else queryset
+        queryset = queryset.filter(category__in=cate_name) if cate_name else queryset
         queryset = queryset.filter(person__id__in=person_name) if person_name else queryset
         queryset = queryset.filter(person__occupation__id__in=occup_name) if occup_name else queryset
         queryset = queryset.filter(Q(title__icontains=search_name) |

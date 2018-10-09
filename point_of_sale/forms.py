@@ -74,18 +74,22 @@ class RetailOrderAdminForm(forms.ModelForm):
 
 
 class SalesForm(forms.ModelForm):
+    date_expired = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
         model = RetailOrder
         fields = ['title',
                   'costumer_account',
-                  
+                  'date_expired',
                   'status',
                   'payment_method',
                   'discount',
                   'user_account'
                   ]
-
+    def __init__(self, *args, **kwargs):
+        super(SalesForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 class RetailOrderItemForm(forms.ModelForm):
 

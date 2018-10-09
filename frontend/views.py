@@ -452,7 +452,25 @@ def user_download_page(request):
     p.save()
     return response
 
+import speech_recognition as sr
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
 
 def test_view(request):
-
+    tmp_file = None
+    if request.POST:
+        print('works!')
+        voice_data = request.FILES.get('voice_data', None)
+        path = default_storage.save('tmp/somename.wav', ContentFile(voice_data.read()))
+        tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+    r = sr.Recognizer()
+    if tmp_file:
+        data = sr.AudioFile(tmp_file)
+        with data as source:
+            audio = r.record(source)
+            r.recognize_google(audio)
+            print(audio)
+    print(tmp_file)
     return render(request, 'my_site/test.html')

@@ -199,6 +199,19 @@
                             </table>
                         </div>
                     </div>
+
+                    <div class="card">
+                        <div class="header">
+                            <div class="title">Edit {{ instance }}</div>
+                        </div>
+                        <div class="content">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button type='submit' name='order_sub' class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
           
                

@@ -44,17 +44,26 @@
                         type: 'line',
                         data: {
                             labels: [
-                                {% for ele in incomes_per_month %}
-                                 "{{ ele.month }}",
-                                {% endfor %}
+                                {% for ele in months_str %}{% if forloop.last %} "{{ ele }}" {% else %}  "{{ ele }}", {% endif %}{% endfor %}
+                                
                                 ],
                             datasets: [
                                 {
-                                    label: '{{ currency }} Κέρδη/Ζημιά ',
+                                    label: '{{ currency }} Total Cost ',
                                     data: [
-                                            {% for ele in profit_losses %}
-                                                {{ ele.1 }},
-                                            {% endfor %}
+                                        {% for ele in chart_all_data %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
+                                        ],
+                                    fill:false,
+                                    borderColor:[
+                                            'red'
+                                    ],
+                                    strokeColor: "#fff",
+                                    pointColor: "#fff"
+                                },
+                                {
+                                    label: '{{ currency }} Sells ',
+                                    data: [
+                                        {% for ele in chart_sell_data %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
                                         ],
                                     fill:false,
                                     borderColor:[
@@ -62,74 +71,56 @@
                                     ],
                                     strokeColor: "#fff",
                                     pointColor: "#fff"
-                                    },
+                                },
                                 {
-                                    label: '{{ currency }} Incomes ',
+                                    label: '{{ currency }} Invoices ',
                                     data: [
-                                        {% for ele in chart_incomes %}
-                                            {% if forloop.last %} {{ ele.final_value }} {% else %} {{ ele.final_value }}, {% endif %}
-                                        {% endfor %}
-                                    ],
+                                        {% for ele in chart_invoices %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
+                                        ],
                                     fill:false,
                                     borderColor:[
-                                        'teal'
+                                            'blue'
                                     ],
-                                    strokeColor: "black",
-                                    pointColor: "black"
-                            },
+                                    strokeColor: "#fff",
+                                    pointColor: "#fff"
+                                },
                                 {
-                                    label: '{{ currency }} Συνολικά Εξοδα ',
+                                    label: '{{ currency }} Bills ',
                                     data: [
-                                        {% for ele in total_expenses_by_month %}
-                                            {{ ele.1.0 }},
-                                        {% endfor %}
-                                    ],
+                                        {% for ele in chart_bills %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
+                                        ],
                                     fill:false,
                                     borderColor:[
-                                        'red'
+                                            'purple'
                                     ],
-                                    strokeColor: "black",
-                                    pointColor: "black"
+                                    strokeColor: "#fff",
+                                    pointColor: "#fff"
                                 },
                                 {
-                                    label: '{{ currency }} Μισθοδοσία',
+                                    label: '{{ currency }} Payroll ',
                                     data: [
-                                        {% for ele in payroll_orders_by_month %}
-                                            {{ ele.total_cost }},
-                                        {% endfor %}
-                                    ],
+                                        {% for ele in chart_payroll %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
+                                        ],
                                     fill:false,
-                                    borderColor:['blue'],
-                                    pointStrokeColor : "blue",
-                                    strokeColor: "blue",
-                                    pointColor: "blue"
+                                    borderColor:[
+                                            'yellow'
+                                    ],
+                                    strokeColor: "#fff",
+                                    pointColor: "#fff"
                                 },
-                            {
-                                    label: '{{ currency }} Αποπληρωμές Τιμολογίου',
+                                {
+                                    label: '{{ currency }} Expenses ',
                                     data: [
-                                        {% for ele in chart_invoice %}
-                                            {% if forloop.last %} {{ ele.final_value }} {% else %} {{ ele.final_value }}, {% endif %}
-                                        {% endfor %}
-                                    ],
+                                        {% for ele in chart_expenses %}{% if forloop.last %} "{{ ele.1 }}" {% else %}  "{{ ele.1 }}", {% endif %}{% endfor %}
+                                        ],
                                     fill:false,
-                                    borderColor:['red'],
-                                    fillColor: "red",
-                                    strokeColor: "red",
-                                    pointColor: "red"
-                                },
-                            {
-                                    label: '{{ currency }} Λογαριασμοί',
-                                    data: [
-                                        {% for ele in bills_orders_by_month %}
-                                            {{ ele.total_cost }},
-                                        {% endfor %}
+                                    borderColor:[
+                                            'pink'
                                     ],
-                                    fill:false,
-                                    borderColor:['#59b8e6'],
-                                    fillColor: "red",
-                                    strokeColor: "red",
-                                    pointColor: "red"
-                                }]
+                                    strokeColor: "#fff",
+                                    pointColor: "#fff"
+                                }
+                                ]
                         },
                         options: {
                             scales: {
