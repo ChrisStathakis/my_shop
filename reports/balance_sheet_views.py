@@ -2,13 +2,14 @@ from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
-
 from point_of_sale.models import RetailOrder
 from inventory_manager.models import Order
 from transcations.models import Bill, Payroll, GenericExpense
 from site_settings.constants import CURRENCY
 
 from .tools import filter_date
+from itertools import chain
+from operator import attrgetter
 
 @staff_member_required
 def balance_sheet(request):
@@ -30,16 +31,16 @@ def balance_sheet(request):
                                                                             ).order_by('month')
     chart_payroll = payroll.annotate(month=TruncMonth('date_expired')
                                                  ).values('month').annotate(final_value=Sum('final_value')
-                                                                            ).order_by('month')                      
+                                                                            ).order_by('month')
     chart_expenses = expenses.annotate(month=TruncMonth('date_expired')
                                                  ).values('month').annotate(final_value=Sum('final_value')
                                                                             ).order_by('month')
 
     chart_total_expenses = []
     months = []
-    
-    for ele in chart_invoices:
-        chart_expenses.append(ele['month'].strftime('%B'),ele['final_value'])
+
+    try_data = list(chain(chart_invoices, chart_expenses, chart_payroll, chart_bills))
+    print(try_data)
 
     chart_sells = retail_orders.filter(order_type__in=['e', 'r']).annotate(month=TruncMonth('date_expired')
                                                  ).values('month').annotate(final_value=Sum('final_value')
@@ -49,7 +50,7 @@ def balance_sheet(request):
     # analyse incomes
 
     total_retail_value = retail_orders.filter(order_type='r').aggregate(Sum('final_value'))['final_value__sum'] if retail_orders.filter(order_type='r') else 0
-    total_eshop_value =  retail_orders.filter(order_type='e').aggregate(Sum('final_value'))['final_value__sum'] if retail_orders.filter(order_type='e') else 0
+    total_eshop_value = retail_orders.filter(order_type='e').aggregate(Sum('final_value'))['final_value__sum'] if retail_orders.filter(order_type='e') else 0
     total_sell_cost = retail_orders.filter(order_type__in=['r', 'e']).aggregate(Sum('total_cost'))['total_cost__sum'] if retail_orders.filter(order_type__in=['r', 'e']) else 0
     
     total_sell_value = total_eshop_value + total_retail_value
