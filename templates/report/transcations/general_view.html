@@ -1,5 +1,58 @@
 {% extends 'report/transcations/homepage.html' %}
 
 {% block content %}
-
+    <div class="row">
+        <div class="six wide column"></div>
+        <div class="four wide column">
+            <h1 class="ui blue header">
+                        Expense Feed
+                <div class="sub header">{{ date_start|date }} - {{ date_end|date }}</div>
+            </h1>
+        </div>
+        <div class="six wide column"></div>
+    </div>
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="eight wide column">
+                <h4>List</h4>
+                <div class="ui raised segment">
+            <div class="ui feed">
+                {% for instance in object_list %}
+                    <div class="event">
+                    <div class="label">
+                        <i class="card icon"></i>
+                    </div>
+                    <div class="content">
+                        <div class="summary">
+                            {{ instance.tag_model }}, 
+                            <a {% if instance.is_paid %} style='color:green' {% else %} style='color:red' {% endif %}>
+                            {{ instance }}</a> Value... {{ instance.tag_final_value }}.
+                            <div class="date">{{ instance.date_expired|date }}</div>
+                        </div>
+                    </div>
+                    </div>
+                {% endfor %}
+            </div>
+            </div>
+        </div>
+        <div class='five wide column'>
+            
+             <div class="ui steps">
+                <a class="active step">
+                          <i class="truck icon"></i>
+                          <div class="content">
+                            <div class="title">Shipping</div>
+                            <div class="description">Choose your shipping options</div>
+                          </div>
+                        </a>
+                        <a class="step">
+                          <div class="content">
+                            <div class="title">Billing</div>
+                            <div class="description">Enter billing information</div>
+                          </div>
+                        </a>
+            </div>
+        </div>
+        <div class="one wide column"></div>
+    </div>
 {% endblock %}

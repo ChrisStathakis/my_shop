@@ -135,7 +135,8 @@ class GenericReportView(TemplateView):
         payroll = Payroll.my_query.get_queryset().filter_by_date(date_start, date_end)
         general_expenses = GenericExpense.my_query.get_queryset().filter_by_date(date_start, date_end)
         object_list = sorted(chain(bills, payroll, general_expenses),
-                             key=attrgetter('date_expired')
+                             key=attrgetter('date_expired'),
+                             reverse=True
                              )
         context.update(locals())
         return context

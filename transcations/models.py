@@ -58,7 +58,7 @@ class BillCategory(models.Model):
 class Bill(DefaultOrderModel):
     category = models.ForeignKey(BillCategory, null=True, on_delete=models.SET_NULL, related_name='bills')
     payment_orders = GenericRelation(PaymentOrders)
-    object = models.Manager()
+    objects = models.Manager()
     my_query = GeneralManager()
 
     class Meta:
@@ -66,6 +66,9 @@ class Bill(DefaultOrderModel):
     
     def __str__(self):
         return f'{self.category} - {self.title}' if self.category else f'self.title'
+
+    def tag_model(self):
+        return f'Bill- {self.category.title}' 
 
     def save(self, *args, **kwargs):
         if not self.is_paid:
@@ -225,28 +228,15 @@ class Payroll(DefaultOrderModel):
     class Meta:
         ordering = ['is_paid', '-date_expired', ]
 
+    def tag_model(self):
+        return f'Payroll - {self.person.title}'
+
     def save(self, *args, **kwargs):
         self.final_value = self.value
         if not self.is_paid:
             for ele in self.payment_orders.all():
                 ele.delete()
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-
-        self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
-            'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-        self.paid_value = self.paid_value if self.paid_value else 0
-
-        if self.paid_value >= self.final_value:
-            self.is_paid = True
-
-        if self.is_paid and self.paid_value < self.final_value:
-            new_order = PaymentOrders.objects.create(payment_type=self.payment_method,
-                                                     value=self.value - self.paid_value,
-                                                     is_paid=True,
-                                                     content_type=ContentType.objects.get_for_model(Payroll),
-                                                     object_id=self.id,
-                                                     date_expired=self.date_expired,
-                                                     )
         super(Payroll, self).save(*args, **kwargs)
         if self.is_paid:
             get_value = self.get_remaining_value()
@@ -327,7 +317,7 @@ class Payroll(DefaultOrderModel):
 
 @receiver(pre_delete, sender=Payroll)
 def update_on_delete_payrolls(sender, instance, *args, **kwargs):
-    get_orders = instance.payorders.all()
+    get_orders = instance.payment_orders.all()
     for order in get_orders:
         order.delete()
 
@@ -335,7 +325,7 @@ def update_on_delete_payrolls(sender, instance, *args, **kwargs):
 @receiver(pre_delete, sender=Payroll)
 def update_person_on_delete(sender, instance, *args, **kwargs):
     person = instance.person
-    person.balance -= instance.price - instance.paid_value
+    person.balance -= instance.final_value - instance.paid_value
     person.save()
 
 
@@ -378,9 +368,12 @@ class GenericExpense(DefaultOrderModel):
                                  related_name='expenses'
                                  )
     payments_orders = GenericRelation(PaymentOrders)
-    object = models.Manager()
+    objects= models.Manager()
     my_query = GeneralManager()
 
+    def tag_model(self):
+        return f'Expenses- {self.category}'
+        
     class Meta:
         ordering = ['is_paid', '-date_expired']
 

@@ -33,5 +33,6 @@ urlpatterns = [
     path('settings/occup-detail/<int:pk>/', GenericExpenseCategoryDetailView.as_view(), name='expense_cate_detail'),
 
     path('check-list/', CheckOrderView.as_view(), name='check_order_view'),
+    path('add-multiply-instances/<slug:expense_type>/<int:pk>/<int:month>/<int:replays>/', add_multi_bills, name='add_multi'),
    
 ]

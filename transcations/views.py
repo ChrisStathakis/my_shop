@@ -84,6 +84,16 @@ def edit_page(request, mymodel, pk, slug):
         instance.save()
         instance.update_category()
         return HttpResponseRedirect(instance.get_dashboard_list_url())
+    if request.GET:
+        month = request.GET.get('month', 0)
+        replays = request.GET.get('replays', 0)
+        print( month, replays)
+        return HttpResponseRedirect(reverse('billings:add_multi'), kwargs={'expense_type':mymodel,
+                                                                           'pk': pk, 
+                                                                           'month':int(month), 
+                                                                           'replays':int(replays)
+                                                                           }
+                                    )
     form = my_form(request.POST or None, instance=instance)
     if form.is_valid():
         form.save()
@@ -106,6 +116,17 @@ def expenses_list_view(request):
         return HttpResponseRedirect(reverse('billings:expenses_list'))
     context = locals()
     return render(request, 'transcations/page_list.html', context)
+
+@staff_member_required
+def add_multi_bills(request, expense_type, pk, month, replays):
+    instance = get_object_or_404(Bill, id=pk) if expense_type == 'bill' else get_object_or_404(Payroll, id=pk) if expense_type == 'payroll' else get_object_or_404(GenericExpense, id=pk)
+    print('works!')
+    if replays > 0 and isinstance(replays, int):
+        for ele in range(replays):
+            new_instance = instance.save(pk=None)
+            new_instance.date_expired += relativedelta(months=ele+month)
+            new_instance.save()
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 
@@ -305,3 +326,4 @@ class CheckOrderView(ListView):
         vendor_name, search_name = self.request.GET.getlist('vendor_name', None), self.request.GET.get('search_name', None)
         context.update(locals())
         return context
+
