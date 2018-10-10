@@ -44,6 +44,7 @@ urlpatterns = [
     path('transcations/bill-list/', BillsReportView.as_view(), name='bills_report_view'),
     path('transcations/payroll-list/', PayrollReportView.as_view(), name='payroll_report_view'),
     path('transcations/expenses-list/', GenericExpenseView.as_view(), name='generic_expenses_view'),
+    path('general-image/', GenericReportView.as_view(), name='general_image'),
 
     # buys
     path('orders/', WarehouseOrderView.as_view(), name='warehouse_orders'),

@@ -14,7 +14,7 @@ from inventory_manager.models import *
 from site_settings.constants import *
 from site_settings.models import PaymentMethod, PaymentOrders, Store
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager, OccupationManager
+from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager, OccupationManager, GeneralManager
 
 import datetime
 
@@ -58,6 +58,8 @@ class BillCategory(models.Model):
 class Bill(DefaultOrderModel):
     category = models.ForeignKey(BillCategory, null=True, on_delete=models.SET_NULL, related_name='bills')
     payment_orders = GenericRelation(PaymentOrders)
+    object = models.Manager()
+    my_query = GeneralManager()
 
     class Meta:
         ordering = ['-date_expired',]
@@ -84,7 +86,6 @@ class Bill(DefaultOrderModel):
                                                          is_expense=True
                                                         )
         self.category.update_balance()
-    
 
     def get_dashboard_url(self):
         return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'edit'})
@@ -197,6 +198,7 @@ class Person(models.Model):
         days = vacations.aggregate(Sum('days'))['days__sum'] if vacations else 0
         return days
 
+    @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
         occup_name = request.GET.getlist('occup_name', None)
@@ -218,8 +220,7 @@ class Payroll(DefaultOrderModel):
     category = models.CharField(max_length=1, choices=PAYROLL_CHOICES, default='1')
     payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
-    my_query = PayrollInvoiceManager()
-
+    my_query = GeneralManager()
 
     class Meta:
         ordering = ['is_paid', '-date_expired', ]
@@ -230,8 +231,6 @@ class Payroll(DefaultOrderModel):
             for ele in self.payment_orders.all():
                 ele.delete()
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-        
-        
 
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
             'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
@@ -379,6 +378,8 @@ class GenericExpense(DefaultOrderModel):
                                  related_name='expenses'
                                  )
     payments_orders = GenericRelation(PaymentOrders)
+    object = models.Manager()
+    my_query = GeneralManager()
 
     class Meta:
         ordering = ['is_paid', '-date_expired']

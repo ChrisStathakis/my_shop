@@ -85,7 +85,6 @@ def balance_sheet(request):
 
     total_cost_value = total_invoice_value + total_payroll_value + total_expenses_value + total_bills_value
 
-
     balance_sheet = total_sell_value - total_cost_value
     context = locals()
     return render(request, 'report/balance-sheet.html', context=locals())

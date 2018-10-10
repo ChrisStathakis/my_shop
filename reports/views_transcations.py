@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_text
@@ -6,7 +6,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from transcations.models import *
 
 from site_settings.constants import PAYROLL_CHOICES, CURRENCY
+from .tools import filter_date
 
+from itertools import chain
+from operator import attrgetter
 
 def transcations_homepage(request):
     bills = BillCategory.my_query.get_queryset().is_active()
@@ -121,3 +124,18 @@ class GenericExpenseView(ListView):
         return context
 
 
+@method_decorator(staff_member_required, name='dispatch')
+class GenericReportView(TemplateView):
+    template_name = 'report/transcations/general_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericReportView, self).get_context_data(**kwargs)
+        date_start, date_end = filter_date(self.request)
+        bills = Bill.my_query.get_queryset().filter_by_date(date_start, date_end)
+        payroll = Payroll.my_query.get_queryset().filter_by_date(date_start, date_end)
+        general_expenses = GenericExpense.my_query.get_queryset().filter_by_date(date_start, date_end)
+        object_list = sorted(chain(bills, payroll, general_expenses),
+                             key=attrgetter('date_expired')
+                             )
+        context.update(locals())
+        return context
