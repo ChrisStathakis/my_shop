@@ -100,17 +100,50 @@
                                     {% endif %}
                                 </span>
                             </div>
-                            <input type="text" class='form-control' name='search_name' placeholder='search'>
+                            <div class="checkbox">
+                                <label>
+                                    <input onclick="this.form.submit()"
+                                           type="checkbox"
+                                           value="paid"
+                                           name="paid_name"
+                                            {% if 'paid' in paid_name %} checked {% endif %}
+                                    >Paid
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input onclick="this.form.submit()"
+                                           type="checkbox"
+                                           value="not_paid"
+                                           name="paid_name"
+                                            {% if 'not_paid' in paid_name %} checked {% endif %}
+                                    >Not Paid
+                                </label>
+                            </div>
+                            <input type="text"
+                                   class='form-control'
+                                   name='search_name'
+                                   placeholder='search'
+                                    {% if search_name %} value="{{ search_name }}" {% endif %}
+                            >
                             <br>
                             <div class="row">
                                 <div class="col-md-6">
                                     <label>Date from</label>
-                                    <input type='date' class="form-control">
+                                    <input name='date_start'
+                                           type='date'
+                                           class="form-control"
+                                           {% if date_start %} value="{{ date_start }}" {% endif%}
+                                    />
                                 </div>
                                 <div class="col-md-6">
-                                        <label>Date until</label>
-                                        <input type='date' class="form-control">
-                                    </div>
+                                    <label>Date until</label>
+                                    <input name="date_end"
+                                           type='date'
+                                           class="form-control"
+                                           {% if date_end %} value="{{ date_end }}" {% endif %}
+                                    />
+                                </div>
                             </div>
                             <h5>Categories</h5>
                             {% for category in categories %}
@@ -119,12 +152,27 @@
                                         <input onclick="this.form.submit()"
                                                type="checkbox"
                                                value="{{ category.id }}"
-                                               name="bill_name"
-                                               {% if category.id|stringformat:'s' in bill_name %} checked {% endif %}
+                                               name="cate_name"
+                                               {% if category.id|stringformat:'s' in cate_name %} checked {% endif %}
                                         >{{ category }}
                                     </label>
                                 </div>
                             {% endfor %}
+                            {% if page_title == 'Payroll' %}
+                                <h5>Person</h5>
+                                {% for person in persons %}
+                                    <div class="checkbox">
+                                        <label>
+                                            <input onclick="this.form.submit()"
+                                                   type="checkbox"
+                                                   value="{{ person.id }}"
+                                                   name="person_name"
+                                                   {% if person.id|stringformat:'s' in person_name %} checked {% endif %}
+                                            >{{ person }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                             <button type="submit" class="btn btn-default btn-round">Save</button>
                             <a href="{{ request.path }}" class="btn btn-warning">Reset</a>
                         </form>

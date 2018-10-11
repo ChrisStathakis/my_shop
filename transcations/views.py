@@ -17,6 +17,14 @@ from inventory_manager.models import Vendor
 from dateutil.relativedelta import relativedelta
 
 
+def filters_data(request):
+    search_name = request.GET.get('search_name', None)
+    paid_name = request.GET.getlist('paid_name', None)
+    cate_name = request.GET.getlist('cate_name', None)
+    date_start, date_end = request.GET.get('date_start', None), request.GET.get('date_end', None)
+    return search_name, paid_name, cate_name, date_start, date_end
+
+
 @staff_member_required
 def homepage(request):
     bills = Bill.objects.all()[:10]
@@ -30,15 +38,14 @@ def bills_list_view(request):
     page_title, button_title, data_url = 'Bills', 'Create Category', reverse('billings:ajax_bill_cat_popup')
     categories = BillCategory.objects.all()
     queryset = Bill.objects.all()
-    search_name = request.GET.get('search_name', None)
-    bill_name = request.GET.getlist('bill_name', None)
+    search_name, paid_name, cate_name, date_start, date_end = filters_data(request)
     queryset = Bill.filters_data(request, queryset)
     form = BillForm(request.POST or None)
     if 'new_bill' in request.POST:
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('billings:bill_list'))
-    paginator = Paginator(queryset, 10)
+    paginator = Paginator(queryset, 50)
     page = request.GET.get('page')
     queryset = paginator.get_page(page)
     context = locals()
@@ -47,10 +54,12 @@ def bills_list_view(request):
 
 @staff_member_required
 def payroll_list_view(request):
-    page_title, button_title, data_url= 'Payroll', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    page_title, button_title, data_url = 'Payroll', 'Create Person', reverse('billings:ajax_payroll_person_popup')
+    search_name, paid_name, cate_name, date_start, date_end = filters_data(request)
+    person_name = request.GET.get('person_name', None)
     queryset = Payroll.objects.all()
-    persons = Person.objects.all()
-    occupations = Occupation.objects.all()
+    persons, categories = Person.objects.all(), Occupation.objects.all()
+    queryset = Payroll.filters_data(request, queryset)
     form = PayrollForm(request.POST or None)
     if form.is_valid():
         form.save()
@@ -62,6 +71,7 @@ def payroll_list_view(request):
 
 @staff_member_required
 def edit_page(request, mymodel, pk, slug):
+    my_form, instance = None, None
     if mymodel == 'bill':
         instance = get_object_or_404(Bill, id=pk)
         page_title, button_title, data_url = 'Bill', 'Create Bill', reverse('billings:ajax_bill_cat_popup')
@@ -87,12 +97,13 @@ def edit_page(request, mymodel, pk, slug):
     if request.GET:
         month = request.GET.get('month', 0)
         replays = request.GET.get('replays', 0)
-        print( month, replays)
-        return HttpResponseRedirect(reverse('billings:add_multi'), kwargs={'expense_type':mymodel,
-                                                                           'pk': pk, 
-                                                                           'month':int(month), 
-                                                                           'replays':int(replays)
-                                                                           }
+        print(month, replays, mymodel, pk)
+        return HttpResponseRedirect(reverse('billings:add_multi',
+                                    kwargs={'expense_type': str(mymodel),
+                                            'pk': pk,
+                                            'month': int(month),
+                                            'replays': int(replays)
+                                            })
                                     )
     form = my_form(request.POST or None, instance=instance)
     if form.is_valid():
@@ -106,7 +117,9 @@ def edit_page(request, mymodel, pk, slug):
 
 @staff_member_required
 def expenses_list_view(request):
-    page_title, button_title, data_url= 'General Expenses', 'Create Expense Category', reverse('billings:ajax_generic_cate_popup')
+    page_title, button_title, data_url = 'General Expenses', 'Create Expense Category', \
+                                         reverse('billings:ajax_generic_cate_popup')
+    search_name, paid_name, cate_name, date_start, date_end = filters_data(request)
     queryset = GenericExpense.objects.all()
     categories = GenericExpenseCategory.objects.all()
     form = GenericExpenseForm(request.POST or None)
@@ -117,20 +130,20 @@ def expenses_list_view(request):
     context = locals()
     return render(request, 'transcations/page_list.html', context)
 
+
 @staff_member_required
 def add_multi_bills(request, expense_type, pk, month, replays):
-    instance = get_object_or_404(Bill, id=pk) if expense_type == 'bill' else get_object_or_404(Payroll, id=pk) if expense_type == 'payroll' else get_object_or_404(GenericExpense, id=pk)
-    print('works!')
+    instance = get_object_or_404(Bill, id=pk) if expense_type == 'bill' else get_object_or_404(Payroll, id=pk) \
+        if expense_type == 'payroll' else get_object_or_404(GenericExpense, id=pk)
     if replays > 0 and isinstance(replays, int):
         for ele in range(replays):
-            new_instance = instance.save(pk=None)
-            new_instance.date_expired += relativedelta(months=ele+month)
-            new_instance.save()
+            instance.pk = None
+            instance.date_expired += relativedelta(months=month)
+            instance.save()
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-
-# settings  ------------------------------------------ settings  ------------------------------------------------- settings ------------------------------------------------------
+# settings  ------------------------------------------ settings  ------------------------------------------------
 
 
 @method_decorator(staff_member_required, name='dispatch')

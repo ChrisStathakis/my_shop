@@ -11,6 +11,7 @@ from .tools import filter_date
 from itertools import chain
 from operator import attrgetter
 
+
 def transcations_homepage(request):
     bills = BillCategory.my_query.get_queryset().is_active()
     payrolls = Person.my_query.get_queryset().is_active()

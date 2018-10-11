@@ -481,7 +481,7 @@ class CheckOrdersView(ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        queryset = PaymentOrders.objects.all()
+        queryset = PaymentOrders.objects.filter(is_check=True)
         return queryset
 
     def get_context_data(self, **kwargs):
