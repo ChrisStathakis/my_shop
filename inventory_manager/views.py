@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
 from django.forms import inlineformset_factory
-
+from django.contrib.contenttypes.models import ContentType
 
 from products.models import Product,  Color, Size, SizeAttribute
 from products.forms import VendorForm
@@ -482,6 +482,11 @@ class CheckOrdersView(ListView):
 
     def get_queryset(self):
         queryset = PaymentOrders.objects.filter(is_check=True)
+        vendors = Vendor.objects.all()
+        content_type_model = ContentType.objects.get_for_model(Vendor)
+        vendors = Vendor.filter_data(self.request, vendors)
+        vendors_ids = vendors.values_list('id', flat=True)
+        queryset = PaymentOrders.objects.filter(object_id__in=vendors_ids, content_type=content_type_model)
         return queryset
 
     def get_context_data(self, **kwargs):

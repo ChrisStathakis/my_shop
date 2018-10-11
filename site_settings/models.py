@@ -34,6 +34,10 @@ class PaymentMethodManager(models.Manager):
     def active_for_site(self):
         return super(PaymentMethodManager, self).filter(active=True, site_active=True)
 
+    
+    def check_orders(self):
+        return super(PaymentMethodManager, self).filter(is_check=True)
+
 
 class ShippingManager(models.Manager):
 
