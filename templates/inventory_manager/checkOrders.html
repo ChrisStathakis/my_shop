@@ -9,6 +9,7 @@
                     <div class="card">
                         <div class="header">
                             <div class="title">Check Order List</div>
+                            <a href="{% url 'inventory:vendor_list' %}" class="btn btn-primary" > Create New Check </a>
                         </div>
                         <div class="content">
                             <table class="table">
@@ -47,23 +48,46 @@
                         </div>
                         <div class="content">
                             <form class="form" method="get">
+                                {% include 'dashboard/include/fliters_snippet.html' %}
+                                <br>
                                 <div class="form-group">
-                                   <input type="text" {% if search_name %}value=""{% endif %}
-                                          placeholder="Search" class="form-control" name="search_name"
-                                   />
+                                    <div class="checkbox">
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onclick="this.form.submit()"
+                                                name="paid_name"
+                                                value="paid"
+                                                {% if 'paid' in paid_name %} required {% endif %}
+                                            >Paid
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onclick="this.form.submit()"
+                                                name="not_paid"
+                                                value="not_paid"
+                                                {% if 'not_paid' in paid_name %} required {% endif %}
+                                            >Not PAid
+                                        </label>
+                                    </div>
                                 </div>
-                                <br>
-                                <div class="form-control">
-                                    <input type="checkbox" class="form-control" name="check_name">
-                                    <label>Only Checks</label>
-                                </div>
-                                <br>
                                 <h4>Vendor</h4>
                                 {% for vendor in vendors %}
-                                    <div class="form-group">
-                                        <input type="checkbox" class="form-control" id="vendor_{{ vendor.id }}">
-                                        <label for="vendor_{{ vendor.id }}">{{ vendor }}</label>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onclick="this.form.submit()"
+                                                name="vendor_name"
+                                                value="{{ vendor.id }}"
+                                                {% if vendor.id|stringformat:"s" in vendor_name %} required {% endif %}
+                                            >{{ vendor }}
+                                        </label>
                                     </div>
+
                                 {% endfor %}
                             </form>
                         </div>

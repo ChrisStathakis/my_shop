@@ -16,6 +16,7 @@ from .models import Order, OrderItem, Vendor, Category, WarehouseOrderImage
 from .models import PaymentOrders
 from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm
 from site_settings.forms import PaymentForm
+from site_settings.tools import dashboard_filters_name
 from inventory_manager.models import Order, OrderItem, Vendor
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
 
@@ -457,6 +458,7 @@ def edit_check_order(request, pk):
     context = locals()
     return render(request, 'inventory_manager/form.html', context)
 
+
 @staff_member_required
 def delete_check_order(request, pk):
     instance = get_object_or_404(PaymentOrders, id=pk)
@@ -483,19 +485,19 @@ class CheckOrdersView(ListView):
     def get_queryset(self):
         queryset = PaymentOrders.objects.filter(is_check=True)
         vendors = Vendor.objects.all()
-        content_type_model = ContentType.objects.get_for_model(Vendor)
         vendors = Vendor.filter_data(self.request, vendors)
         vendors_ids = vendors.values_list('id', flat=True)
-        queryset = PaymentOrders.objects.filter(object_id__in=vendors_ids, content_type=content_type_model)
+        content_type_model = ContentType.objects.get_for_model(Vendor)
+        queryset = queryset.filter(object_id__in=vendors_ids, content_type=content_type_model)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(CheckOrdersView, self).get_context_data(**kwargs)
         vendors = Vendor.objects.filter(active=True)
-        vendor_name, search_name, check_name = [self.request.GET.getlist('vendor_name', None),
-                                                self.request.GET.get('search_name', None),
-                                                self.request.GET.get('check_name', None)
-                                                ]
+        date_start, date_end, search_name = dashboard_filters_name(self.request)
+        vendor_name, paid_name = [self.request.GET.getlist('vendor_name', None),
+                                  self.request.GET.get('check_name', None)
+                                ]
         context.update(locals())
         return context
 

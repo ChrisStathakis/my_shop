@@ -1,6 +1,7 @@
 import datetime
 from dateutil.relativedelta import relativedelta
 
+
 def initial_date(request, months=3):
     #gets the initial last three months or the session date
     date_now = datetime.datetime.today()
@@ -40,3 +41,10 @@ def estimate_date_start_end_and_months(request):
     start_year, day_now, date_range = clean_date_filter(request, date_pick, date_start=start_year, date_end=day_now)
     months_list=12
     return [start_year, day_now, date_range, months_list]
+
+
+def dashboard_filters_name(request):
+    date_start = request.GET.get('date_start', None)
+    date_end = request.GET.get('date_end', None)
+    search_name = request.GET.get('search_name', None)
+    return date_start, date_end, search_name

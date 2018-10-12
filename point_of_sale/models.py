@@ -12,14 +12,13 @@ import datetime
 from decimal import Decimal
 
 from .managers import RetailOrderManager
-from accounts.models import CostumerAccount
+from accounts.models import CostumerAccount, BillingProfile
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from site_settings.models import PaymentMethod, PaymentOrders, Shipping
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
-
 
 
 RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIONS, settings.PRODUCT_ATTRITUBE_TRANSCATION 
@@ -74,13 +73,17 @@ class RetailOrderItemManager(models.Manager):
 
 
 class RetailOrder(DefaultOrderModel):
+    billing_profile = models.OneToOneField(BillingProfile, blank=True, null=True, on_delete=models.SET_NULL)
     status = models.CharField(max_length=1, choices=ORDER_STATUS, default='1')
     order_type = models.CharField(max_length=1, choices=ORDER_TYPES, default='r')
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0,
                                      verbose_name='Συνολικό Κόστος Παραγγελίας')
-    costumer_account = models.ForeignKey(CostumerAccount, blank=True, null=True, verbose_name='Πελάτης', on_delete=models.CASCADE)
-    #eshop info only
-
+    costumer_account = models.ForeignKey(CostumerAccount,
+                                         blank=True,
+                                         null=True,
+                                         verbose_name='Costumer',
+                                         on_delete=models.CASCADE)
+    #  eshop info only
     shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.SET_NULL)
     shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     payment_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)

@@ -7,6 +7,27 @@
         {% include 'my_site/include/navbar.html' %}
         <div class="cart-table-area section-padding-100">
                 <div class="container-fluid">
+                    <div class="row">
+                        {% if not request.user.is_authenticated %}
+                            <div class="col-md-4">
+                                <p class="lead">Login or Register</p>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{ login_form }}
+                                    <br>
+                                    <button name="login_button" type="submit" class="btn btn-success">Login</button>
+                                </form>
+                            </div>
+                            <div class="col-md-4">
+                            <p class="lead">Continue as Guest</p>
+                                <form method="post">{% csrf_token %}
+                                    <input type="email" class="form-control" placeholder="Email" required>
+                                    <br>
+                                    <button name="guest_button" type="submit" class="btn btn-success">Continue</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
                     <form method="post" class="row"> {% csrf_token %}
                         <div class="col-12 col-lg-8">     
                             <div class="checkout_details_area mt-50 clearfix">

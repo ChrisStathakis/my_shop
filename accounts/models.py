@@ -82,4 +82,30 @@ def create_profile(sender, instance, *args, **kwargs):
     get_profile, created = CostumerAccount.objects.get_or_create(user=instance)
 
 
+class BillingProfile(models.Model):
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    email = models.EmailField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.email
+
+
+def user_created_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        BillingProfile.objects.get_or_create(user=instance)
+
+
+post_save.connect(user_created_receiver, sender=User)
+
+
+class GuestEmail(models.Model):
+    email = models.EmailField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.email

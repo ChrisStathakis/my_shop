@@ -21,6 +21,7 @@ from reportlab.pdfgen import canvas
 from urllib.parse import urlencode
 
 from accounts.models import User, CostumerAccount
+from accounts.forms import LoginForm
 from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
 from .models import FirstPage, Banner, Brands, CategorySite
@@ -294,20 +295,21 @@ def update_cart_page(request, pk, qty):
                                           context = {'cart_items': cart_items}
                                     )
     data['cart_data'] = render_to_string(request=request,
-                                     template_name='my_site/ajax_calls/cart_page_cart.html',
-                                     context = {'cart': cart}
+                                         template_name='my_site/ajax_calls/cart_page_cart.html',
+                                         context = {'cart': cart}
                                     )
     return JsonResponse(data)
     
 
 def checkout_page(request):
-    #del request.session['cart_id']
-    form = CheckoutForm(request.POST or None)
-    user = request.user.is_authenticated
     menu_categories, cart, cart_items = initial_data(request)
     payment_methods = PaymentMethod.objects.filter(active=True)
     shippings = Shipping.objects.filter(active=True)
+    user = request.user.is_authenticated
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
+
+    login_form = LoginForm(request.POST or None)
+    form = CheckoutForm(request.POST or None)
     if user:
         profile, created = CostumerAccount.objects.get_or_create(user=user)
         form = CheckoutForm(initial={'email': profile.user.email,

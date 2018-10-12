@@ -121,42 +121,6 @@ class Cart(models.Model):
     class Meta:
         ordering = ['-id']
 
-    def check_coupons(self):
-        total_coupon_discount = 0
-        items = self.cart_items.all()
-        coupons = self.coupon.all()
-        for coupon in coupons:
-            if coupon.whole_order:
-                if self.value >= coupon.limit_price:
-                    total_coupon_discount += coupon.estimate_addiotional_cost(value)
-                else:
-                    total_coupon_discount += coupon.estimate_additional_cost(value)
-            else:
-                for item in items:
-                    categories = item.category_site.all()
-                    if categories in coupon.categories:
-                        total_coupon_discount += coupon.estimate_additional_cost()
-        return total_coupon_discount
-                
-        try:
-            all_coupons = self.coupon.all()
-            price = self.value
-            order_items = self.cart_items.all()
-            for coupon in all_coupons:
-                # priority
-                limit_price = coupon.cart_total_value if coupon.cart_total_value else 0
-                if price > limit_price and limit_price > 0:
-                    self.coupon_discount = coupon.discount_value if coupon.discount_value else \
-                        (coupon.discount_percent/100)*price if coupon.discount_percent else 0
-                if coupon.products or coupon.categories:
-                    for product in order_items:
-                        get_products = Product.objects.filter(category_site__in=coupon.categories.all()) if coupon.categories else []
-                        if product in coupon.products.all() or product in get_products:
-                            self.coupon_discount = coupon.discount_value if coupon.discount_value else \
-                                (coupon.discount_percent / 100) * price if coupon.discount_percent else 0
-        except:
-            pass
-
     def __str__(self):
         return '%s %s' % ('Cart ', self.id)
 
@@ -171,7 +135,6 @@ class Cart(models.Model):
         get_items = self.cart_items.all()
         self.value = get_items.aggregate(total=(Sum(F('final_value') * F('qty'), output_field=models.DecimalField())))['total'] if get_items else 0
         current_value = self.value
-        self.check_coupons()
         current_value += self.payment_method.estimate_additional_cost(self.value) if self.payment_method else 0
         current_value += self.shipping_method.estimate_additional_cost(self.value) if self.shipping_method else 0
         self.final_value = current_value - self.coupon_discount
