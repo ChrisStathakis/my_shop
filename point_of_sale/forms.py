@@ -91,6 +91,7 @@ class SalesForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+
 class RetailOrderItemForm(forms.ModelForm):
 
     class Meta:
@@ -114,16 +115,7 @@ class EshopRetailForm(forms.ModelForm):
 
     class Meta:
         model = RetailOrder
-        fields = ["status", 'title',
-                  'payment_method', 'shipping',
-                  'payment_cost', 'shipping_cost',
-                  'user_account', 'costumer_account',
-                  'first_name', 'last_name', 'email',
-                  'address', 'city', 'zip_code',
-                  'state', 'cellphone', 'phone',
-                  'discount', 'coupons', 'notes',
-                  'costumer_submit',
-                  ]
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EshopRetailForm, self).__init__(*args, **kwargs)
@@ -174,7 +166,6 @@ class CreateOrderItemWithSizeForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
-
 class RetailOrderWarehouseIncomeForm(forms.ModelForm):
 
     class Meta:
@@ -197,7 +188,6 @@ class ShippingForm(forms.ModelForm):
         super(ShippingForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-
 
 
 class CouponForm(forms.ModelForm):

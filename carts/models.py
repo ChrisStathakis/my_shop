@@ -157,22 +157,16 @@ class Cart(models.Model):
     def tag_to_order(self):
         return 'Done' if self.is_complete else 'Not Done'
 
-    def to_order(self, payment_method, shipping_method):
-        self.active, self.is_complete = False, True
-        self.payment_method, self.shipping_method = PAYMENT_TYPE['%s'] % payment_method,\
-                                                    Shipping.objects.get(id=int(shipping_method))
-        self.save()
-
     @staticmethod
     def costumer_changes(request, cart):
         payment_method = request.POST.get('payment_method', cart.payment_method)
         shipping_method = request.POST.get('shipping_method', cart.shipping_method)
         add_coupon = request.POST.get('add_coupon', None)
-        print('just before the storm')
         if isinstance(int(payment_method), int):
             cart.payment_method = PaymentMethod.objects.get(id=payment_method)
-        if isinstance(int(shipping_method), int):
-            cart.shipping_method = Shipping.objects.get(id=shipping_method)
+        if shipping_method:
+            if isinstance(int(shipping_method), int):
+                cart.shipping_method = Shipping.objects.get(id=shipping_method)
         cart.save()
         if add_coupon:
             coupons = Coupons.objects.filter(code=add_coupon)
@@ -189,8 +183,6 @@ class Cart(models.Model):
                             cart.coupon.add(coupon)
                             break
             cart.save()
-
-
 
 
 class CartItemManager(models.Manager):

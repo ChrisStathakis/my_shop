@@ -69,3 +69,4 @@ class RetailOrderManager(models.Manager):
         return super(RetailOrderManager, self).filter(order_type='r').order_by('-date_created')
 
 
+

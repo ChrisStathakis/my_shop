@@ -60,6 +60,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-lg-4">
+                            {% if cart %}
                             <div id='cart_data' class="cart-summary ">
                                 <h5>Add Coupon</h5>
                                 <form class='form' method='post'>{% csrf_token %}
@@ -69,6 +70,7 @@
                                 </form>
                         
                             </div>
+                            {% endif %}
 
                             <div id='cart_data' class="cart-summary ">
                                 <h5>Cart Total</h5>

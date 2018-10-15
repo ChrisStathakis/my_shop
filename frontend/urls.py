@@ -23,6 +23,7 @@ urlpatterns = [
     path('cart-page/', CartPage.as_view(), name='cart_page'),
     path('cart-page/ajax/update/<int:pk>/<int:qty>/', view=update_cart_page, name='update_cart_page'),
     path('checkout/',  view=checkout_page, name='checkout_page'),
+    path('checkout-home/', checkout_home, name='checkoit_home'),
     path('order-view/<slug:pk>/', order_detail_view, name='order_view'),
     path('checkout/ajax-view/<slug:type>/<int:pk>/', ajax_update_checkout, name='ajax_checkout'),
 

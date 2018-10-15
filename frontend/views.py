@@ -240,9 +240,11 @@ class CartPage(SearchMixin, TemplateView):
         context = super(CartPage, self).get_context_data(**kwargs)
         menu_categories, cart, cart_items = initial_data(self.request)
         gifts = CartGiftItem.objects.filter(cart_related=cart)
-        cart_form = CartCostumerForm(initial={'payment_method': cart.payment_method,
-                                              'shipping_method': cart.shipping_method    
-                                            })
+        cart_form = CartCostumerForm()
+        if cart:
+            cart_form = CartCostumerForm(initial={'payment_method': cart.payment_method,
+                                                  'shipping_method': cart.shipping_method
+                                                 })
         context.update(locals())
         return context
 
@@ -260,6 +262,7 @@ class CartPage(SearchMixin, TemplateView):
                 messages.warning(self.request, 'This code is not a valid coupon')
         if 'my_cart' in self.request.POST:
             Cart.costumer_changes(self.request, cart)
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
             
         if 'my_cart' not in self.request.POST:
             data = self.request.POST
@@ -337,6 +340,11 @@ def checkout_page(request):
         form = CheckoutForm(request.POST)
         print(form.errors, request.POST.get('phone', 'wtf'))
         if form.is_valid():
+            new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
+            messages.success(request, 'Your Order Have Completed!')
+            GiftRetailItem.check_retail_order(new_order, cart)
+            del request.session['cart_id']
+            return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
             try:
                 new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
                 messages.success(request, 'Your Order Have Completed!')
@@ -454,11 +462,22 @@ def user_download_page(request):
     p.save()
     return response
 
+
+def checkout_home(request):
+    menu_categories, cart, cart_items = initial_data(request)
+    order_obj = None
+
+    context = locals()
+    return render(request, 'my_site/checkout_home.html', context)
+
+
+# speech regon
 import speech_recognition as sr
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
+
 
 def test_view(request):
     tmp_file = None

@@ -65,7 +65,7 @@ class CheckoutForm(forms.Form):
                                widget=forms.TextInput(attrs={'placeholder': 'Zip Code'}),
                                validators=[validate_number]
                                )
-    #phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
+    #  phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
     cellphone = forms.CharField(required=True,
                                 widget=forms.TextInput(attrs={'placeholder': 'CellPhone'}),
                                 validators=[validate_cellphone]

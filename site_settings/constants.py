@@ -115,3 +115,7 @@ MEASURE_UNITS = (
 STATUS = (('1', ''),('2', ''),('3', ''),('4', ''),)
 
 
+ADDRESS_TYPES = (
+    ('billing', 'Billing'),
+    ('shipping', 'Shipping')
+)

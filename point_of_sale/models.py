@@ -12,7 +12,7 @@ import datetime
 from decimal import Decimal
 
 from .managers import RetailOrderManager
-from accounts.models import CostumerAccount, BillingProfile
+from accounts.models import CostumerAccount, BillingProfile, Address
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
@@ -74,6 +74,7 @@ class RetailOrderItemManager(models.Manager):
 
 class RetailOrder(DefaultOrderModel):
     billing_profile = models.OneToOneField(BillingProfile, blank=True, null=True, on_delete=models.SET_NULL)
+    address_profile = models.OneToOneField(Address, blank=True, null=True, on_delete=models.SET_NULL)
     status = models.CharField(max_length=1, choices=ORDER_STATUS, default='1')
     order_type = models.CharField(max_length=1, choices=ORDER_TYPES, default='r')
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0,
@@ -88,16 +89,6 @@ class RetailOrder(DefaultOrderModel):
     shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     payment_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
     day_sent = models.DateTimeField(blank=True, null=True)
-    first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Όνομα')
-    last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Έπίθετο')
-    city = models.CharField(max_length=100, null=True, blank=True, verbose_name='Πόλη')
-    address = models.CharField(max_length=100, null=True, blank=True, verbose_name='Διεύθυνση')
-    state = models.CharField(max_length=100, null=True, blank=True, verbose_name='Νομός')
-    zip_code = models.IntegerField(null=True, blank=True, verbose_name='ΤΚ')
-    cellphone = models.CharField(null=True, blank=True, verbose_name='Κινητό', max_length=10)
-    phone = models.CharField(null=True, blank=True, verbose_name='Σταθερό Τηλεφωνο', max_length=10)
-    email = models.EmailField(null=True, blank=True, )
-    costumer_submit = models.BooleanField(default=True, verbose_name='Επιβεβαίωση')
     eshop_order_id = models.CharField(max_length=10, blank=True, null=True)
     eshop_session_id = models.CharField(max_length=50, blank=True, null=True)
 
@@ -273,54 +264,64 @@ class RetailOrder(DefaultOrderModel):
     def create_order_from_cart(form, cart, cart_items):
         payment_method = form.cleaned_data.get('payment_method', None)
         shipping_method = form.cleaned_data.get('shipping_method', None)
-        shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart, payment_method, shipping_method)
+        shipping_cost, payment_cost = RetailOrder.estimate_shipping_and_payment_cost(cart,
+                                                                                     payment_method,
+                                                                                     shipping_method
+                                                                                     )
+        billing_profile, created = BillingProfile.objects.get_or_create(email=form.cleaned_data.get('email'),
+                                                        first_name=form.cleaned_data.get('first_name'),
+                                                        last_name=form.cleaned_data.get('last_name'),
+                                                        cellphone=form.cleaned_data.get('cellphone'),
+                                                        phone=form.cleaned_data.get('phone', None),
+                                                        cart=cart,
+                                                        costumer_submit=form.cleaned_data.get('agreed'),
+                                                        )
+        address_profile, created = Address.objects.get_or_create(billing_profile=billing_profile,
+                                                 address_line_1=form.cleaned_data.get('address'),
+                                                 city=form.cleaned_data.get('city'),
+                                                 postal_code=form.cleaned_data.get('zip_code'),
+                                                 )
         new_order = RetailOrder.objects.create(order_type='e',
                                                title=f'EshopOrder1{cart.id}',
                                                payment_method=form.cleaned_data.get('payment_method'),
                                                shipping=form.cleaned_data.get('shipping_method'),
                                                shipping_cost=shipping_cost,
                                                payment_cost=payment_cost,
-                                               email=form.cleaned_data.get('email'),
-                                               first_name=form.cleaned_data.get('first_name'),
-                                               last_name=form.cleaned_data.get('last_name'),
-                                               city=form.cleaned_data.get('city'),
-                                               address=form.cleaned_data.get('address'),
-                                               zip_code=form.cleaned_data.get('zip_code'),
-                                               cellphone=form.cleaned_data.get('cellphone'),
-                                               #phone=form.cleaned_data.get('phone'),
-                                               costumer_submit=form.cleaned_data.get('agreed'),
+                                               billing_profile=billing_profile,
+                                               address_profile=address_profile,
                                                eshop_session_id=cart.id_session,
                                                notes=form.cleaned_data.get('notes'),
                                                cart_related=cart,
-                                                )
+                                               )
         if cart.user:
             new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
             new_order.save()
-            for item in cart_items:
-                if item.characteristic:
-                    order_item = RetailOrderItem.objects.create(title=item.product_related,
-                                                                order=new_order,
-                                                                cost=item.product_related.price_buy,
-                                                                value=item.price,
-                                                                qty=item.qty,
-                                                                discount_value=item.price_discount,
-                                                                size=item.characteristic,
-                                                                )
+            billing_profile.user = cart.user
+            billing_profile.save()
+        for item in cart_items:
+            if item.characteristic:
+                order_item = RetailOrderItem.objects.create(title=item.product_related,
+                                                            order=new_order,
+                                                            cost=item.product_related.price_buy,
+                                                            value=item.price,
+                                                            qty=item.qty,
+                                                            discount_value=item.price_discount,
+                                                            size=item.characteristic,
+                                                            )
                     
 
-                else:
-                    order_item = RetailOrderItem.objects.create(title=item.product_related,
-                                                                order=new_order,
-                                                                cost=item.product_related.price_buy,
-                                                                value=item.price,
-                                                                qty=item.qty,
-                                                                discount_value=item.price_discount,
-                                                                )
-                    
-                order_item.update_warehouse('remove', item.qty)
-            new_order.update_order()
-            cart.is_complete = True
-            cart.save()
+            else:
+                order_item = RetailOrderItem.objects.create(title=item.product_related,
+                                                            order=new_order,
+                                                            cost=item.product_related.price_buy,
+                                                            value=item.price,
+                                                            qty=item.qty,
+                                                            discount_value=item.price_discount,
+                                                            )
+            order_item.update_warehouse('remove', item.qty)
+        new_order.update_order()
+        cart.is_complete = True
+        cart.save()
         return new_order
 
 

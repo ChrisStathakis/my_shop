@@ -5,7 +5,9 @@ from django.db.models import F,Sum
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-CURRENCY = '€'
+from site_settings.models import Country
+from site_settings.constants import CURRENCY, ADDRESS_TYPES
+from carts.models import Cart
 
 
 class CostumerAccountManager(models.Manager):
@@ -46,18 +48,6 @@ class CostumerAccount(models.Model):
     def __str__(self):
         return self.user.username if self.user else self.name
 
-    def save(self, *args, **kwargs):
-        '''
-        get_orders = self.retailorder_set.all()
-        retail_orders = get_orders.filter(order_type__in=['e', 'r'])
-        return_orders = get_orders.filter(order_type='b')
-        retail_order_value = retail_orders.aggregate(Sum('final_price'))['final_price__sum'] if retail_orders else 0
-        retail_paid_value = retail_orders.aggregate(Sum('paid_value'))['paid_value__sum'] if retail_orders else 0
-        return_paid_value = return_orders.aggregate(Sum('paid_value'))['paid_value__sum'] if return_orders else 0
-        self.balance = retail_order_value - retail_paid_value - return_paid_value
-        '''
-        super(CostumerAccount, self).save(*args, **kwargs)
-
     def template_tag_balance(self):
         return '%s %s' % ('{0:2f}'.format(round(self.balance, 2)),CURRENCY)
 
@@ -83,24 +73,31 @@ def create_profile(sender, instance, *args, **kwargs):
 
 
 class BillingProfile(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    first_name = models.CharField(max_length=120)
+    last_name = models.CharField(max_length=120)
+    cellphone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=10, blank=True, null=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    cart = models.OneToOneField(Cart, on_delete=models.CASCADE, null=True, blank=True)
     email = models.EmailField()
     timestamp = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+    costumer_submit = models.BooleanField(default=True, verbose_name='Are you sure?')
 
     def __str__(self):
-        return self.email
+        return f'{self.cart.id}'
 
 
-def user_created_receiver(sender, instance, created, *args, **kwargs):
+def cart_created_receiver(sender, instance, created, *args, **kwargs):
     if created:
-        BillingProfile.objects.get_or_create(user=instance)
+        BillingProfile.objects.get_or_create(cart=instance)
 
 
-post_save.connect(user_created_receiver, sender=User)
+post_save.connect(cart_created_receiver, sender=Cart)
 
 
+# will be removed
 class GuestEmail(models.Model):
     email = models.EmailField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -109,3 +106,20 @@ class GuestEmail(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class Address(models.Model):
+    billing_profile = models.OneToOneField(BillingProfile, on_delete=models.CASCADE)
+    address_line_1 = models.CharField(max_length=120)
+    address_line_2 = models.CharField(max_length=120, null=True, blank=True)
+    city = models.CharField(max_length=120)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
+    postal_code = models.CharField(max_length=5)
+
+    def __str__(self):
+        return f'{self.billing_profile.cart.id}'
+
+
+def billing_profile_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        Address.objects.get_or_create(billing_profile=instance)
