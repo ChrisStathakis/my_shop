@@ -186,3 +186,9 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(AddressForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+        self.fields['billing_profile'].widget = forms.HiddenInput()

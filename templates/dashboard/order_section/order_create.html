@@ -98,11 +98,19 @@
                                                class="btn btn-primary">{{ instance.tag_fullname }}
                                             </a>
                                             {% else %}
-                                                <a href="" class="btn btn-primary">Create Billing Profile</a>
+                                                <a href="{% url 'dashboard:create_billing_profile' instance.id %}" class="btn btn-primary">Create Billing Profile</a>
                                             {% endif %}
                                         </th>
                                         <td>Address Details</td>
-                                        <th>{{ shipping_profile.address }} {{ shipping_profile.postal_code }} {{ shipping_profile.city }}</th>
+                                        <th>
+                                            {% if address_profile %}
+                                                <a href="{% url 'dashboard:edit_address_view' instance.id %}" class="btn btn-primary">
+                                                    {{ address_profile.address }} {{ address_profile.postal_code }} {{ address_profile.city }}
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'dashboard:create_address_profile' instance.id %}" class="btn btn-primary">Create Address</a>
+                                            {% endif %}  
+                                        </th>
                                     </tr>
                                     <tr>
                                         <td>Shipping Method</td>

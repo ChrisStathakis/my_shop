@@ -86,7 +86,9 @@ class BillingProfile(models.Model):
     costumer_submit = models.BooleanField(default=True, verbose_name='Are you sure?')
 
     def __str__(self):
-        return f'{self.cart.id}'
+        if self.cart:
+            return f'{self.cart.id}'
+        return f'{self.first_name, self.last_name}'
 
 
 def cart_created_receiver(sender, instance, created, *args, **kwargs):
@@ -117,7 +119,9 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=5)
 
     def __str__(self):
-        return f'{self.billing_profile.cart.id}'
+        if self.billing_profile.cart:
+            return f'{self.billing_profile.cart.id}'
+        return f'{self.billing_profile}'
 
 
 def billing_profile_receiver(sender, instance, created, *args, **kwargs):
