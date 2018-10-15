@@ -82,7 +82,7 @@
                                         <td>Title</td>
                                         <th>{{ instance }}</th>
                                         <td>Date Added</td>
-                                        <th>{{ instance.date_created|date }}</th>
+                                        <th>{{ instance.date_expired|date }}</th>
                                     </tr>
                                     <tr>
                                         <td>Order Items Value</td>
@@ -92,9 +92,17 @@
                                     </tr>
                                     <tr>
                                         <td>Costumer Details</td>
-                                        <th>{{ instance.first_name }} {{ instance.last_name }}</th>
+                                        <th>
+                                            {% if billing_profile %}
+                                            <a href="{% url 'dashboard:edit_billing_view' billing_profile.id instance.id %}"
+                                               class="btn btn-primary">{{ instance.tag_fullname }}
+                                            </a>
+                                            {% else %}
+                                                <a href="" class="btn btn-primary">Create Billing Profile</a>
+                                            {% endif %}
+                                        </th>
                                         <td>Address Details</td>
-                                        <th>{{ instance.address }} {{ instance.zip_code }} {{ instance.city }}</th>
+                                        <th>{{ shipping_profile.address }} {{ shipping_profile.postal_code }} {{ shipping_profile.city }}</th>
                                     </tr>
                                     <tr>
                                         <td>Shipping Method</td>
@@ -211,6 +219,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script type="text/javascript">
         function showEditPopup(url) {

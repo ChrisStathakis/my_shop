@@ -168,3 +168,21 @@ class CostumerPageEditDetailsForm(forms.ModelForm):
         fields =['first_name', 'last_name', 'shipping_address_1' ,'shipping_city', 'shipping_zip_code', 'phone', 'phone1', 'cellphone']
 
 
+class BillingProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = BillingProfile
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(BillingProfileForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+        self.fields['cart'].widget = forms.HiddenInput()
+
+
+class AddressForm(forms.ModelForm):
+
+    class Meta:
+        model = Address
+        fields = '__all__'

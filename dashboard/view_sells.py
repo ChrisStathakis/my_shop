@@ -13,6 +13,8 @@ from django.conf import settings
 from products.models import *
 from products.forms import *
 from carts.models import Cart, Coupons
+from accounts.models import Address, BillingProfile
+from accounts.forms import BillingProfileForm, AddressForm
 from carts.forms import CouponForm
 from point_of_sale.models import *
 from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm, CreateOrderItemWithSizeForm
@@ -118,9 +120,12 @@ def create_eshop_order(request):
 @staff_member_required()
 def eshop_order_edit(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
+    billing_profile = instance.billing_profile
+    address_profile = instance.address_profile
     object_list = Product.my_query.get_site_queryset().active_for_site()
     order_items = RetailOrderItem.objects.filter(order=instance)
     form = EshopRetailForm(request.POST or None, instance=instance)
+    billing_form = BillingProfileForm()
     gifts = instance.gifts.all()
     if form.is_valid():
         form.save()
@@ -132,6 +137,66 @@ def eshop_order_edit(request, pk):
     paginator = Paginator(object_list, 20)
     object_list = paginator.get_page(1)
     return render(request, 'dashboard/order_section/order_create.html', context=locals())
+
+
+@staff_member_required()
+def create_billing_profile_view(request, pk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    title, back_url = 'Create New Billing Profile', reverse('dashboard:eshop_order_edit', kwargs={'pk': pk})
+    if instance.billing_profile:
+        return HttpResponseRedirect(back_url)
+    form = BillingProfileForm(request.POST)
+    if form.is_valid():
+        new_billing_profile = form.save()
+        instance.billing_profile = new_billing_profile
+        instance.save()
+        return HttpResponseRedirect(back_url)
+    context = locals()
+    return render(request, 'dashboard/form_view.html', context)
+
+
+@staff_member_required()
+def edit_billing_profile_view(request, pk, dk):
+    instance = get_object_or_404(BillingProfile, id=pk)
+    order = get_object_or_404(RetailOrder, id=pk)
+    title, back_url = f'{order.__str__}', reverse('dashboard:eshop_order_edit', kwargs={'pk': dk})
+    form = BillingProfileForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(back_url)
+    context = locals()
+    return render(request, 'dashboard/form_view.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class AddressCreateView(CreateView):
+    model = Address
+    form_class = AddressForm
+
+    def get_initial(self):
+        initial = super(AddressForm).get_initial()
+        instance = get_object_or_404(RetailOrder, id=self.kwargs['pk'])
+        initial['billing_profile'] = instance.billing_profile
+        return initial
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('dashboard:eshop_order_edit', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        context = super(AddressCreateView, self).get_context_data(**kwargs)
+        title, back_url = 'Create New Address', reverse('dashboard:eshop_order_edit', kwargs={'pk':self.kwargs['pk']})
+        context.update(locals())
+        return context
+
+@method_decorator(staff_member_required, name='dispatch')
+class AddressEditView(UpdateView):
+    model = Address
+    form_class = AddressForm
+
+    def get_success_url(self):
+        pass
+
 
 
 @login_required()

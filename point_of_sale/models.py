@@ -210,7 +210,11 @@ class RetailOrder(DefaultOrderModel):
         return 'Printed' if self.printed else 'Not Printed'
     
     def tag_phones(self):
-        return 'CellPhone.. %s, Phone %s' % (self.cellphone, self.phone) if self.phone else self.cellphone
+        if self.billing_profile:
+            my_profile = self.billing_profile
+            return 'CellPhone.. %s, Phone %s' % (my_profile.cellphone,
+                                                 my_profile.phone) if my_profile.phone else my_profile.cellphone
+        return 'No Phones added'
 
     def tag_fullname(self):
         if self.costumer_account:
@@ -218,10 +222,14 @@ class RetailOrder(DefaultOrderModel):
                 return f'{self.costumer_account.name}'
             if self.costumer_account.user:
                 return f'Account: {self.costumer_account.user.username}'
-        return f'{self.first_name} {self.last_name}'
+        if self.billing_profile:
+            return f'{self.billing_profile.first_name} {self.billing_profile.last_name}'
+        return 'No name added'
     
     def tag_full_address(self):
-        return f'{self.address}, City: {self.city}'
+        if self.address_profile:
+            return f'{self.address_profile.address_line_1}, City: {self.address_profile.city}'
+        return 'No address added'
 
     @staticmethod
     def eshop_orders_filtering(request, queryset):
