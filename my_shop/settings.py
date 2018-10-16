@@ -167,3 +167,4 @@ USE_QTY_LIMIT = False
 
 USE_WAREHOUSE = False
 USE_REPORTS = False
+LOGIN_URL = '/login-page/'

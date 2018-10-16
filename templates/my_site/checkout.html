@@ -36,16 +36,47 @@
                                 </div>
                                 <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <input type="text" class="form-control" id="id_first_name" name='first_name' value="" placeholder="First Name" required>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="id_first_name" 
+                                                   name='first_name'
+                                                   {% if request.user.profile.tag_first_name %}
+                                                        value="{{ request.user.profile.tag_first_name }}" 
+                                                        placeholder="{{ request.user.profile.tag_first_name }}"
+                                                   {% else %}
+                                                        value="" 
+                                                        placeholder="First Name"
+                                                   {% endif %}
+                                                   required
+                                            >
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <input type="text" class="form-control" id="id_last_name" name='last_name' value="" placeholder="Last Name" required>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="id_last_name" 
+                                                   name='last_name' 
+                                                   {% if request.user.profile.tag_last_name %}
+                                                        value="{{ request.user.profile.last_name}}" 
+                                                        placeholder="{{ request.user.profile.last_name }}" 
+                                                   {% else %}
+                                                        value="" 
+                                                        placeholder="Last Name" 
+                                                   {% endif %}
+                                                   required
+                                            >
                                         </div>
                                         <div class="col-12 mb-3">
                                             <input type="text" class="form-control" id="company" placeholder="Company Name" value="">
                                         </div>
                                         <div class="col-12 mb-3">
-                                            <input type="email" class="form-control" id="id_email" name='email' placeholder="Email" value="" required>
+                                            <input type="email" 
+                                                   class="form-control" 
+                                                   id="id_email" 
+                                                   name='email' 
+                                                   placeholder="Email"
+                                                   value="" 
+                                                   required
+                                            >
                                         </div>
                                         
                                         <div class="col-12 mb-3">

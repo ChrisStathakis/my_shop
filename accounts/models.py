@@ -18,27 +18,28 @@ class CostumerAccountManager(models.Manager):
 
 class CostumerAccount(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name='profile')
-    name = models.CharField(blank=True, null=True, max_length=150, help_text='Only needed if not user related')
+    first_name = models.CharField(blank=True, null=True, max_length=150, verbose_name='First Name')
+    last_name = models.CharField(blank=True, null=True, max_length=150, verbose_name='Last Name')
     #  shipping_information
-    shipping_address_1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='Διεύθυνση Αποστολής')
-    shipping_city = models.CharField(max_length=50, blank=True, null=True, verbose_name='Πόλη')
-    shipping_zip_code= models.IntegerField(blank=True, null=True, verbose_name='Ταχυδρομικός Κώδικας')
+    shipping_address_1 = models.CharField(max_length=100, blank=True, null=True, verbose_name='Shipping Address')
+    shipping_city = models.CharField(max_length=50, blank=True, null=True, verbose_name='City')
+    shipping_zip_code = models.IntegerField(blank=True, null=True, verbose_name='Postal')
     #  billing information
     billing_name = models.CharField(max_length=100, blank=True, null=True)
     billing_address = models.CharField(max_length=100, blank=True, null=True)
     billing_city = models.CharField(max_length=100, blank=True, null=True)
     billing_zip_code = models.IntegerField(blank= True, null=True, )
     #  personal stuff
-    phone = models.CharField(max_length=10, blank=True, verbose_name="Τηλέφωνο")
+    phone = models.CharField(max_length=10, blank=True, verbose_name="Phone")
     phone1 = models.CharField(max_length=10, blank=True, verbose_name="Τηλέφωνο")
-    cellphone = models.CharField(max_length=10, blank=True, verbose_name='Κινητό')
+    cellphone = models.CharField(max_length=10, blank=True, verbose_name='Cell Phone')
     fax = models.CharField(max_length=10, blank=True, verbose_name="Fax")
     #  if costumer is not Retail
     is_retail = models.BooleanField(default=True)
     is_eshop = models.BooleanField(default=True)
     afm = models.CharField(max_length=9, blank=True, verbose_name="ΑΦΜ")
     DOY = models.CharField(max_length=100, blank=True, null=True)
-    balance = models.DecimalField(max_digits=20, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
+    balance = models.DecimalField(max_digits=20, decimal_places=2, default=0, verbose_name='Balance')
     my_query = CostumerAccountManager()
     objects = models.Manager()
 
@@ -46,7 +47,7 @@ class CostumerAccount(models.Model):
         return '%s  %s'%(self.user.first_name, self.user.last_name)
 
     def __str__(self):
-        return self.user.username if self.user else self.name
+        return self.user.username if self.user else self.first_name
 
     def template_tag_balance(self):
         return '%s %s' % ('{0:2f}'.format(round(self.balance, 2)),CURRENCY)
@@ -60,11 +61,27 @@ class CostumerAccount(models.Model):
     def tag_full_address(self):
         return f'{self.shipping_address_1} - {self.shipping_city}'
 
+    def tag_first_name(self):
+        return f'{self.first_name}' if len(self.first_name)>1 else None
+
+    def tag_last_name(self):
+        return f'{self.last_name}' if len(self.last_name)>1 else None
+
     @property
     def get_content_type(self):
         instance = self
         content_type = ContentType.objects.get_for_model(instance.__class__)
         return content_type
+
+    def update_fields(self, form):
+        self.first_name = form.cleaned_data.get('first_name', self.first_name)
+        self.last_name = form.cleaned_data.get('last_name', self.last_name)
+        self.shipping_address_1 = form.cleaned_data.get('address', self.shipping_address_1)
+        self.shipping_city = form.cleaned_data.get('city', self.shipping_city)
+        self.shipping_zip_code = form.cleaned_data.get('zip_code', self.shipping_zip_code)
+        self.cellphone = form.cleaned_data.get('cellphone', self.cellphone)
+        self.phone = form.cleaned_data.get('phone', self.phone)
+        self.save()
 
 
 @receiver(post_save, sender=User)

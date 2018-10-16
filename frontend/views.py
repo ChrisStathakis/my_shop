@@ -308,23 +308,12 @@ def checkout_page(request):
     menu_categories, cart, cart_items = initial_data(request)
     payment_methods = PaymentMethod.objects.filter(active=True)
     shippings = Shipping.objects.filter(active=True)
-    user = request.user.is_authenticated
+    user = request.user
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
 
     login_form = LoginForm(request.POST or None)
-    form = CheckoutForm(request.POST or None)
-    if user:
-        profile, created = CostumerAccount.objects.get_or_create(user=user)
-        form = CheckoutForm(initial={'email': profile.user.email,
-                                     'first_name': profile.user.first_name,
-                                     'last_name': profile.user.last_name,
-                                     'address': profile.shipping_address_1,
-                                     'city': profile.shipping_city,
-                                     'zip_code': profile.shipping_zip_code,
-                                     'cellphone': profile.cellphone,
-                                     'phone': profile.phone,
-                                         
-                                    })
+    form = CheckoutForm()
+    
    
     if 'login_button' in request.POST:
         username = request.POST.get('username')
@@ -338,24 +327,20 @@ def checkout_page(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     if request.POST:
         form = CheckoutForm(request.POST)
-        print(form.errors, request.POST.get('phone', 'wtf'))
         if form.is_valid():
-            new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
-            messages.success(request, 'Your Order Have Completed!')
-            GiftRetailItem.check_retail_order(new_order, cart)
-            del request.session['cart_id']
-            return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
             try:
                 new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
                 messages.success(request, 'Your Order Have Completed!')
                 GiftRetailItem.check_retail_order(new_order, cart)
                 del request.session['cart_id']
+                if user.is_authenticated:  #  check if profile exists or create one
+                    profile, created = CostumerAccount.objects.get_or_create(user=user)
+                    profile.update_fields(form)
                 return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
             except:
                 print('something is wrong!')
                 del request.session['cart_id']
-                return HttpResponseRedirect('/')       
-            
+                return HttpResponseRedirect('/')    
     context = locals()
     return render(request, 'my_site/checkout.html', context)
 
@@ -390,6 +375,8 @@ def delete_coupon(request, dk):
 @login_required
 def user_profile_page(request):
     user = request.user
+    if not user.is_authenticated:
+        return HttpResponseRedirect('/')
     profile, created = CostumerAccount.objects.get_or_create(user=user)
     orders_list = RetailOrder.objects.filter(costumer_account=profile)
     form = CostumerAccountForm(request.POST or None, instance=profile)

@@ -28,6 +28,8 @@ urlpatterns = [
     path('retail/api/detail/<int:pk>/', RetailRenderer.as_view(), name='api_retail_detail'),
 
 
+    path('/accounts/', include('django.contrib.auth.urls')),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <ul class="list-group">
-                                        <li class="list-group-item"><h5>Eshop Detalis</h5></li>
+                                        <li class="list-group-item"><a href="{% url 'POS:homepage' %}" class="btn btn-warning">Back</a><h5>Eshop Detalis</h5></li>
                                         <li class="list-group-item">
                                             <h6>Shipping Method <span class="badge badge-secondary">
                                                 {{ instance.shipping }}</span>
@@ -102,6 +102,15 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="header">
+                            <div class="title">Actions</div>
+                        </div>
+                        <div class="content">
+                            <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
+                            <a href="" class="btn btn-success btn-lg btn-raised right">Paid</a>
+                        </div>
+                   </div>
+                    <div class="card">
+                        <div class="header">
                             <div class="title">Order Items</div>
                             {% if messages %}
                                 <ul class="messages">
@@ -162,22 +171,6 @@
                             </table>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="header">
-                            <div class="title">Actions</div>
-                        </div>
-                        <div class="content">
-                            <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
-                            <a href="" class="btn btn-success btn-lg btn-raised right">Done</a>
-                            <br><br>
-                            <div class="row">
-                                <button class="btn btn-primary">Paid</button>
-                                <button class="btn btn-primary">Change Costumer</button>
-                                <button class="btn btn-primary">Change Payment</button>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="card">
                         <div class="header">
                             <h4 class="text-center">Edit Details</h4>

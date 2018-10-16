@@ -219,7 +219,7 @@ class RetailOrder(DefaultOrderModel):
     def tag_fullname(self):
         if self.costumer_account:
             if not self.costumer_account.user:
-                return f'{self.costumer_account.name}'
+                return f'{self.costumer_account.first_name}'
             if self.costumer_account.user:
                 return f'Account: {self.costumer_account.user.username}'
         if self.billing_profile:
@@ -263,9 +263,8 @@ class RetailOrder(DefaultOrderModel):
     @staticmethod
     def new_order_payment_and_costumer():
         payments = PaymentMethod.objects.filter(title='Cash')
-        costumers = CostumerAccount.objects.filter(name='Retail Costumer')
         payment = payments.first() if payments.exists() else PaymentMethod.objects.create(title='Cash')
-        costumer = costumers.first() if costumers.exists() else CostumerAccount.objects.create(name='Retail Costumer')
+        costumer, create = CostumerAccount.objects.get_or_create(first_name='Costumer', last_name='Account')
         return payment, costumer
 
     @staticmethod
@@ -276,19 +275,19 @@ class RetailOrder(DefaultOrderModel):
                                                                                      payment_method,
                                                                                      shipping_method
                                                                                      )
-        billing_profile, created = BillingProfile.objects.get_or_create(email=form.cleaned_data.get('email'),
-                                                        first_name=form.cleaned_data.get('first_name'),
-                                                        last_name=form.cleaned_data.get('last_name'),
-                                                        cellphone=form.cleaned_data.get('cellphone'),
-                                                        phone=form.cleaned_data.get('phone', None),
-                                                        cart=cart,
-                                                        costumer_submit=form.cleaned_data.get('agreed'),
-                                                        )
-        address_profile, created = Address.objects.get_or_create(billing_profile=billing_profile,
-                                                 address_line_1=form.cleaned_data.get('address'),
-                                                 city=form.cleaned_data.get('city'),
-                                                 postal_code=form.cleaned_data.get('zip_code'),
-                                                 )
+        billing_profile, created = BillingProfile.objects.get_or_create(cart=cart)
+        billing_profile.email=form.cleaned_data.get('email')
+        billing_profile.first_name=form.cleaned_data.get('first_name')
+        billing_profile.last_name=form.cleaned_data.get('last_name')
+        billing_profile.cellphone=form.cleaned_data.get('cellphone')
+        billing_profile.phone=form.cleaned_data.get('phone', None)
+        billing_profile.costumer_submit=form.cleaned_data.get('agreed')
+        billing_profile.save()
+        address_profile, created = Address.objects.get_or_create(billing_profile=billing_profile)
+        address_profile.address_line_1=form.cleaned_data.get('address')
+        address_profile.city=form.cleaned_data.get('city')
+        address_profile.postal_code=form.cleaned_data.get('zip_code')
+        address_profile.save()                                   
         new_order = RetailOrder.objects.create(order_type='e',
                                                title=f'EshopOrder1{cart.id}',
                                                payment_method=form.cleaned_data.get('payment_method'),
