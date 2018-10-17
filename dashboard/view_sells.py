@@ -160,7 +160,7 @@ def create_billing_profile_view(request, pk):
 @staff_member_required()
 def edit_billing_profile_view(request, pk, dk):
     instance = get_object_or_404(BillingProfile, id=pk)
-    order = get_object_or_404(RetailOrder, id=pk)
+    order = get_object_or_404(RetailOrder, id=dk)
     title, back_url = f'{order.__str__}', reverse('dashboard:eshop_order_edit', kwargs={'pk': dk})
     form = BillingProfileForm(request.POST or None, instance=instance)
     if form.is_valid():

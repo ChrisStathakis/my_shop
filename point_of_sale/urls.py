@@ -10,6 +10,7 @@ urlpatterns = [
     path('create-sale/', view=create_new_sales_order, name='create_sale'),
     path('sales/<int:pk>/', view=sales, name='sales'),
     path('sales/action/<int:pk>/<int:qty>/<slug:type>/', edit_product_item_view, name='edit_product_item'),
+    path('sales/retail-order/done/<int:pk>/', retail_order_done, name='retail_order_done'),
 
     path('sales/<int:pk>/pay-order/', view=order_paid, name='order_paid'),
     path('sales/delete-payment/<int:dk>/<int:pk>/', view=delete_payment_order, name='delete_payment_order'),

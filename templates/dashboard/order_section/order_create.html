@@ -123,11 +123,10 @@
                                         <th>{% for coupon in instance.coupons.all %}{{ coupon }}, {% endfor %}</th>
                                         <td>User Created</td>
                                         <th>{{ instance.user_account }}</th>
-                                    </tr>
                                     <tr>
                                         <td></td>
                                         <td colspan="2">
-                                            <h4 class="title text-center">Total Value {{ instance.tag_final_price }}</h4>
+                                            <h4 class="title text-center">Total Value {{ instance.tag_final_value }}</h4>
                                         </td>
                                         <td></td>
                                     </tr>

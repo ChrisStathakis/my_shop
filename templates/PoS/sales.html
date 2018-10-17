@@ -106,7 +106,7 @@
                         </div>
                         <div class="content">
                             <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
-                            <a href="" class="btn btn-success btn-lg btn-raised right">Paid</a>
+                            <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised right">Paid</a>
                         </div>
                    </div>
                     <div class="card">

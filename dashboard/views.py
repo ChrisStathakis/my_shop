@@ -27,6 +27,7 @@ from point_of_sale.models import RetailOrderItem
 from inventory_manager.forms import CategoryForm
 from frontend.models import CategorySite, Brands
 
+from datetime import datetime, timedelta
 
 WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
@@ -37,11 +38,13 @@ class DashBoard(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashBoard, self).get_context_data(**kwargs)
-        eshop_orders = RetailOrder.my_query.eshop_new_orders()[:10]
+        new_orders = RetailOrder.my_query.eshop_new_orders().count()
+        carts = Cart.my_query.active_carts().filter(timestamp__range=[datetime.now()-timedelta(days=2), datetime.now()])
+        eshop_orders = RetailOrder.my_query.eshop_orders()[:10]
         sent_orders = RetailOrder.my_query.eshop_sent_orders()[:10]
         last_items = RetailOrderItem.objects.filter(order__in=eshop_orders)[:10] if eshop_orders else []
-        revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_price'))['final_price__sum'] if RetailOrder.my_query.paid_orders() else 0
-        carts = Cart.my_query.active_carts()
+        revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_value'))['final_value__sum'] if RetailOrder.my_query.paid_orders() else 0
+        
         currency = CURRENCY
         context.update(locals())
         return context
@@ -90,25 +93,21 @@ class ProductsList(ListView):
             if self.request.POST.get('change_cate_site') else None
         new_vendor = get_object_or_404(Vendor, id=self.request.POST.get('change_vendor')) \
             if self.request.POST.get('change_vendor') else None
-        print(new_cate_site)
         if new_brand and get_products:
             for product_id in get_products:
                 product = get_object_or_404(Product, id=product_id)
-                print(product_id, product)
                 product.brand = new_brand
                 product.save()
             messages.success(self.request, 'The brand %s added on the products' % new_brand.title)
             return redirect('dashboard:products')
         if new_category and get_products:
             for product_id in get_products:
-                print('new category')
                 product = get_object_or_404(Product, id=product_id)
                 product.category = new_category
                 product.save()
             messages.success(self.request, 'The brand %s added on the products' % new_category.title)
             return redirect('dashboard:products')
         if new_cate_site and get_products:
-            print('wtf')
             for product_id in get_products:
                 product = get_object_or_404(Product, id=product_id)
                 product.category_site.add(new_cate_site)
@@ -133,7 +132,6 @@ def product_detail(request, pk):
     form = UpdateProductForm(request.POST or None, instance=instance)
 
     if 'save_' in request.POST:
-        print('here')
         if form.is_valid():
             form.save()
             messages.success(request, 'The products %s is saves!')
@@ -177,7 +175,6 @@ class ProductAddMultipleImages(View):
                                              template_name='dashboard/ajax_calls/images.html',
                                              context={'photos': ProductPhotos.objects.filter(product=instance) }
                                             )
-        print(data)
         return JsonResponse(data)
 
 
@@ -229,7 +226,6 @@ def delete_product_size(request, pk):
     retail_order_items = RetailOrderItem.objects.filter(size=instance)
     warehouse_orders = OrderItem.objects.filter(size=instance)
     if retail_order_items.exists() or warehouse_orders.exists():
-        print('here!@')
         messages.warning(request, 'You cant delete this')
     else:
         instance.delete()

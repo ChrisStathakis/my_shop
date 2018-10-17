@@ -34,18 +34,18 @@
                             <div class="col-xs-6">
                                 <address>
                                 <strong>Billed To:</strong><br>
-                                    {{ instance.first_name }} {{ instance.last_name }}<br>
-                                    {{ instance.address }}<br>
-                                    {{ instance.city }}, {{ instance.zip_code }}<br>
+                                    {{ instance.billing_profile.first_name }} {{ instance.billing_profile.last_name }}<br>
+                                    {{ instance.shipping_profile.address_line_1 }}<br>
+                                    {{ instance.shipping_profile.city }}, {{ instance.shipping_profile.postal_code }}<br>
                                     Greece
                                 </address>
                             </div>
                             <div class="col-xs-6 text-right">
                                 <address>
                                 <strong>Shipped To:</strong><br>
-                                    {{ instance.first_name }} {{ instance.last_name }}<br>
-                                    {{ instance.address }}<br>
-                                    {{ instance.city }}, {{ instance.zip_code }}<br>
+                                    {{ instance.billing_profile.first_name }} {{ instance.billing_profile.last_name }}<br>
+                                    {{ instance.shipping_profile.address_line_1 }}<br>
+                                    {{ instance.shipping_profile.city }}, {{ instance.shipping_profile.postal_code }}<br>
                                     Greece
                                 </address>
                             </div>
@@ -54,14 +54,14 @@
                             <div class="col-xs-6">
                                 <address>
                                     <strong>Payment Method:</strong><br>
-                                    {{ instance.get_payment_method_display }}<br>
-                                    {{ instance.email }}
+                                    {{ instance.payment_method }}<br>
+                                    {{ instance.billing_profile.email }}
                                 </address>
                             </div>
                             <div class="col-xs-6 text-right">
                                 <address>
                                     <strong>Order Date:</strong><br>
-                                    {{ instance.date_created|date }}<br><br>
+                                    {{ instance.date_expired|date }}<br><br>
                                 </address>
                             </div>
                         </div>
@@ -86,31 +86,38 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for item in instance.retailorderitem_set.all %}
+                                            {% for item in instance.order_items.all %}
                                                 <tr>
                                                     <td>{{ item }}</td>
-                                                    <td class="text-center">{{ item.tag_final_price }}</td>
+                                                    <td class="text-center">{{ item.tag_final_value }}</td>
                                                     <td class="text-center">{{ item.qty }}</td>
-                                                    <td class="text-right">{{ item.tag_total_price }}</td>
+                                                    <td class="text-right">{{ item.tag_total_value }}</td>
                                                 </tr>
                                             {% endfor %}
+                                           
                                             <tr>
                                                 <td class="thick-line"></td>
                                                 <td class="thick-line"></td>
                                                 <td class="thick-line text-center"><strong>Subtotal</strong></td>
-                                                <td class="thick-line text-right">$670.99</td>
+                                                <td class="thick-line text-right">{{ instance.tag_value }}</td>
                                             </tr>
                                             <tr>
                                                 <td class="no-line"></td>
                                                 <td class="no-line"></td>
-                                                <td class="no-line text-center"><strong>Shipping</strong></td>
-                                                <td class="no-line text-right">$15</td>
+                                                <td class="no-line text-center"><strong>Shipping cost</strong></td>
+                                                <td class="no-line text-right">{{ instance.tag_shipping_value}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-line"></td>
+                                                <td class="no-line"></td>
+                                                <td class="no-line text-center"><strong>Payment cost</strong></td>
+                                                <td class="no-line text-right">{{ instance.tag_payment_value}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="no-line"></td>
                                                 <td class="no-line"></td>
                                                 <td class="no-line text-center"><strong>Total</strong></td>
-                                                <td class="no-line text-right">{{ instance.tag_final_price }}</td>
+                                                <td class="no-line text-right">{{ instance.tag_final_value }}</td>
                                             </tr>
                                         </tbody>
                                     </table>

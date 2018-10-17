@@ -83,7 +83,8 @@ class RetailOrder(DefaultOrderModel):
                                          blank=True,
                                          null=True,
                                          verbose_name='Costumer',
-                                         on_delete=models.CASCADE)
+                                         on_delete=models.SET_NULL)
+    seller_account = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='seller')
     #  eshop info only
     shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.SET_NULL)
     shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
@@ -113,16 +114,15 @@ class RetailOrder(DefaultOrderModel):
         try:
             self.check_coupons()
         except:
-            self.discount = 0
-        self.status = self.status if not self.is_paid else '7'
+            self.discount = 0 
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
-        if self.status == '7':
+        if self.status == '7' or self.status == '8':
             self.is_paid = True
-        if self.is_paid and self.paid_value < self.final_price and not self.order_type == 'd':
-            new_order = PaymentOrders.objects.create(payment_type=self.payment_method,
-                                                     value=self.final_price - self.paid_value,
+        if self.is_paid and self.paid_value < self.final_value and not self.order_type == 'd':
+            new_order = PaymentOrders.objects.create(payment_method=self.payment_method,
+                                                     value=self.final_value - self.paid_value,
                                                      is_paid=True,
                                                      content_type=ContentType.objects.get_for_model(RetailOrder),
                                                      object_id=self.id,
@@ -205,6 +205,15 @@ class RetailOrder(DefaultOrderModel):
     @property
     def tag_remain_value(self):
         return '%s %s' % (round(self.final_value - self.paid_value, 2), CURRENCY)
+    
+    def tag_status(self):
+        return f'{self.get_status_display()}'
+
+    def tag_costumer(self):
+        return self.costumer_account
+
+    def tag_seller_point(self):
+        return self.seller_account.username if self.seller_account else 'No data'
 
     def is_printed(self):
         return 'Printed' if self.printed else 'Not Printed'

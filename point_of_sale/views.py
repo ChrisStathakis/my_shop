@@ -136,9 +136,13 @@ def delete_order_view(request, dk):
 @staff_member_required
 def retail_order_done(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
+    if not instance.order_items.all():
+        instance.delete()
+        return HttpResponseRedirect(reverse('POS:homepage'))
     instance.is_paid = True
+    instance.status = '8'
     instance.save()
-    return HttpResponseRedirect(reverse('POS:sales'))
+    return HttpResponseRedirect(reverse('POS:homepage'))
 
 @staff_member_required()
 def ajax_products_search(request, pk):
@@ -198,7 +202,6 @@ def ajax_edit_product(request, dk):
     data = dict()
     product = get_object_or_404(RetailOrderItem, id=dk)
     get_type = request.GET.get('type')
-    print(get_type)
     if get_type == 'add':
         product.qty += 1
     else:

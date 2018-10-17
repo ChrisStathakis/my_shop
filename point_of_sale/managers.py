@@ -34,7 +34,7 @@ class RetailOrderManager(models.Manager):
         return super(RetailOrderManager, self).filter(date_expired__range=[date_start, date_end])
 
     def sells_orders(self, date_start, date_end):
-        return self.all_orders_by_date_filter(date_start, date_end).filter(order_type__in=['r', 'e']).exclude(status__in=['5', '6'])
+        return self.all_orders_by_date_filter(date_start, date_end).filter(order_type__in=['r', 'e'])
 
     def sellings_done(self):
         return super(RetailOrderManager, self).filter(status__id__in=[7,8]).exclude(order_type='b').order_by('-date_created')
@@ -46,10 +46,10 @@ class RetailOrderManager(models.Manager):
         return super(RetailOrderManager, self).filter(order_type='e')
 
     def eshop_new_orders(self):
-        return super(RetailOrderManager, self).filter(order_type='e', status=1).order_by('-timestamp')
+        return super(RetailOrderManager, self).filter(status='1')
 
     def eshop_sent_orders(self):
-        return self.eshop_orders().filter(status__in=[5,7,8])
+        return self.eshop_orders().filter(status__in=['5','6','7','8'])
 
     def paid_orders(self):
         return super(RetailOrderManager, self).filter(is_paid=True)

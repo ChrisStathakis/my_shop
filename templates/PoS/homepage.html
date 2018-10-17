@@ -28,8 +28,11 @@
                                     <th>#</th>
                                     <th>Date</th>
                                     <td>Order Type</td>
-                                    <td>Value</td>
-                                    <td>Action</td>
+                                    <th>Sell Point</th>
+                                    <th>Costumer</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +41,10 @@
                                         <td>{{ forloop.counter }}</td>
                                         <td>{{ order.date_expired|date }}</td>
                                         <td>{{ order.get_order_type_display }}</td>
+                                        <td>{{ order.tag_seller_point|default_if_none:"No data" }}</td>
+                                        <td>{{ order.tag_costumer|default_if_none:"No data" }}</td>
                                         <td>{{ order.tag_final_value }}</td>
+                                        <td>{{ order.tag_status }}</td>
                                         <td><a href="{% url 'POS:sales' order.id %}" class="btn btn-primary">Edit</a> </td>
                                     </tr>
                                 {% empty %}

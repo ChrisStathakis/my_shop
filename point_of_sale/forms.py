@@ -115,7 +115,11 @@ class EshopRetailForm(forms.ModelForm):
 
     class Meta:
         model = RetailOrder
-        fields = '__all__'
+        fields = ['date_expired', 'title', 
+                  'payment_method', 'shipping',
+                  'status', 'notes',
+                  'shipping_cost', 'payment_cost'
+                ]
 
     def __init__(self, *args, **kwargs):
         super(EshopRetailForm, self).__init__(*args, **kwargs)
