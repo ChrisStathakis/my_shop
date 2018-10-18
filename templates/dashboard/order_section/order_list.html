@@ -26,7 +26,7 @@
                                             <th>Name</th>
                                             <th>Address</th>
                                             <th>Phones</th>
-                                            <th>Status</th>
+                                            <th>Order Type - Status</th>
                                             <th>Price</th>
                                             <th>Actions</th>
                                         </tr>
@@ -44,7 +44,7 @@
                                                 <td><a href="{% url 'dashboard:eshop_order_edit' order.id  %}">{{ order.tag_fullname }}</a></td>
                                                 <td>{{ order.tag_full_address }}</td>
                                                 <td>{{ order.tag_phones }}</td>
-                                                <td>{{ order.get_status_display }}</td>
+                                                {{ order.tag_order_type_and_status }}
                                                 <td>{{ order.tag_final_value }}</td>
                                                 <td>
                                                     <a href="{{ order.get_dashboard_print_url }}" class="btn btn-icon"><i class="fa fa-print"></i></a>

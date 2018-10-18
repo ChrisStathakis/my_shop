@@ -62,10 +62,10 @@ class CostumerAccount(models.Model):
         return f'{self.shipping_address_1} - {self.shipping_city}'
 
     def tag_first_name(self):
-        return f'{self.first_name}' if len(self.first_name)>1 else None
+        return f'{self.first_name}' if self.first_name else None
 
     def tag_last_name(self):
-        return f'{self.last_name}' if len(self.last_name)>1 else None
+        return f'{self.last_name}' if self.last_name else None
 
     @property
     def get_content_type(self):

@@ -291,6 +291,21 @@ def print_invoice(request, pk):
     return render(request, 'dashboard/print_invoice.html', {'instance': instance})
 
 
+@staff_member_required
+def order_change_status_fast(request, pk, dk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    new_status = f'{dk}'
+    instance.status = new_status
+    instance.save()
+    return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk': pk}))
+
+def warehouse_found(request, pk):
+    instance = get_object_or_404(RetailOrderItem, id=pk)
+    instance.is_find = False if instance.is_find else True
+    instance.save()
+    return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk': instance.order.id}))
+
+
 @method_decorator(staff_member_required, name='dispatch')
 class ShippingPage(ListView):
     template_name = 'dashboard/order_section/shipping.html'

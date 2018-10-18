@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.utils.safestring import mark_safe
 import datetime
 from decimal import Decimal
 
@@ -165,6 +166,12 @@ class RetailOrder(DefaultOrderModel):
     
     def tag_status(self):
         return f'{self.get_status_display()}'
+
+    def tag_order_type_and_status(self):
+        text = f'{self.get_order_type_display()} - {self.get_status_display()}' if self.order_type in ['e', 'r'] else f'{self.get_order_type_display()}'
+        back_color = 'success' if self.order_type in ['e', 'r'] and self.status in ['4','7', '8'] else 'info' if self.order_type in ['e', 'r'] else 'danger' if self.order_type == 'c' else 'warning'
+        return mark_safe('<td class="%s">%s</td>' %(back_color, text))
+
 
     def tag_costumer(self):
         return self.costumer_account
@@ -363,6 +370,9 @@ class RetailOrderItem(DefaultOrderItemModel):
 
     def tag_value(self):
         return '%s %s' % (self.value, CURRENCY)
+    
+    def tag_found(self):
+        return 'Found' if self.is_find else 'Not Found'
 
     def tag_total_taxes(self):
         return '%s %s' %(round(self.value*self.qty*(Decimal(self.order.taxes)/100), 2), CURRENCY)

@@ -73,23 +73,23 @@
                                     <a href="{% url 'dashboard:print_invoice' instance.id %}"
                                        class="btn btn-success"><i class="fa fa-print"></i>Print
                                     </a>
-                                    <a href=""
+                                    <a href="{% url 'dashboard:order_change_status' instance.id 2 %}" class="btn btn-primary">
+                                        <i class="fa fa-edit"></i>In Progress
+                                    </a>
+                                    <a href="{% url 'dashboard:order_change_status' instance.id 3 %}"
                                        class="btn btn-success">
                                         <i class="fa fa-check"></i>Ready
                                     </a>
-                                    <a href=""
-                                       class="btn btn-success">
-                                        <i class="fa fa-check"></i>Send
-                                    </a>
+                                    
                                 </div>
                                 <div class="col-md-6">
                                     <h6> Status... {{ instance.get_status_display }} </h6>
                                     <br><br>
-                                    <a href=""
-                                       class="btn btn-info">
-                                        <i class="fa fa-credit-card"></i>Paid
+                                    <a href="{% url 'dashboard:order_change_status' instance.id 4 %}"
+                                       class="btn btn-success">
+                                        <i class="fa fa-check"></i>Send
                                     </a>
-                                    <a href=""
+                                    <a href="{% url 'dashboard:order_change_status' instance.id 8 %}"
                                        class="btn btn-success">
                                         <i class="fa fa-check"></i>Done
                                     </a>
@@ -176,6 +176,7 @@
                                         <th>Qty</th>
                                         <th>Price</th>
                                         <th>Actions</th>
+                                        <th>Warehouse</th>
                                     </tr>
                                  </thead>
                                  <tbody>
@@ -189,6 +190,7 @@
                                                 <a href="{% url 'dashboard:edit_order_item' product.id %}" class="btn btn-primary">Edit</a>
                                                 <a href="{% url 'dashboard:delete_order_item' product.id %}" class="btn btn-warning">Delete</a>
                                             </td>
+                                            <td><a href="{% url 'dashboard:warehouse_found' product.id %}" class='btn btn-info'>{{ product.tag_found }}</a></td>
                                         </tr>
                                         {% empty %}
                                         <tr>
