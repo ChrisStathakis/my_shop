@@ -62,12 +62,40 @@
 
                 <div class="col-lg-6 col-md-6">
                     {% block card_section %}
-                    <div class="card">
+                        <div class="card">
                         <div class="header">
                             <h4 class="title text-center">Order Details</h4>
-                            <a href="{% url 'dashboard:print_invoice' instance.id %}" class="btn btn-success"><i class="fa fa-print"></i>Print</a>
-                            <a href="" class="btn btn-info"><i class="fa fa-credit-card"></i>Paid</a>
+                            <br><br>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Order Type... {{ instance.get_order_type_display }}</h6>
+                                    <br><br>
+                                    <a href="{% url 'dashboard:print_invoice' instance.id %}"
+                                       class="btn btn-success"><i class="fa fa-print"></i>Print
+                                    </a>
+                                    <a href=""
+                                       class="btn btn-success">
+                                        <i class="fa fa-check"></i>Ready
+                                    </a>
+                                    <a href=""
+                                       class="btn btn-success">
+                                        <i class="fa fa-check"></i>Send
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6> Status... {{ instance.get_status_display }} </h6>
+                                    <br><br>
+                                    <a href=""
+                                       class="btn btn-info">
+                                        <i class="fa fa-credit-card"></i>Paid
+                                    </a>
+                                    <a href=""
+                                       class="btn btn-success">
+                                        <i class="fa fa-check"></i>Done
+                                    </a>
 
+                                </div>
+                            </div>
                         </div>
                         <div class="content">
                             <table class="table">
@@ -215,8 +243,8 @@
                                 <h4 class="title text-center">Actions</h4>
                             </div>
                             <div class="content">
-                                <a href="" class="btn btn-success"><i class="fa fa-print"></i> Print </a>
-
+                                <a href="" class="btn btn-dark"><i class="fa fa-warning"></i> Return </a>
+                                <a href="" class="btn btn-warning"><i class="fa fa-remove"></i> Cancel </a>
                                 <br><br><br>
                                 <a style="width: 100%;" href="" class="btn btn-warning ">Delete</a>
                             </div>

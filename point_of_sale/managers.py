@@ -69,4 +69,15 @@ class RetailOrderManager(models.Manager):
         return super(RetailOrderManager, self).filter(order_type='r').order_by('-date_created')
 
 
+class RetailOrderItemManager(models.Manager):
+    def all_orders_by_date_filter(self, date_start, date_end):
+        return super(RetailOrderItemManager, self).filter(order__date_created__range=[date_start, date_end])
+
+    def selling_order_items(self, date_start, date_end):
+        return super(RetailOrderItemManager, self).filter(order__order_type__in=['e', 'r'],
+                                                          order__date_created__range=[date_start, date_end])
+
+    def return_order_items(self, date_start, date_end):
+        return super(RetailOrderItemManager ,self).filter(order__order_type='b',
+                                                          order__date_created__range=[date_start, date_end])
 

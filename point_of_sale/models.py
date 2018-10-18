@@ -11,7 +11,7 @@ from django.conf import settings
 import datetime
 from decimal import Decimal
 
-from .managers import RetailOrderManager
+from .managers import RetailOrderManager, RetailOrderItemManager
 from accounts.models import CostumerAccount, BillingProfile, Address
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
@@ -20,56 +20,9 @@ from site_settings.models import PaymentMethod, PaymentOrders, Shipping
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
 
+from .tools import update_warehouse, payment_method_default
 
 RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIONS, settings.PRODUCT_ATTRITUBE_TRANSCATION 
-
-
-def order_transcation(order_type, instance, qty, substact,): #  substact can be add or minus, change
-    product = instance.title
-    costumer = instance.order.costumer_account
-    old_qty = instance.tracker.previous('qty')
-    if order_type in ['e', 'r']:
-        if substact == 'add':
-            if old_qty:
-                product.qty -= instance.qty - old_qty
-            else:
-                product.qty -= instance.qty
-            if costumer:
-                if old_qty:
-                    costumer.balance -= old_qty * instance.final_price
-                    costumer.balance += instance.get_total_value
-                else:
-                    costumer.balance += instance.get_total_value
-        if substact == 'minus':
-            product.qty += qty
-            product.save()
-            if costumer:
-                if old_qty:
-                    costumer.balance -= instance.get_total_value
-    if order_type in ['d', 'b']:
-        product.qty += instance.qty - old_qty if old_qty else instance.qty
-        costumer.balance += old_qty*instance.final_price - instance.get_total_value if old_qty else -instance.get_total_value
-    product.save()
-    if costumer:
-        costumer.save()
-
-
-def payment_method_default():
-    exists = PaymentMethod.objects.exists()
-    return PaymentMethod.objects.first() if exists else None
-
-
-class RetailOrderItemManager(models.Manager):
-    def all_orders_by_date_filter(self, date_start, date_end):
-        return super(RetailOrderItemManager, self).filter(order__date_created__range=[date_start, date_end])
-
-    def selling_order_items(self, date_start, date_end):
-        return super(RetailOrderItemManager, self).filter(order__order_type__in=['e', 'r'],
-                                                          order__date_created__range=[date_start, date_end])
-
-    def return_order_items(self, date_start, date_end):
-        return super(RetailOrderItemManager ,self).filter(order__order_type='b',
-                                                          order__date_created__range=[date_start, date_end])
 
 
 class RetailOrder(DefaultOrderModel):
@@ -109,16 +62,14 @@ class RetailOrder(DefaultOrderModel):
         return self.title if self.title else 'order'
 
     def save(self, *args, **kwargs):
-        get_all_items = self.order_items.all()
-        self.count_items = get_all_items.count() if get_all_items else 0
-        try:
-            self.check_coupons()
-        except:
-            self.discount = 0 
+        order_items = self.order_items.all()
+        self.count_items = order_items.count() if order_items else 0
+        self.check_coupons()
+        self.update_order()
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
-        self.paid_value = self.payorders.aggregate(Sum('value'))['value__sum'] if self.payorders else 0
+        self.paid_value = self.payorders.all().aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
-        if self.status == '7' or self.status == '8':
+        if self.status in ['7', '8']:
             self.is_paid = True
         if self.is_paid and self.paid_value < self.final_value and not self.order_type == 'd':
             new_order = PaymentOrders.objects.create(payment_method=self.payment_method,
@@ -140,23 +91,29 @@ class RetailOrder(DefaultOrderModel):
         items = self.order_items.all()
         self.value = items.aggregate(Sum('total_value'))['total_value__sum'] if items else 0
         self.total_cost = items.aggregate(Sum('total_cost_value'))['total_cost_value__sum'] if items else 0
-        self.save()
+
 
     def check_coupons(self):
-        total_value = 0
-        active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
-        for coupon in self.coupons.all():
-            if coupon in active_coupons :
-                if self.value > coupon.cart_total_value:
-                    total_value += coupon.discount_value if coupon.discount_value else \
-                    (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
-        self.discount = total_value
+        try:
+            total_value = 0
+            active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
+            for coupon in self.coupons.all():
+                if coupon in active_coupons :
+                    if self.value > coupon.cart_total_value:
+                        total_value += coupon.discount_value if coupon.discount_value else \
+                        (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
+            self.discount = total_value
+        except:
+            self.discount = 0
 
     def get_report_url(self):
         return reverse('reports:retail_order_detail', kwargs={'pk': self.id})
 
     def get_dashboard_url(self):
-        return reverse('dashboard:order_detail', kwargs={'pk': self.id} )
+        return reverse('dashboard:eshop_order_edit', kwargs={'pk': self.id})
+
+    def get_dashboard_print_url(self):
+        return reverse('dashboard:print_invoice', kwargs={'pk': self.id})
 
     def is_sale(self):
         return True if self.order_type in ['r', 'e'] else False
@@ -376,46 +333,11 @@ class RetailOrderItem(DefaultOrderItemModel):
         self.total_cost_value = self.cost*self.qty
         super(RetailOrderItem, self).save(*args, **kwargs)
 
-    def update_warehouse(self, transcation, qty):
-        if RETAIL_TRANSCATIONS:
-            product = self.title
-            if self.size:
-                self.size.update_size()
-            else:
-                product.update_product(transcation, qty)
-        else:
-            pass
+    def update_warehouse(self, transcation_type, qty):
+        update_warehouse(self, transcation_type, qty)
 
-    def update_order_item(self):
-        self.order.update_order()
-
-    def add_item(self, qty):
-        get_total_value = self.total_value
-        get_total_cost = self.total_cost_value
-        self.order.update_order()
-        if RETAIL_TRANSCATIONS:
-            self.title.qty -= qty
-            self.title.save()
-            if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
-                self.size.qty -= qty
-        if self.order.costumer_account:
-            costumer = self.order.costumer_account
-            costumer.balance += get_total_cost
-            costumer.save() 
-
-    def remove_item(self, qty):
-        get_total_value = self.total_value
-        get_total_cost = self.total_cost_value
-        self.order.update_order()
-        if RETAIL_TRANSCATIONS:
-            self.title.qty += self.qty
-            self.title.save()
-            if PRODUCT_ATTRITUBE_TRANSCATION and self.size:
-                self.size.qty += self.qty
-        if self.order.costumer_account:
-            costumer = self.order.costumer_account
-            costumer.balance -= get_total_cost
-            costumer.save()
+    def update_order(self):
+        self.order.save()
 
     def get_clean_value(self):
         return self.final_value * (100-self.order.taxes/100)
@@ -545,5 +467,3 @@ class GiftRetailItem(models.Model):
                     if cart:
                         new_gift.cart_related = cart
                         new_gift.save()
-                
-                

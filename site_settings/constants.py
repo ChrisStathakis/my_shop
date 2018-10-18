@@ -79,8 +79,9 @@ STATUS_SITE = (
 
 #  retail
 ORDER_TYPES = [('r', 'Retail Order'),
-               ('e', 'Eshop'),
+               ('e', 'Eshop Invoice'),
                ('b', 'Return Order'),
+               ('c', 'Cancel Order'),
                ('wa', 'Παραστατικό Εισαγωγής'),
                ('wr', 'Export Invoice'),
                ]

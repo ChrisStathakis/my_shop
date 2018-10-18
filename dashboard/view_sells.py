@@ -26,8 +26,6 @@ from site_settings.models import PaymentMethod, Shipping
 from site_settings.forms import PaymentMethodForm
 
 
-
-
 @method_decorator(staff_member_required, name='dispatch')
 class EshopOrdersPage(ListView):
     model = RetailOrder
@@ -170,7 +168,6 @@ def edit_billing_profile_view(request, pk, dk):
     return render(request, 'dashboard/form_view.html', context)
 
 
-
 @staff_member_required
 def create_address_view(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
@@ -204,28 +201,24 @@ def edit_address_view(request, pk):
     return render(request, 'dashboard/form_view.html', context)
 
 
-@login_required()
+@staff_member_required()
 def add_edit_order_item(request, dk, pk, qty):
     order = get_object_or_404(RetailOrder, id=dk)
     product = get_object_or_404(Product, id=pk)
-    exists = RetailOrderItem.objects.filter(title=product, order=order)
-    if exists.exists():
-        new_order_item = exists.last()
-        new_order_item.remove_item()
-        new_qty = new_order_item.qty + qty
+    new_order_item, created = RetailOrderItem.objects.get_or_create(title=product, order=order)
+    new_order_item.update_warehouse('REMOVE', 0)
+    new_qty = new_order_item.qty + qty
+    new_order_item.qty = new_qty
+    new_order_item.save()
+    new_order_item.update_warehouse('ADD', new_qty)
+    if created:
+        new_order_item.cost = product.price_buy
+        new_order_item.value = product.price
         new_order_item.qty = new_qty
+        new_order_item.discount_value = product.price_discount
         new_order_item.save()
-        new_order_item.add_item(new_qty)
-    else:
-        new_order_item = RetailOrderItem.objects.create(title=product,
-                                                        order=order,
-                                                        cost=product.price_buy,
-                                                        value=product.price,
-                                                        qty=qty,
-                                                        discount_value=product.price_discount,
-                                                        )
-        new_order_item.add_item(qty)
-    GiftRetailItem.check_retail_order(order)
+    new_order_item.update_order()
+    # GiftRetailItem.check_retail_order(order)
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(dk,)))
 
 
@@ -247,7 +240,9 @@ class CreateOrderItemWithSizePage(CreateView):
     def get_context_data(self, **kwargs):
         context = super(CreateOrderItemWithSizePage, self).get_context_data(**kwargs)
         instance = get_object_or_404(Product, id=self.kwargs.get('dk'))
-        page_title, back_url = f'Add {instance.title} ', reverse('dashboard:eshop_order_edit', kwargs={'pk': self.kwargs.get('pk')})
+        page_title, back_url = f'Add {instance.title} ', reverse('dashboard:eshop_order_edit',
+                                                                 kwargs={'pk': self.kwargs.get('pk')}
+                                                                 )
         context.update(locals())
         return context
 
@@ -268,10 +263,11 @@ def edit_order_item(request, dk):
     if instance.size:
         form_order = EshopOrderItemWithSizeForm(request.POST or None, instance=instance) 
     if form_order.is_valid():
-        old_instance.remove_item()
+        old_instance.update_warehouse('REMOVE', qty=0)
         form_order.save()
         instance.refresh_from_db()
-        instance.add_item(qty=instance.qty)
+        instance.update_warehouse('ADD', qty=instance.qty)
+        instance.update_order()
         return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(instance.order.id,)))
     context = locals()
     return render(request, 'dashboard/order_section/edit_order_item.html', context)
@@ -280,9 +276,10 @@ def edit_order_item(request, dk):
 @staff_member_required
 def delete_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
-    instance.remove_item()
+    instance.update_warehouse('REMOVE', qty=0)
     order = instance.order
     instance.delete()
+    order.save()
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(order.id,)))
 
 
@@ -410,3 +407,28 @@ def delete_payment_method(request, dk):
     pass
 
 
+@staff_member_required
+def return_or_cancel_order(request, pk, instance_type):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    order_items = instance.order_items.all()
+    if not order_items:
+        instance.delete()
+        messages.success(request, 'Invoice didn\'t had any item and deleted')
+    new_order = instance
+    new_order.pk = None
+    new_order.order_related = instance
+    new_order.order_type = 'b' if instance_type == 'return' else 'c'
+    new_order.save()
+    for item in order_items.all():
+        new_item = RetailOrderItem.objects.create(order=new_order,
+                                                  title=item.title,
+                                                  qty=item.qty,
+                                                  cost=item.cost,
+                                                  size=item.size,
+                                                  is_return=True,
+                                                  is_find=True
+                                                  )
+        new_item.update_warehouse('REMOVE', 0)
+    new_order.save()
+    new_order.refresh_from_db()
+    return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk', new_order.id}))
