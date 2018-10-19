@@ -233,7 +233,7 @@
                                     </div>
                                 {% endfor %}
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-info btn-fill btn-wd">Update Profile</button>
+                                    <button type="submit" class="btn btn-info btn-fill btn-wd">Update</button>
                                 </div>
                                 <div class="clearfix"></div>
                             </form>
@@ -244,12 +244,14 @@
                             <div class="header">
                                 <h4 class="title text-center">Actions</h4>
                             </div>
+                            {% if instance.order_type == 'e' or instance.order_type == 'r' %}
                             <div class="content">
-                                <a href="" class="btn btn-dark"><i class="fa fa-warning"></i> Return </a>
-                                <a href="" class="btn btn-warning"><i class="fa fa-remove"></i> Cancel </a>
+                                <a href="{% url 'dashboard:return_or_cancel' instance.id 'b' %}" class="btn btn-dark"><i class="fa fa-warning"></i> Return </a>
+                                <a href="{% url 'dashboard:return_or_cancel' instance.id 'c' %}" class="btn btn-warning"><i class="fa fa-remove"></i> Cancel </a>
                                 <br><br><br>
                                 <a style="width: 100%;" href="" class="btn btn-warning ">Delete</a>
                             </div>
+                            {% endif %}
                         </div>
                     {% endblock %}
                 </div>

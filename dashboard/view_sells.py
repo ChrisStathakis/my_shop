@@ -431,19 +431,31 @@ def return_or_cancel_order(request, pk, instance_type):
         messages.success(request, 'Invoice didn\'t had any item and deleted')
     new_order = instance
     new_order.pk = None
-    new_order.order_related = instance
+    new_order.is_paid = False
+    new_order.billing_profile = None
+    new_order.address_profile = None
+    new_order.cart_related = None
     new_order.order_type = 'b' if instance_type == 'return' else 'c'
+    new_order.status = '5' if instance_type == 'return' else '6'
     new_order.save()
+
     for item in order_items.all():
         new_item = RetailOrderItem.objects.create(order=new_order,
                                                   title=item.title,
                                                   qty=item.qty,
+                                                  value=item.value,
+                                                  discount_value=item.discount_value,
                                                   cost=item.cost,
                                                   size=item.size,
                                                   is_return=True,
                                                   is_find=True
                                                   )
         new_item.update_warehouse('REMOVE', 0)
+    new_order.order_related = instance
     new_order.save()
     new_order.refresh_from_db()
-    return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk', new_order.id}))
+    instance.status = '5' if instance_type == 'return' else '6'
+    instance.save()
+    return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk': new_order.id}))
+
+

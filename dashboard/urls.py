@@ -96,7 +96,11 @@ urlpatterns = [
     path('eshop-orders/print/<int:pk>/', view=print_invoice, name='print_invoice'),
     path('eshop-orders/gifts/', gifts_view, name='gift_view'),
     path('eshop-orders/gifts/<int:pk>/', gifts_edit, name='gift_detail'),
-    path('eshop-orders/gifts/actions/<int:pk>/<int:dk>/<int:type>/<int:sub>/', gift_edit_products, name='gift_detail_pro'),
+    path('eshop-orders/gifts/actions/<int:pk>/<int:dk>/<int:type>/<int:sub>/',
+         gift_edit_products, name='gift_detail_pro'),
+    path('eshop-orders/create-return-or-cancel-order/<int:pk>/<slug:instance_type>/',
+         return_or_cancel_order, name='return_or_cancel'),
+
     path('carts/', CartListPage.as_view(), name='carts'),
     path('carts-details/<int:pk>/', CartDetailView.as_view(), name='cart_detail'),
 

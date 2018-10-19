@@ -72,7 +72,8 @@ class RetailOrder(DefaultOrderModel):
         self.paid_value = self.paid_value if self.paid_value else 0
         if self.status in ['7', '8']:
             self.is_paid = True
-        if self.is_paid and self.paid_value < self.final_value and not self.order_type == 'd':
+        if self.is_paid and self.paid_value < self.final_value and not self.order_type in ['e', 'r']:
+            print('paid section')
             new_order = PaymentOrders.objects.create(payment_method=self.payment_method,
                                                      value=self.final_value - self.paid_value,
                                                      is_paid=True,
@@ -92,7 +93,6 @@ class RetailOrder(DefaultOrderModel):
         items = self.order_items.all()
         self.value = items.aggregate(Sum('total_value'))['total_value__sum'] if items else 0
         self.total_cost = items.aggregate(Sum('total_cost_value'))['total_cost_value__sum'] if items else 0
-
 
     def check_coupons(self):
         try:
@@ -171,7 +171,6 @@ class RetailOrder(DefaultOrderModel):
         text = f'{self.get_order_type_display()} - {self.get_status_display()}' if self.order_type in ['e', 'r'] else f'{self.get_order_type_display()}'
         back_color = 'success' if self.order_type in ['e', 'r'] and self.status in ['4','7', '8'] else 'info' if self.order_type in ['e', 'r'] else 'danger' if self.order_type == 'c' else 'warning'
         return mark_safe('<td class="%s">%s</td>' %(back_color, text))
-
 
     def tag_costumer(self):
         return self.costumer_account
