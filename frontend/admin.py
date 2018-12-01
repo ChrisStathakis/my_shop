@@ -11,3 +11,4 @@ class BrandsAdmin(ImportExportModelAdmin):
 @admin.register(CategorySite)
 class CategorySiteAdmin(ImportExportModelAdmin):
     pass
+
