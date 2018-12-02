@@ -1,5 +1,5 @@
 import os
-
+from .cache_manager import CACHES
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,6 +13,7 @@ SECRET_KEY = ')7zrdi9m2**axpm%*2#t36t8mx)qg^@-i1eifq0p*@*-m4k_=+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+USE_CACHE = True
 
 ALLOWED_HOSTS = ['*', ]
 
@@ -168,3 +169,7 @@ USE_QTY_LIMIT = False
 USE_WAREHOUSE = False
 USE_REPORTS = False
 LOGIN_URL = '/login-page/'
+
+
+if USE_CACHE:
+    CACHES=CACHES

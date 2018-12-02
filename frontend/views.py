@@ -1,40 +1,32 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
-from django.contrib import auth, messages
-from django.db.models import Q, Sum
+from django.urls import reverse
+from django.contrib import messages
+from django.db.models import Sum
 from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import  ListView, DetailView, View, TemplateView, FormView
-from django.contrib.auth.decorators import login_required
-from django.template.context_processors import csrf
+from django.views.generic import ListView, TemplateView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.conf import settings
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
-from django.conf import settings
 from django.http import HttpResponse
+from django.db import connection, reset_queries
 from reportlab.pdfgen import canvas
-from urllib.parse import urlencode
-
-from accounts.models import User, CostumerAccount
+from accounts.models import CostumerAccount
 from accounts.forms import LoginForm
 from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
-from .models import FirstPage, Banner, Brands, CategorySite
-from products.models import Product, Color, ProductPhotos, Gifts
+from .models import Brands, CategorySite
+from products.models import Product, ProductPhotos
 from point_of_sale.models import RetailOrder, RetailOrderItem, GiftRetailItem
 from site_settings.models import Shipping
 from site_settings.models import PaymentMethod
-from site_settings.constants import CURRENCY, PAYMENT_METHOD
-from carts.views import check_if_cart_id, cart_data, check_or_create_cart, initial_data
+from carts.views import check_or_create_cart, initial_data
 from carts.models import CartItem, Coupons, CartGiftItem, Cart
 from carts.forms import CartItemCreate, CartItemCreateWithAttrForm, CartCostumerForm
 from .forms import CheckoutForm
 from accounts.forms import CostumerAccountForm
+from .cache import homepage_view_data, navbar_categgories_view_data
+from products.cache import new_products_queryset_view
 
 
 # from .forms import PersonalInfoForm
@@ -48,10 +40,10 @@ class Homepage(SearchMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(Homepage, self).get_context_data(**kwargs)
-        first_page = FirstPage.active_first_page()
-        featured_products = Product.my_query.get_site_queryset().featured()
-        banners = Banner.objects.filter(active=True)
-        menu_categories, cart, cart_items = initial_data(self.request)
+        first_page, featured_products, banners = homepage_view_data()
+        menu_categories = navbar_categgories_view_data()
+        # menu_categories, cart, cart_items = initial_data(self.request)
+
         context.update(locals())
         return context
 
@@ -62,10 +54,11 @@ class NewProductsPage(SearchMixin, ListView):
     paginate_by = 4
 
     def get_queryset(self):
-        queryset = Product.my_query.active_for_site()
+        queryset = Product.my_query.active_for_site().last()[20]
         queryset = Product.filters_data(self.request, queryset)
         queryset = queryset_ordering(self.request, queryset)
         queryset = queryset[:160]
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -74,8 +67,9 @@ class NewProductsPage(SearchMixin, ListView):
         brands, categories, colors, sizes = initial_filter_data(self.object_list)
         menu_categories, cart, cart_items = initial_data(self.request)
         brand_name, site_cate_name, color_name = grab_user_filter_data(self.request)
+        print('total connections...', len(connection.queries))
+        reset_queries()
         context.update(locals())
-
         return context
 
 

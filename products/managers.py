@@ -2,7 +2,10 @@ from django.db import models
 from site_settings.constants import RETAIL_TRANSCATIONS
 from django.conf import settings
 
+from datetime import datetime, timedelta
 USE_QTY_LIMIT = settings.USE_QTY_LIMIT
+
+one_month_earlier = datetime.now()
 
 
 class ProductSiteQuerySet(models.query.QuerySet):
@@ -45,4 +48,5 @@ class ProductManager(models.Manager):
     def active_warehouse_with_attr(self):
         return self.active_warehouse().filter(size=True)
 
-
+    def new_products(self):
+        return self.active_for_site().filter(timestamp_gte=one_month_earlier)

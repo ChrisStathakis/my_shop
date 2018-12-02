@@ -34,7 +34,10 @@ def category_site_directory_path(instance, filename):
 
 class CategorySiteManager(models.Manager):
     def main_page_show(self):
-        return super(CategorySiteManager, self).filter(status=True, parent__isnull=True)
+        return super(CategorySiteManager, self).filter(active=True, parent__isnull=True)
+
+    def navbar(self):
+        return super(CategorySiteManager, self).filter(active=True, show_on_menu=True)
 
 
 class CategorySite(models.Model):
