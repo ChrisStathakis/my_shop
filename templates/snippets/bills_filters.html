@@ -21,7 +21,7 @@
             <label>Πληρωμένες</label>
         </div>
         <div class="ui red checkbox">
-            <input type="checkbox" name="paid_name" value="not_paid" {% if 'not_paid' in paid_name %} checked {% endif %}>
+            <input type="checkbox" name="paid_name" value="not_" {% if 'not_' in paid_name %} checked {% endif %}>
             <label>Μη πληρωμένες</label>
         </div>
     </div>
@@ -74,7 +74,7 @@
         {% endfor %}
     </div>
     <div class="field">
-        <label>Υπάλληλοι</label>
+        <label>Επάγγελμα</label>
         {% for occup in occupations %}
             <div class="ui checkbox">
                 <input type="checkbox"

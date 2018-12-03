@@ -24,7 +24,7 @@
         <div style="margin-left: 2%" class="three column row">
         <div class="column">
             <h2 style="margin-left: 15%" class="ui icon header">
-                <i class="green checked cart icon"></i>
+                <i class="blue money bill alternate icon"></i>
                 <div class="content">
                     Υπόλοιπο Λογαριασμών
                     <div class="sub header"></div>
@@ -108,6 +108,113 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ instance }}</td>
                         <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_balance }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Δε υπάρχουν Γενικά Εξοδα.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div style="margin-left: 2%; margin-top:5%"" class="three column row">
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="red money bill alternate icon"></i>
+                <div class="content">
+                    Λογαριασμοί που λήγουν
+                    <div class="sub header"></div>
+                    <br>
+                    <a class="ui green tiny button" href=''> <i class=" tiny edit icon">Επεξεργασία</i> </a>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ημερομηνία</th>
+                        <th>Λογαριασμος</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in bill_orders %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ instance.date_expired|date }}
+                      <td>{{ instance.category }}</td>
+                      <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_final_value }}</td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Όλοι οι λογαριασμοί έχουν πληρωθεί</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="red checked calendar icon"></i>
+                <div class="content">
+                    Μη πληρωτέα Μισθοδοσία
+                    <div class="sub header"></div>
+                    <br>
+                    <a class="ui green tiny button" href=''> <i class=" tiny edit icon">Επεξεργασία</i> </a>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ημερομηνία</th>
+                        <th>Υπάλληλος</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in payroll_orders %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ instance.date_expired|date }}</td>
+                      <td>{{ instance.person }}</td>
+                      <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_final_value }}</td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">Δεν υπάρχουν υπόλοιπα</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h2 style="margin-left: 15%" class="ui icon header">
+                <i class="red checked visa icon"></i>
+                <div class="content">
+                    Γενικά Έξοδα
+                    <div class="sub header">{{ last_seven_days }}</div>
+                    <br>
+                    <a class="ui green tiny button" href=''> <i class=" tiny edit icon">Επεξεργασία</i> </a>
+                </div>
+            </h2>
+            <table class="ui celled table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ημερομηνία</th>
+                        <th>Eίδος</th>
+                        <th>Ποσό</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instance in expenses %}
+                        <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ instance.date_expired|date}}
+                        <td>{{ instance.category }}</td>
+                        <td{% if instance.balance > 0 %} class='warning' {% endif %}>{{ instance.tag_final_value }}</td>
                         </tr>
                     {% empty %}
                         <tr>

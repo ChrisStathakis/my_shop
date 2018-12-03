@@ -44,26 +44,41 @@ class PersonAdmin(admin.ModelAdmin):
 
 @admin.register(Payroll)
 class PayrollAdmin(admin.ModelAdmin):
-    list_display = ['date_expired', 'person', 'category', 'tag_final_value', 'is_paid']
-    list_filter = ['is_paid', 'category', 'person']
+    date_hierarchy = 'date_expired'
+    list_per_page = 50
+    list_select_related = ['payment_method', 'person', 'user_account', 'person']
+    list_display = ['date_expired', 'person', 'category', 'tag_final_value', 'payment_method', 'is_paid']
+    list_filter = ['is_paid', 'date_expired','category', 'user_account', 'payment_method']
+    actions = [paid_action, ]
     fieldsets = (
-        ('General Info', {
-            'fields': ('is_paid',
-                       ('title', 'date_expired'),
-                       ('timestamp', 'edited')
-                       )
+        ('General', {
+            'fields': (
+                'is_paid',
+                ('title', 'date_expired', 'person'),
+                ('timestamp', 'edited'),
+                ('tag_final_value', 'user_account'),
+                )
         }),
-        ('Edit info', {
-            'fields': (('person', 'category'),
-                       ('payment_method', 'value'),
-                       )
-        })
+        ('Edit Data', {
+            'fields': (
+                ('value', 'payment_method', 'category'),
+                ('tag_paid_value')
+            )
+        }),
     )
 
+   
+    def save_model(self, request, obj, form, change):
+        if not obj.user_account:
+            obj.user_account = request.user
+        super(PayrollAdmin, self).save_model(request, obj, form, change)
+
     def get_readonly_fields(self, request, obj=None):
-        my_list = ['timestamp', 'edited']
+        my_list = ['timestamp', 'edited', 'user_account', 'tag_paid_value', 'tag_final_value']
         if obj:
             my_list.append('person')
+            if obj.is_paid:
+                my_list.append('value')
         return my_list
 
 

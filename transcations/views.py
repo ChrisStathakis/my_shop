@@ -140,6 +140,7 @@ def add_multi_bills(request, expense_type, pk, month, replays):
     if replays > 0 and isinstance(replays, int):
         for ele in range(replays):
             instance.pk = None
+            instance.paid_value = 0
             instance.date_expired += relativedelta(months=month)
             instance.save()
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

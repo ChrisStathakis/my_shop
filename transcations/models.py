@@ -1,10 +1,9 @@
 from django.db import models
-from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete, post_save
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
@@ -81,38 +80,23 @@ class Bill(DefaultOrderModel):
     def tag_model(self):
         return f'Bill- {self.category.title}'
 
-    def create_bill_order(self, value):
-        PaymentOrders.objects.create(title=f'{self.title}',
-                                     value=value,
-                                     payment_method=self.payment_method,
-                                     is_paid=True,
-                                     object_id=self.id,
-                                     content_type=ContentType.objects.get_for_model(self),
-                                     is_expense=True
-                                     )
-
     def deposit(self):
         final_value = self.value
         if self.is_paid:
+            diff = self.value - self.paid_value
             paid_value = self.value
-            get_value = self.get_remaining_value()
-            if get_value > 0:
-                self.create_bill_order(get_value)
+            if diff > 0:
+                self.create_order(diff)
         if not self.is_paid:
-            print('not')
             paid_value = 0
             payment_orders = self.payment_orders.all()
-            print(payment_orders)
             if payment_orders:
                 for order in payment_orders: order.delete()
         Bill.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
 
     def save(self,  *args, **kwargs):
         super().save(*args, **kwargs)
-        try:
-            self.deposit()
-        except:
-            pass
+        self.deposit()
         self.category.update_balance()
 
     def get_dashboard_url(self):
@@ -143,21 +127,27 @@ class Bill(DefaultOrderModel):
         paid_name = request.GET.getlist('paid_name', None)
         search_name = request.GET.get('search_name', None)
         cate_name = request.GET.getlist('cate_name', None)
+        bill_name = request.GET.getlist('bill_name', None)
         date_start, date_end = request.GET.get('date_start', None), request.GET.get('date_end', None)
         if date_start and date_end and date_end > date_start:
             queryset = queryset.filter(date_expired__range=[date_start, date_end])
         queryset = queryset.filter(is_paid=True) if 'paid' in paid_name else queryset.filter(is_paid=False)\
-            if 'not_paid' in paid_name else queryset
+            if 'not_' in paid_name else queryset
         queryset = queryset.filter(category__id__in=cate_name) if cate_name else queryset
+        queryset = queryset.filter(category__id__in=bill_name) if bill_name else queryset
         queryset = queryset.filter(Q(title__icontains=search_name)|
                                    Q(category__title__icontains=search_name)
                                    ).distinct() if search_name else queryset
         return queryset
 
-
 @receiver(post_delete, sender=Bill)
 def update_billing(sender, instance, **kwargs):
     instance.category.update_balance()
+
+@receiver(pre_delete, sender=Bill)
+def update_on_delete_payrolls(sender, instance, *args, **kwargs):
+    get_orders = instance.payment_orders.all()
+    for order in get_orders: order.delete()
 
 
 class Occupation(models.Model):
@@ -199,7 +189,7 @@ class Person(models.Model):
     phone = models.CharField(max_length=10, verbose_name='Τηλέφωνο', blank=True)
     phone1 = models.CharField(max_length=10, verbose_name='Κινητό', blank=True)
     date_added = models.DateField(default=timezone.now, verbose_name='Ημερομηνία Πρόσληψης')
-    occupation = models.ForeignKey(Occupation, null=True, verbose_name='Απασχόληση', on_delete=models.SET_NULL)
+    occupation = models.ForeignKey(Occupation, null=True, verbose_name='Απασχόληση', on_delete=models.PROTECT)
     store = models.ForeignKey(Store, blank=True, null=True, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
     vacation_days = models.IntegerField(default=0)
@@ -253,7 +243,7 @@ class PayrollInvoiceManager(models.Manager):
 
 
 class Payroll(DefaultOrderModel):
-    person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.CASCADE, related_name='person_invoices')
+    person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.PROTECT, related_name='person_invoices')
     category = models.CharField(max_length=1, choices=PAYROLL_CHOICES, default='1')
     payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
@@ -267,28 +257,21 @@ class Payroll(DefaultOrderModel):
     def tag_model(self):
         return f'Payroll - {self.person.title}'
 
-    def create_order(self, value):
-        PaymentOrders.objects.create(title=f'{self.title}',
-                                     value=value,
-                                     payment_method=self.payment_method,
-                                     is_paid=True,
-                                     object_id=self.id,
-                                     content_type=ContentType.objects.get_for_model(self),
-                                     is_expense=True
-                                     )
-
     def deposit(self):
         final_value = self.value
         if self.is_paid:
+            diff = self.value - self.paid_value
             paid_value = self.value
-            if self.get_remaining_value() > 0:
-                self.create_order(self.get_remaining_value())
-        else:
+            if diff > 0:
+                self.create_order(diff)
+        if not self.is_paid:
             paid_value = 0
             payment_orders = self.payment_orders.all()
             if payment_orders:
                 for order in payment_orders: order.delete()
         Payroll.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
+
+        
 
     def save(self, *args, **kwargs):
         super(Payroll, self).save(*args, **kwargs)
@@ -320,11 +303,6 @@ class Payroll(DefaultOrderModel):
         queryset = self.payment_orders.all()
         for payment in queryset:
             payment.delete()
-
-    def tag_paid_value(self):
-        return '%s %s' % (self.paid_value, CURRENCY)
-
-    tag_paid_value.short_description = 'Πληρωμένη Αξία'
 
     def tag_value(self):
         return '%s %s' % (self.value, CURRENCY)
@@ -369,7 +347,7 @@ def update_on_delete_payrolls(sender, instance, *args, **kwargs):
         order.delete()
 
 
-@receiver(pre_delete, sender=Payroll)
+@receiver(post_delete, sender=Payroll)
 def update_person_on_delete(sender, instance, *args, **kwargs):
     person = instance.person
     person.balance -= instance.final_value - instance.paid_value
@@ -415,7 +393,7 @@ class GenericExpenseCategory(models.Model):
 class GenericExpense(DefaultOrderModel):
     category = models.ForeignKey(GenericExpenseCategory,
                                  null=True,
-                                 on_delete=models.SET_NULL,
+                                 on_delete=models.PROTECT,
                                  related_name='expenses'
                                  )
     payments_orders = GenericRelation(PaymentOrders)
@@ -433,23 +411,24 @@ class GenericExpense(DefaultOrderModel):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        if not self.is_paid:
-            for payment in self.payments_orders.all():
-                payment.delete()
-        if self.is_paid:
-            get_value = self.get_remaining_value()
-            if get_value > 0:
-                new_payment_order = PaymentOrders.objects.create(title=f'{self.title}',
-                                                                 value=self.get_remaining_value(),
-                                                                 payment_method=self.payment_method,
-                                                                 is_paid=True,
-                                                                 object_id=self.id,
-                                                                 content_type=ContentType.objects.get_for_model(self),
-                                                                 is_expense=True
-                                                                 )
 
+    def deposit(self):
+        final_value = self.value
+        if self.is_paid:
+            diff = self.value - self.paid_value
+            paid_value = self.value
+            if diff > 0:
+                self.create_order(diff)
+        if not self.is_paid:
+            paid_value = 0
+            payment_orders = self.payment_orders.all()
+            if payment_orders:
+                for order in payment_orders: order.delete()
+        qs = GenericExpense.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
+
+    def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.deposit()
         self.category.update_balance()
 
     def get_dashboard_url(self):
@@ -492,7 +471,16 @@ class GenericExpense(DefaultOrderModel):
                                    ).distinct() if search_name else queryset
         return queryset
     
+
+@receiver(post_delete, sender=GenericExpense)
+def update_expense_category(sender, instance, **kwargs):
+    instance.category.update_balance()
+
+@receiver(pre_delete, sender=GenericExpense)
+def delete_generic_order_items(sender, instance, **kwargs):
+    for order in instance.payment_orders.all(): order.delete()
     
+
 class VacationReason(models.Model):
     title = models.CharField(max_length=150, unique=True)
 

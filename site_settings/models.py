@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import post_delete, pre_save, post_save
 from django.db.models import Sum, Q
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -157,6 +157,17 @@ class DefaultOrderModel(models.Model):
 
     def get_remaining_value(self):
         return self.final_value - self.paid_value
+
+    def create_order(self, value):
+        PaymentOrders.objects.create(title=f'{self.title}',
+                                     value=value,
+                                     payment_method=self.payment_method,
+                                     is_paid=True,
+                                     object_id=self.id,
+                                     content_type=ContentType.objects.get_for_model(self),
+                                     is_expense=True
+                                     )
+
 
     
 class DefaultOrderItemModel(models.Model):

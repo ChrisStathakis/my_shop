@@ -15,7 +15,8 @@ class GeneralManager(models.Manager):
     def get_queryset(self):
          return TranscationsQueryset(self.model, using=self._db,)
 
-
+    def not_paid(self):
+        return self.get_queryset().filter(is_paid=False)
 
 
 class BillCategoryManager(models.Manager):

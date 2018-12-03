@@ -13,9 +13,12 @@ from operator import attrgetter
 
 
 def transcations_homepage(request):
-    bills = BillCategory.my_query.get_queryset().is_active()
-    payrolls = Person.my_query.get_queryset().is_active()
-    expenses = GenericExpenseCategory.objects.filter(active=True)
+    bills = BillCategory.my_query.get_queryset().is_active().filter(balance__gt=0)
+    payrolls = Person.my_query.get_queryset().is_active().filter(balance__gt=0)
+    expenses = GenericExpenseCategory.objects.filter(active=True).filter(balance__gt=0)
+    bill_orders = Bill.my_query.not_paid()[:10]
+    payroll_orders = Payroll.my_query.not_paid()[:10]
+    expense_orders = GenericExpense.my_query.not_paid()[:10]
     context = locals()
     return render(request, 'report/transcations/homepage.html', context)
 
@@ -24,7 +27,7 @@ def transcations_homepage(request):
 class BillsReportView(ListView):
     model = Bill
     template_name = 'report/transcations/page_list.html'
-    paginate_by = 100
+    paginate_by = 50
 
     def get_queryset(self):
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
@@ -38,7 +41,7 @@ class BillsReportView(ListView):
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
         search_name, bill_name, paid_name = [self.request.GET.get('search_name'),
                                              self.request.GET.getlist('bill_name'),
-                                             self.request.GET.get('paid_name')
+                                             self.request.GET.getlist('paid_name')
                                             ]
         bills = BillCategory.my_query.get_queryset().is_active()
         payments_orders = PaymentOrders.objects.filter(object_id__in=self.object_list.values('id'),
@@ -73,6 +76,7 @@ class PayrollReportView(ListView):
                                                                             self.request.GET.getlist('paid_name'),
                                                                             self.request.GET.getlist('bill_group_name'),
                                                                         ]
+        
         persons = Person.my_query.get_queryset().is_active()
         occupations = Occupation.my_query.get_queryset().is_active()
         bills_group = PAYROLL_CHOICES
