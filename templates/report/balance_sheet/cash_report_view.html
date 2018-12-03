@@ -1,0 +1,19 @@
+{% extends 'report/warehouse.html' %}
+
+{% block down_menu %}
+<div class="ui two item bottom fixed menu">
+    <a  href="{% url 'reports:balance_sheet' %}" class="green item">Homepage</a>
+    <a  href="{% url 'reports:cash_report_view' %}" class="active item">Cash Row</a>
+</div>
+{% endblock %}
+
+{% block content %}
+    <p>hello</p>
+    {% for data in expenses %}
+        <p> epx {{ data.final_value }}</p>
+    {% endfor %}
+
+    {% for data in incomes %}
+        <p>{{ data.final_value }}</p>
+    {% endfor %}
+{% endblock %}

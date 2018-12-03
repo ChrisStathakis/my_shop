@@ -1,0 +1,30 @@
+[
+  {
+    "model": "site_settings.paymentmethod",
+    "pk": 1,
+    "fields": {
+      "title": "Cash",
+      "active": true,
+      "site_active": false
+    }
+  },
+  {
+    "model": "site_settings.paymentmethod",
+    "pk": 2,
+    "fields": {
+      "title": "PayPal",
+      "active": true,
+      "site_active": false
+    }
+  },
+  {
+    "model": "site_settings.paymentmethod",
+    "pk": 3,
+    "fields": {
+      "title": "Bank",
+      "active": true,
+      "site_active": false
+    }
+  }
+
+]

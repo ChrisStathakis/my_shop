@@ -43,7 +43,9 @@ def bills_list_view(request):
     form = BillForm(request.POST or None)
     if 'new_bill' in request.POST:
         if form.is_valid():
-            form.save()
+            new_object = form.save(commit=False)
+            new_object.user_account = request.user
+            new_object.save()
             return HttpResponseRedirect(reverse('billings:bill_list'))
     paginator = Paginator(queryset, 50)
     page = request.GET.get('page')

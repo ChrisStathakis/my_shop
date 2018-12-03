@@ -1,4 +1,5 @@
 from django import forms
+
 from django.contrib.contenttypes.models import ContentType
 from .models import PaymentOrders, PaymentMethod
 
@@ -30,3 +31,5 @@ class PaymentMethodForm(forms.ModelForm):
         super(PaymentMethodForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+

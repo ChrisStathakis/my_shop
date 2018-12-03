@@ -100,3 +100,43 @@ class VacationForm(forms.ModelForm):
         super(VacationForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class PayrollActionForm(forms.Form):
+    comment = forms.CharField(required=False, widget=forms.Textarea, )
+    send_email = forms.BooleanField(required=False, )
+
+    @property
+    def email_subject_template(self):
+        return 'email/account/notification_subject.txt'
+
+    @property
+    def email_body_template(self):
+        raise NotImplementedError()
+
+    def form_action(self, account, user):
+        raise NotImplementedError()
+
+    def save(self, account, user):
+        try:
+            account, action = self.form_action(account, user)
+        except:
+            pass
+        if self.cleaned_data.get('send_email', False):
+            print('send_email')
+
+        return account, action
+
+
+class PayForm(PayrollActionForm):
+    value = forms.DecimalField(required=True, help_text='How much?')
+
+    field_order = (
+        'value',
+        'send_email'
+    )
+
+    def form_action(self, account, user):
+        return Payroll.objects.create(
+
+        )

@@ -16,6 +16,8 @@ class GeneralManager(models.Manager):
          return TranscationsQueryset(self.model, using=self._db,)
 
 
+
+
 class BillCategoryManager(models.Manager):
 
     def get_queryset(self):

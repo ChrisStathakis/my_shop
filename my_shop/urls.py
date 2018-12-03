@@ -5,6 +5,8 @@ from django.conf import settings
 from django.conf.urls import url
 from point_of_sale.api.views import RetailOrderListApi, RetailRenderer
 
+admin.site.site_header = 'Awesome Inc. Administration'
+admin.site.site_title = 'Awesome Inc. Administration'
 
 urlpatterns = [
     path('admin/', admin.site.urls),

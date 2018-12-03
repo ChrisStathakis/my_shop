@@ -57,6 +57,7 @@ class RetailOrder(DefaultOrderModel):
 
     class Meta:
         verbose_name_plural = '1. Παραστατικά Πωλήσεων'
+        verbose_name = 'Πώληση'
         ordering = ['-timestamp']
 
     def __str__(self):

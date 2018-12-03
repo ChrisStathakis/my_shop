@@ -3,7 +3,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models.signals import post_delete, pre_save
-from django.utils import timezone
 from django.db.models import Sum, Q
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -11,6 +10,8 @@ from django.shortcuts import reverse
 from django.core.exceptions import ValidationError
 
 from .constants import BANKS, CURRENCY
+import uuid
+
 
 def validate_positive_decimal(value):
     if value < 0:
@@ -34,7 +35,6 @@ class PaymentMethodManager(models.Manager):
     def active_for_site(self):
         return super(PaymentMethodManager, self).filter(active=True, site_active=True)
 
-    
     def check_orders(self):
         return super(PaymentMethodManager, self).filter(is_check=True)
 
@@ -122,32 +122,38 @@ class Store(models.Model):
 
 
 class DefaultOrderModel(models.Model):
+    uid = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name='Friendly ID')
     title = models.CharField(max_length=150)
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-    user_account = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    user_account = models.ForeignKey(User, null=True, blank=True, on_delete=models.PROTECT)
     notes = models.TextField(blank=True, null=True)
-    payment_method = models.ForeignKey(PaymentMethod, null=True, on_delete=models.SET_NULL)
-    date_expired = models.DateField(default=timezone.now())
+    payment_method = models.ForeignKey(PaymentMethod,
+                                       null=True,
+                                       on_delete=models.PROTECT,
+                                       verbose_name='Τρόπος Πληρωμής')
+    date_expired = models.DateField(default=timezone.now)
     value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     discount = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False, verbose_name='Πληρωμένο?')
     printed = models.BooleanField(default=False)
     objects = models.Manager()
-    
 
     class Meta:
         abstract = True
-
 
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'Not Paid'
 
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
+    tag_final_value.short_description = 'Αξία'
+
+    def tag_paid_value(self):
+        return f'{self.paid_value} {CURRENCY}'
 
     def get_remaining_value(self):
         return self.final_value - self.paid_value
@@ -160,7 +166,6 @@ class DefaultOrderItemModel(models.Model):
     value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     discount_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    
 
     class Meta:
         abstract = True
@@ -191,7 +196,7 @@ class PaymentOrders(DefaultOrderModel):
     @staticmethod
     def filters_data(request, queryset):
         search_name = request.GET.get('search_name', None)
-        vendor_name = request.GET.getlist('vendor_name', None)
+        # vendor_name = request.GET.getlist('vendor_name', None)
         paid_name = request.GET.getlist('paid_name', None)
         check_name = request.GET.get('check_name', None)
 

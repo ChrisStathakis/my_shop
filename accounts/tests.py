@@ -1,6 +1,9 @@
 from django.test import TestCase as DjangoTestCase
+from django.contrib.auth import get_user_model
 import requests
 from unittest import TestCase
+
+User = get_user_model()
 
 
 class TestLogin:
@@ -44,3 +47,23 @@ class TestLogin:
             self.response.json(),
             self.expected_return_payload
         )
+
+
+class TestSuccessfulLogin(TestLogin, TestCase):
+    username = 'haki'
+    password = 'correct-password'
+    expected_status_code = 200
+    expected_return_payload = {
+        'id': 1,
+        'username': 'Haki',
+        'full_name': 'Haki Benita'
+    }
+
+    def test_should_update_last_login_date_in_user_model(self):
+        user = User.objects.get(self.response.data['id'])
+        self.assertIsNotNone(user.last_login_date)
+
+
+class TestInvalidPassword(TestLogin, TestCase):
+    username = 'Haki'
+    password = 'wrong-password'
