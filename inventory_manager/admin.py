@@ -1,12 +1,17 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.admin import GenericTabularInline
+
 from import_export.admin import ImportExportModelAdmin
 from .models import Order, OrderItem, Category, Vendor, OrderItemSize, WarehouseOrderImage
 from site_settings.admin_tools import admin_changelist_link
+from site_settings.models import PaymentOrders
 
 
 class OrderPhotoInline(admin.TabularInline):
     model = WarehouseOrderImage
+    extra = 1
+
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
@@ -30,8 +35,6 @@ class OrderItemInline(admin.TabularInline):
         my_list = ['tag_final_value', ]
         return my_list
 
-  
-    
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -62,6 +65,8 @@ class OrderAdmin(admin.ModelAdmin):
                     ]
         if obj:
             obj_list.append('vendor')
+            if obj.is_paid:
+                obj_list.extend(['taxes_modifier', 'payment_method', 'order_type', 'date_expired', 'discount'])
         return obj_list
 
     def response_add(self, request, new_object):
@@ -74,7 +79,6 @@ class OrderAdmin(admin.ModelAdmin):
 
     def after_saving_model_and_related_inlines(self, obj):
         obj.save()
-        # now we have what we need here... :)
         return obj
 
 @admin.register(OrderItem)

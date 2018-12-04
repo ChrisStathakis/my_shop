@@ -174,6 +174,19 @@ class Order(DefaultOrderModel):
     def __str__(self):
         return self.title
 
+    def deposit(self):
+        if self.is_paid:
+            diff = self.final_value - self.paid_value
+            if diff > 0:
+                PaymentOrders.objects.create(
+                    title=self.title,
+                    date_expired=self.date_expired,
+                    value=self.final_value,
+                    payment_method=self.payment_method,
+                    is_paid=True,
+                    is_expense=True
+                )
+
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
         self.value = order_items.aggregate(total=Sum(F('qty') * F('value'), output_field=models.FloatField()))[
@@ -195,7 +208,6 @@ class Order(DefaultOrderModel):
         super(Order, self).save(*args, **kwargs)
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.update_warehouse()
-
 
     def tag_total_discount(self):
         return '%s %s' % (self.total_discount, CURRENCY)

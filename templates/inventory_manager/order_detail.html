@@ -5,9 +5,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6 col-md-6">
-                <div class="card">
+                <div class=" inverted card">
                     <div class="header">
-                        <h4 class="title">Edit Order</h4>
+                        <h4 class="title">Αναζήτηση Προϊόντος</h4>
                         <form method='GET'>
                             <input type="text" name='search_name' class="form-control" placeholder="Search">
                             <a href="{{ request.path  }}" class="btn btn-warning">Reset</a>
@@ -22,25 +22,25 @@
                     </div>
                     <div class="content">
                         <form class='form' method="post">{% csrf_token %}
-                            <table class="table table-responsive table-bordered table-striped">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>id - sku</th>
-                                        <th>Product</th>
+                                        <th>Κωδικός</th>
+                                        <th colspan="2">Προϊόν.........</th>
+                                        <th>Μαζική Επιλογή</th>
                                         <th colspan="4">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for product in products %}
                                         <tr>
-                                            <td>{{ product.id }} - {{ product.sku }}</td>
-                                            <td><a target="_blank" href="{{ product.edit_url }}">{{ product.title }}</a></td>
+                                            <td>{{ product.sku }}</td>
+                                            <td colspan="2"><a target="_blank" href="{{ product.edit_url }}">{{ product.title }}</a></td>
                                             <td>
                                                 {% if product.size %}
                                                     <a href="{% url 'inventory:order_create_size_chart' instance.id product.id %}" class="btn btn-raised">Add</a>
                                                 {% else %}
-                                                    <label for="add_">Add</label>
-                                                    <input type="checkbox" class="form-control" value="{{ product.id }}" id="add_" name="add_">
+                                                    <div class="checkbox"><input type="checkbox" class="small form-control" value="{{ product.id }}" id="add_" name="add_"></div>
                                                 {% endif %}
                                             </td>
                                             <td><label>Τιμή</label><input type='number' class="form-control" step='0.01' name='price_{{product.id}}' value='{{ product.price_buy  }}' placeholder="{{ product.price_buy }}"></td>
@@ -58,19 +58,20 @@
                         </form>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="header">Payments</div>
+
+                <div style="margin-top: 25%" class="card">
+                    <div class="header">Πληρωμές</div>
                     <div class="content">
-                    <h4>User Vendor Payment</h4>
+                    <h4>Χρησιμοποίησε επιταγή Προμηθευτή</h4>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Date</th>
-                                    <th>Title</th>
-                                    <th>Payment Method</th>
-                                    <th>Paid Status</th>
-                                    <th>Value</th>
+                                    <th>Ημερομηνία</th>
+                                    <th>Τίτλος</th>
+                                    <th>Τρόπος Πληρωμής</th>
+                                    <th>Κατάσταση</th>
+                                    <th>Αξία</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -91,7 +92,7 @@
                             </tbody>
                         </table>
                         <br> <br>
-                        <h4>Create new payment</h4>
+                        <h4>Δημιούργησε καινούργια</h4>
                         <table class="table table-responsive-sm table-bordered">
                             <thead>
                                 <tr>
@@ -136,26 +137,11 @@
                 </div>
             </div>
 
-
             <div class="col-lg-6 col-md-6">
-
                 <div class="card">
                     <div class="header">
-                        <h4 class="title">Actions</h4>
-                    </div>
-                    <div class="content">
-                        <a href="{% url 'inventory:order_update_warehouse' instance.id %}" class="btn btn-success">Update!</a>
-
-                        <br> <br><br>
-                        <a href="" onclick="return confirm('Do you really want to delete it?');" class="btn btn-warning">Delete</a>
-                        <a target='_blank' href="{% url 'dashboard:product_create' %}" class="btn btn-primary">Δημιουργία Προϊόντος</a>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="header">
-                        <h4 class="title text-center">{{ instance }}, {{ instance.date_expired|date }}
-                            <br><br> Vendor:.. {{ instance.vendor }}
+                        <h4 class="title text-center">Τίτλος...{{ instance }}, Ημερομηνία... {{ instance.date_expired|date }}
+                            <br><br> Προμηθευτής:.. {{ instance.vendor }}
                         </h4>
                     </div>
                     <div class="content">
@@ -165,12 +151,12 @@
                                     <div class="col-xs-6">
                                         {{ instance.get_order_type_display }}
                                         <br>
-                                        <span class="text-muted"><small>Status</small></span>
+                                        <span class="text-muted"><small>Είδος Παραστατικού</small></span>
                                     </div>
                                     <div class="col-xs-3 text-right">
                                         {{ instance.payment_method }}
                                         <br>
-                                        <span class="text-muted"><small>Payment Type</small></span>
+                                        <span class="text-muted"><small>Τρόπος Πληρωμής</small></span>
                                     </div>
                                     <div class="col-xs-3 text-right">
                                         <btn class="btn btn-sm btn-success btn-icon"><i class="fa fa-edit"></i></btn>
@@ -180,17 +166,17 @@
                             <li>
                                 <div class="row">
                                     <div class="col-xs-9">
-                                        Clean Value..{{ instance.tag_clean_value }} <br>                                      
-                                        Taxes Value..{{ instance.tag_total_taxes }} <br>
-                                        Discount Value..{{ instance.tag_discount }} <br>
-                                        Paid value.. {{ instance.tag_paid_value}}
+                                        Αρχική Αξία..{{ instance.tag_clean_value }} <br>
+                                        Συνολική έκπτωση..{{ instance.tag_total_discount }} <br>
+                                        Καθαρή Αξία..{{ instance.tag_clean_value }} <br>
+                                        Φόροι.. {{ instance.tag_total_taxes}}
                                         <br>
-                                        <span class="text-muted"><small>Prices</small></span>
+                                        <span class="text-muted"><small>Ανάλυση</small></span>
                                     </div>
                                     <div class="col-xs-3 text-right">
                                         {{ instance.tag_final_value }}<br>
                                         <br>
-                                        <span class="text-muted"><small>Total Value</small></span>
+                                        <span class="">Αξία</span>
                                     </div>
                                 </div>
                             </li>
@@ -326,6 +312,19 @@
                             {{ form_image }}
                             <button class="btn btn-raised" type="input" name="image">Save</button>
                         </form>
+                    </div>
+                </div>
+
+                 <div class="card">
+                    <div class="header">
+                        <h4 class="title">Actions</h4>
+                    </div>
+                    <div class="content">
+                        <a href="{% url 'inventory:order_update_warehouse' instance.id %}" class="btn btn-success">Update!</a>
+
+                        <br> <br><br>
+                        <a href="" onclick="return confirm('Do you really want to delete it?');" class="btn btn-warning">Delete</a>
+                        <a target='_blank' href="{% url 'dashboard:product_create' %}" class="btn btn-primary">Δημιουργία Προϊόντος</a>
                     </div>
                 </div>
             </div>
