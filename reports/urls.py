@@ -46,6 +46,8 @@ urlpatterns = [
     path('transcations/expenses-list/', GenericExpenseView.as_view(), name='generic_expenses_view'),
     path('general-image/', GenericReportView.as_view(), name='general_image'),
 
+    path('transcations/bill-detail/<int:pk>/', BillCategoryDetailView.as_view(), name="bill_category"),
+
     # buys
     path('orders/', WarehouseOrderView.as_view(), name='warehouse_orders'),
     path('orders/<int:pk>/', WarehouseDetailView.as_view(), name='warehouse_order_detail'),

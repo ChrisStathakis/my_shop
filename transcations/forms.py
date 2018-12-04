@@ -12,6 +12,9 @@ class BillForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BillForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance.is_paid:
+            self.fields['value'].widget.attrs['readonly'] = True
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
@@ -50,6 +53,7 @@ class PersonForm(forms.ModelForm):
         super(PersonForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
 
 class OccupationForm(forms.ModelForm):
     

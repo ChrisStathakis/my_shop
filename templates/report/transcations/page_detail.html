@@ -61,66 +61,34 @@
     </div>
 
     <div class="row">
-        <div class="ui one wide column"></div>
-        <div class="ui twelve wide column">
-        <canvas id="myChart1" width="400" height="150"></canvas>
-        <script>
-        var ctx = document.getElementById("myChart1").getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [
-                    {% for bill in analysis_per_bill  %}
-                        {% if forloop.last %}
-                            "Total {{ bill.category__title }}",  "Paid {{ bill.category__title }}"
-                        {% else %}
-                            "Total {{ bill.category__title }}",  "Paid {{ bill.category__title }}",
-                        {% endif %}
-                    {% endfor %}
-                    ],
-                datasets: [{
-                    label: '# Euro',
-                    data: [
-                        {% for bill in analysis_per_bill  %}
-                        {% if forloop.last %} "{{ bill.value }}", {{ bill.paid_value_ }} {% else %} "{{ bill.value }}", {{ bill.paid_value_ }}, {% endif %}
-                    {% endfor %}
-                    ],
-                    backgroundColor: [
-                        {% for bill in analysis_per_bill  %}
-                        {% if forloop.last %}
-                            'blue', 'green'
-                        {% else %}
-                            'blue', 'green',
-                        {% endif %}
-                    {% endfor %}
+        <div class="four wide column"><a href="{% url 'reports:bills_report_view' %}" class="ui teal button">Back</a> </div>
+        <div class="six wide column">
+            <h4>Στατιστικα στοιχεία</h4>
+            <table class="ui selectable inverted table">
+                <thead>
+                    <tr>
+                        <th>Σύνολο Παραστατικών</th>
+                        <th>#</th>
+                        <th>Συνολική Αξία</th>
+                        <th>#</th>
+                        <th>Υπόλοιπο</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }
-                ]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
-            }
-        });
-        </script>
-        <br>
-    </div>
-    </div>
 
     <div class="row">
     <div class="one wide column"></div>
@@ -133,9 +101,10 @@
                         <th>#</th>
                         <th>Ημερομηνία</th>
                         <th>Λογαριασμός</th>
+                        <th>Τρόπος Πληρωμής</th>
                         <th>Σχολια- Τίτλος</th>
                         <th>Αξία</th>
-                        <th>Κατάσταση</th>                  
+                        <th>Κατάσταση</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,6 +113,7 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ invoice.date_expired|date }}</td>
                             <td>{{ invoice.title }}</td>
+                            <td>{{ invoice.payment_method }}</td>
                             <td>{{ invoice.category }}</td>
                             <td>{{ invoice.tag_final_value }}</td>
                             <td{% if invoice.is_paid %} class="positive" {% else %} class="negative" {% endif %}>{{ invoice.tag_is_paid }}</td>
@@ -160,34 +130,29 @@
     <div class="one wide column"></div>
     <div class="four wide column">
         <div class="row">
-            <h4>Ανάλυση ανά Λογαριασμό</h4>
-            {% for bill in bills %}
-                <a href="{% url 'reports:bill_category' bill.id %}" style="margin-bottom: 2%" class="ui teal button">{{ bill }}</a>
-            {% endfor %}
-            <br>
-            <h4>Στατιστικα στοιχεία</h4>
-            <table class="ui inverted table">
+            <h4>Αποδείξης Πληρωμών</h4>
+            <table class="ui table">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Λογαριασμός</th>
-                        <th>Συνολική Αξία</th>
-                        <th>Πληρωμένη Αξία</th>
-                        <th>Υπόλοιπο</th>
+                        <th>Tροπος Πληρωμής</th>
+                        <th>Κατάσταση/th>
+                        <th>Ποσό</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for bill in analysis_per_bill %}
+                    {% for bill in payment_orders %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ bill.category__title }}</td>
-                            <td>{{ bill.value }} {{ currency }}</td>
-                            <td>{{ bill.paid_value_ }} {{ currency }}</td>
-                            <td>{{ bill.remaining }} {{ currency }}</td>
+                            <td>{{ bill }}</td>
+                            <td>{{ bill.payment_method }} {{ currency }}</td>
+                            <td>{{ bill.tag_is_paid }} {{ currency }}</td>
+                            <td>{{ bill.tag_final_value }} {{ currency }}</td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="5">No data</td>
+                            <td colspan="5">Δε υπάρχουν αποδείξης</td>
                         </tr>
                     {% endfor %}
                 </tbody>

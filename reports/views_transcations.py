@@ -37,16 +37,17 @@ class BillsReportView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(BillsReportView, self).get_context_data(**kwargs)
-        page__title, currency = 'Bils', CURRENCY
+        page_title, currency = 'Ανάλυση Λογαριασμών', CURRENCY
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
         search_name, bill_name, paid_name = [self.request.GET.get('search_name'),
                                              self.request.GET.getlist('bill_name'),
                                              self.request.GET.getlist('paid_name')
                                             ]
         bills = BillCategory.my_query.get_queryset().is_active()
-        payments_orders = PaymentOrders.objects.filter(object_id__in=self.object_list.values('id'),
-                                                       content_type=ContentType.objects.get_for_model(self.object_list.model)
-                                                       )
+        totals = [0, 0] # count the orders, total_value
+        totals[0] = self.object_list.count()
+        totals[1] = self.object_list.aggregate(Sum('final_value'))['final_value__sum'] if self.object_list else 0
+
         analysis_per_bill = self.object_list.values('category__title').annotate(value=Sum('final_value'),
                                                                                 paid_value_=Sum('paid_value'),
                                                                                 remaining=Sum(F('final_value')-F('paid_value'))
@@ -143,5 +144,29 @@ class GenericReportView(TemplateView):
                              key=attrgetter('date_expired'),
                              reverse=True
                              )
+        context.update(locals())
+        return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class BillCategoryDetailView(ListView):
+    model = Bill
+    template_name = 'report/transcations/page_detail.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        self.bill_category = get_object_or_404(BillCategory, id=self.kwargs['pk'])
+        queryset = Bill.objects.filter(category__id=self.bill_category.id)
+        print('my_queryset', queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(BillCategoryDetailView, self).get_context_data(**kwargs)
+        page_title, currency = f'{self.bill_category.title}', CURRENCY
+        payments_orders = PaymentOrders.objects.filter(object_id__in=self.object_list.values('id'),
+                                                       content_type=ContentType.objects.get_for_model(
+                                                           self.object_list.model)
+                                                       )
+
         context.update(locals())
         return context
