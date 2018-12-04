@@ -156,19 +156,16 @@ class OrderManager(models.Manager):
 
 class Order(DefaultOrderModel):
     vendor = models.ForeignKey(Vendor, verbose_name="Vendor", on_delete=models.SET_NULL, null=True, related_name='vendor_orders')
-    total_price_no_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
-                                                  verbose_name="Clean Value")
-    total_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Order Discount")
+    total_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Συνολική Έκπτωση")
     total_price_after_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
-                                                     verbose_name="Value after Discount")
+                                                     verbose_name="Καθαρή Έκπτωση")
     taxes_modifier = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
-    total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Taxes")
+    total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Συνολικοί Φόροι")
     order_type = models.CharField(default=1, max_length=1, choices=WAREHOUSE_ORDER_TYPE)
 
     objects = models.Manager()
     my_query = OrderManager()
     payment_orders = GenericRelation(PaymentOrders)
-    update_warehouse = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "1. Warehouse Invoice"
@@ -179,15 +176,15 @@ class Order(DefaultOrderModel):
 
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
-        self.total_price_no_discount = \
-        order_items.aggregate(total=Sum(F('qty') * F('value'), output_field=models.FloatField()))[
+        self.value = order_items.aggregate(total=Sum(F('qty') * F('value'), output_field=models.FloatField()))[
             'total'] if order_items else 0
-        self.total_price_after_discount = \
-        order_items.aggregate(total=Sum(F('qty') * F('final_value'), output_field=models.DecimalField()))[
-            'total'] if order_items else 0
-        self.total_taxes = (self.total_price_after_discount - self.total_discount) * (
+        self.total_discount = (order_items.aggregate(total=Sum((F('qty') * F('value')*F('discount_value')), output_field=models.FloatField()))[
+            'total'])/100 if order_items else 0 
+        self.total_discount = Decimal(self.total_discount) + Decimal(self.discount)
+        self.total_price_after_discount = Decimal(self.value) - Decimal(self.total_discount)
+        self.total_taxes = (self.total_price_after_discount) * (
         Decimal(self.get_taxes_modifier_display()) / 100)
-        self.final_value = self.total_price_after_discount + self.total_taxes - self.total_discount
+        self.final_value = self.total_price_after_discount + self.total_taxes
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
             'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         self.paid_value = self.paid_value if self.paid_value else 0
@@ -198,6 +195,19 @@ class Order(DefaultOrderModel):
         super(Order, self).save(*args, **kwargs)
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.update_warehouse()
+
+
+    def tag_total_discount(self):
+        return '%s %s' % (self.total_discount, CURRENCY)
+    tag_total_discount.short_description = 'Συνολική Έκπτωση'
+
+    def tag_clean_value(self):
+        return f'{self.total_price_after_discount} {CURRENCY}'
+    tag_clean_value.short_description = 'Καθαρή Αξία'
+
+    def tag_total_taxes(self):
+        return f'{self.total_taxes} {CURRENCY}'
+    tag_total_taxes.short_description = 'Συνολικός Φόρος'
 
     def update_warehouse(self):
         self.vendor.save()
@@ -254,22 +264,7 @@ class Order(DefaultOrderModel):
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'Not Paid'
 
-    def tag_first_value(self):
-        return f'{self.value} {CURRENCY}'
-
-    def tag_discount(self):
-        return '%s %s' % (self.total_discount, CURRENCY)
-
-    def tag_clean_value(self):
-        return f'{self.total_price_after_discount} {CURRENCY}'
-
-    tag_clean_value.short_description = 'Αξία Μετά την έκπτωση'
-
-    def tag_total_taxes(self):
-        return f'{self.total_taxes} {CURRENCY}'
-
-    def tag_final_value(self):
-        return f'{self.final_value} {CURRENCY}'
+    
 
     def tag_form_remain_value(self):
         return True if self.get_remaining_value > 0 else False
@@ -290,16 +285,17 @@ class OrderItem(DefaultOrderItemModel):
                                 on_delete=models.CASCADE,
                                 null=True,
                                 )
-    unit = models.CharField(max_length=1, choices=UNIT, default='1')
-    taxes = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
+    unit = models.CharField(max_length=1, choices=UNIT, default='1', verbose_name='Μονάδα Μέτρησης')
+    taxes = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3', verbose_name='ΦΠΑ')
     total_clean_value = models.DecimalField(default=0, max_digits=15, decimal_places=2,
                                             verbose_name='Συνολική Αξία χωρίς Φόρους')
     total_value_with_taxes = models.DecimalField(default=0, max_digits=14, decimal_places=2,
                                                  verbose_name='Συνολική Αξία με φόρους')
 
     class Meta:
+        unique_together = ['order', 'product']
         ordering = ['product']
-        verbose_name = "Συστατικά Τιμολογίου   "
+        verbose_name = "Συστατικά Τιμολογίου"
 
     def __str__(self):
         return f'{self.product}'
@@ -318,6 +314,7 @@ class OrderItem(DefaultOrderItemModel):
         if self.product.size:
             queryset = self.attributes.all()
             queryset.update(value=self.value, discount=self.discount_value, final_value=self.final_value)
+        self.order.save()
 
     def remove_from_order(self, qty):
         if WAREHOUSE_ORDERS_TRANSCATIONS:
@@ -332,7 +329,7 @@ class OrderItem(DefaultOrderItemModel):
             product = self.product
             product.qty += qty
             product.save()
-        self.order.save()
+
 
     @staticmethod
     def add_to_order(request, product, order):
@@ -356,14 +353,10 @@ class OrderItem(DefaultOrderItemModel):
             print('wtf')
             messages.warning(request, 'Something goes wrong!')
 
-    def tag_value(self):
-        return f'{self.value} {CURRENCY}'
-
-    def tag_final_value(self):
-        return f'{self.final_value} {CURRENCY}'
 
     def tag_total_clean_value(self):
         return f'{self.total_clean_value} {CURRENCY}'
+    
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)

@@ -137,7 +137,7 @@ class DefaultOrderModel(models.Model):
     taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    discount = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    discount = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Επιπλέον Έκπτωση')
     is_paid = models.BooleanField(default=False, verbose_name='Πληρωμένο?')
     printed = models.BooleanField(default=False)
     objects = models.Manager()
@@ -147,6 +147,10 @@ class DefaultOrderModel(models.Model):
 
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'Not Paid'
+
+    def tag_value(self):
+        return f'{self.value} {CURRENCY}'
+    tag_value.short_description = 'Αρχική Αξία'
 
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
@@ -172,14 +176,23 @@ class DefaultOrderModel(models.Model):
     
 class DefaultOrderItemModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    edited = models.DateTimeField(auto_now=True)
-    qty = models.PositiveIntegerField(default=1)
-    value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    discount_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    edited = models.DateTimeField(auto_now=True, verbose_name='Ημερομηνία Τελευταίας Επεξεργασίας')
+    qty = models.PositiveIntegerField(default=1, verbose_name='Ποσότητα')
+    value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Άρχικη Αξία')
+    discount_value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Ποσοστό Έκτωσης')
+    final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Αξία')
 
     class Meta:
         abstract = True
+
+    def tag_final_value(self):
+        return f'{self.final_value} {CURRENCY}'
+    tag_final_value.short_description = 'Αξία'
+
+    def tag_value(self):
+        return f'{self.value} {CURRENCY}'
+    tag_value.short_description = 'Αρχική Αξία'
+
 
 
 class PaymentOrders(DefaultOrderModel):
@@ -200,6 +213,7 @@ class PaymentOrders(DefaultOrderModel):
 
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
+    tag_final_value.short_description = 'Αξία'
 
     def get_dashboard_url(self):
         return reverse('inventory:check_order_detail', kwargs={'pk': self.id})

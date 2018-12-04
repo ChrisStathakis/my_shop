@@ -5,6 +5,7 @@ from .models import Product, CategorySite, SizeAttribute, Characteristics, Chara
 from site_settings.admin_tools import admin_link
 from site_settings.admin_mixins import DefaultFilterMixin
 
+
 @admin.register(Product)
 class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
     list_display = ['title', 'category', 'vendor', 'category_link']
@@ -13,7 +14,7 @@ class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
     readonly_fields = ['tag_final_price',]
     fieldsets = (
         ('General', {
-            'fields': (('site_active', 'title', 'size'),
+            'fields': (('site_active', 'title', 'size', 'vendor'),
                        ('is_featured', 'brand', 'category_site'),
                        ('qty', 'sku', 'color',),
                        ('price', 'price_discount', 'tag_final_price'),
