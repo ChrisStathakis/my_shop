@@ -1,10 +1,11 @@
 {% extends 'report/warehouse.html' %}{% load static %}
 
 {% block down_menu %}
-<div class="ui three item bottom fixed menu">
-    <a href="{% url 'reports:warehouse_orders' %}" style="background-color: green" class="item">Homepage</a>
-    <a href="{% url 'reports:vendors' %}" class="item">Vendors</a>
-    <a href=""  class="item">Item Flow</a>
+<div class="ui four item bottom fixed menu">
+    <a href="{% url 'reports:warehouse_orders' %}" style="background-color: green" class="item">Τιμολόγια</a>
+    <a href="{% url 'reports:vendors' %}" class="item">Προμηθευτές</a>
+    <a href="{% url 'reports:check_orders' %}" class="item">Επιταγές</a>
+    <a href=""  class="item">Ανάλυση Αγορών</a>
 </div>
 {% endblock %}
 
@@ -17,8 +18,8 @@
             <h2 class="ui blue icon header">
                 <i class="blue calendar icon"></i>
                 <div class="blue content">
-                    Warehouse Orders
-                    <div class="sub header">Date Range... {{ date_start|date }} - {{ date_end|date }}</div>
+                    Παραστατικά Αγορών
+                    <div class="sub header">Διάστημα... {{ date_start|date }} - {{ date_end|date }}</div>
                 </div>
             </h2>
         </div>
@@ -33,74 +34,9 @@
                 </div>
                 <div class="content">
                     <form class="ui form" method="get">
-                        <div class="two fields">
-                            <div class="field">
-                                <input 
-                                    type="text" 
-                                    class="ui text" 
-                                    name="search_pro" 
-                                    {% if search_pro %} value="{{ search_pro }}"  {% else %} value="" {% endif %}
-                                    {% if search_pro %} placeholder="{{ search_pro }}"  {% else %} placeholder="Search" {% endif %}
-                                >
-                            </div>
-                            <div class="field">
-                                <input  
-                                    name="date_pick" 
-                                    {% if date_pick %}  value="{{ date_pick }}" {% endif %}
-                                    {% if date_pick %} placeholder="{{ date_pick }}" {% else %} placeholder="Pick Date" {% endif %}
-                                >
-                            </div>
-                        </div>
-                        <div class="two fields">
-                            <div class="field">
-                                <div class="grouped fields">
-                                    <label>Paid Satus</label>
-                                    <div class="field">
-                                        <div class="ui radio checkbox">
-                                            <input type="radio" name="is_paid_name" value="a"{% if is_paid_name == 'a' %} checked {% endif %}>
-                                            <label>Is Paid</label>
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="ui radio checkbox">
-                                            <input type="radio"  name="is_paid_name" value="b" {% if is_paid_name == 'b' %} checked {% endif %}>
-                                            <label>Not Paid</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <label>Payment Method</label>
-                                {% for payment in payment_method %}
-                                    {% if vendor.0|stringformat:"s" in vendor_name %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ payment.0 }}" type="checkbox" name="payment_name" checked>
-                                            <label>{{ payment.1 }}</label>
-                                        </div>
-                                    {% else %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ payment.0 }}" type="checkbox" name="payment_name">
-                                            <label>{{ payment.1 }}</label>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="field">
-                                <label>Choose Vendor</label>
-                                {% for vendor in vendors %}
-                                    {% if vendor.id|stringformat:"s" in vendor_name %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
-                                            <label>{{ vendor }}</label>
-                                        </div>
-                                    {% else %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
-                                            <label>{{ vendor }}</label>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-
+                        {% include 'snippets/search_date_filter.html'%}
+                        {% include 'snippets/payment_filters.html' %}
+                        {% include 'snippets/invoices_filter.html' %}
                         <button style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">Save</button>
                     </form>
                     <a href="{% url 'reports:warehouse_orders' %}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">

@@ -37,8 +37,8 @@ urlpatterns = [
          name='ware_order_paid_delete'),
 
     path('check-orders/', CheckOrdersView.as_view(), name='check_orders'),
-    path('check-orders/detail/<int:pk>/', CheckOrderUpdateView.as_view(), name='check_order_detail')
+    path('check-orders/detail/<int:pk>/', CheckOrderUpdateView.as_view(), name='check_order_detail'),
     
 
-    
+    path('ajax/search_products/', ajax_search_products, name='ajax_search_products')
 ]

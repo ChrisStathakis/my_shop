@@ -1,9 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, UpdateView, FormView, CreateView, TemplateView
+from django.views.generic import ListView, UpdateView, FormView, CreateView
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
@@ -220,6 +222,21 @@ def delete_order_item(request, dk):
     instance = get_object_or_404(OrderItem, id=dk)
     instance.delete()
     return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.order.id}))
+
+
+@staff_member_required
+def ajax_search_products(request):
+    data = {}
+    search_name, instance_id = request.GET.get('search_name', None), request.GET.get('instance_id', None)
+    instance = get_object_or_404(Order, id=instance_id)
+    vendor = instance.vendor
+    queryset = Product.my_query.active().filter(vendor=vendor)
+    queryset = Product.filters_data(request, queryset)[:10]
+    data['results'] = render_to_string(template_name='inventory_manager/ajax/product_container.html',
+                                      request=request,
+                                      context={'products': queryset, 'instance': instance}
+                                      )
+    return JsonResponse(data)
 
 
 @staff_member_required

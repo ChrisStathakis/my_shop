@@ -1,0 +1,37 @@
+<div class="two fields">
+    <div class="field">
+        <div class="field">
+            <label>Προμηθευτές</label>
+            {% for vendor in vendors %}
+                {% if vendor.id|stringformat:"s" in vendor_name %}
+                    <div class="ui slider checkbox">
+                        <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
+                        <label>{{ vendor }}</label>
+                    </div>
+                {% else %}
+                    <div class="ui slider checkbox">
+                        <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
+                        <label>{{ vendor }}</label>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="field">
+         <label>Είδος Παραστατικού</label>
+        {% for order_type in order_types %}
+            {% if order_type.0|stringformat:"s" in order_type_name %}
+                <div class="ui slider checkbox">
+                    <input value="{{ order_type.0 }}" type="checkbox" name="order_type_name" checked>
+                    <label>{{ order_type.1 }}</label>
+                </div>
+            {% else %}
+                <div class="ui slider checkbox">
+                    <input value="{{ order_type.0 }}" type="checkbox" name="order_type_name">
+                    <label>{{ order_type.1 }}</label>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

@@ -95,6 +95,7 @@ class OrderItemAdminForm(forms.ModelForm):
 
 class OrderQuickForm(forms.ModelForm):
     date_expired = forms.DateTimeField(widget=forms.DateInput(attrs={'type': 'date'}))
+
     class Meta:
         model = Order
         fields = ['date_expired', 'title', 'order_type', 'vendor', 'payment_method',]
@@ -106,15 +107,23 @@ class OrderQuickForm(forms.ModelForm):
 
 
 class WarehouseOrderForm(forms.ModelForm):
+    date_expired = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
         model = Order
-        fields = ['date_expired', 'title', 'payment_method', 'total_discount', 'taxes_modifier']
+        fields = ['date_expired', 'title', 'payment_method', 'discount', 'taxes_modifier']
 
     def __init__(self, *args, **kwargs):
         super(WarehouseOrderForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+        if instance and instance.is_paid:
+            print('i am here!')
+            self.fields['date_expired'].widget.attrs['readonly'] = True
+            self.fields['discount'].widget.attrs['readonly'] = True
+            self.fields['taxes_modifier'].widget.attrs['readonly'] = True
 
 
 class WarehouseOrderImageForm(forms.ModelForm):

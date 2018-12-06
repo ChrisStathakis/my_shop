@@ -9,10 +9,22 @@ from products.models import Category, Color, Size
 from frontend.models import CategorySite, Brands
 from inventory_manager.models import Vendor, Order, OrderItem
 from point_of_sale.models import *
-
+from site_settings.constants import WAREHOUSE_ORDER_TYPE
 
 def diff_month(date_start, date_end):
     return (date_end.year - date_start.year)*12 + (date_end.month - date_start.month)
+
+
+def get_filters_data_payments(request):
+    payment_name = request.GET.getlist('payment_name', None)
+    is_paid_name = request.GET.get('is_paid_name', None)
+    return [payment_name, is_paid_name]
+
+
+def get_filters_data_warehouse_invoices(request):
+    vendor_name = request.GET.getlist('vendor_name', None)
+    order_type_name = request.GET.get('order_type_name', None)
+    return [vendor_name, order_type_name]
 
 
 def get_filters_data(request):
@@ -28,6 +40,13 @@ def get_filters_data(request):
     qty_name = request.GET.get('qty_name', None)
     return [search_name, cate_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name,
             discount_name, qty_name]
+
+
+def initial_data_invoices():
+    vendors = Vendor.objects.filter(active=True)
+    payment_method = PaymentMethod.my_query.active()
+    order_types = WAREHOUSE_ORDER_TYPE
+    return [vendors, payment_method, order_types]
 
 
 def initial_data_from_database():

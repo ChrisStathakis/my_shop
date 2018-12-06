@@ -1,0 +1,46 @@
+<div class="two fields">
+    <div class="field">
+        <div class="grouped fields">
+            <label>Κατάσταση</label>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input
+                            type="radio"
+                            name="is_paid_name"
+                            value="a"
+                            {% if is_paid_name == 'a' %} checked {% endif %}
+                    >
+                    <label>Πληρωμένο</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox">
+                    <input
+                            type="radio"
+                            name="is_paid_name"
+                            value="b"
+                            {% if is_paid_name == 'b' %} checked {% endif %}
+                    >
+                    <label>Μη πληρωμένο</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+         <label>Τρόπος Πληρωμής</label>
+        {% for payment in payment_method %}
+            {% if payment.id|stringformat:"s" in payment_name %}
+                <div class="ui slider checkbox">
+                    <input value="{{ payment.id }}" type="checkbox" name="payment_name" checked>
+                    <label>{{ payment.title }}</label>
+                </div>
+            {% else %}
+                <div class="ui slider checkbox">
+                    <input value="{{ payment.id }}" type="checkbox" name="payment_name">
+                    <label>{{ payment.title }}</label>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

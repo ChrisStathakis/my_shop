@@ -19,7 +19,8 @@ from site_settings.constants import *
 from point_of_sale.models import *
 from transcations.models import *
 from accounts.models import CostumerAccount
-from .tools import (initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months, 
+from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoices, initial_data_invoices,
+                    initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months,
                     warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis, filter_date
                     )
 
@@ -230,10 +231,13 @@ class WarehouseOrderView(ListView):
 
     def get_context_data(self, **kwargs):
         content = super(WarehouseOrderView, self).get_context_data(**kwargs)
+
         date_start, date_end = filter_date(self.request)
         orders, currency = self.object_list, CURRENCY
-        search_name, cate_name, vendor_name, brand_name, category_site_name, site_status, color_name, size_name, \
-        discount_name, qty_name = get_filters_data(self.request)
+        vendors, payment_method, order_types = initial_data_invoices()
+
+        vendor_name, order_type_name = get_filters_data_warehouse_invoices(self.request)
+        payment_name, is_paid_name = get_filters_data_payments(self.request)
         order_count, total_value, paid_value = orders.count(), orders.aggregate(Sum('final_value'))[
             'final_value__sum'] \
             if orders else 0, orders.aggregate(Sum('paid_value'))[

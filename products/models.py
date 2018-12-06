@@ -18,6 +18,7 @@ from .managers import ProductManager
 
 WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
+
 def product_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'product/{0}/{1}'.format(instance.product.title, filename)
@@ -95,13 +96,13 @@ class Size(DefaultBasicModel):
 
 
 class Product(DefaultBasicModel):
-    site_active = models.BooleanField(default=True, verbose_name='Active for Site')
-    wholesale_active = models.BooleanField(default=False, verbose_name="Active for WholeSale")
-    is_service = models.BooleanField(default=False, verbose_name='Service')
+    site_active = models.BooleanField(default=True, verbose_name='Ενεργό στο Site')
+    wholesale_active = models.BooleanField(default=False, verbose_name="Χονδρεμποριο")
+    is_service = models.BooleanField(default=False, verbose_name='Υπηρεσία')
     is_featured = models.BooleanField(default=False, verbose_name='Featured Product')
-    is_offer = models.BooleanField(default=True)
-    size = models.BooleanField(default=False, verbose_name='Size Chart')
-    color = models.ForeignKey(Color, blank=True, null=True, verbose_name='Color', on_delete=models.CASCADE)
+    is_offer = models.BooleanField(default=True, verbose_name='Προσφορά')
+    size = models.BooleanField(default=False, verbose_name='Μεγεθολόγιο')
+    color = models.ForeignKey(Color, blank=True, null=True, verbose_name='Χρώμσ', on_delete=models.CASCADE)
     #  warehouse data
     order_code = models.CharField(null=True, blank=True, max_length=100, verbose_name="Κωδικός Τιμολογίου")
     price_buy = models.DecimalField(decimal_places=2, max_digits=6, default=0, verbose_name="Τιμή Αγοράς") # the price which you buy the product

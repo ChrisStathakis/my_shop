@@ -8,28 +8,42 @@ from site_settings.admin_mixins import DefaultFilterMixin
 
 @admin.register(Product)
 class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
-    list_display = ['title', 'category', 'vendor', 'category_link']
-    list_filter = ['site_active']
+    list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price']
+    list_filter = ['active', 'site_active', 'is_offer', 'category', 'vendor']
     list_select_related = ['category', 'vendor']
-    readonly_fields = ['tag_final_price',]
+    readonly_fields = ['tag_final_price', ]
+    save_as = True
+    list_per_page = 50
     fieldsets = (
         ('General', {
-            'fields': (('site_active', 'title', 'size', 'vendor'),
-                       ('is_featured', 'brand', 'category_site'),
-                       ('qty', 'sku', 'color',),
-                       ('price', 'price_discount', 'tag_final_price'),
-                       ('site_text', 'slug')
+            'fields': (('active', 'size'),
+                       ('is_service', 'wholesale_active',),
+                       ('title', 'category', 'vendor'),
+                       ('order_code', 'price_buy', 'order_discount'),
+                       ('qty', 'qty_kilo', 'measure_unit', 'barcode', 'safe_stock'),
                        )
         }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': (),
+        ('Price', {
+            'fields': ('is_offer',
+                       ('price', 'price_discount', 'tag_final_price'))
         }),
+        ('Site', {
+            'fields': (
+                ('site_active', 'is_featured',),
+                ('brand', 'slug',),
+                ('sku', 'category_site', 'site_text'),
+            )
+        }),
+
     )
 
     @admin_link('category', _('Category'))
     def category_link(self, category):
         return category
+
+    @admin_link('vendor', _('Προμηθευτής'))
+    def vendor_link(self, vendor):
+        return vendor
 
     def get_default_filters(self, request):
         return {

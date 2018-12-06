@@ -25,7 +25,7 @@ WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
 
 
 def upload_image(instance, filename):
-    return f'warehouse_images/{instance.order_related.title}/{instance.order_related.id}/{filename}'
+    return f'warehouse_images/{instance.order_related.vendor.title}/{instance.order_related.title}/{filename}'
 
 
 def validate_file(value):
@@ -201,7 +201,7 @@ class Order(DefaultOrderModel):
         self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
             'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         self.paid_value = self.paid_value if self.paid_value else 0
-        if self.paid_value >= self.final_value and self.paid_value > 0.5:
+        if self.paid_value > 0:
             self.is_paid = True
         else:
             self.is_paid = False
@@ -238,10 +238,12 @@ class Order(DefaultOrderModel):
         search_name = request.GET.get('search_name', None)
         vendor_name = request.GET.getlist('vendor_name', None)
         balance_name = request.GET.get('balance_name', None)
-        paid_name = request.GET.get('paid_name', None)
+        paid_name = request.GET.get('is_paid_name', None)
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
         payment_name = request.GET.getlist('payment_name', None)
+        order_type_name = request.GET.getlist('order_type_name', None)
         try:
+            queryset = queryset.filter(order_type__in=order_type_name) if order_type_name else queryset
             queryset = queryset.filter(vendor__id__in=vendor_name) if vendor_name else queryset
             queryset = queryset.filter(Q(title__icontains=search_name) |
                                        Q(vendor__title__icontains=search_name)
