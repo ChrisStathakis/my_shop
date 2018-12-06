@@ -32,14 +32,28 @@
                     <div class="content">
                         <h4 class="center aligned">Κωδικός... {{ instance.title }}, Προμηθευτής... {{ instance.vendor }}, Ημερομηνία... {{ instance.date_expired|date }}</h4>
                         <p>
-                            <button data-vendoe="{{ instance.vendor.id }}" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#product_collapse" aria-expanded="false" aria-controls="product_collapse">
+                            <button class="btn btn-primary"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#product_collapse"
+                                    aria-expanded="false"
+                                    aria-controls="product_collapse"
+                            >
                                 Προσθήκη Προϊόντος
+                            </button>
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    data-toggle="collapse"
+                                    data-target="#create_product"
+                                    aria-expanded="false"
+                                    aria-controls="product_collapse"
+                            >Δημιουργία προϊόντος
                             </button>
                         </p>
                         {% if messages %}
                             <ul class="messages">
                                 {% for message in messages %}
-                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                    <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
@@ -65,7 +79,7 @@
                                         <tbody id="product_container">
                                         {% for product in products %}
                                             <tr>
-                                                <td>{{ product.sku }}</td>
+                                                <td>{{ product.order_code }}</td>
                                                 <td colspan="2"><a target="_blank" href="{{ product.edit_url }}">{{ product.title }}</a></td>
                                                 <td>
                                                     {% if product.size %}
@@ -85,6 +99,16 @@
                                         <button  name='add_products' type="submit" class="btn btn-info btn-fill btn-wd">Add</button>
                                     </div>
                                     <div class="clearfix"></div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="collapse" id="create_product">
+                             <div class="header"><h4 class="title">Δημιουργία Προϊόντος</h4></div>
+                             <div class="content">
+                                <form class='form' method="post">{% csrf_token %}
+                                    {{ form_product }}
+                                    <button name="create_product" type="submit" class="btn btn-primary">Αποθήκευση</button>
                                 </form>
                             </div>
                         </div>

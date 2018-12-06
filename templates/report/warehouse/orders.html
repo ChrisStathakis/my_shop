@@ -5,7 +5,7 @@
     <a href="{% url 'reports:warehouse_orders' %}" style="background-color: green" class="item">Τιμολόγια</a>
     <a href="{% url 'reports:vendors' %}" class="item">Προμηθευτές</a>
     <a href="{% url 'reports:check_orders' %}" class="item">Επιταγές</a>
-    <a href=""  class="item">Ανάλυση Αγορών</a>
+    <a href="{% url 'reports:order_items_flow' %}"  class="item">Ανάλυση Αγορών</a>
 </div>
 {% endblock %}
 
@@ -94,36 +94,36 @@
         });
         </script>
             <div class="ui segments">
-                <div style='text-align: center' class="ui blue header segment">Sells Analysis</div>
+                <div style='text-align: center' class="ui blue header segment">Σύνολα</div>
                 <table style="text-align: center" class="ui table">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Value</th>
+                    <th>#</th>
+                    <th>#</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
-                        <h4 class="blue header">Total Value</h4>
+                        <h4 class="blue header">Συνολική Αξία</h4>
                     </td>
                     <td>{{ total_value }} {{ currency }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="green header">Payments</h4>
+                        <h4 class="green header">Πληρωμές</h4>
                     </td>
                     <td>{{ paid_value }} {{ currency }}</td>
                 </tr>
                 <tr>
-                    <td>
-                        <h4 class="red header">Remaining</h4>
+                    <td class="negative">
+                        <h4 class="red header">Υπόλοιπο</h4>
                     </td>
-                    <td> {{ diff }}{{ currency }}</td>
+                    <td class="negative"> {{ diff }}{{ currency }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Orders Qty</h4>
+                        <h4 class="header">Πλήθος Παραστ.</h4>
                     </td>
                     <td>{{ orders.count }}</td>
                 </tr>
@@ -180,11 +180,7 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
             <div class="row">
-                <button class="ui blue button" id="analyse_vendor">Vendor Analysis</button>
-
-                <div class="row" id="data-show">
-
-                </div>
+                <h4 class="header">Παραστατικά</h4>
             </div>
         </div>
         <div class="two wide column"></div>
@@ -202,15 +198,15 @@
                         </tr>
                         <tr>
                             <th>#</th>
-                            <th>Date</th>
-                            <th>Title</th>
-                            <th>Vendor</th>
-                            <th>Order Type</th>
-                            <th>Payment Type</th>
-                            <th>Clean Value</th>
-                            <th>Taxes</th>
-                            <th>Value</th>
-                            <th>Paid Status</th>
+                            <th>Ημερομηνία</th>
+                            <th>Κωδικος</th>
+                            <th>Προμηθευτής</th>
+                            <th>Τύπος Παραστ.</th>
+                            <th>Τρόπος Πληρωμής</th>
+                            <th>Καθαρή Αξία</th>
+                            <th>Φόροι</th>
+                            <th>Τελική Αξία</th>
+                            <th>Πληρωτέο Ποσό</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -225,8 +221,8 @@
                                 <td>{{ order.payment_method }}</td>
                                 <td>{{ order.tag_clean_value }} </td>
                                 <td>{{ order.tag_total_taxes }}</td>
-                                <td>{{ order.tag_final_value }}</td>
-                                <td>{{ order.tag_paid_status }}</td>
+                                <td class="positive">{{ order.tag_final_value }}</td>
+                                <td class="negative">{{ order.tag_paid_value }}</td>
                                 <td><a href='{{ order.get_report_url }}' class="ui teal button">Details</a></td>
                             </tr>
                         {% endfor %}

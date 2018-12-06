@@ -273,11 +273,12 @@ class VendorsPage(ListView):
         date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(self.request)
         date_start_last_year, date_end_last_year = date_start- relativedelta(year=1), date_end-relativedelta(year=1)
         date_pick, currency = self.request.GET.get('date_pick'), CURRENCY
-        vendor_name, balance_name, search_name =[self.request.GET.getlist('vendor_name'),
-                                                 self.request.GET.get('balance_name'),
-                                                 self.request.GET.get('search_name'),
-                                                ]
+        vendor_name, balance_name, search_name = [self.request.GET.getlist('vendor_name'),
+                                                  self.request.GET.get('balance_name'),
+                                                  self.request.GET.get('search_name'),
+                                                 ]
 
+        vendors = self.object_list
         orders = Order.objects.filter(timestamp__range=[date_start, date_end])
         chart_data = [Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all() else 0,
                       orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0,
@@ -316,15 +317,29 @@ class CheckOrderPage(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        queryset_o = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Order))
-        queryset_1 = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Vendor))
-        queryset = queryset_o|queryset_1
+        date_start, date_end = filter_date(self.request)
+        queryset_o = PaymentOrders.objects.filter(is_check=True,
+                                                  content_type=ContentType.objects.get_for_model(Order),
+                                                  date_expired__range=[date_start, date_end]
+                                                  )
+        queryset_1 = PaymentOrders.objects.filter(is_check=True,
+                                                  content_type=ContentType.objects.get_for_model(Vendor),
+                                                  date_expired__range=[date_start, date_end]
+                                                  )
+        vendor_name = self.request.GET.getlist('vendor_name', None)
+        if vendor_name:
+            order_content = ContentType.objects.get_for_model(Order)
+            orders_ids = Order.objects.filter(vendor__id__in=vendor_name).values_list('id')
+            queryset_1 = queryset_1.filter(object_id__in=vendor_name)
+            queryset_o = queryset_o.filter(content_type=order_content,
+                                           object_id__in=orders_ids)
+        queryset = queryset_o | queryset_1
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(CheckOrderPage, self).get_context_data(**kwargs)
-        vendors = Vendor.objects.filter(active=True)
-
+        vendors, payment_method, tt = initial_data_invoices()
+        vendor_name = self.request.GET.getlist('vendor_name', None)
         not_paid_checks = self.object_list.filter(is_paid=False)
         not_paid_chart_analysis = not_paid_checks.values('payment_method__title').\
             annotate(total_value=Sum('final_value')).order_by('payment_method__title')

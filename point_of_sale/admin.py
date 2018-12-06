@@ -66,8 +66,6 @@ class RetailOrderAdmin(admin.ModelAdmin):
             'total': x['total'] or 0,
             'pct': ((x['total'] or 0) - low) / (high - low) * 100 if high > low else 0,
         } for x in summary_over_time]
-
-
         return response
 
 

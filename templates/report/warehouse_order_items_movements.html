@@ -1,12 +1,5 @@
-{% extends 'report/warehouse.html' %}
+{% extends 'report/warehouse/orders.html' %}
 
-{% block down_menu %}
-<div class="ui three item bottom fixed menu">
-    <a href="{% url 'reports:warehouse_orders' %}" class="item">Homepage</a>
-    <a href="{% url 'reports:vendors' %}"  class="active item">Vendors</a>
-    <a href="{% url 'reports:order_items_flow' %}" style="background-color: green" class="item">Item Flow</a>
-</div>
-{% endblock %}
 
 
 {% block content %}
@@ -16,8 +9,8 @@
             <h2 class="ui blue icon header">
                 <i class="blue calendar icon"></i>
                 <div class="blue content">
-                    Order Item Flow
-                    <div class="sub header">Date range {{ date_start|date }} - {{ date_end|date }}</div>
+                    Ροή Προϊόντων
+                    <div class="sub header">Διάστημα... {{ date_start|date }} - {{ date_end|date }}</div>
                 </div>
             </h2>
         </div>

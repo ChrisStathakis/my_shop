@@ -8,6 +8,12 @@ from site_settings.admin_tools import admin_changelist_link
 from site_settings.models import PaymentOrders
 
 
+class PaymentOrderInline(GenericTabularInline):
+    model = PaymentOrders
+    extra = 1
+    fields = ['title', 'date_expired', 'payment_method', 'value', 'is_paid']
+
+
 class OrderPhotoInline(admin.TabularInline):
     model = WarehouseOrderImage
     extra = 1
@@ -42,12 +48,12 @@ class OrderAdmin(admin.ModelAdmin):
     list_select_related = ['vendor']
     list_per_page = 50
     list_filter = ['vendor', 'is_paid']
-    inlines = [OrderPhotoInline, OrderItemInline, ]
+    inlines = [OrderPhotoInline, OrderItemInline, PaymentOrderInline]
 
     fieldsets = (
         ('General', {
             'fields': (
-                ('is_paid', 'vendor' ),
+                ('is_paid', 'vendor', 'tag_remaining_value'),
                 ('title', 'date_expired'),
                 ('timestamp', 'edited'),
                 ('order_type',  'payment_method'),
@@ -61,7 +67,7 @@ class OrderAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         obj_list = ['timestamp', 'edited', 'tag_final_value',
                     'tag_value', 'tag_total_discount', 'tag_clean_value', 
-                    'tag_total_taxes', 'tag_final_value',
+                    'tag_total_taxes', 'tag_final_value', 'is_paid', 'tag_remaining_value'
                     ]
         if obj:
             obj_list.append('vendor')

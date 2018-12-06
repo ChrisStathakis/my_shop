@@ -13,7 +13,7 @@ from django.forms import inlineformset_factory
 from django.contrib.contenttypes.models import ContentType
 
 from products.models import Product,  Color, Size, SizeAttribute
-from products.forms import VendorForm
+from products.forms import VendorForm, CreateProductForm
 from .models import Order, OrderItem, Vendor, Category, WarehouseOrderImage
 from .models import PaymentOrders
 from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm
@@ -79,6 +79,7 @@ def warehouse_order_detail(request, dk):
     products = queryset[:10]
     products_with_size = queryset.filter(size=True)
     # forms
+    form_product = CreateProductForm()
     form = WarehouseOrderForm(instance=instance)
     form_image = WarehouseOrderImageForm(initial={'order_related': instance})
     form_payment = PaymentForm(initial={'payment_method': instance.payment_method,
@@ -108,7 +109,13 @@ def warehouse_order_detail(request, dk):
             OrderItem.add_to_order(request, product=get_product, order=instance)
         instance.save()
         return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
-
+    if 'create_product' in request.POST:
+        form_product = CreateProductForm(request.POST)
+        if form_product.is_valid():
+            new_product = form_product.save(commit=False)
+            new_product.vendor = instance.vendor
+            new_product.save()
+            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.id}))
     if request.POST:
         form = WarehouseOrderForm(request.POST, instance=instance)
         if form.is_valid():

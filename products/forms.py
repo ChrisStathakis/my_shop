@@ -8,7 +8,7 @@ class CreateProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['active', 'size', 'title', 'color']
+        fields = ['active', 'size', 'title', 'order_code']
 
     def __init__(self, *args, **kwargs):
         super(CreateProductForm, self).__init__(*args, **kwargs)
