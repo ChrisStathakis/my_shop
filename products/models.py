@@ -112,7 +112,7 @@ class Product(DefaultBasicModel):
 
     qty_kilo = models.DecimalField(max_digits=5, decimal_places=3, default=1, verbose_name='Βάρος/Τεμάχια ανά Συσκευασία ')
     qty = models.DecimalField(default=0, verbose_name="Qty", max_digits=10, decimal_places=2)
-    barcode = models.CharField(max_length=6, null=True, blank=True, verbose_name='Κωδικός/Barcode')
+    barcode = models.CharField(max_length=100, null=True, blank=True, verbose_name='Κωδικός/Barcode')
     notes = models.TextField(null=True, blank=True, verbose_name='Περιγραφή')
     measure_unit = models.CharField(max_length=1, default='1', choices=UNIT, blank=True, null=True)
     safe_stock = models.DecimalField(max_digits=5, decimal_places=2, default=0)

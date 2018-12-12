@@ -1,0 +1,60 @@
+{% extends 'inventory_manager/index.html' %} {% load static %}
+
+{% block content %}
+   <div class="content">
+       <div class="container-fluid">
+           <div class="row">
+               <div class="col-md-8">
+                   <div class="card">
+                       <div class="header">
+                           <h4 class="title text-center">Απογραφές</h4>
+                       </div>
+                       <div class="content table-responsive table-full-width">
+                           <table class="table table-striped">
+                               <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Χρονιά</th>
+                                        <th>Σχόλια</th>
+                                        <th>Ποσό</th>
+                                        <th></th>
+                                    </tr>
+
+                               </thead>
+                               <tbody>
+                                {% for object in object_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ object.year }}</td>
+                                        <td>{{ object.title }}</td>
+                                        <td>{{ object. }}</td>
+                                        <td>
+                                            <a href="{{ object.get_absolute_url }}" class="btn btn-info" href="">Details</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                               </tbody>
+                           </table>
+                       </div>
+                   </div>
+               </div>
+               <div class="col-md-4">
+                   <div class="card">
+                       <div class="header">
+                            <h4>Δημιουργησε νέα απογραφή</h4>
+                       </div>
+                       <div class="content">
+                           <form method="post"> {% csrf_token %}
+                                {{ form }}
+                               <button type="submit" class="btn btn-primary">Submit</button>
+                           </form>
+                       </div>
+                   </div>
+                   {% if category_page %}
+                        {% include 'dashboard/include/actions/category_actions.html' %}
+                   {% endif %}
+               </div>
+           </div>
+       </div>
+   </div>
+{% endblock %}

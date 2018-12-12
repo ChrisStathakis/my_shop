@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import *
 from django.urls import path
 from .api.views import RetailOrderListApi
-from .ajax_views import ajax_products_search, ajax_edit_order_item, ajax_add_product
+from .ajax_views import ajax_products_search, ajax_edit_order_item, ajax_add_product, ajax_barcode_add
 app_name = 'POS'
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
     path('ajax/sales/search/<int:pk>/', view=ajax_products_search, name='ajax_products_search'),
     path('ajax/sales/edit-order/<int:pk>/<int:qty>/<slug:action>/', ajax_edit_order_item, name='ajax_edit_order_item'),
     path('ajax/sales/<int:pk>/<int:dk>/add', view=ajax_add_product, name='ajax_add_products'),
+    path('ajax/sales/barcode/<int:pk>/add', ajax_barcode_add, name='ajax_barcode'),
 
 
     # create costumer

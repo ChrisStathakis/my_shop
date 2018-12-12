@@ -16,10 +16,10 @@ from products.models import Product,  Color, Size, SizeAttribute
 from products.forms import VendorForm, CreateProductForm
 from .models import Order, OrderItem, Vendor, Category, WarehouseOrderImage
 from .models import PaymentOrders
-from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm
+from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm, StockForm
 from site_settings.forms import PaymentForm
 from site_settings.tools import dashboard_filters_name
-from inventory_manager.models import Order, OrderItem, Vendor
+from inventory_manager.models import Order, OrderItem, Vendor, Stock, StockItem
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
 
 import datetime
@@ -552,3 +552,25 @@ class CheckOrderUpdateView(UpdateView):
         form.save()
         messages.success(self.request, 'The Payment is edited')
         return super().form_valid(form)
+
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class StockListView(ListView, FormView):
+    model = Stock
+    template_name = 'inventory_manager/stock_list_page.html'
+    queryset = Stock.objects.all()
+    form_class = StockForm
+
+    def form_valid(self, form):
+        form.save()
+        super(StockListView, self).form_valid(form)
+
+    def get_success_url(self):
+        new_id = Stock.objects.last().id
+        return reverse('')
+
+@staff_member_required
+def stock_detail_view(request, pk):
+    pass
+    form = ';'

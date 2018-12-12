@@ -19,6 +19,23 @@
                 }
             })
         })
+        $('#barcode_name').change(function () {
+            var barcode_name = $(this).val();
+            
+            $.ajax({
+                url: '{% url "POS:ajax_barcode" instance.id %}' + '?barcode_name=' + barcode_name,
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    'barcode_name': barcode_name
+                },
+                success: function (data) {
+                    $('#order_items_container').html(data.order_items_section);
+                    $('#value_container').html(data.final_value)
+                    $("#cform")[0].reset();
+                }
+            })
+        })
     </script>
 
     <script>
@@ -53,14 +70,15 @@
                                <div class="header">
                                    <div class="title text-center">
                                        <h4>Products</h4>
-                                       <form onsubmit="return ajax_search(event)" class='form' method='GET'>
+                                       <form onsubmit="return ajax_search(event)" class='form' method='GET' id='cform'>
                                            <div class="row">
                                                <div class="col-md-6">
                                                    <input
                                                            style="background-color: orangered"
-                                                           name="barcode"
+                                                           name="barcode_name"
                                                            class="form-control"
                                                            placeholder="Barcode"
+                                                           id='barcode_name'
                                                    >
                                                </div>
                                                <div class="col-md-6">
@@ -149,6 +167,26 @@
                         </div>
                     </div>
 
+                    <div class="card">
+                        <div class="header"><div class="title">Actions</div></div>
+                        <div class="content">
+                            <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
+                            <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised right">Paid</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="header"><div class="title">Edit {{ instance }}</div></div>
+                            <div class="content">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button type='submit' name='order_sub' class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                       
+
                     <div class='card'>
                         <div class="header text-center">
                            <button class="btn btn-primary"
@@ -232,26 +270,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="header"><div class="title">Actions</div></div>
-                                <div class="content">
-                                    <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
-                                    <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised right">Paid</a>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="header"><div class="title">Edit {{ instance }}</div></div>
-                                <div class="content">
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        {{ form }}
-                                        <button type='submit' name='order_sub' class="btn btn-primary">Save</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        
                 </div>
             </div>
         </div>

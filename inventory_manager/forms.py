@@ -192,3 +192,14 @@ class OrderItemSizeForm(forms.ModelForm):
 
      
 
+class StockForm(forms.ModelForm):
+    year = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Stock
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(StockForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

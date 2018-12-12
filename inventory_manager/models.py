@@ -446,3 +446,31 @@ class PreOrder(models.Model):
     def __str__(self):
         return self.title
 
+
+class Stock(models.Model):
+    title = models.CharField(unique=True, max_length=100)
+    year = models.DateField()
+    printscreen = models.BooleanField(default=False)
+    value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+
+    class Meta:
+        ordering = ['year']
+
+    def __str__(self):
+        return f'{self.title}'
+
+    def get_absolute_url(self):
+        return reverse('inventory:stock_detail_view', kwargs={'pk':self.id})
+
+
+class StockItem(models.Model):
+    product = models.ForeignKey('products.Product', on_delete=models.PROTECT)
+    order_related = models.ForeignKey(Stock, on_delete=models.PROTECT)
+    qty = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    price_buy = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+
+    class Meta:
+        unique_together = ['product', 'order_related']
+
+    def __str__(self):
+        return f'{self.order_related.title} - {self.product}'

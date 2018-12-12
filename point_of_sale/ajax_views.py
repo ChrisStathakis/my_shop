@@ -16,7 +16,7 @@ def ajax_products_search(request, pk):
     products = Product.objects.none()
     if search_name:
         products = Product.my_query.active()
-        products = Product.filters_data(request, products)
+        products = Product.filters_data(request, products)[:10]
     print(products.count())
     data['products'] = render_to_string(request=request,
                                         template_name='PoS/ajax/products_search.html',
@@ -53,6 +53,26 @@ def ajax_add_product(request, pk, dk):
     instance = get_object_or_404(RetailOrder, id=pk)
     product = get_object_or_404(Product, id=dk)
     RetailOrderItem.create_or_edit_item(instance, product, 1, 'ADD')
+    instance.refresh_from_db()
+    data['order_items_section'] = render_to_string(template_name='PoS/ajax/order_items.html',
+                                                   request=request,
+                                                   context={'instance': instance}
+                                                   )
+    data['final_value'] = render_to_string(template_name='PoS/ajax/final_value.html',
+                                           request=request,
+                                           context={'instance': instance}
+                                           )
+    return JsonResponse(data)
+
+
+def ajax_barcode_add(request, pk):
+    data = {}
+    barcode_name = request.GET.get('barcode_name', None)
+    instance = get_object_or_404(RetailOrder, id=pk)
+    product_qs = Product.my_query.active().filter(barcode=barcode_name)
+    product = product_qs.first() if product_qs.exists() else None
+    if product:
+        RetailOrderItem.create_or_edit_item(instance, product, 1, 'ADD')
     instance.refresh_from_db()
     data['order_items_section'] = render_to_string(template_name='PoS/ajax/order_items.html',
                                                    request=request,

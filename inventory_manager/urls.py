@@ -39,6 +39,10 @@ urlpatterns = [
     path('check-orders/', CheckOrdersView.as_view(), name='check_orders'),
     path('check-orders/detail/<int:pk>/', CheckOrderUpdateView.as_view(), name='check_order_detail'),
     
+    path('stock-list/', StockListView.as_view(), name='stock_list'),
+    path('stock-list/detail/<int:pk>/', stock_detail_view, name='stock_detail_view'),
 
-    path('ajax/search_products/', ajax_search_products, name='ajax_search_products')
+    path('ajax/search_products/', ajax_search_products, name='ajax_search_products'),
+    
+    
 ]
