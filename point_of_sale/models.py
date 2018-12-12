@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.utils.safestring import mark_safe
+from django.shortcuts import get_object_or_404
 import datetime
 from decimal import Decimal
 
@@ -66,7 +67,7 @@ class RetailOrder(DefaultOrderModel):
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
         self.count_items = order_items.count() if order_items else 0
-        self.check_coupons()
+        # self.check_coupons()
         self.update_order()
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.all().aggregate(Sum('value'))['value__sum'] if self.payorders else 0
@@ -94,6 +95,7 @@ class RetailOrder(DefaultOrderModel):
         items = self.order_items.all()
         self.value = items.aggregate(Sum('total_value'))['total_value__sum'] if items else 0
         self.total_cost = items.aggregate(Sum('total_cost_value'))['total_cost_value__sum'] if items else 0
+
 
     def check_coupons(self):
         try:
@@ -396,6 +398,19 @@ class RetailOrderItem(DefaultOrderItemModel):
         return exists.first() if exists else None
 
     @staticmethod
+    def add_item(self, order_id, product_id, qty):
+        order = get_object_or_404(RetailOrder, id=order_id)
+        product = get_object_or_404(Product, id=product_id)
+        instance, created = RetailOrderItem.objects.get_or_create(order=order,
+                                                                  product=product
+                                                                  )
+        if created:
+            instance.qty = qty
+        else:
+            instance.qty += 1
+        instance.save()
+
+    @staticmethod
     def barcode(request, instance):
         barcode = request.GET.get('barcode')
         print(barcode)
@@ -409,28 +424,36 @@ class RetailOrderItem(DefaultOrderItemModel):
 
     @staticmethod
     def create_or_edit_item(order, product, qty, transation_type):
-        instance = RetailOrderItem.check_if_exists(order, product)
-        if instance and transation_type == 'ADD':
-            instance.qty += qty
-            instance.add_item(qty)
-            instance.save()
-        elif not instance and transation_type == 'ADD':
-            instance = RetailOrderItem.objects.create(title=product,
-                                                      order=order,
-                                                      cost=product.price_buy,
-                                                      value=product.price,
-                                                      discount_value=product.price_discount,
-                                                      qty=qty
-                                                      )
-            instance.add_item(qty)
-        elif instance and transation_type == 'REMOVE':
+        instance, created = RetailOrderItem.objects.get_or_create(order=order, title=product)
+        if transation_type == 'ADD':
+            if not created:
+                instance.qty += qty
+            else:
+                instance.qty = qty
+                instance.value = product.price
+                instance.discount_value=product.price_discount
+                instance.cost = product.price_buy
+        if transation_type == 'REMOVE':
             instance.qty -= qty
-            instance.remove_item(qty)
-            instance.save()
-        elif instance and transation_type == 'DELETE':
-            instance.remove_item(instance.qty)
+            instance.qty = 1 if instance.qty <= 0 else instance.qty
+        instance.save()
+        if transation_type == 'DELETE':
             instance.delete()
-        order.update_order()
+        order.save()
+'''
+class OrderProfile(models.Model):
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    address = models.CharField(max_length=150)
+    zipcode = models.CharField(max_length=150)
+    city = models.CharField(max_length=150)
+    country = models.CharField(max_length=1, blank=True)
+    order_type = models.CharField(max_length=1)
+    order_related = models.ForeignKey(RetailOrder)
+    
+    class Meta:
+        unique_together = ['order_related', 'order_type']
+'''
 
 
 def create_destroy_title():

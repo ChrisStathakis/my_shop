@@ -1170,7 +1170,7 @@ $.fn.visibility.settings = {
   // special visibility type (image, fixed)
   type                   : false,
 
-  // image only animation settings
+  // image only animation more_settings
   transition             : 'fade in',
   duration               : 1000,
 

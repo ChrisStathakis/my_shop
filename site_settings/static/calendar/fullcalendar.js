@@ -9143,7 +9143,7 @@ var DateComponent = /** @class */ (function (_super) {
         return this._getView().get('dateProfile');
     };
     // Generates HTML for an anchor to another view into the calendar.
-    // Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
+    // Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled more_settings.
     // `gotoOptions` can either be a moment input, or an object with the form:
     // { date, type, forceOff }
     // `type` is a view-type like "day" or "week". default value is "day".
@@ -9892,7 +9892,7 @@ var Calendar = /** @class */ (function () {
             }
         });
     };
-    // Builds a moment using the settings of the current calendar: timezone and locale.
+    // Builds a moment using the more_settings of the current calendar: timezone and locale.
     // Accepts anything the vanilla moment() constructor accepts.
     Calendar.prototype.moment = function () {
         var args = [];
@@ -9935,7 +9935,7 @@ var Calendar = /** @class */ (function () {
         this.localizeMoment(mom);
         return mom;
     };
-    // Updates the given moment's locale settings to the current calendar locale settings.
+    // Updates the given moment's locale more_settings to the current calendar locale more_settings.
     Calendar.prototype.localizeMoment = function (mom) {
         mom._locale = this.localeData;
     };

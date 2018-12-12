@@ -1075,7 +1075,7 @@ $.fn.search.settings = {
   performance    : true,
 
   type           : 'standard',
-  // template to use (specified in settings.templates)
+  // template to use (specified in more_settings.templates)
 
   minCharacters  : 1,
   // minimum characters required to search
@@ -1113,7 +1113,7 @@ $.fn.search.settings = {
   cache          : true,
   // whether to store lookups in local cache
 
-  // transition settings
+  // transition more_settings
   transition     : 'scale',
   duration       : 200,
   easing         : 'easeOutExpo',

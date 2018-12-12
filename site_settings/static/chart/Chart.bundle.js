@@ -6316,10 +6316,10 @@ defaults._set('bar', {
 			categoryPercentage: 0.8,
 			barPercentage: 0.9,
 
-			// offset settings
+			// offset more_settings
 			offset: true,
 
-			// grid line settings
+			// grid line more_settings
 			gridLines: {
 				offsetGridLines: true
 			}
@@ -6351,10 +6351,10 @@ defaults._set('horizontalBar', {
 			categoryPercentage: 0.8,
 			barPercentage: 0.9,
 
-			// offset settings
+			// offset more_settings
 			offset: true,
 
-			// grid line settings
+			// grid line more_settings
 			gridLines: {
 				offsetGridLines: true
 			}
@@ -11340,7 +11340,7 @@ defaults._set('scale', {
 	position: 'left',
 	offset: false,
 
-	// grid line settings
+	// grid line more_settings
 	gridLines: {
 		display: true,
 		color: 'rgba(0, 0, 0, 0.1)',
@@ -11376,7 +11376,7 @@ defaults._set('scale', {
 		}
 	},
 
-	// label settings
+	// label more_settings
 	ticks: {
 		beginAtZero: false,
 		minRotation: 0,
@@ -12285,7 +12285,7 @@ module.exports = function(Chart) {
 			return this.constructors.hasOwnProperty(type) ? this.constructors[type] : undefined;
 		},
 		getScaleDefaults: function(type) {
-			// Return the scale defaults merged with the global settings so that we always use the latest ones
+			// Return the scale defaults merged with the global more_settings so that we always use the latest ones
 			return this.defaults.hasOwnProperty(type) ? helpers.merge({}, [defaults.scale, this.defaults[type]]) : {};
 		},
 		updateScaleDefaults: function(type, additions) {
@@ -17079,7 +17079,7 @@ module.exports = function(Chart) {
 	var defaultConfig = {
 		position: 'left',
 
-		// label settings
+		// label more_settings
 		ticks: {
 			callback: Ticks.formatters.logarithmic
 		}
@@ -17342,7 +17342,7 @@ module.exports = function(Chart) {
 			circular: false
 		},
 
-		// label settings
+		// label more_settings
 		ticks: {
 			// Boolean - Show a backdrop to the scale label
 			showLabelBackdrop: true,

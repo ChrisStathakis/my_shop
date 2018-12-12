@@ -1,0 +1,418 @@
+POST http://127.0.0.1:8000/api/auth/auth-jwt/?username=admin&password=password
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111859.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111834.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111830.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111822.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111821.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111819.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111811.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111755.404.html
+
+###
+
+POST http://127.0.0.1:8000/api/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111752.404.html
+
+###
+
+POST http://127.0.0.1:8000/api/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111747.404.html
+
+###
+
+POST http://127.0.0.1:8000/api/auth-jwt/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111743.404.html
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T111720.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T105018.200.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104843.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104833.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104813.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104724.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104610.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104551.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104527.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104452.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104426.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104411.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104408.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104344.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104255.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104237.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104234.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104219.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104205.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T104019.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T100138.400.json
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T100125.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+<> 2018-12-10T100100.500.txt
+
+###
+
+POST http://127.0.0.1:8000/api/auth/login/?username=admn&password=adminadm
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+###
+

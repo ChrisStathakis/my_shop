@@ -65,7 +65,7 @@ $.fn.form = function(parameters) {
 
         initialize: function() {
 
-          // settings grabbed at run time
+          // more_settings grabbed at run time
           module.get.settings();
           if(methodInvoked) {
             if(instance === undefined) {
@@ -396,7 +396,7 @@ $.fn.form = function(parameters) {
                 settings   = $.extend(true, {}, $.fn.form.settings, legacyParameters);
                 validation = $.extend({}, $.fn.form.settings.defaults, parameters);
                 module.error(settings.error.oldSyntax, element);
-                module.verbose('Extending settings from legacy parameters', validation, settings);
+                module.verbose('Extending more_settings from legacy parameters', validation, settings);
               }
               else {
                 // 2.x
@@ -419,7 +419,7 @@ $.fn.form = function(parameters) {
 
                 settings   = $.extend(true, {}, $.fn.form.settings, parameters);
                 validation = $.extend({}, $.fn.form.settings.defaults, settings.fields);
-                module.verbose('Extending settings', validation, settings);
+                module.verbose('Extending more_settings', validation, settings);
               }
             }
             else {
@@ -1119,7 +1119,7 @@ $.fn.form.settings = {
     identifier : 'You must specify a string identifier for each field',
     method     : 'The method you called is not defined.',
     noRule     : 'There is no rule matching the one you specified',
-    oldSyntax  : 'Starting in 2.0 forms now only take a single settings object. Validation settings converted to new syntax automatically.'
+    oldSyntax  : 'Starting in 2.0 forms now only take a single more_settings object. Validation more_settings converted to new syntax automatically.'
   },
 
   templates: {

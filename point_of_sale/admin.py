@@ -8,6 +8,24 @@ from .models import RetailOrderItem, RetailOrder, GiftRetailItem
 
 @admin.register(RetailOrder)
 class RetailOrderAdmin(admin.ModelAdmin):
+    list_display = ['date_expired', 'title', 'order_type', 'tag_final_value']
+    list_filter = ['is_paid', 'date_expired', 'order_type']
+    list_per_page = 50
+    fieldsets = (
+        ('General', {
+            'fields': (
+                ('is_paid', 'is_printed'),
+
+                      )
+        }),
+    )
+
+    def get_readonly_fields(self, request, obj=None):
+        my_list = ['tag_final_value', 'is_paid']
+        return my_list
+
+
+class RetailOrderAdmini(admin.ModelAdmin):
     change_list_template = 'admin_/sale_summary_change_list.html'
     date_hierarchy = 'date_expired'
     list_filter = ['payment_method', ]

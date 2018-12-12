@@ -72,7 +72,7 @@ urlpatterns = [
     # redirects
     path('product/copy/<int:pk>/', view=create_copy_item, name='copy_product'),
 
-    path('site-settings', SiteView.as_view(), name='site_view'),
+    path('site-more_settings', SiteView.as_view(), name='site_view'),
 
     
 
@@ -124,15 +124,15 @@ urlpatterns = [
 
     
     # site pages
-    path('site-settings', SiteView.as_view(), name='site_view'),
-    path('site-settings/banners/', BannerView.as_view(), name='banner_view'),
-    path('site-settings/banners/create', BannerCreateView.as_view(), name='banner_create'),
-    path('site-settings/banners/edit/<int:pk>/', BannerEditView.as_view(), name='banner_edit'),
-    path('site-settings/banners/delete/<int:pk>/', view=banner_delete, name='banner_delete'),
+    path('site-more_settings', SiteView.as_view(), name='site_view'),
+    path('site-more_settings/banners/', BannerView.as_view(), name='banner_view'),
+    path('site-more_settings/banners/create', BannerCreateView.as_view(), name='banner_create'),
+    path('site-more_settings/banners/edit/<int:pk>/', BannerEditView.as_view(), name='banner_edit'),
+    path('site-more_settings/banners/delete/<int:pk>/', view=banner_delete, name='banner_delete'),
 
-    path('site-settings/coupons/', CouponsView.as_view(), name='coupons_view'),
-    path('size-settings/coupons/edit/<int:pk>/', view=edit_coupon_view, name='coupons_edit_view'),
-    path('size-settings/coupons/ajax/<int:pk>/<int:dk>/<slug:slug>/', ajax_edit_coupon_view, name='ajax_coupon_edit'),
+    path('site-more_settings/coupons/', CouponsView.as_view(), name='coupons_view'),
+    path('size-more_settings/coupons/edit/<int:pk>/', view=edit_coupon_view, name='coupons_edit_view'),
+    path('size-more_settings/coupons/ajax/<int:pk>/<int:dk>/<slug:slug>/', ajax_edit_coupon_view, name='ajax_coupon_edit'),
 
     # user urls
     path('users-list/', UserListView.as_view(), name='users_list'),

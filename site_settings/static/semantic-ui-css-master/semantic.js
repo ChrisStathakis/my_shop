@@ -161,7 +161,7 @@ $.site = $.fn.site = function(parameters) {
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
               if($existingModules.length > 0) {
-                module.verbose('Modifying existing settings', $existingModules);
+                module.verbose('Modifying existing more_settings', $existingModules);
                 $existingModules[name]('setting', setting, value);
               }
             }
@@ -187,7 +187,7 @@ $.site = $.fn.site = function(parameters) {
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
               if($existingModules.length > 0) {
-                module.verbose('Modifying existing settings', $existingModules);
+                module.verbose('Modifying existing more_settings', $existingModules);
                 $existingModules[name]('setting', newSettings);
               }
             }
@@ -563,7 +563,7 @@ $.fn.form = function(parameters) {
 
         initialize: function() {
 
-          // settings grabbed at run time
+          // more_settings grabbed at run time
           module.get.settings();
           if(methodInvoked) {
             if(instance === undefined) {
@@ -894,7 +894,7 @@ $.fn.form = function(parameters) {
                 settings   = $.extend(true, {}, $.fn.form.settings, legacyParameters);
                 validation = $.extend({}, $.fn.form.settings.defaults, parameters);
                 module.error(settings.error.oldSyntax, element);
-                module.verbose('Extending settings from legacy parameters', validation, settings);
+                module.verbose('Extending more_settings from legacy parameters', validation, settings);
               }
               else {
                 // 2.x
@@ -917,7 +917,7 @@ $.fn.form = function(parameters) {
 
                 settings   = $.extend(true, {}, $.fn.form.settings, parameters);
                 validation = $.extend({}, $.fn.form.settings.defaults, settings.fields);
-                module.verbose('Extending settings', validation, settings);
+                module.verbose('Extending more_settings', validation, settings);
               }
             }
             else {
@@ -1617,7 +1617,7 @@ $.fn.form.settings = {
     identifier : 'You must specify a string identifier for each field',
     method     : 'The method you called is not defined.',
     noRule     : 'There is no rule matching the one you specified',
-    oldSyntax  : 'Starting in 2.0 forms now only take a single settings object. Validation settings converted to new syntax automatically.'
+    oldSyntax  : 'Starting in 2.0 forms now only take a single more_settings object. Validation more_settings converted to new syntax automatically.'
   },
 
   templates: {
@@ -7372,7 +7372,7 @@ $.fn.dropdown.settings = {
 
   glyphWidth             : 1.0714,     // widest glyph width in em (W is 1.0714 em) used to calculate multiselect input width
 
-  // label settings on multi-select
+  // label more_settings on multi-select
   label: {
     transition : 'scale',
     duration   : 200,
@@ -8105,7 +8105,7 @@ $.fn.embed.settings = {
   url      : false,
   id       : false,
 
-  // standard video settings
+  // standard video more_settings
   autoplay  : 'auto',
   color     : '#444444',
   hd        : true,
@@ -8337,7 +8337,7 @@ $.fn.modal = function(parameters) {
               module.error(error.dimmer);
               return;
             }
-            module.debug('Creating dimmer with settings', dimmerSettings);
+            module.debug('Creating dimmer with more_settings', dimmerSettings);
             $dimmable = $context.dimmer(dimmerSettings);
             if(settings.detachable) {
               module.verbose('Modal is detachable, moving content into dimmer');
@@ -9844,7 +9844,7 @@ $.fn.popup = function(parameters) {
           }
           else if(settings.popup) {
             $(settings.popup).data(metadata.activator, $module);
-            module.verbose('Used popup specified in settings');
+            module.verbose('Used popup specified in more_settings');
             module.refresh();
             if(settings.hoverable) {
               module.bind.popup();
@@ -10823,7 +10823,7 @@ $.fn.popup.settings = {
 
   name         : 'Popup',
 
-  // module settings
+  // module more_settings
   debug        : false,
   verbose      : false,
   performance  : true,
@@ -10916,7 +10916,7 @@ $.fn.popup.settings = {
   // whether fluid variation should assign width explicitly
   setFluidWidth  : true,
 
-  // transition settings
+  // transition more_settings
   duration       : 200,
   transition     : 'scale',
 
@@ -11136,16 +11136,16 @@ $.fn.progress = function(parameters) {
           },
           settings: function() {
             if(settings.total !== false) {
-              module.debug('Current total set in settings', settings.total);
+              module.debug('Current total set in more_settings', settings.total);
               module.set.total(settings.total);
             }
             if(settings.value !== false) {
-              module.debug('Current value set in settings', settings.value);
+              module.debug('Current value set in more_settings', settings.value);
               module.set.value(settings.value);
               module.set.progress(module.value);
             }
             if(settings.percent !== false) {
-              module.debug('Current percent set in settings', settings.percent);
+              module.debug('Current percent set in more_settings', settings.percent);
               module.set.percent(settings.percent);
             }
           }
@@ -13359,7 +13359,7 @@ $.fn.search.settings = {
   performance    : true,
 
   type           : 'standard',
-  // template to use (specified in settings.templates)
+  // template to use (specified in more_settings.templates)
 
   minCharacters  : 1,
   // minimum characters required to search
@@ -13397,7 +13397,7 @@ $.fn.search.settings = {
   cache          : true,
   // whether to store lookups in local cache
 
-  // transition settings
+  // transition more_settings
   transition     : 'scale',
   duration       : 200,
   easing         : 'easeOutExpo',
@@ -17289,7 +17289,7 @@ $.fn.tab.settings = {
   cache           : true,   // cache the content requests to pull locally
   ignoreFirstLoad : false,  // don't load remote content on first load
 
-  apiSettings     : false,  // settings for api call
+  apiSettings     : false,  // more_settings for api call
   evaluateScripts : 'once', // whether inline scripts should be parsed (true/false/once). Once will not re-evaluate on cached content
 
   onFirstLoad : function(tabPath, parameterArray, historyEvent) {}, // called first time loaded
@@ -17395,7 +17395,7 @@ $.fn.transition = function() {
 
         initialize: function() {
 
-          // get full settings
+          // get full more_settings
           settings        = module.get.settings.apply(element, moduleArguments);
 
           // shorthand
@@ -17417,7 +17417,7 @@ $.fn.transition = function() {
 
           // method not invoked, lets run an animation
           if(methodInvoked === false) {
-            module.verbose('Converted arguments into settings object', settings);
+            module.verbose('Converted arguments into more_settings object', settings);
             if(settings.interval) {
               module.delay(settings.animate);
             }
@@ -17836,7 +17836,7 @@ $.fn.transition = function() {
         },
         get: {
           settings: function(animation, duration, onComplete) {
-            // single settings object
+            // single more_settings object
             if(typeof animation == 'object') {
               return $.extend(true, {}, $.fn.transition.settings, animation);
             }
@@ -17855,7 +17855,7 @@ $.fn.transition = function() {
                 duration  : duration
               });
             }
-            // duration is actually settings object
+            // duration is actually more_settings object
             else if(typeof duration == 'object') {
               return $.extend({}, $.fn.transition.settings, duration, {
                 animation : animation
@@ -18600,7 +18600,7 @@ $.api = $.fn.api = function(parameters) {
             settings.data = module.add.formData(settings.data);
           }
 
-          // call beforesend and get any settings changes
+          // call beforesend and get any more_settings changes
           requestSettings = module.get.settings();
 
           // check if before send cancelled request
@@ -18630,7 +18630,7 @@ $.api = $.fn.api = function(parameters) {
 
           requestSettings.url = settings.base + url;
 
-          // look for jQuery ajax parameters in settings
+          // look for jQuery ajax parameters in more_settings
           ajaxSettings = $.extend(true, {}, settings, {
             type       : settings.method || settings.type,
             data       : data,
@@ -18642,7 +18642,7 @@ $.api = $.fn.api = function(parameters) {
           });
 
           module.debug('Querying URL', ajaxSettings.url);
-          module.verbose('Using AJAX settings', ajaxSettings);
+          module.verbose('Using AJAX more_settings', ajaxSettings);
 
           if(settings.cache === 'local' && module.read.cachedResponse(url)) {
             module.debug('Response returned from local cache');
@@ -19024,7 +19024,7 @@ $.api = $.fn.api = function(parameters) {
                 response = responder.call(context, requestSettings);
               }
               else {
-                module.debug('Using settings specified response', responder);
+                module.debug('Using more_settings specified response', responder);
                 response = responder;
               }
               // simulating response
@@ -19469,7 +19469,7 @@ $.api.settings = {
   // whether to throttle first request or only repeated
   throttleFirstRequest : true,
 
-  // standard ajax settings
+  // standard ajax more_settings
   method            : 'get',
   data              : {},
   dataType          : 'json',
@@ -19518,7 +19518,7 @@ $.api.settings = {
     missingAction     : 'API action used but no url was defined',
     missingSerialize  : 'jquery-serialize-object is required to add form data to an existing data object',
     missingURL        : 'No URL specified for api event',
-    noReturnedValue   : 'The beforeSend callback must return a settings object, beforeSend ignored.',
+    noReturnedValue   : 'The beforeSend callback must return a more_settings object, beforeSend ignored.',
     noStorage         : 'Caching responses locally requires session storage',
     parseError        : 'There was an error parsing your request',
     requiredParameter : 'Missing a required URL parameter: ',
@@ -21419,7 +21419,7 @@ $.fn.visibility.settings = {
   // special visibility type (image, fixed)
   type                   : false,
 
-  // image only animation settings
+  // image only animation more_settings
   transition             : 'fade in',
   duration               : 1000,
 

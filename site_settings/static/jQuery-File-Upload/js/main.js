@@ -32,7 +32,7 @@ $(function () {
     );
 
     if (window.location.hostname === 'blueimp.github.io') {
-        // Demo settings:
+        // Demo more_settings:
         $('#fileupload').fileupload('option', {
             url: '//jquery-file-upload.appspot.com/',
             // Enable image resizing, except for Android and Opera,

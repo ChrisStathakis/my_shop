@@ -245,7 +245,7 @@ $.fn.popup = function(parameters) {
           }
           else if(settings.popup) {
             $(settings.popup).data(metadata.activator, $module);
-            module.verbose('Used popup specified in settings');
+            module.verbose('Used popup specified in more_settings');
             module.refresh();
             if(settings.hoverable) {
               module.bind.popup();
@@ -1224,7 +1224,7 @@ $.fn.popup.settings = {
 
   name         : 'Popup',
 
-  // module settings
+  // module more_settings
   debug        : false,
   verbose      : false,
   performance  : true,
@@ -1317,7 +1317,7 @@ $.fn.popup.settings = {
   // whether fluid variation should assign width explicitly
   setFluidWidth  : true,
 
-  // transition settings
+  // transition more_settings
   duration       : 200,
   transition     : 'scale',
 

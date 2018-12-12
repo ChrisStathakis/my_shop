@@ -146,7 +146,7 @@ def add_multi_bills(request, expense_type, pk, month, replays):
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-# settings  ------------------------------------------ settings  ------------------------------------------------
+# more_settings  ------------------------------------------ more_settings  ------------------------------------------------
 
 
 @method_decorator(staff_member_required, name='dispatch')

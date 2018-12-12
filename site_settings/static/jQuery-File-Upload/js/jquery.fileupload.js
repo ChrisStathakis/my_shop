@@ -200,7 +200,7 @@
             //
             // The upload starts when the submit method is invoked on the data parameter.
             // The data object contains a files property holding the added files
-            // and allows you to override plugin options as well as define ajax settings.
+            // and allows you to override plugin options as well as define ajax more_settings.
             //
             // Listeners for this callback can also be bound the following way:
             // .bind('fileuploadadd', func);
@@ -273,8 +273,8 @@
             // Callback for completed (success, abort or error) chunk upload requests:
             // chunkalways: function (e, data) {}, // .bind('fileuploadchunkalways', func);
 
-            // The plugin options are used as settings object for the ajax calls.
-            // The following are jQuery ajax settings required for the file uploads:
+            // The plugin options are used as more_settings object for the ajax calls.
+            // The following are jQuery ajax more_settings required for the file uploads:
             processData: false,
             contentType: false,
             cache: false,

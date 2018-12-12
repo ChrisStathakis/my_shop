@@ -30,7 +30,7 @@
                     '/cors/result.html?%s'
                 );
                 if (isOnGitHub) {
-                    // Demo settings:
+                    // Demo more_settings:
                     angular.extend(fileUploadProvider.defaults, {
                         // Enable image resizing, except for Android and Opera,
                         // which actually support image resizing, but fail to

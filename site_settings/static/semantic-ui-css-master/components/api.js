@@ -190,7 +190,7 @@ $.api = $.fn.api = function(parameters) {
             settings.data = module.add.formData(settings.data);
           }
 
-          // call beforesend and get any settings changes
+          // call beforesend and get any more_settings changes
           requestSettings = module.get.settings();
 
           // check if before send cancelled request
@@ -220,7 +220,7 @@ $.api = $.fn.api = function(parameters) {
 
           requestSettings.url = settings.base + url;
 
-          // look for jQuery ajax parameters in settings
+          // look for jQuery ajax parameters in more_settings
           ajaxSettings = $.extend(true, {}, settings, {
             type       : settings.method || settings.type,
             data       : data,
@@ -232,7 +232,7 @@ $.api = $.fn.api = function(parameters) {
           });
 
           module.debug('Querying URL', ajaxSettings.url);
-          module.verbose('Using AJAX settings', ajaxSettings);
+          module.verbose('Using AJAX more_settings', ajaxSettings);
 
           if(settings.cache === 'local' && module.read.cachedResponse(url)) {
             module.debug('Response returned from local cache');
@@ -614,7 +614,7 @@ $.api = $.fn.api = function(parameters) {
                 response = responder.call(context, requestSettings);
               }
               else {
-                module.debug('Using settings specified response', responder);
+                module.debug('Using more_settings specified response', responder);
                 response = responder;
               }
               // simulating response
@@ -1059,7 +1059,7 @@ $.api.settings = {
   // whether to throttle first request or only repeated
   throttleFirstRequest : true,
 
-  // standard ajax settings
+  // standard ajax more_settings
   method            : 'get',
   data              : {},
   dataType          : 'json',
@@ -1108,7 +1108,7 @@ $.api.settings = {
     missingAction     : 'API action used but no url was defined',
     missingSerialize  : 'jquery-serialize-object is required to add form data to an existing data object',
     missingURL        : 'No URL specified for api event',
-    noReturnedValue   : 'The beforeSend callback must return a settings object, beforeSend ignored.',
+    noReturnedValue   : 'The beforeSend callback must return a more_settings object, beforeSend ignored.',
     noStorage         : 'Caching responses locally requires session storage',
     parseError        : 'There was an error parsing your request',
     requiredParameter : 'Missing a required URL parameter: ',

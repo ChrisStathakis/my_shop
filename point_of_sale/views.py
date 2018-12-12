@@ -112,7 +112,7 @@ def sales(request, pk):
 def add_product_to_order_(request, dk, pk, qty=1):
     instance = get_object_or_404(RetailOrder, id=dk)
     product = get_object_or_404(Product, id=pk)
-    RetailOrderItem.create_or_edit_item(instance, product, 1, 'ADD')
+    RetailOrderItem.create_or_edit_item(instance, product, qty, 'ADD')
     if instance.order_type in ['wa', 'wr']:
         return HttpResponseRedirect(reverse('POS:warehouse_in', kwargs={'dk': dk}))
     return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': dk}))
@@ -143,88 +143,6 @@ def retail_order_done(request, pk):
     instance.status = '8'
     instance.save()
     return HttpResponseRedirect(reverse('POS:homepage'))
-
-@staff_member_required()
-def ajax_products_search(request, pk):
-    data = dict()
-    order = get_object_or_404(RetailOrder, id=pk)
-    is_sale = True if order.order_type == 'r' else False
-    search_name = request.GET.get('search_name')
-    products = None
-    if len(search_name) >= 3:
-        products = Product.my_query.active_warehouse()
-        products = products.filter(Q(title__icontains=search_name) |
-                                   Q(supply__title__icontains=search_name) |
-                                   Q(brand__title__icontains=search_name) |
-                                   Q(category__title__icontains=search_name) |
-                                   Q(color__title__icontains=search_name)
-                                   ).distinct()[:10]
-        print(products.count())
-    data['products'] = render_to_string(request=request,
-                                        template_name='PoS/ajax/products_search.html',
-                                        context={'object_list': products,
-                                                 'object': order,
-                                                 'is_sale': is_sale
-                                                 }
-                                        )
-
-    return JsonResponse(data)
-
-
-@staff_member_required()
-def ajax_add_product(request, dk, pk):
-    data = dict()
-    order = get_object_or_404(RetailOrder, id=dk)
-    product = get_object_or_404(Product, id=pk)
-    qty = request.GET.get('qty')
-    order_item_exists = RetailOrderItem.objects.filter(title=product, order=order)
-    if order_item_exists:
-        order_item = order_item_exists.last()
-        order_item.qty += Decimal(qty)
-        order_item.save()
-    else:
-        create_item = RetailOrderItem.objects.create(title=Product.objects.get(id=pk),
-                                                     order=order,
-                                                     cost=product.price_buy,
-                                                     price=product.price,
-                                                     qty=Decimal(qty),
-                                                     discount=product.price_discount,
-                                                     )
-        create_item.save()
-    data['order_details'] = render_to_string(request=request,
-                                             template_name='PoS/ajax/add_product.html',
-                                             context={'object': order})
-    return JsonResponse(data)
-
-
-@staff_member_required()
-def ajax_edit_product(request, dk):
-    data = dict()
-    product = get_object_or_404(RetailOrderItem, id=dk)
-    get_type = request.GET.get('type')
-    if get_type == 'add':
-        product.qty += 1
-    else:
-        if product.qty > 1:
-            product.qty -= 1
-    product.save()
-    order = product.order
-    data['order_details'] = render_to_string(request=request,
-                                             template_name='PoS/ajax/add_product.html',
-                                             context={'object': order})
-    return JsonResponse(data)
-
-
-@staff_member_required()
-def ajax_delete_product(request, dk):
-    data = dict()
-    product = get_object_or_404(RetailOrderItem, id=dk)
-    order = product.order
-    product.delete()
-    data['order_details'] = render_to_string(request=request,
-                                             template_name='PoS/ajax/add_product.html',
-                                             context={'object': order})
-    return JsonResponse(data)
 
 
 #  actions

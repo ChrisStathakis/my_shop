@@ -80,6 +80,9 @@ class Bill(DefaultOrderModel):
     def tag_model(self):
         return f'Bill- {self.category.title}'
 
+    def tag_category(self):
+        return f'{self.category.title}'
+
     def deposit(self):
         final_value = self.value
         if self.is_paid:
@@ -140,9 +143,11 @@ class Bill(DefaultOrderModel):
                                    ).distinct() if search_name else queryset
         return queryset
 
+
 @receiver(post_delete, sender=Bill)
 def update_billing(sender, instance, **kwargs):
     instance.category.update_balance()
+
 
 @receiver(pre_delete, sender=Bill)
 def update_on_delete_payrolls(sender, instance, *args, **kwargs):

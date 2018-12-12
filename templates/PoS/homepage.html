@@ -7,11 +7,12 @@
             <div class='card'>
                 <div class='header text-center'>
                     <h2 class="title">POS Homepage</h2>
+                    <a href="{% url 'POS:create_sale' %}" class="btn btn-success btn-raised">New Order</a>
                 </div>
                 <div class="content text-center">
                     <div class="row">
                         <div class="col-md-6"><a href="" class="btn btn-danger">New Return Order</a></div>
-                        <div class="col-md-6"><a href="{% url 'POS:create_sale' %}" class="btn btn-success">New Order</a></div>
+
                     </div>
                 </div>
             </div>

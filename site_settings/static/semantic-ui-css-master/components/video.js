@@ -187,7 +187,7 @@ $.fn.video = function(parameters) {
             var
               html
             ;
-            // allow override of settings
+            // allow override of more_settings
             source = source || settings.source;
             id     = id     || settings.id;
             if((source && id) || url) {

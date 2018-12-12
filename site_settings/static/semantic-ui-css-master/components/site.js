@@ -151,7 +151,7 @@ $.site = $.fn.site = function(parameters) {
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
               if($existingModules.length > 0) {
-                module.verbose('Modifying existing settings', $existingModules);
+                module.verbose('Modifying existing more_settings', $existingModules);
                 $existingModules[name]('setting', setting, value);
               }
             }
@@ -177,7 +177,7 @@ $.site = $.fn.site = function(parameters) {
             if(modifyExisting && namespace) {
               $existingModules = $(':data(module-' + namespace + ')');
               if($existingModules.length > 0) {
-                module.verbose('Modifying existing settings', $existingModules);
+                module.verbose('Modifying existing more_settings', $existingModules);
                 $existingModules[name]('setting', newSettings);
               }
             }

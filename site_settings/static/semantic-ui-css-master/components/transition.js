@@ -60,7 +60,7 @@ $.fn.transition = function() {
 
         initialize: function() {
 
-          // get full settings
+          // get full more_settings
           settings        = module.get.settings.apply(element, moduleArguments);
 
           // shorthand
@@ -82,7 +82,7 @@ $.fn.transition = function() {
 
           // method not invoked, lets run an animation
           if(methodInvoked === false) {
-            module.verbose('Converted arguments into settings object', settings);
+            module.verbose('Converted arguments into more_settings object', settings);
             if(settings.interval) {
               module.delay(settings.animate);
             }
@@ -501,7 +501,7 @@ $.fn.transition = function() {
         },
         get: {
           settings: function(animation, duration, onComplete) {
-            // single settings object
+            // single more_settings object
             if(typeof animation == 'object') {
               return $.extend(true, {}, $.fn.transition.settings, animation);
             }
@@ -520,7 +520,7 @@ $.fn.transition = function() {
                 duration  : duration
               });
             }
-            // duration is actually settings object
+            // duration is actually more_settings object
             else if(typeof duration == 'object') {
               return $.extend({}, $.fn.transition.settings, duration, {
                 animation : animation

@@ -1,11 +1,13 @@
 import os
-from .cache_manager import CACHES
+import datetime
+from my_shop.more_settings.cache_manager import CACHES
+import datetime
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MYSQL = False
 
-# Quick-start development settings - unsuitable for production
+# Quick-start development more_settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'reportlab',
     'social_django',
     'import_export',
+    'django_filters',
 
 ]
 
@@ -174,3 +177,23 @@ LOGIN_URL = '/login-page/'
 
 if USE_CACHE:
     CACHES=CACHES
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}

@@ -10,6 +10,8 @@ admin.site.site_title = 'Awesome Inc. Administration'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('site_settings.api_urls')),
+
     path('dashboard/', include('dashboard.urls', namespace='dashboard', )),
     path('warehouse/', include('inventory_manager.urls', namespace='inventory')),
     path('billings/', include('transcations.urls', namespace='billings')),

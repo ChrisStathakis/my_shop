@@ -1,25 +1,44 @@
-
-<table class="ui table">
+<table class="table">
     <thead>
     <tr>
-        <th></th>
-        <th>Προϊόν</th>
-        <th>Τιμή</th>
-        <th>Ποσότητα</th>
-        <th>Ενέργιες</th>
+        <th>Sku</th>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Value</th>
+        <th>Action</th>
     </tr>
     </thead>
     <tbody>
     {% for product in object_list %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ product.sku|default_if_none:'No Sku' }}</td>
             <td>{{ product }}</td>
+            <td>{{ product.category|default_if_none:'No category' }}</td>
             <td>{{ product.tag_final_price }}</td>
-            <td><input id="{{ product.id }}" name="product-{{ product.id }}" type="number" min="1" placeholder="1" value="1"></td>
             <td>
-                <a href="{% url 'pos:add_to_order' object.id product.id 1 %}" class='ui green button' >Add</a>
+                <button data-href='{% url "POS:ajax_add_products" instance.id product.id %}'
+                        class="btn btn-primary add_button"
+                >Add</button>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
+<a class="btn btn-danger" href="{% url 'POS:sales' instance.id %}">Reset</a>
+
+<script>
+    $('.add_button').click(function (event) {
+        console.log('add works!');
+        var button = $(this);
+        var url = button.attr('data-href');
+        $.ajax({
+            method: 'GET',
+            dataType: 'json',
+            url: url,
+            success: function (data) {
+                $('#order_items_container').html(data.order_items_section)
+                $('#final_value').html(data.final_value)
+            }
+        })
+    })
+</script>

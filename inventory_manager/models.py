@@ -221,6 +221,10 @@ class Order(DefaultOrderModel):
         return f'{self.total_taxes} {CURRENCY}'
     tag_total_taxes.short_description = 'Συνολικός Φόρος'
 
+    def tag_vendor(self):
+        return f'{self.vendor.title}'
+    tag_vendor.short_description = 'Προμηθευτής'
+
     def update_warehouse(self):
         self.vendor.save()
 
@@ -278,11 +282,19 @@ class Order(DefaultOrderModel):
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'Not Paid'
 
-    
-
     def tag_form_remain_value(self):
         return True if self.get_remaining_value > 0 else False
 
+
+@receiver(post_delete, sender=Order)
+def delete_order(sender, instance, **kwargs):
+    for image in instance.images.all():
+        image.delete()
+    for order_item in instance.order_items.all():
+        order_item.delete()
+    for payment in instance.payments.all():
+        payment.delete()
+    instance.vendor.save()
 
 class WarehouseOrderImage(models.Model):
     order_related = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='images')
@@ -378,6 +390,14 @@ class OrderItem(DefaultOrderItemModel):
     def tag_total_taxes(self):
         taxes = self.total_value_with_taxes - self.total_clean_value
         return f'{taxes} {CURRENCY}'
+
+    def tag_order(self):
+        return f"{self.order.title} - {self.order.vendor.title}"
+    tag_order.short_description = 'Παραστατικό'
+
+    def tag_product(self):
+        return f'{self.product.title}'
+    tag_product.short_description = 'Προϊόν'
 
     @staticmethod
     def filters_data(request, queryset):

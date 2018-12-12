@@ -1,0 +1,64 @@
+<table class='table'>
+    <thead>
+    <tr>
+        <th>Sku</th>
+        <th>Προϊόν</th>
+        <th>Ποσότητα</th>
+        <th>Τιμή</th>
+        <th>Σύνολο</th>
+        <th colspan="2">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order_item in instance.order_items.all %}
+        <tr>
+            <td>{{ order_item.title.sku }}</td>
+            <td>{{ order_item.title|truncatechars:25 }}</td>
+            <td>{{ order_item.qty }}</td>
+            <td>{{ order_item.tag_final_value }}</td>
+            <td>{{ order_item.tag_total_value  }}</td>
+            <td colspan="2">
+                <button  data-href="{% url 'POS:ajax_edit_order_item' order_item.id 1 'REMOVE' %}" class="btn btn-sm btn-warning edit_item"><i class="fa fa-arrow-down"></i></button>
+                <button  data-href="{% url 'POS:ajax_edit_order_item' order_item.id 1 'ADD' %}" class="btn btn-sm btn-success edit_item"><i class="fa fa-arrow-up"></i></button>
+                <button  data-href="{% url 'POS:ajax_edit_order_item' order_item.id 1 'DELETE' %}" class="btn btn-sm btn-danger edit_item"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan='6'>No items added</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td>Shipping Cost</td>
+        <td>{{ instance.costumer_account }}</td>
+        <td>Payment Cost</td>
+        <td></td>
+        <td>Costuer</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="4"></td>
+        <td>Final Price</td>
+        <td>{{ instance.tag_final_value }}</td>
+    </tr>
+    </tfoot>
+</table>
+
+<script>
+        $('.edit_item').click(function (event) {
+            console.log('works!')
+            var button = $(this);
+            var url = button.attr('data-href');
+            $.ajax({
+                method: 'GET',
+                dataType: 'json',
+                url: url,
+                success: function (data) {
+                    $('#order_items_container').html(data.order_items_section);
+                    $('#value_container').html(data.final_value)
+                }
+            })
+        })
+    </script>

@@ -72,6 +72,12 @@ class Shipping(models.Model):
     def tag_active_minimum_cost(self):
         return f'{self.limit_value} {CURRENCY}'
 
+    def tag_additional_cost(self):
+        return f'{self.additional_cost} {CURRENCY}'
+
+    def tag_limit_value(self):
+        return f'{self.limit_value} {CURRENCY}'
+
     def tag_active(self):
         return 'Active' if self.active else 'No Active'
 
@@ -132,11 +138,11 @@ class DefaultOrderModel(models.Model):
                                        null=True,
                                        on_delete=models.PROTECT,
                                        verbose_name='Τρόπος Πληρωμής')
-    date_expired = models.DateField(default=timezone.now)
-    value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
-    final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0)
+    date_expired = models.DateField(default=timezone.now, verbose_name='Ημερομηνία')
+    value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Αξία')
+    taxes = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Φόροι')
+    paid_value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Πληρωτέο Ποσό')
+    final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Τελική Αξίσ')
     discount = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Επιπλέον Έκπτωση')
     is_paid = models.BooleanField(default=False, verbose_name='Πληρωμένο?')
     printed = models.BooleanField(default=False)
@@ -161,6 +167,9 @@ class DefaultOrderModel(models.Model):
 
     def get_remaining_value(self):
         return self.final_value - self.paid_value
+
+    def tag_payment_method(self):
+        return f'{self.payment_method} {CURRENCY}'
 
     def create_order(self, value):
         PaymentOrders.objects.create(title=f'{self.title}',

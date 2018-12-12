@@ -123,16 +123,16 @@ $.fn.progress = function(parameters) {
           },
           settings: function() {
             if(settings.total !== false) {
-              module.debug('Current total set in settings', settings.total);
+              module.debug('Current total set in more_settings', settings.total);
               module.set.total(settings.total);
             }
             if(settings.value !== false) {
-              module.debug('Current value set in settings', settings.value);
+              module.debug('Current value set in more_settings', settings.value);
               module.set.value(settings.value);
               module.set.progress(module.value);
             }
             if(settings.percent !== false) {
-              module.debug('Current percent set in settings', settings.percent);
+              module.debug('Current percent set in more_settings', settings.percent);
               module.set.percent(settings.percent);
             }
           }
