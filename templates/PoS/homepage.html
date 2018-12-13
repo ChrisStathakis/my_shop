@@ -7,11 +7,12 @@
             <div class='card'>
                 <div class='header text-center'>
                     <h2 class="title">POS Homepage</h2>
-                    <a href="{% url 'POS:create_sale' %}" class="btn btn-success btn-raised">New Order</a>
+                    <a href="{% url 'POS:create_sale' %}" class="btn btn-success btn-raised">Νέα Πώληση</a>
                 </div>
                 <div class="content text-center">
                     <div class="row">
-                        <div class="col-md-6"><a href="" class="btn btn-danger">New Return Order</a></div>
+                        <div class="col-md-6">
+                            <a href="{% url 'POS:homepage_return' %}" class="btn btn-danger">Επιστροφές</a></div>
 
                     </div>
                 </div>
@@ -45,8 +46,10 @@
                                         <td>{{ order.tag_seller_point|default_if_none:"No data" }}</td>
                                         <td>{{ order.tag_costumer|default_if_none:"No data" }}</td>
                                         <td>{{ order.tag_final_value }}</td>
-                                        <td>{{ order.tag_status }}</td>
-                                        <td><a href="{% url 'POS:sales' order.id %}" class="btn btn-primary">Edit</a> </td>
+                                        <td {% if order.is_paid %} class="success" {% endif %}>{{ order.tag_status }}</td>
+                                        <td {% if order.is_paid %} class="success" {% endif %}>
+                                            <a href="{% url 'POS:sales' order.id %}" class="btn btn-primary">Edit</a>
+                                        </td>
                                     </tr>
                                 {% empty %}
                                     <tr>

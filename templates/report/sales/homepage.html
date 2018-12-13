@@ -15,8 +15,8 @@
             <h2 class="ui green icon header">
                 <i class="green calendar icon"></i>
                 <div class="green content">
-                    Retail Invoices
-                    <div class="sub header">Analysis</div>
+                     Πωλήσεις
+                    <div class="sub header">Διάστημα.. {{ date_start|date }} - {{ date_end|date }}</div>
                 </div>
             </h2>
         </div>
@@ -106,30 +106,36 @@
         <div class="one wide column"></div>
         <div class="four wide column">
         <div class="ui segments">
-            <div style='text-align: center' class="ui blue header segment">Sells Analysis</div>
+            <div style='text-align: center' class="ui blue header segment">Ανάλυση Πωλήσεων</div>
             <table style="text-align: center" class="ui table">
                 <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>#</th>
+                    </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
-                        <h4 class="header">Sells - Paid</h4>
+                        <h4 class="header">Πωλήσεις</h4>
                     </td>
-                    <td>{{ total_sells }} {{ currency }} - {{ paid_sells }} {{ currency }}</td>
+                    <td>{{ total_sells }} {{ currency }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Returns - Paid</h4>
+                        <h4 class="header">Πληρωμές</h4>
                     </td>
-                    <td>{{ total_returns }} {{ currency }} - {{ paid_returns }} {{ currency }}</td>
+                    <td>{{ paid_sells }} {{ currency }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Total - Paid Total</h4>
+                        <h4 class="header">Επιστροφές</h4>
+                    </td>
+                    <td>{{ total_returns }} {{ currency }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 class="header">Έσοδα</h4>
                     </td>
                     <td>{{ total }} {{ currency }} - {{ paid_total }} {{ currency }}</td>
                 </tr>
@@ -205,19 +211,20 @@
                     <thead>
                         <tr>
                             <th colspan="9">
-                                All Retail Orders
+                                Παραστατικα
                             </th>
                         </tr>
                         <tr>
                             <th>#</th>
-                            <th>Date</th>
-                            <th>Title</th>
-                            <th>Costumer</th>
-                            <th>Order Type</th>
-                            <th>Seller</th>
-                            <th>Payment Type</th>
-                            <th>Value</th>
-                            <th>Action</th>
+                            <th>Ημερομηνία</th>
+                            <th>Σχόλια</th>
+                            <th>Πελάτης</th>
+                            <th>Τύπος</th>
+                            <th>Πωλητής</th>
+                            <th>Τρόπος Πληρωμης</th>
+                            <th>Κατάσταση</th>
+                            <th>Αξία</th>
+                            <th>Λεπτομέριες</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -230,6 +237,7 @@
                                 <td>{{ order.get_order_type_display }}</td>
                                 <td>{{ order.user_account }} </td>
                                 <td>{{ order.payment_method }}</td>
+                                <td>{{ order.get_status_display }}</td>
                                 <td>{{ order.tag_final_value }}</td>
                                 <td><a href='{{ order.get_report_url }}' {% if order.is_return %} class="ui teal button" {% else %} class="ui red button" {% endif %}>Details</a></td>
                             </tr>

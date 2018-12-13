@@ -64,11 +64,17 @@
                     <div class="card">
                         <div class="header text-center" id="value_container">
                             <h3>Aξία Παραγγελίας... {{ instance.tag_final_value }}  </h3>
+                            <a onclick="return alert('Είσαι σίγουρος;')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-warning">Ακύρωση</a>
+                            <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success">Αποθήκευση</a>
                         </div>
                         <div class="content">
                            <div class="card">
                                <div class="header">
                                    <div class="title text-center">
+                                   {% if instance.is_paid %}
+                                        <a href="{% url 'POS:retail_unlock' instance.id %}" class="btn btn-warning">Ξεκλείδωμα</a>
+                                       <p>Εάν θέλετε να επεξεργαστήτε το παραστατικό θα πρέπει να το ξεκληδώσετε πρώτα</p>
+                                   {% else %}
                                        <h4>Products</h4>
                                        <form onsubmit="return ajax_search(event)" class='form' method='GET' id='cform'>
                                            <div class="row">
@@ -93,6 +99,7 @@
                                            </div>
                                            <input type="submit" hidden>
                                        </form>
+                                   {% endif %}
                                    </div>
                                </div>
                                <div class='content' id="products_container">
@@ -168,24 +175,34 @@
                     </div>
 
                     <div class="card">
-                        <div class="header"><div class="title">Actions</div></div>
+                        <div class="header text-center">
+                            <button class="btn btn-primary"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#actions_info"
+                                    aria-expanded="false"
+                                    aria-controls="actions_info"
+                            >Actions
+                            </button>
+                        </div>
                         <div class="content">
-                            <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
-                            <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised right">Paid</a>
-                        </div>
-                    </div>
+                            <div class="row collapse" id="actions_info">
+                                <div class="col-md-6">
+                                    <h4>Επεξεργασία</h4>
+                                    <form method="post">{% csrf_token %}
+                                        {{ form }}
+                                        <button type='submit' name='order_sub' class="btn btn-primary">Save</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <br> <br>
+                                    <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
+                                    <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised">Paid</a>
+                                </div>
+                            </div>
 
-                    <div class="card">
-                        <div class="header"><div class="title">Edit {{ instance }}</div></div>
-                            <div class="content">
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form }}
-                                <button type='submit' name='order_sub' class="btn btn-primary">Save</button>
-                            </form>
                         </div>
                     </div>
-                       
 
                     <div class='card'>
                         <div class="header text-center">
@@ -197,8 +214,8 @@
                                    aria-controls="general_info "
                            >Γενικές Πληροφορίες</button>
                         </div>
-                        <div class="content collapse" id="general_info">
-                            <div class="row">
+                        <div class="content">
+                            <div class="row collapse" id="general_info">
                                 <div class="col-md-6">
                                     <ul class="list-group">
                                         <li class="list-group-item"><h5>Γενικές Πληροφορίες</h5></li>
@@ -235,46 +252,41 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="header">
-                            <button class="btn btn-danger"
-                                    type="button"
-                                   data-toggle="collapse"
-                                   data-target="#edit_section"
-                                   aria-expanded="false"
-                                   aria-controls="general_info ">Επεξεργασία</button>
-                        </div>
-                    </div>
-                    <div id="edit_section">
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="header">
-                                    <h4 class="text-center">Edit Details</h4>
-                                </div>
-                                <div class="content">
-                                    <h5>Payment Orders</h5>
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Title</th>
-                                            <th>Value</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        
+
+
+            <div class="card">
+                <div class="header">
+                    <h4 class="text-center">Edit Details</h4>
+                </div>
+                <div class="content">
+                    <h5>Payment Orders</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Ημερομηνία</th>
+                            <th>Σχόλια</th>
+                            <th>Τρόπος Πληρωμής</th>
+                            <th>Ποσό</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in instance.payorders.all %}
+                                <tr>
+                                    <td>{{ payment.date_expired|date }}</td>
+                                    <td>{{ payment.title|default_if_none:"..." }}</td>
+                                    <td>{{ payment.payment_method }}</td>
+                                    <td>{{ payment.tag_final_value }}</td>
+                                </tr>
+                            {% empty %}
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
+
+
 
     <div style="margin-top: 7%" class="row"></div>
     {% include 'PoS/includes/include_ajax_calls.html' %}

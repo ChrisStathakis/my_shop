@@ -72,30 +72,33 @@ class RetailOrder(DefaultOrderModel):
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.all().aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
-        if self.status in ['7', '8']:
-            self.is_paid = True
-        if self.is_paid and self.paid_value < self.final_value and not self.order_type in ['e', 'r']:
-            print('paid section')
-            new_order = PaymentOrders.objects.create(payment_method=self.payment_method,
-                                                     value=self.final_value - self.paid_value,
-                                                     is_paid=True,
-                                                     content_type=ContentType.objects.get_for_model(RetailOrder),
-                                                     object_id=self.id,
-                                                     date_expired=datetime.datetime.now(),
-                                                     is_expense=False,
-                                                     )
-            self.paid_value += new_order.value
+        if self.paid_value >= self.final_value: self.is_paid = True
+
         super(RetailOrder, self).save(*args, **kwargs)
         if self.costumer_account:
             self.costumer_account.save()
         if self.order_type in ['b', 'd']:
             self.payorders.all().update(is_expense=True)
 
+    def create_check(self):
+        value = self.get_remaining_value()
+        if value > 0:
+            new_check = PaymentOrders.objects.create(
+                payment_method=self.payment_method,
+                value=self.final_value - self.paid_value,
+                is_paid=True,
+                content_type=ContentType.objects.get_for_model(RetailOrder),
+                object_id=self.id,
+                date_expired=datetime.datetime.now(),
+                is_expense=False,
+            )
+            if self.order_type not in ['e', 'r']: new_check.is_expense = True
+            new_check.save()
+
     def update_order(self):
         items = self.order_items.all()
         self.value = items.aggregate(Sum('total_value'))['total_value__sum'] if items else 0
         self.total_cost = items.aggregate(Sum('total_cost_value'))['total_cost_value__sum'] if items else 0
-
 
     def check_coupons(self):
         try:

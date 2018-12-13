@@ -11,6 +11,7 @@ from inventory_manager.models import Vendor, Order, OrderItem
 from point_of_sale.models import *
 from site_settings.constants import WAREHOUSE_ORDER_TYPE
 
+
 def diff_month(date_start, date_end):
     return (date_end.year - date_start.year)*12 + (date_end.month - date_start.month)
 
