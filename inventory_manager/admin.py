@@ -43,7 +43,7 @@ class OrderItemInline(admin.TabularInline):
 
 
 @admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(ImportExportModelAdmin):
     list_display = ['date_expired', 'title', 'vendor', 'is_paid', 'tag_final_value']
     list_select_related = ['vendor']
     list_per_page = 50
@@ -88,7 +88,7 @@ class OrderAdmin(admin.ModelAdmin):
         return obj
 
 @admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
+class OrderItemAdmin(ImportExportModelAdmin):
     pass
 
 
