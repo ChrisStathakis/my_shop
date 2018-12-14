@@ -40,8 +40,26 @@ class BillDetailSerializer(serializers.ModelSerializer):
                 ]
 
 
-class OccupationListApiView(serializers.ModelSerializer):
+class OccupationListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Occupation
         fields = ['id', 'title', 'active']
+
+
+class PersonListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Person
+        fields = ['id', 'title', 'occupation', 'tag_occupation',
+                  'active', 'tag_balance'
+                  ]
+
+
+class PayrollListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Payroll
+        fields = ['id', 'person', 'tag_person', 'category', 'tag_person',
+                  'tag_final_value', 'is_paid'
+                  ]

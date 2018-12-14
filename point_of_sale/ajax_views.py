@@ -83,3 +83,5 @@ def ajax_barcode_add(request, pk):
                                            context={'instance': instance}
                                            )
     return JsonResponse(data)
+
+

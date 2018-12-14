@@ -6,7 +6,8 @@ from django.db.models import F, Sum
 
 from .tools import initial_date, estimate_date_start_end_and_months
 from point_of_sale.models import RetailOrder, RetailOrderItem
-
+from site_settings.constants import ORDER_TYPES, ORDER_STATUS
+from inventory_manager.models import Vendor
 CURRENCY = settings.CURRENCY
 
 
@@ -24,6 +25,10 @@ class HomepageSellView(ListView):
     def get_context_data(self, **kwargs):
         content = super(HomepageSellView, self).get_context_data(**kwargs)
         currency = CURRENCY
+        # populate filters
+        order_types = ORDER_TYPES
+        order_status = ORDER_STATUS
+
         sells = self.object_list.filter(order_type__in=['r', 'e'])
         returns = self.object_list.filter(order_type='b')
         removes = self.object_list.filter(order_type='wr')

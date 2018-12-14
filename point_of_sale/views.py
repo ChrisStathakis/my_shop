@@ -26,6 +26,7 @@ from site_settings.tools import initial_date
 
 # Retail Pos
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class HomePage(ListView):
     template_name = 'PoS/homepage.html'
@@ -124,7 +125,29 @@ class HomepageRetailReturnOrder(ListView):
     template_name = 'PoS/return_section/homepage_return.html'
 
     def get_queryset(self):
-        date_start, date_end = initial_date(self.request)
+        date_start, date_end, date_range = initial_date(self.request)
         queryset = RetailOrder.my_query.get_queryset().returns(date_start, date_end)
-
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(HomepageRetailReturnOrder, self).get_context_data(**kwargs)
+        date_start, date_end, date_range = initial_date(self.request)
+        retail_orders = RetailOrder.my_query.sells_orders(date_start, date_end)
+        context.update(locals())
+        return context
+
+
+@staff_member_required
+def create_order_return_from_order_view(request, pk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    return_instance, created = RetailOrder.objects.get_or_create(order_type='b',
+                                                        order_related=instance
+                                                        )
+    for order_item in instance.order_items.all():
+        new_order_item = order_item
+        new_order_item.pk = None
+        new_order_item.order = return_instance
+        new_order_item.is_return = True
+        new_order_item.save()
+    return_instance.refresh_from_db()
+    return HttpResponseRedirect(reverse('POS:sales', kwargs={'pk': return_instance.id}))

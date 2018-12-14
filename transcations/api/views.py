@@ -4,8 +4,11 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import (BillCategoryListSerializer, BillCategoryDetailSerializer,
-                          BillListSerializer, BillDetailSerializer)
-from ..models import Bill, BillCategory
+                          BillListSerializer, BillDetailSerializer,
+                          OccupationListSerializer,
+                          PersonListSerializer,
+                          PayrollListSerializer,)
+from ..models import Bill, BillCategory, Occupation, Person, Payroll
 
 
 @api_view(['GET'])
@@ -39,4 +42,21 @@ class BillListApiView(generics.ListCreateAPIView):
 class BillDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BillDetailSerializer
     queryset = Bill.objects.all()
+    permission_classes = [permissions.IsAuthenticated, ]
+
+
+class OccupationListApiView(generics.ListCreateAPIView):
+    serializer_class = OccupationListSerializer
+    queryset = Occupation.objects.all()
+    permissions_classes = [permissions.IsAuthenticated, ]
+
+
+class PersonListApiView(generics.ListCreateAPIView):
+    serializer_class = PersonListSerializer
+    queryset = Person.objects.all()
+    permission_classes = [permissions.isAutheticated, ]
+
+class PayrollListApiView(generics.ListCreateAPIView):
+    serializer_class = PayrollListSerializer
+    queryset = Payroll.objects.all()
     permission_classes = [permissions.IsAuthenticated, ]

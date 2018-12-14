@@ -220,6 +220,9 @@ class Person(models.Model):
     def tag_balance(self):
         return '%s %s' % (self.balance, CURRENCY)
 
+    def tag_occupation(self):
+        return f'{self.occupation.title}'
+
     def get_dashboard_url(self):
         return reverse('billings:person_detail', kwargs={'pk': self.id})
     tag_balance.short_description = 'Υπόλοιπο'
@@ -261,6 +264,9 @@ class Payroll(DefaultOrderModel):
 
     def tag_model(self):
         return f'Payroll - {self.person.title}'
+
+    def tag_person(self):
+        return f'{self.person.title}'
 
     def deposit(self):
         final_value = self.value

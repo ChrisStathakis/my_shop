@@ -53,7 +53,7 @@ class RetailOrder(DefaultOrderModel):
 
     cart_related = models.OneToOneField(Cart, blank=True, null=True, on_delete=models.SET_NULL)
     coupons = models.ManyToManyField(Coupons, blank=True)
-    order_related = models.ForeignKey('self', blank=True, null=True, on_delete = models.CASCADE)
+    order_related = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     payorders = GenericRelation(PaymentOrders)
 
     class Meta:

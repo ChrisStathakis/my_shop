@@ -1,5 +1,85 @@
-{% extends 'PoS/homepage.html' %}
+{% extends 'dashboard/dashboard.html' %}
 
 {% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class='col-12'>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="header">
+                                <div class="title">Παραστατικά Επιστροφών</div>
+                            </div>
+                            <div class="container">
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ημερομηνία</th>
+                                            <th>Σχόλια</th>
+                                            <th>Πελάτης</th>
+                                            <th>Αξία</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in object_list %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ order.date_expired }}</td>
+                                                <td>{{ order.title }}</td>
+                                                <td>{{ order.costumer_account }}</td>
+                                                <td>{{ order.tag_final_value }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td>Δε υπάρχουν παραστατικά</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="header"><div class="title">Παραστατικά Πωλήσεων</div> </div>
+                            <div class="container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ημερομηνία</th>
+                                            <th>Σχόλια</th>
+                                            <th>Πελάτης</th>
+                                            <th>Αξία</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in retail_orders %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ order.date_expired }}</td>
+                                                <td>{{ order.title }}</td>
+                                                <td>{{ order.costumer_account }}</td>
+                                                <td>{{ order.tag_final_value }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td>Δε υπάρχουν παραστατικά</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="order_detail">
 
+            </div>
+        </div>
+    </div>
 {% endblock %}

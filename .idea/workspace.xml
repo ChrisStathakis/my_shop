@@ -8,14 +8,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/my_shop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/my_shop.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/ajax_views.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/ajax_views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/point_of_sale/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/point_of_sale/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/point_of_sale/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reports/tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports/tools.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/PoS/homepage.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/PoS/homepage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/view_sells.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports/view_sells.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/site_settings/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/PoS/sales.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/PoS/sales.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/report/sales/homepage.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/report/sales/homepage.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/test_db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/transcations/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/transcations/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/transcations/models.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/httpRequests/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,13 +49,25 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/point_of_sale/views.py">
+          <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/transcations/api/serializers.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2057">
-                  <caret line="121" column="31" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="31" />
+                <state relative-caret-position="664">
+                  <caret line="64" column="18" selection-start-line="64" selection-start-column="18" selection-end-line="64" selection-end-column="18" />
                   <folding>
-                    <element signature="e#0#86#0" expanded="true" />
+                    <element signature="e#0#38#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/transcations/api/views.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="341">
+                  <caret line="61" column="56" selection-start-line="61" selection-start-column="56" selection-end-line="61" selection-end-column="56" />
+                  <folding>
+                    <element signature="e#0#48#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -61,10 +78,13 @@
       <split-second>
         <leaf>
           <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
+            <entry file="file://$PROJECT_DIR$/transcations/models.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-391">
-                  <caret line="80" column="56" selection-start-line="80" selection-start-column="56" selection-end-line="80" selection-end-column="56" />
+                <state relative-caret-position="357">
+                  <caret line="268" column="35" selection-start-line="268" selection-start-column="35" selection-end-line="268" selection-end-column="35" />
+                  <folding>
+                    <element signature="e#0#28#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -121,8 +141,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/snippets/payment_filters.html" />
-        <option value="$PROJECT_DIR$/templates/snippets/invoices_filter.html" />
         <option value="$PROJECT_DIR$/inventory_manager/admin.py" />
         <option value="$PROJECT_DIR$/templates/report/warehouse/orders_id.html" />
         <option value="$PROJECT_DIR$/products/forms.py" />
@@ -150,7 +168,6 @@
         <option value="$PROJECT_DIR$/accounts/urls.py" />
         <option value="$PROJECT_DIR$/accounts/api/views.py" />
         <option value="$PROJECT_DIR$/templates/PoS/ajax/order_items.html" />
-        <option value="$PROJECT_DIR$/point_of_sale/ajax_views.py" />
         <option value="$PROJECT_DIR$/templates/PoS/includes/products.html" />
         <option value="$PROJECT_DIR$/transcations/api/urls.py" />
         <option value="$PROJECT_DIR$/site_settings/api_urls.py" />
@@ -159,19 +176,22 @@
         <option value="$PROJECT_DIR$/site_settings/api/views.py" />
         <option value="$PROJECT_DIR$/site_settings/api/serializers.py" />
         <option value="$PROJECT_DIR$/site_settings/models.py" />
-        <option value="$PROJECT_DIR$/transcations/models.py" />
         <option value="$PROJECT_DIR$/my_shop/settings.py" />
-        <option value="$PROJECT_DIR$/transcations/api/views.py" />
-        <option value="$PROJECT_DIR$/transcations/api/serializers.py" />
-        <option value="$PROJECT_DIR$/point_of_sale/models.py" />
-        <option value="$PROJECT_DIR$/templates/PoS/sales.html" />
-        <option value="$PROJECT_DIR$/templates/report/sales/homepage.html" />
         <option value="$PROJECT_DIR$/point_of_sale/managers.py" />
         <option value="$PROJECT_DIR$/reports/tools.py" />
-        <option value="$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html" />
-        <option value="$PROJECT_DIR$/point_of_sale/views.py" />
-        <option value="$PROJECT_DIR$/point_of_sale/urls.py" />
         <option value="$PROJECT_DIR$/templates/PoS/homepage.html" />
+        <option value="$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html" />
+        <option value="$PROJECT_DIR$/point_of_sale/models.py" />
+        <option value="$PROJECT_DIR$/point_of_sale/ajax_views.py" />
+        <option value="$PROJECT_DIR$/point_of_sale/urls.py" />
+        <option value="$PROJECT_DIR$/templates/PoS/sales.html" />
+        <option value="$PROJECT_DIR$/point_of_sale/views.py" />
+        <option value="$PROJECT_DIR$/reports/view_sells.py" />
+        <option value="$PROJECT_DIR$/templates/report/sales/homepage.html" />
+        <option value="$PROJECT_DIR$/site_settings/constants.py" />
+        <option value="$PROJECT_DIR$/transcations/models.py" />
+        <option value="$PROJECT_DIR$/transcations/api/serializers.py" />
+        <option value="$PROJECT_DIR$/transcations/api/views.py" />
       </list>
     </option>
   </component>
@@ -202,6 +222,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -212,13 +233,18 @@
             <path>
               <item name="my_shop" type="b2602c69:ProjectViewProjectNode" />
               <item name="my_shop" type="462c0819:PsiDirectoryNode" />
-              <item name="point_of_sale" type="462c0819:PsiDirectoryNode" />
+              <item name="transcations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="my_shop" type="b2602c69:ProjectViewProjectNode" />
+              <item name="my_shop" type="462c0819:PsiDirectoryNode" />
+              <item name="transcations" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -228,19 +254,19 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\my_site\static\home" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\my_site" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static\boot_datepicker" />
-      <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Zefarak\Desktop\my_shop\my_shop\settings" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\settings" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\PoS\ajax" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\inventory_manager" />
       <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\my_site\static\home" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates\my_site" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\templates" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static\boot_datepicker" />
+      <recent name="C:\Users\Zefarak\Desktop\my_shop\site_settings\static" />
     </key>
   </component>
   <component name="RestClientSettings">
@@ -1039,7 +1065,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -1048,12 +1074,13 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32837406" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1265625" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32750398" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13396779" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="manage.py@my_shop" order="7" weight="0.31160572" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -1063,32 +1090,31 @@
       <window_info anchor="right" id="Data View" order="3" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="manage.py@my_shop" order="7" weight="0.3290938" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1265625" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13396779" />
       <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="manage.py@my_shop" order="8" weight="0.31160572" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="Data View" order="4" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Python Console" order="9" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" id="Database" order="5" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.32837406" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.32750398" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="manage.py@my_shop" order="11" weight="0.3290938" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
@@ -1136,7 +1162,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/report/warehouse/vendors_list.html" />
     <entry file="file://$PROJECT_DIR$/templates/report/warehouse_order_items_movements.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -1243,13 +1268,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/ajax_views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3">
-          <caret line="49" column="38" selection-start-line="49" selection-start-column="38" selection-end-line="49" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/PoS/includes/products.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="201">
@@ -1268,16 +1286,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="12" column="52" selection-start-line="12" selection-start-column="52" selection-end-line="12" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/site_settings/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="48" selection-start-line="10" selection-start-column="48" selection-end-line="10" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1335,26 +1343,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transcations/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-680">
-          <caret line="68" column="30" selection-start-line="68" selection-start-column="30" selection-end-line="68" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transcations/api/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/transcations/api/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -1362,57 +1350,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transcations/api/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="30" column="50" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/PoS/sales.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="74" column="122" selection-start-line="74" selection-start-column="122" selection-end-line="74" selection-end-column="122" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/site_settings/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1275" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/report/sales/homepage.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="239" column="63" selection-start-line="239" selection-start-column="63" selection-end-line="239" selection-end-column="63" />
-          <folding>
-            <element signature="e#5818#5844#0#HTML" expanded="true" />
-            <element signature="e#5916#5942#0#HTML" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/reports/view_sells.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-255">
-          <folding>
-            <element signature="e#0#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/point_of_sale/tests.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-391">
-          <caret line="80" column="56" selection-start-line="80" selection-start-column="56" selection-end-line="80" selection-end-column="56" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/point_of_sale/managers.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1428,29 +1367,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/site_settings/tools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="14" column="87" selection-start-line="14" selection-start-column="87" selection-end-line="14" selection-end-column="87" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="11" selection-start-line="4" selection-start-column="11" selection-end-line="4" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/PoS/homepage.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -1458,12 +1374,141 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/site_settings/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="48" selection-start-line="10" selection-start-column="48" selection-end-line="10" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/PoS/return_section/homepage_return.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="81" column="18" lean-forward="true" selection-start-line="81" selection-start-column="18" selection-end-line="81" selection-end-column="18" />
+          <folding>
+            <element signature="e#165#231#0#HTML" />
+            <element signature="e#1064#1168#0#HTML" />
+            <element signature="e#248#314#0#HTML" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4964">
+          <caret line="29" column="37" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/point_of_sale/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2057">
-          <caret line="121" column="31" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="31" />
+        <state relative-caret-position="2414">
+          <caret line="142" column="28" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="28" />
           <folding>
             <element signature="e#0#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/PoS/sales.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="202" column="36" selection-start-line="202" selection-start-column="36" selection-end-line="202" selection-end-column="36" />
+          <folding>
+            <element signature="n#block#0;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/ajax_views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="87" selection-start-line="87" selection-end-line="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/report/sales/homepage.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1293">
+          <caret line="103" column="64" selection-start-line="103" selection-start-column="64" selection-end-line="103" selection-end-column="64" />
+          <folding>
+            <element signature="e#139#170#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/view_sells.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="29" column="20" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/site_settings/tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="20" column="44" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/site_settings/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="99" selection-start-line="99" selection-end-line="99" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/api/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transcations/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="268" column="35" selection-start-line="268" selection-start-column="35" selection-end-line="268" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transcations/api/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="664">
+          <caret line="64" column="18" selection-start-line="64" selection-start-column="18" selection-end-line="64" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transcations/api/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="61" column="56" selection-start-line="61" selection-start-column="56" selection-end-line="61" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>

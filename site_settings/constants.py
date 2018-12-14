@@ -78,23 +78,23 @@ STATUS_SITE = (
 
 
 #  retail
-ORDER_TYPES = [('r', 'Retail Order'),
-               ('e', 'Eshop Invoice'),
-               ('b', 'Return Order'),
-               ('c', 'Cancel Order'),
+ORDER_TYPES = [('r', 'Λιανική Πώληση'),
+               ('e', 'Πώληση Eshop'),
+               ('b', 'Παραστατικό Επιστροφής'),
+               ('c', 'Ακυρωμένη Παραγγελία'),
                ('wa', 'Παραστατικό Εισαγωγής'),
-               ('wr', 'Export Invoice'),
+               ('wr', 'Παραστατικό Εξαγωγής'),
                ]
 
 ORDER_STATUS = (
-    ('1', 'New Order'),
-    ('2', 'In Progress'),
-    ('3', 'Ready for Send'),
-    ('4', 'Sent'),
-    ('5', 'Return'),
-    ('6', 'Cancel'),
-    ('7', 'Receipted'),
-    ('8', 'Done') # never change that
+    ('1', 'Νέα Παραγγελία'),
+    ('2', 'Σε επεξεργασία'),
+    ('3', 'Έτοιμη προς αποστολή'),
+    ('4', 'Απεστάλη'),
+    ('5', 'Επιστράφηκε'),
+    ('6', 'Ακυρώθηκε'),
+    ('7', 'Εισπράκτηκε'),
+    ('8', 'Ολοκληρώθηκε') # never change that
         )
 
 

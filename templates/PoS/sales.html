@@ -198,6 +198,9 @@
                                     <br> <br>
                                     <a onclick="return confirm('Are you sure?')" href="{% url 'POS:delete_order' instance.id %}" class="btn btn-danger btn-lg btn-raised">Delete</a>
                                     <a href="{% url 'POS:retail_order_done' instance.id %}" class="btn btn-success btn-lg btn-raised">Paid</a>
+                                    <a href="{% url 'POS:return_order_from_retail' instance.id %}" class="btn btn-primary">
+                                        Δημιουργία Παραστατικού Επιστροφής
+                                    </a>
                                 </div>
                             </div>
 

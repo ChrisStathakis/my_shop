@@ -1,10 +1,11 @@
 {% extends 'index.html' %}
 
 {% block down_menu %}
-<div class="ui three item bottom fixed menu">
-    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Retail Orders</a>
-    <a href="{% url 'reports:product_warning' %}" class="item">Costumers</a>
-    <a href="{% url 'reports:product_warning' %}" class="item">Sellers</a>
+<div class="ui four item bottom fixed menu">
+    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Παραστατικά</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Προϊόντα</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Πελάτες</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Καταστήματα</a>
 </div>
 {% endblock %}
 
@@ -15,7 +16,7 @@
             <h2 class="ui green icon header">
                 <i class="green calendar icon"></i>
                 <div class="green content">
-                     Πωλήσεις
+                     Παραστατικά
                     <div class="sub header">Διάστημα.. {{ date_start|date }} - {{ date_end|date }}</div>
                 </div>
             </h2>
@@ -74,18 +75,34 @@
                                 {% endfor %}
                             </div>
                             <div class="field">
-                                <label>Επέλεξε Προμηθευτή</label>
-                                {% for vendor in vendors %}
+                                <label>Επέλεξε Είδος Παραστατικού</label>
+                                {% for order_type in order_types %}
                                     {% if vendor.id|stringformat:"s" in vendor_name %}
                                         <div class="ui slider checkbox">
                                             <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
-                                            <label>{{ vendor }}</label>
+                                            <label>{{ order_type.1 }}</label>
                                         </div>
                                     {% else %}
                                         <div class="ui slider checkbox">
                                             <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
-                                            <label>{{ vendor }}</label>
+                                            <label>{{ order_type.1 }}</label>
                                         </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="field">
+                                <label>Επέλεξε Κατάσταση</label>
+                                {% for status in order_status %}
+                                    {% if vendor.id|stringformat:"s" in vendor_name %}
+                                            <div class="ui slider checkbox">
+                                                <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
+                                                <label>{{ status.1 }}</label>
+                                            </div>
+                                    {% else %}
+                                            <div class="ui slider checkbox">
+                                                <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
+                                                <label>{{ status.1 }}</label>
+                                            </div>
                                     {% endif %}
                                 {% endfor %}
                             </div>

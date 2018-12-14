@@ -11,6 +11,8 @@ urlpatterns = [
     path('sales/retail_order_done/<int:pk>/', retail_order_done, name='retail_order_done'),
     path('sales/retail-unlock/<int:pk>/', retail_order_unlock, name='retail_unlock'),
 
+    path('return-order/<int:pk>/', create_order_return_from_order_view, name='return_order_from_retail'),
+
     # return url
     path('homepage_return/', HomepageRetailReturnOrder.as_view(), name='homepage_return'),
 
