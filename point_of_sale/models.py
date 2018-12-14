@@ -105,7 +105,7 @@ class RetailOrder(DefaultOrderModel):
             total_value = 0
             active_coupons = Coupons.my_query.active_date(date=datetime.datetime.now())
             for coupon in self.coupons.all():
-                if coupon in active_coupons :
+                if coupon in active_coupons:
                     if self.value > coupon.cart_total_value:
                         total_value += coupon.discount_value if coupon.discount_value else \
                         (coupon.discount_percent/100)*self.value if coupon.discount_percent else 0
@@ -320,7 +320,7 @@ def update_on_delete_retail_order(sender, instance, *args, **kwargs):
 
 
 class RetailOrderItem(DefaultOrderItemModel):
-    order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_items')
+    order = models.ForeignKey(RetailOrder, on_delete=models.PROTECT, related_name='order_items')
     cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     #  warehouse_management
@@ -389,7 +389,7 @@ class RetailOrderItem(DefaultOrderItemModel):
         return "{0:.2f}".format(round(self.value*self.qty,2)) + ' %s'%(CURRENCY)
 
     def price_for_vendor_page(self):
-        #returns silimar def for price in vendor_id page
+        #  returns silimar def for price in vendor_id page
         return self.value
 
     def absolute_url_vendor_page(self):

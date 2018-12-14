@@ -54,7 +54,8 @@ class OccupationListApiView(generics.ListCreateAPIView):
 class PersonListApiView(generics.ListCreateAPIView):
     serializer_class = PersonListSerializer
     queryset = Person.objects.all()
-    permission_classes = [permissions.isAutheticated, ]
+    permission_classes = [permissions.IsAuthenticated, ]
+
 
 class PayrollListApiView(generics.ListCreateAPIView):
     serializer_class = PayrollListSerializer
