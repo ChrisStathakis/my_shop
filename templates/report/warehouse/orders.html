@@ -206,12 +206,12 @@
                             <th>Καθαρή Αξία</th>
                             <th>Φόροι</th>
                             <th>Τελική Αξία</th>
-                            <th>Πληρωτέο Ποσό</th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in orders %}
+                        {% for order in object_list %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ order.date_expired|date }}</td>
@@ -221,8 +221,12 @@
                                 <td>{{ order.payment_method }}</td>
                                 <td>{{ order.tag_clean_value }} </td>
                                 <td>{{ order.tag_total_taxes }}</td>
-                                <td class="positive">{{ order.tag_final_value }}</td>
-                                <td class="negative">{{ order.tag_paid_value }}</td>
+                                <td {% if order.is_paid %}
+                                        class="positive"
+                                        {% else %} class="negative" {% endif %}
+                                    >{{ order.tag_final_value }}
+                                </td>
+
                                 <td><a href='{{ order.get_report_url }}' class="ui teal button">Details</a></td>
                             </tr>
                         {% endfor %}

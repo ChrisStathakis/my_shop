@@ -7,8 +7,8 @@
                     <input
                             type="radio"
                             name="is_paid_name"
-                            value="a"
-                            {% if is_paid_name == 'a' %} checked {% endif %}
+                            value="paid"
+                            {% if is_paid_name == 'paid' %} checked {% endif %}
                     >
                     <label>Πληρωμένο</label>
                 </div>
@@ -18,8 +18,8 @@
                     <input
                             type="radio"
                             name="is_paid_name"
-                            value="b"
-                            {% if is_paid_name == 'b' %} checked {% endif %}
+                            value="not_paid"
+                            {% if is_paid_name == 'not_paid' %} checked {% endif %}
                     >
                     <label>Μη πληρωμένο</label>
                 </div>

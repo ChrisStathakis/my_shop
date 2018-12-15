@@ -252,7 +252,7 @@ class Order(DefaultOrderModel):
             queryset = queryset.filter(Q(title__icontains=search_name) |
                                        Q(vendor__title__icontains=search_name)
                                        ).dinstict() if search_name else queryset
-            queryset = queryset.filter(date_created__range=[date_start, date_end]) if date_start else queryset
+            queryset = queryset.filter(date_expired__range=[date_start, date_end]) if date_start else queryset
             queryset = queryset.filter(is_paid=True) if paid_name == 'paid' else queryset.filter(is_paid=False) \
                 if paid_name == 'not_paid' else queryset
             queryset = queryset.filter(total_price__gte=balance_name) if balance_name else queryset
@@ -295,6 +295,7 @@ def delete_order(sender, instance, **kwargs):
     for payment in instance.payments.all():
         payment.delete()
     instance.vendor.save()
+
 
 class WarehouseOrderImage(models.Model):
     order_related = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='images')

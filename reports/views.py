@@ -230,8 +230,7 @@ class WarehouseOrderView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        content = super(WarehouseOrderView, self).get_context_data(**kwargs)
-
+        content = super().get_context_data(**kwargs)
         date_start, date_end = filter_date(self.request)
         orders, currency = self.object_list, CURRENCY
         vendors, payment_method, order_types = initial_data_invoices()

@@ -54,7 +54,7 @@
     <div class="one wide column"></div>
     <div class="three wide column">
         <div class="ui segments">
-            <div style='text-align: center' class="ui inverted blue segment">Info</div>
+            <div style='text-align: center' class="ui inverted blue segment">Πληροφορίες</div>
             <div style='text-align: center' class="ui blue header segment">Warehouse data</div>
             <table style="text-align: center" class="ui table">
                 <thead>
@@ -66,19 +66,19 @@
                 <tbody>
                 <tr>
                     <td>
-                        <h4 class="header">Vendor</h4>
+                        <h4 class="header">Προμηθευτής</h4>
                     </td>
                     <td>{{ product.vendor|default_if_none:'No data' }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Warehouse Category</h4>
+                        <h4 class="header">Κατηγορία Αποθήκης</h4>
                     </td>
                     <td>{{ product.category|default_if_none:'No data' }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Category Site</h4>
+                        <h4 class="header">Κατηγορία Site</h4>
                     </td>
                     <td>{{ product.category_site.all|default_if_none:'No data' }}</td>
                 </tr>
@@ -94,14 +94,14 @@
                     <td>{{ product.sku|default_if_none:'No data' }}</td>
                 </tr><tr>
                     <td>
-                        <h4 class="header">Invoice code</h4>
+                        <h4 class="header">Κωδικός Τιμολογίου</h4>
                     </td>
                     <td>{{ product.order_code|default_if_none:'No data' }}</td>
                 </tr>
                 </tbody>
             </table>
 
-            <div style='text-align: center' class="ui blue header segment">Prices</div>
+            <div style='text-align: center' class="ui blue header segment">Τιμές</div>
             <table style="text-align: center" class="ui table">
                 <thead>
                 <tr>
@@ -112,48 +112,48 @@
                 <tbody>
                 <tr>
                     <td>
-                        <h4 class="header">Price buy - Final</h4>
+                        <h4 class="header">Αρχική Τιμή Αγοράς - Τελική Τιμή</h4>
                     </td>
                     <td>{{ product.tag_price_buy }} - {{ product.tag_price_buy_final }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Price - Final Price</h4>
+                        <h4 class="header">Αρχική Τιμή Πώλησης - Τελική Τιμή</h4>
                     </td>
                     <td>{{ product.tag_price }} - {{ product.tag_final_price }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Qty</h4>
+                        <h4 class="header">Ποσότητα</h4>
                     </td>
                     <td>{{ product.qty }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Sizes</h4>
+                        <h4 class="header">Μεγεθολόγιο</h4>
                     </td>
                     <td>No added</td>
                 </tr>
                 </tbody>
             </table>
-            <div style='text-align: center' class="ui blue header segment">Date range analysis<br>
-                <a class='ui green label'>Incomes  {{ retail_items_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
-                <a class='ui red label'>Buys {{ order_items_analysis.0.total_tax|floatformat:2 }} {{ currency }}</a>
-                <a class='ui blue label'>REturns {{ return_products_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
+            <div style='text-align: center' class="ui blue header segment">Ανάλυση Επιλεγμένου Διαστήματος<br>
+                <a class='ui green label'>Έσοδα  {{ retail_items_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
+                <a class='ui red label'>Αγορές {{ order_items_analysis.0.total_tax|floatformat:2 }} {{ currency }}</a>
+                <a class='ui blue label'>Επιστροφές {{ return_products_analysis.0.total_incomes|floatformat:2 }} {{ currency }}</a>
             </div>
             
-            <div style='text-align: center' class="ui  segment">Balance Sheet {{ win_or_loss }} {{ currency }} </div>
+            <div style='text-align: center' class="ui  segment">Ισολογισμός {{ win_or_loss }} {{ currency }} </div>
         </div>
         <div style="margin-bottom: 10%" class="ui segment"></div>
     </div>
     <div class="eleven wide column">
         <div class="ui two column grid">
             <div style="text-align: center" class="column">
-               <h2 class="ui blue header">
+               <h2 class="ui red header">
                    <i class="education_paper icon"></i>
                    <div class="content">
-                       Warehouse Invoices
-                       <div class="sub header">Total</div>
+                       Παραστατικά Αποθήκης
+                       <div class="sub red  header">Σύνολα</div>
                    </div>
                </h2>
                 <div class="ui feed">
@@ -190,8 +190,8 @@
                <h2 class="ui green header">
                    <i class="settings icon"></i>
                    <div class="content">
-                       Sells
-                       <div class="sub header">Total</div>
+                       Παραστατικά Πωλήσεων
+                       <div class="sub header">Σύνολα</div>
                    </div>
                </h2>
                 <div class="ui feed">
