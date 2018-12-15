@@ -8,6 +8,15 @@ from site_settings.admin_tools import admin_changelist_link
 from site_settings.models import PaymentOrders
 
 
+def update_vendor(modeladmin, request, queryset):
+    for order in queryset:
+        items = order.order_items.all()
+        for item in items:
+            product = item.product
+            product.vendor = order.vendor
+            product.save()
+
+
 class PaymentOrderInline(GenericTabularInline):
     model = PaymentOrders
     extra = 1
@@ -49,6 +58,7 @@ class OrderAdmin(ImportExportModelAdmin):
     list_per_page = 50
     list_filter = ['vendor', 'is_paid']
     inlines = [OrderPhotoInline, OrderItemInline, PaymentOrderInline]
+    actions = [update_vendor, ]
 
     fieldsets = (
         ('General', {

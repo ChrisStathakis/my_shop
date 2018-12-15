@@ -333,9 +333,8 @@ class OrderItem(DefaultOrderItemModel):
             queryset = self.attributes.all()
             self.qty = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
         '''
-        self.value = Decimal(self.total_clean_value) / Decimal(self.qty)
         self.final_value = Decimal(self.value) * (100 - self.discount_value) / 100
-        # self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
+        self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
         self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100 + self.get_taxes_display()) / 100)
         super(OrderItem, self).save(*args, **kwargs)
         self.product.price_buy = self.value
@@ -359,7 +358,6 @@ class OrderItem(DefaultOrderItemModel):
             product = self.product
             product.qty += qty
             product.save()
-
 
     @staticmethod
     def add_to_order(request, product, order):

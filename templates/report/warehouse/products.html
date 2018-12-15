@@ -1,11 +1,48 @@
 {% extends 'report/warehouse.html' %} 
 
+{% block extra_js %}
+<script xmlns="http://www.w3.org/1999/html">
+    $('#search_pro').keyup(function() {
+        console.log('button pressed!dfdf');
+        var my_form = $('#filter_form').serialize();
+        $.ajax({
+            url: "{% url 'reports:ajax_product_search' %}",
+            dataType: 'json',
+            data: my_form,
+            success: function(data) {
+                 $('#ajax_container').html(data.result_data)
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $('.warehouse_analysis').click(function() {
+        $('#ajax_container').html('<h2 class="ui header">Περιμένετε λίγο</h2>');
+        var btn = $(this);
+        var my_form = $('#filter_form').serialize();
+        console.log(my_form);
+        $('#ajax_container').html('<h4>Waiting....</h4>');
+        console.log(my_form);
+        $.ajax({
+            url: btn.attr('data-url'),
+            dataType: 'json',
+            data: my_form + '&analysis='+ btn.attr('data-slug'),
+            success: function(data) {
+                $('#ajax_container').html(data.results)
+            }
+        })
+
+    })
+</script>
+
+{% endblock %}
 
 
 {% block content %}
     <div class="sixteen wide column">
         <h2 class="ui center aligned icon header">
-            <i class="circular blue file icon"></i> Products
+            <i class="circular blue file icon"></i> Προϊόντα
         </h2>
     </div>
 
@@ -26,16 +63,16 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
              <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="warehouse_analysis" id="button-analysis">Calculate Qty Analysis
+                    data-slug="warehouse_analysis">Ανάλυση Αποθεμάτος
             </button>
             <button class="ui blue button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="brand_analysis" id="button-analysis">Analysis Per Brand
+                    data-slug="brand_analysis">Ανάλυση ανα Brand
             </button>
             <button class="ui green button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="sells_analysis" id="button-analysis">Sells Selected
+                    data-slug="sells_analysis">Sells Selected
             </button>
             <button class="ui red button warehouse_analysis" data-url="{% url 'reports:ajax_products_analysis' %}"
-                    data-slug="vendor_analysis" id="button-analysis">Buys Selected
+                    data-slug="vendor_analysis" >Ανάλυση ανα Προμηθευτή
             </button>
         </div>
         <div class="two wide column"></div>
@@ -106,38 +143,5 @@
 
 <div style="margin-bottom: 5%" class="row"></div>
 
-<script xmlns="http://www.w3.org/1999/html">
-    $('#search_pro').keyup(function() {
-        console.log('button pressed!dfdf');
-        var my_form = $('#filter_form').serialize();
-        $.ajax({
-            url: "{% url 'reports:ajax_product_search' %}",
-            dataType: 'json',
-            data: my_form,
-            success: function(data) {
-                 $('#ajax_container').html(data.result_data)
-            }   
-        });
-    });
-</script>
 
-<script type="text/javascript">
-    $('.warehouse_analysis').click(function() {
-        $('#ajax_container').html('<h2 class="ui header">Περιμένετε λίγο</h2>');
-        var btn = $(this);
-        var my_form = $('#filter_form').serialize();
-        console.log(my_form);
-        $('#ajax_container').html('<h4>Waiting....</h4>');
-        console.log(my_form);
-        $.ajax({
-            url: btn.attr('data-url'),
-            dataType: 'json',
-            data: my_form + '&analysis='+ btn.attr('data-slug'),
-            success: function(data) {
-                $('#ajax_container').html(data.results)
-            }
-        })
-
-    })
-</script>
 {% endblock %}

@@ -5,6 +5,11 @@ from django.db.models.functions import TruncMonth
 
 from .tools import initial_date
 
+
+
+
+
+
 def ajax_analyse_vendors(request):
     data = dict()
     date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
@@ -67,7 +72,7 @@ def ajax_warehouse_product_movement_vendor_analysis(request):
         order__day_created__range=[date_start, date_end]))
     product_analysis = warehouse_order_items.values('product').annotate(
         total_sum=Sum('total_clean_value')).order_by('-total_sum')
-    category_analysis = warehouse_order_items.values('product__supply__title').annotate(total_sum=Sum('total_clean_value'))
+    category_analysis = warehouse_order_items.values('product__vendor__title').annotate(total_sum=Sum('total_clean_value'))
     data['product_analysis'] = render_to_string(request=request, template_name='report/ajax/warehouse-product-flow-analysis.html', context={'product_analysis': product_analysis,})
     return JsonResponse(data)
 

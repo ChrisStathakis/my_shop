@@ -7,10 +7,11 @@ from django.db.models import Sum, Q, F
 from django.conf import settings
 from ..tools import warehouse_filters
 
-from inventory_manager.models import Vendor
+
 from point_of_sale.models import RetailOrderItem
 from products.models import Product, Category, CategorySite, SizeAttribute
 from frontend.models import Brands
+from inventory_manager.models import Vendor
 from ..tools import initial_date, filter_date
 CURRENCY = settings.CURRENCY
 
@@ -20,7 +21,6 @@ def ajax_products_analysis(request):
     switcher = request.GET.get('analysis')
     queryset = Product.my_query.active_for_site()
     queryset = Product.filters_data(request, queryset)
-    print(queryset.count(), request.GET)
     queryset_analysis = [0, 0, 0] # total_qty, #total_warehouse_value, #total_sell_value
     if switcher == 'warehouse_analysis':
         queryset_analysis[0] = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
@@ -50,9 +50,9 @@ def ajax_products_analysis(request):
                                            )
 
     if switcher == 'vendor_analysis':
-        vendor_analysis = queryset.values('supply__title').annotate(total_ware_price=Sum(F('qty')*F('final_price')),
+        vendor_analysis = queryset.values('vendor__title').annotate(total_ware_price=Sum(F('qty')*F('final_price')),
                                                                     total_sell_price=Sum(F('qty')*F('price_buy'))
-                                                                    ).order_by('supply__title')
+                                                                    ).order_by('vendor__title')
         data['results'] = render_to_string(request=request,
                                            template_name='report/ajax/warehouse/ajax_warehouse_analysis.html',
                                            context={'vendor_analysis': vendor_analysis,
@@ -67,7 +67,7 @@ def ajax_products_analysis(request):
                                                                      ).order_by('-incomes')[:30]
         data['results'] = render_to_string(request=request,
                                           template_name='report/ajax/warehouse/ajax_warehouse_analysis.html',
-                                          context={ 'sells_analysis': sells_analysis,
+                                          context={'sells_analysis': sells_analysis,
                                                     'currency': CURRENCY,
                                                     'switcher': switcher
                                                   }

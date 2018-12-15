@@ -6,18 +6,13 @@ from django.db.models import Q, F
 from django.db.models import ExpressionWrapper, DecimalField
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.context_processors import csrf
-from django.db.models import Avg, Max, Min, Sum, Count
-from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView
-from django.db.models.functions import TruncMonth
-
-
 from products.models import *
+from point_of_sale.models import *
+from transcations.models import *
 from inventory_manager.models import Vendor, Order, OrderItem
 from site_settings.models import PaymentOrders
 from site_settings.constants import *
-from point_of_sale.models import *
-from transcations.models import *
 from accounts.models import CostumerAccount
 from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoices, initial_data_invoices,
                     initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months,
@@ -26,9 +21,7 @@ from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoic
 
 
 from itertools import chain
-from operator import attrgetter
 from dateutil.relativedelta import relativedelta
-import datetime
 
 
 @method_decorator(staff_member_required, name='dispatch')

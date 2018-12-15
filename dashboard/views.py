@@ -132,6 +132,7 @@ def product_detail(request, pk):
     form = UpdateProductForm(request.POST or None, instance=instance)
 
     if 'save_' in request.POST:
+        print('i am here nab!')
         if form.is_valid():
             form.save()
             messages.success(request, 'The products %s is saves!')

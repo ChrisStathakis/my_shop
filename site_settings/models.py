@@ -109,7 +109,7 @@ class PaymentMethod(models.Model):
 
 class DefaultBasicModel(models.Model):
     active = models.BooleanField(default=True)
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     user_account = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)

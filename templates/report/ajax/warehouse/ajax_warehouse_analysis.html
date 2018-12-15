@@ -86,7 +86,7 @@
             {% for vendor in vendor_analysis %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ vendor.supply__title }}</td>
+                    <td>{{ vendor.vendor__title }}</td>
                     <td class="warning">{{ vendor.total_ware_price }} {{ currency }} </td>
                     <td></td>
                     <td class="positive">{{ vendor.total_sell_price }} {{ currency }}</td>

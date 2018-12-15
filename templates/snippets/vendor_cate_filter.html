@@ -2,7 +2,7 @@
     <div class="field">
         <label>Vendors</label>
         {% for vendor in vendors %}
-            {% if vendor.id|stringformat:"s" in request.GET.vendor_name %}
+            {% if vendor.id|stringformat:"s" in vendor_name %}
                 <div class="ui slider checkbox">
                     <input type="checkbox" checked name="vendor_name" value="{{ vendor.id }}">
                     <label>{{ vendor }}</label>
