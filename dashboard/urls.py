@@ -80,11 +80,10 @@ urlpatterns = [
     path('eshop-orders/', EshopOrdersPage.as_view(), name='eshop_orders_page'),
     path('eshop-orders/create/', view=create_eshop_order, name='eshop_order_create'),
     path('eshop-orders/edit/<int:pk>/', view=eshop_order_edit, name='eshop_order_edit'),
+    path('eshop/order/delete/<int:pk>/', delete_eshop_order, name='delete_eshop_order'),
 
-    path('eshop-orders/create/billing-profile/<int:pk>/', create_billing_profile_view, name='create_billing_profile'),
-    path('eshop-orders/billing-profile/edit/<int:pk>/<int:dk>/', edit_billing_profile_view, name='edit_billing_view'),
-    path('eshop-orders/create/address-profile/<int:pk>/', create_address_view, name='create_address_profile'),
-    path('eshop-orders/address-profile/edit/<int:pk>/', edit_address_view, name='edit_address_view'),
+
+    path('eshop-orders/billing-profile/edit/<int:pk>/', edit_billing_profile_view, name='edit_billing_view'),
     path('eshop-orders/change-status/<int:pk>/<int:dk>/', order_change_status_fast, name='order_change_status'),
     path('eshop-orders/warehouse-found/<int:pk>/', warehouse_found, name='warehouse_found'),
 

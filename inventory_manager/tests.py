@@ -25,4 +25,3 @@ class WarehouseOrderTest(TestCase):
         with self.settings(WAREHOUSE_ORDERS_TRANSCATIONS=True):
             new_item.quick_add_to_order(5)
         self.assertEqual(product.qty, 5.00)
-

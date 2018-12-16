@@ -273,6 +273,7 @@ class CartItem(models.Model):
             else:
                 cart_item.qty += qty
                 cart_item.save()
+                messages.success(request, ' The product %s added to cart' % cart_item.title)
             return cart_item
         else:
             if RETAIL_TRANSCATIONS:

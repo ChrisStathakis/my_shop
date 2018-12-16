@@ -1,4 +1,6 @@
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column, Button
 from .models import *
 
 from site_settings.models import PaymentMethod
@@ -56,7 +58,7 @@ class FirstPageForm(forms.ModelForm):
 
 
 class CheckoutForm(forms.Form):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Email'}))
     first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
     last_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
     address = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Address'}))
@@ -70,13 +72,46 @@ class CheckoutForm(forms.Form):
                                 widget=forms.TextInput(attrs={'placeholder': 'CellPhone'}),
                                 validators=[validate_cellphone]
                                 )
+    phone = forms.CharField(required=False,
+                            widget=forms.TextInput(attrs={'placeholder': 'Phone'}),
 
-    notes = forms.Textarea()
+                            )
+    notes = forms.CharField(widget=forms.Textarea(), required=False)
     payment_method = forms.ModelChoiceField(required=True, queryset=PaymentMethod.objects.all())
     shipping_method = forms.ModelChoiceField(required=True, queryset=Shipping.objects.all())
     agreed = forms.BooleanField(required=True)
 
     def __init__(self, *args, **kwargs):
-        super(CheckoutForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+              Column('email', css_class='form-group col-md-12 col-lg-12 mb-3')
+            ),
+            Row(
+                Column('first_name', css_class='form-group col-md-6 col-lg-6 mb-3'),
+                Column('last_name', css_class='form-group col-md-6 col-lg-6 mb-3'),
+            ),
+            Row(
+                Column('address', css_class='form-group col-md-4 mb-3'),
+                Column('zip_code', css_class='form-group col-md-4 mb-3'),
+                Column('city', css_class='form-group col-md-4 mb-3'),
+            ),
+            Row(
+                Column('cellphone', css_class='form-group col-md-6 mb-0'),
+                Column('phone', css_class='form-group col-md-6 mb-0'),
+            ),
+            Row(
+                Column('notes', css_class='form-group col-md-12 mb-3')
+            ),
+            Row(
+                Column('payment_method', css_class='form-group col-md-6 mb-0'),
+                Column('shipping_method', css_class='form-group col-md-6 mb-0'),
+            ),
+
+            Row(
+                Column('agreed', css_class='form-group col-md-6 mb-3')
+            ),
+            Submit('submit', 'Checkout', css_class='btn btn-danger',
+                   )
+        )

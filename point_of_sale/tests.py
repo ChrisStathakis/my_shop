@@ -1,8 +1,16 @@
 from django.test import TestCase
 from products.models import Product
-from .models import RetailOrder, RetailOrderItem
+from .models import RetailOrder, RetailOrderItem, Cart, CartItem
 from django.conf import settings
+import random
+from string import ascii_letters
 
+
+def generate_cart_id():
+    new_id = ''
+    for i in range(50):
+        new_id = new_id + random.choice(ascii_letters)
+    return new_id
 
 class BasicTest(TestCase):
 
@@ -79,3 +87,17 @@ class RetailTranscationTest(BasicTest):
         self.assertEqual(new_item.final_value, coca_cola.final_price)
         self.assertEqual(retail_order.final_value, 10.00)
         self.assertEqual(retail_order.order_items.count(), 1)
+
+
+class TestEshopOrder(TestCase):
+
+    def setUp(self):
+        self.product = Product.objects.create(title='hello', qty=10, price=10)
+        self.cart = Cart.objects.create(id_session=generate_cart_id())
+
+    def test_cart(self):
+        cart_item = CartItem.objects.create(order_related=self.cart, product_related=self.product, qty=1)
+        self.assertEqual(self.cart.final_value, 10.00)
+
+
+

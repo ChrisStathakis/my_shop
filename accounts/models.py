@@ -89,33 +89,6 @@ def create_profile(sender, instance, *args, **kwargs):
     get_profile, created = CostumerAccount.objects.get_or_create(user=instance)
 
 
-class BillingProfile(models.Model):
-    first_name = models.CharField(max_length=120)
-    last_name = models.CharField(max_length=120)
-    cellphone = models.CharField(max_length=10)
-    phone = models.CharField(max_length=10, blank=True, null=True)
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    cart = models.OneToOneField(Cart, on_delete=models.CASCADE, null=True, blank=True)
-    email = models.EmailField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    update = models.DateTimeField(auto_now=True)
-    active = models.BooleanField(default=True)
-    costumer_submit = models.BooleanField(default=True, verbose_name='Are you sure?')
-
-    def __str__(self):
-        if self.cart:
-            return f'{self.cart.id}'
-        return f'{self.first_name, self.last_name}'
-
-
-def cart_created_receiver(sender, instance, created, *args, **kwargs):
-    if created:
-        BillingProfile.objects.get_or_create(cart=instance)
-
-
-post_save.connect(cart_created_receiver, sender=Cart)
-
-
 # will be removed
 class GuestEmail(models.Model):
     email = models.EmailField()
@@ -126,21 +99,3 @@ class GuestEmail(models.Model):
     def __str__(self):
         return self.email
 
-
-class Address(models.Model):
-    billing_profile = models.OneToOneField(BillingProfile, on_delete=models.CASCADE)
-    address_line_1 = models.CharField(max_length=120)
-    address_line_2 = models.CharField(max_length=120, null=True, blank=True)
-    city = models.CharField(max_length=120)
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
-    postal_code = models.CharField(max_length=5)
-
-    def __str__(self):
-        if self.billing_profile.cart:
-            return f'{self.billing_profile.cart.id}'
-        return f'{self.billing_profile}'
-
-
-def billing_profile_receiver(sender, instance, created, *args, **kwargs):
-    if created:
-        Address.objects.get_or_create(billing_profile=instance)

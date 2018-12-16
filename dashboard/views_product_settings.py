@@ -177,8 +177,7 @@ class BrandPage(ListView):
     def get_queryset(self):
         queryset = Brands.objects.all()
         search_name = self.request.GET.get('search_name', None)
-        active_name = self.request.GET.get('active_name', None)
-        queryset = Brands.filters_data(queryset, search_name, active_name)
+        queryset = Brands.filters_data(queryset, self.request)
         return queryset
 
     def get_context_data(self, **kwargs):

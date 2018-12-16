@@ -14,12 +14,12 @@ import datetime
 from decimal import Decimal
 
 from .managers import RetailOrderManager, RetailOrderItemManager
-from accounts.models import CostumerAccount, BillingProfile, Address
+from accounts.models import CostumerAccount
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from site_settings.models import PaymentMethod, PaymentOrders, Shipping
-from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES
+from site_settings.models import PaymentMethod, PaymentOrders, Shipping, Country
+from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES, ADDRESS_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
 
 from .tools import update_warehouse, payment_method_default
@@ -28,8 +28,6 @@ RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIO
 
 
 class RetailOrder(DefaultOrderModel):
-    billing_profile = models.OneToOneField(BillingProfile, blank=True, null=True, on_delete=models.SET_NULL)
-    address_profile = models.OneToOneField(Address, blank=True, null=True, on_delete=models.SET_NULL)
     status = models.CharField(max_length=1, choices=ORDER_STATUS, default='1')
     order_type = models.CharField(max_length=1, choices=ORDER_TYPES, default='r')
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0,
@@ -188,25 +186,21 @@ class RetailOrder(DefaultOrderModel):
         return 'Printed' if self.printed else 'Not Printed'
     
     def tag_phones(self):
-        if self.billing_profile:
-            my_profile = self.billing_profile
-            return 'CellPhone.. %s, Phone %s' % (my_profile.cellphone,
-                                                 my_profile.phone) if my_profile.phone else my_profile.cellphone
+        profile = self.order_profiles.filter(order_type='billing')
+        if profile:
+            return profile.first().cellphone
         return 'No Phones added'
 
     def tag_fullname(self):
-        if self.costumer_account:
-            if not self.costumer_account.user:
-                return f'{self.costumer_account.first_name}'
-            if self.costumer_account.user:
-                return f'Account: {self.costumer_account.user.username}'
-        if self.billing_profile:
-            return f'{self.billing_profile.first_name} {self.billing_profile.last_name}'
+        profile = self.order_profiles.filter(order_type='billing')
+        if profile:
+            return f'{profile.first().first_name} {profile.first().last_name}'
         return 'No name added'
     
     def tag_full_address(self):
-        if self.address_profile:
-            return f'{self.address_profile.address_line_1}, City: {self.address_profile.city}'
+        profile = self.order_profiles.filter(order_type='billing')
+        if profile:
+            return profile.first().tag_full_address()
         return 'No address added'
 
     @staticmethod
@@ -253,36 +247,18 @@ class RetailOrder(DefaultOrderModel):
                                                                                      payment_method,
                                                                                      shipping_method
                                                                                      )
-        billing_profile, created = BillingProfile.objects.get_or_create(cart=cart)
-        billing_profile.email=form.cleaned_data.get('email')
-        billing_profile.first_name=form.cleaned_data.get('first_name')
-        billing_profile.last_name=form.cleaned_data.get('last_name')
-        billing_profile.cellphone=form.cleaned_data.get('cellphone')
-        billing_profile.phone=form.cleaned_data.get('phone', None)
-        billing_profile.costumer_submit=form.cleaned_data.get('agreed')
-        billing_profile.save()
-        address_profile, created = Address.objects.get_or_create(billing_profile=billing_profile)
-        address_profile.address_line_1=form.cleaned_data.get('address')
-        address_profile.city=form.cleaned_data.get('city')
-        address_profile.postal_code=form.cleaned_data.get('zip_code')
-        address_profile.save()                                   
-        new_order = RetailOrder.objects.create(order_type='e',
-                                               title=f'EshopOrder1{cart.id}',
-                                               payment_method=form.cleaned_data.get('payment_method'),
-                                               shipping=form.cleaned_data.get('shipping_method'),
-                                               shipping_cost=shipping_cost,
-                                               payment_cost=payment_cost,
-                                               billing_profile=billing_profile,
-                                               address_profile=address_profile,
-                                               eshop_session_id=cart.id_session,
-                                               notes=form.cleaned_data.get('notes'),
-                                               cart_related=cart,
-                                               )
+        new_order, created = RetailOrder.objects.get_or_create(cart_related=cart)
+        if created:
+            new_order.order_type = 'e'
+            new_order.title = f'EshopOrder000{new_order.id}'
+            new_order.payment_method = form.cleaned_data.get('payment_method')
+            new_order.shipping = form.cleaned_data.get('shipping_method')
+            new_order.shipping_cost = shipping_cost
+            new_order.payment_cost = payment_cost
+            new_order.eshop_session_id = cart.id_session
         if cart.user:
             new_order.costumer_account = CostumerAccount.objects.get(user=cart.user)
-            new_order.save()
-            billing_profile.user = cart.user
-            billing_profile.save()
+        new_order.save()
         for item in cart_items:
             if item.characteristic:
                 order_item = RetailOrderItem.objects.create(title=item.product_related,
@@ -293,8 +269,6 @@ class RetailOrder(DefaultOrderModel):
                                                             discount_value=item.price_discount,
                                                             size=item.characteristic,
                                                             )
-                    
-
             else:
                 order_item = RetailOrderItem.objects.create(title=item.product_related,
                                                             order=new_order,
@@ -313,14 +287,16 @@ class RetailOrder(DefaultOrderModel):
 @receiver(post_delete, sender=RetailOrder)
 def update_on_delete_retail_order(sender, instance, *args, **kwargs):
     payments_order = instance.payorders.all()
-    for order in payments_order:
-        order.delete()
     for order in instance.order_items.all():
+        order.delete()
+    for profile in instance.order_profiles.all():
+        profile.delete()
+    for order in payments_order:
         order.delete()
 
 
 class RetailOrderItem(DefaultOrderItemModel):
-    order = models.ForeignKey(RetailOrder, on_delete=models.PROTECT, related_name='order_items')
+    order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_items')
     cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     #  warehouse_management
@@ -443,27 +419,13 @@ class RetailOrderItem(DefaultOrderItemModel):
         if transation_type == 'DELETE':
             instance.delete()
         order.save()
-'''
-class OrderProfile(models.Model):
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    address = models.CharField(max_length=150)
-    zipcode = models.CharField(max_length=150)
-    city = models.CharField(max_length=150)
-    country = models.CharField(max_length=1, blank=True)
-    order_type = models.CharField(max_length=1)
-    order_related = models.ForeignKey(RetailOrder)
-    
-    class Meta:
-        unique_together = ['order_related', 'order_type']
-'''
 
 
 def create_destroy_title():
     last_order = RetailOrderItem.objects.all().last()
     if last_order:
         number = int(last_order.id)+1
-        return 'ΚΑΤ'+ str(number)
+        return 'ΚΑΤ' + str(number)
     else:
         return 'ΚΑΤ1'
 
@@ -503,3 +465,52 @@ class GiftRetailItem(models.Model):
                     if cart:
                         new_gift.cart_related = cart
                         new_gift.save()
+
+
+class RetailOrderProfile(models.Model):
+    email = models.EmailField(blank=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=5)
+    country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.PROTECT)
+    cellphone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=10, blank=True)
+    notes = models.TextField()
+    order_type = models.CharField(max_length=1, choices=ADDRESS_TYPES,)
+    order_related = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_profiles')
+
+    class Meta:
+        unique_together = ['order_related', 'order_type']
+
+    def tag_full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def tag_full_address(self):
+        return f'{self.address} {self.city} TK..{self.zip_code}'
+
+    def tag_phones(self):
+        return f'{self.cellphone} ,{self.phone}'
+
+
+
+    @staticmethod
+    def create_profile_from_cart(form, order):
+        billing_profile, created = RetailOrderProfile.objects.get_or_create(order_related=order, order_type='billing')
+        billing_profile.email = form.cleaned_data.get('email', 'Error')
+        billing_profile.first_name = form.cleaned_data.get('first_name', 'Error')
+        billing_profile.last_name = form.cleaned_data.get('last_name', 'Error')
+        billing_profile.cellphone = form.cleaned_data.get('cellphone', 'Error')
+        billing_profile.zip_code = form.cleaned_data.get('zip_code', 'Error')
+        billing_profile.address = form.cleaned_data.get('address', 'Error')
+        billing_profile.city = form.cleaned_data.get('city', 'Error')
+        billing_profile.phone = form.cleaned_data.get('phone', None)
+        billing_profile.notes = form.cleaned_data.get('notes', None)
+        billing_profile.save()
+
+        # address_profile, created = Address.objects.get_or_create(billing_profile=billing_profile)
+        # address_profile.address_line_1 = form.cleaned_data.get('address')
+        # address_profile.city = form.cleaned_data.get('city')
+        # address_profile.postal_code = form.cleaned_data.get('zip_code')
+        # address_profile.save()

@@ -10,6 +10,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.forms import formset_factory, inlineformset_factory
 from django.conf import settings
+from django.db import connection
 from dateutil.relativedelta import relativedelta
 
 from point_of_sale.models import RetailOrder, RetailOrderItem
@@ -26,7 +27,6 @@ from inventory_manager.models import Vendor, Category, OrderItem
 from point_of_sale.models import RetailOrderItem
 from inventory_manager.forms import CategoryForm
 from frontend.models import CategorySite, Brands
-
 from datetime import datetime, timedelta
 
 WAREHOUSE_ORDERS_TRANSCATIONS = settings.WAREHOUSE_ORDERS_TRANSCATIONS
@@ -54,7 +54,7 @@ class DashBoard(TemplateView):
 class ProductsList(ListView):
     template_name = 'dashboard/products_list.html'
     model = Product
-    paginate_by = 50
+    paginate_by = 20
     total_products = 0
 
     def get_queryset(self):

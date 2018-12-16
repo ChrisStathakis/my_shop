@@ -1,6 +1,4 @@
 from django.contrib import admin
-from .models import CostumerAccount, BillingProfile, Address
+from .models import CostumerAccount
 
 admin.site.register(CostumerAccount)
-admin.site.register(BillingProfile)
-admin.site.register(Address)

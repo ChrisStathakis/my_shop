@@ -50,8 +50,11 @@ INSTALLED_APPS = [
     'social_django',
     'import_export',
     'django_filters',
+    'crispy_forms',
 
 ]
+
+
 
 SITE_ID = 1
 
@@ -169,7 +172,7 @@ WAREHOUSE_ORDERS_TRANSCATIONS = True
 RETAIL_TRANSCATIONS = True
 PRODUCT_ATTRITUBE_TRANSCATION = True
 USE_QTY_LIMIT = False
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 USE_WAREHOUSE = False
 USE_REPORTS = False
 LOGIN_URL = '/login-page/'
@@ -195,3 +198,10 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'christosstath10@gmail.com'
+EMAIL_HOST_PASSWORD = ''

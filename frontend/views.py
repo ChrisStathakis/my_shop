@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.db import connection, reset_queries
+from django.core.mail import send_mail
 from reportlab.pdfgen import canvas
 from accounts.models import CostumerAccount
 from accounts.forms import LoginForm
@@ -17,7 +18,7 @@ from .tools import initial_filter_data, grab_user_filter_data, queryset_ordering
 from .mixins import custom_redirect, SearchMixin
 from .models import Brands, CategorySite
 from products.models import Product, ProductPhotos
-from point_of_sale.models import RetailOrder, RetailOrderItem, GiftRetailItem
+from point_of_sale.models import RetailOrder, RetailOrderItem, GiftRetailItem, RetailOrderProfile
 from site_settings.models import Shipping
 from site_settings.models import PaymentMethod
 from carts.views import check_or_create_cart, initial_data
@@ -304,11 +305,9 @@ def checkout_page(request):
     shippings = Shipping.objects.filter(active=True)
     user = request.user
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
-
     login_form = LoginForm(request.POST or None)
     form = CheckoutForm()
-    
-   
+
     if 'login_button' in request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -319,22 +318,22 @@ def checkout_page(request):
                 cart.user = user
                 cart.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    if request.POST:
+    if 'submit' in request.POST:
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            try:
-                new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)    
-                messages.success(request, 'Your Order Have Completed!')
-                GiftRetailItem.check_retail_order(new_order, cart)
-                del request.session['cart_id']
-                if user.is_authenticated:  #  check if profile exists or create one
-                    profile, created = CostumerAccount.objects.get_or_create(user=user)
-                    profile.update_fields(form)
-                return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
-            except:
-                print('something is wrong!')
-                del request.session['cart_id']
-                return HttpResponseRedirect('/')    
+            print('form_valid')
+            new_order = RetailOrder.create_order_from_cart(form, cart, cart_items)
+            RetailOrderProfile.create_profile_from_cart(form, order=new_order)
+            messages.success(request, 'Your Order Have Completed!')
+            GiftRetailItem.check_retail_order(new_order, cart)
+            del request.session['cart_id']
+            if user.is_authenticated:  # check if profile exists or create one
+                profile, created = CostumerAccount.objects.get_or_create(user=user)
+                profile.update_fields(form)
+            send_mail('Η παραγελία σας πραγματοποιήθηκε', 'Νέα Παραγγελία', 'test_site@gmail.com', [f'{form.cleaned_data.get("email")}'], fail_silently=True)
+            return HttpResponseRedirect(reverse('order_view', kwargs={'pk': new_order.id}))
+        else:
+            print(form.errors)
     context = locals()
     return render(request, 'my_site/checkout.html', context)
 

@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import CostumerAccount, Address, GuestEmail, BillingProfile
+from .models import CostumerAccount, GuestEmail
 from site_settings.constants import ADDRESS_TYPES
+
 
 class CostumerAccountForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput())
@@ -168,27 +169,3 @@ class CostumerPageEditDetailsForm(forms.ModelForm):
         fields =['first_name', 'last_name', 'shipping_address_1' ,'shipping_city', 'shipping_zip_code', 'phone', 'phone1', 'cellphone']
 
 
-class BillingProfileForm(forms.ModelForm):
-
-    class Meta:
-        model = BillingProfile
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(BillingProfileForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
-        self.fields['cart'].widget = forms.HiddenInput()
-
-
-class AddressForm(forms.ModelForm):
-
-    class Meta:
-        model = Address
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(AddressForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
-        self.fields['billing_profile'].widget = forms.HiddenInput()

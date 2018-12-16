@@ -10,10 +10,20 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
+                <div class="col-lg-12 col-12">
+                    <div class="card">
+                        <div class="header"><div class="title text-center"><h3>{{ profile.tag_full_name }}</h3></div></div>
+                        <div class="content">
+                            <h3 class="text-center">Διεύθυνση... {{ profile.tag_full_address }}  , Τηλέφωνο... {{ profile.tag_phones }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="card">
                         <div class="header">
-                            <h4 class="title">Add Product</h4>
+                            <h4 class="title">Προσθήκη Προϊόντος</h4>
                         </div>
                         <div class="content">
                             <form method="get">
@@ -64,11 +74,11 @@
                     {% block card_section %}
                         <div class="card">
                         <div class="header">
-                            <h4 class="title text-center">Order Details</h4>
+                            <h4 class="title text-center">Πληροφορίες Παραστατικού</h4>
                             <br><br>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6>Order Type... {{ instance.get_order_type_display }}</h6>
+                                    <h6>Είδος... {{ instance.get_order_type_display }}</h6>
                                     <br><br>
                                     <a href="{% url 'dashboard:print_invoice' instance.id %}"
                                        class="btn btn-success"><i class="fa fa-print"></i>Print
@@ -80,20 +90,18 @@
                                        class="btn btn-success">
                                         <i class="fa fa-check"></i>Ready
                                     </a>
-                                    
                                 </div>
                                 <div class="col-md-6">
-                                    <h6> Status... {{ instance.get_status_display }} </h6>
+                                    <h6> Κατάσταση... {{ instance.get_status_display }} </h6>
                                     <br><br>
                                     <a href="{% url 'dashboard:order_change_status' instance.id 4 %}"
                                        class="btn btn-success">
-                                        <i class="fa fa-check"></i>Send
+                                        <i class="fa fa-check"></i>Αποστολή
                                     </a>
                                     <a href="{% url 'dashboard:order_change_status' instance.id 8 %}"
                                        class="btn btn-success">
-                                        <i class="fa fa-check"></i>Done
+                                        <i class="fa fa-check"></i>Ολοκλήρώθηκε
                                     </a>
-
                                 </div>
                             </div>
                         </div>
@@ -107,57 +115,43 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Title</td>
-                                        <th>{{ instance }}</th>
-                                        <td>Date Added</td>
+                                        <td>Τίτλος</td>
+                                        <th>{{ instance.title }}</th>
+                                        <td>Ημερομηνία</td>
                                         <th>{{ instance.date_expired|date }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Order Items Value</td>
+                                        <td>Αξία Προϊόντων</td>
                                         <th>{{ instance.tag_value }}</th>
-                                        <td>Shipping Cost - Payment Cost</td>
+                                        <td>Έξοδα Μεταφόρας - Έξοδα Αντικαταβολήε</td>
                                         <th>{{ instance.tag_shipping_value }} - {{ instance.tag_payment_value }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Costumer Details</td>
-                                        <th>
-                                            {% if billing_profile %}
-                                            <a href="{% url 'dashboard:edit_billing_view' billing_profile.id instance.id %}"
-                                               class="btn btn-primary">{{ instance.tag_fullname }}
-                                            </a>
-                                            {% else %}
-                                                <a href="{% url 'dashboard:create_billing_profile' instance.id %}" class="btn btn-primary">Create Billing Profile</a>
-                                            {% endif %}
-                                        </th>
-                                        <td>Address Details</td>
-                                        <th>
-                                            {% if address_profile %}
-                                                <a href="{% url 'dashboard:edit_address_view' instance.id %}" class="btn btn-primary">
-                                                    {{ address_profile.address }} {{ address_profile.postal_code }} {{ address_profile.city }}
-                                                </a>
-                                            {% else %}
-                                                <a href="{% url 'dashboard:create_address_profile' instance.id %}" class="btn btn-primary">Create Address</a>
-                                            {% endif %}  
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td>Shipping Method</td>
+                                        <td>Τρόπος Μεταφοράς</td>
                                         <th>{{ instance.shipping }}</th>
-                                        <td>Payment Method</td>
+                                        <td>Τρόπος Πληρωμής</td>
                                         <th>{{ instance.payment_method }}</th>
                                     </tr>
                                     <tr>
-                                        <td>Selected Coupons Total Discount {{ instance.tag_discount }}</td>
+                                        <td>Σινολική Έκπτωση από Κουπόνια {{ instance.tag_discount }}</td>
                                         <th>{% for coupon in instance.coupons.all %}{{ coupon }}, {% endfor %}</th>
-                                        <td>User Created</td>
+                                        <td>Χρήστης</td>
                                         <th>{{ instance.user_account }}</th>
                                     <tr>
                                         <td></td>
-                                        <td colspan="2">
-                                            <h4 class="title text-center">Total Value {{ instance.tag_final_value }}</h4>
+                                        <td class="positive" colspan="2">
+                                            <h4 class="title text-center ">Αξία {{ instance.tag_final_value }}</h4>
                                         </td>
                                         <td></td>
                                     </tr>
+                                    <tr>
+                                        <td>Στοιχεία Τιμολόγησης</td>
+                                            <th>
+                                                <a href="{% url 'dashboard:edit_billing_view' instance.id %}" class="btn btn-primary">Επεξεργασία</a>
+                                            </th>
+                                            <td>Στοιχεία Αποστολής</td>
+
+                                        </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -249,7 +243,7 @@
                                 <a href="{% url 'dashboard:return_or_cancel' instance.id 'b' %}" class="btn btn-dark"><i class="fa fa-warning"></i> Return </a>
                                 <a href="{% url 'dashboard:return_or_cancel' instance.id 'c' %}" class="btn btn-warning"><i class="fa fa-remove"></i> Cancel </a>
                                 <br><br><br>
-                                <a style="width: 100%;" href="" class="btn btn-warning ">Delete</a>
+                                <a style="width: 100%;" href="{% url 'dashboard:delete_eshop_order' instance.id %}" class="btn btn-warning ">Delete</a>
                             </div>
                             {% endif %}
                         </div>

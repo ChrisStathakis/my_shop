@@ -13,8 +13,8 @@ from django.conf import settings
 from products.models import *
 from products.forms import *
 from carts.models import Cart, Coupons
-from accounts.models import Address, BillingProfile
-from accounts.forms import BillingProfileForm, AddressForm
+
+
 from carts.forms import CouponForm
 from point_of_sale.models import *
 from point_of_sale.forms import EshopRetailForm, EshopOrderItemForm, EshopOrderItemWithSizeForm, CreateOrderItemWithSizeForm
@@ -118,12 +118,11 @@ def create_eshop_order(request):
 @staff_member_required()
 def eshop_order_edit(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
-    billing_profile = instance.billing_profile
-    address_profile = instance.address_profile
+    profile, created = RetailOrderProfile.objects.get_or_create(order_type='billing', order_related=instance)
     object_list = Product.my_query.get_site_queryset().active_for_site()
     order_items = RetailOrderItem.objects.filter(order=instance)
     form = EshopRetailForm(request.POST or None, instance=instance)
-    billing_form = BillingProfileForm()
+    # billing_form = BillingProfileForm()
     gifts = instance.gifts.all()
     if form.is_valid():
         form.save()
@@ -132,71 +131,15 @@ def eshop_order_edit(request, pk):
 
     search_name = request.GET.get('search_name', None)
     object_list = object_list.filter(title__icontains=search_name) if search_name else object_list
-    paginator = Paginator(object_list, 20)
+    paginator = Paginator(object_list, 10)
     object_list = paginator.get_page(1)
     return render(request, 'dashboard/order_section/order_create.html', context=locals())
 
 
 @staff_member_required()
-def create_billing_profile_view(request, pk):
-    instance = get_object_or_404(RetailOrder, id=pk)
-    page_title, back_url = 'Create New Billing Profile', reverse('dashboard:eshop_order_edit', kwargs={'pk': pk})
-    if instance.billing_profile:
-        return HttpResponseRedirect(back_url)
-    form = BillingProfileForm()
-    if request.POST:
-        form = BillingProfileForm(request.POST)
-        if form.is_valid():
-            new_billing_profile = form.save()
-            instance.billing_profile = new_billing_profile
-            instance.save()
-            return HttpResponseRedirect(back_url)
-    context = locals()
-    return render(request, 'dashboard/form_view.html', context)
-
-
-@staff_member_required()
-def edit_billing_profile_view(request, pk, dk):
-    instance = get_object_or_404(BillingProfile, id=pk)
-    order = get_object_or_404(RetailOrder, id=dk)
-    title, back_url = f'{order.__str__}', reverse('dashboard:eshop_order_edit', kwargs={'pk': dk})
-    form = BillingProfileForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(back_url)
-    context = locals()
-    return render(request, 'dashboard/form_view.html', context)
-
-
-@staff_member_required
-def create_address_view(request, pk):
-    instance = get_object_or_404(RetailOrder, id=pk)
-    billing_profile = instance.billing_profile
-    page_title, back_url = 'Create New Address', reverse('dashboard:eshop_order_edit', kwargs={'pk': pk})
-    if not billing_profile:
-        messages.warning(request, 'You need to create billing profile first')
-        return HttpResponseRedirect(back_url)
-    form = AddressForm(initial={'billing_profile': billing_profile})
-    if request.POST:
-        form = AddressForm(request.POST, initial={'billing_profile': billing_profile})
-    if form.is_valid():
-        new_instance = form.save()
-        instance.address_profile = new_instance
-        instance.save()
-        return HttpResponseRedirect(back_url)
-    context = locals()
-    return render(request, 'dashboard/form_view.html', context)
-        
-
-@staff_member_required
-def edit_address_view(request, pk):
-    order = get_object_or_404(RetailOrder, id=pk)
-    instance = order.address_profile
-    page_title, back_url = f'Edit {order.title}', reverse('dashboard:eshop_order_edit', kwargs={'pk': pk})
-    form = AddressForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(back_url)
+def edit_billing_profile_view(request, pk):
+    instance, created = RetailOrderProfile.objects.get_or_create(order_related__id=pk, order_type='billing')
+    form = ''
     context = locals()
     return render(request, 'dashboard/form_view.html', context)
 
@@ -281,6 +224,13 @@ def delete_order_item(request, dk):
     instance.delete()
     order.save()
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(order.id,)))
+
+
+@staff_member_required
+def delete_eshop_order(request, pk):
+    instance = get_object_or_404(RetailOrder, id=pk)
+    instance.delete()
+    return HttpResponseRedirect(reverse('dashboard:eshop_orders_page'))
 
 
 @staff_member_required

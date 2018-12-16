@@ -52,35 +52,6 @@ def update_warehouse(instance, transcation_type, qty):
                 costumer.save()
 
 
-'''
-    product = instance.title
-    costumer = instance.order.costumer_account
-    old_qty = instance.tracker.previous('qty')
-    if order_type in ['e', 'r']:
-        if substact == 'add':
-            if old_qty:
-                product.qty -= instance.qty - old_qty
-            else:
-                product.qty -= instance.qty
-            if costumer:
-                if old_qty:
-                    costumer.balance -= old_qty * instance.final_price
-                    costumer.balance += instance.get_total_value
-                else:
-                    costumer.balance += instance.get_total_value
-        if substact == 'minus':
-            product.qty += qty
-            product.save()
-            if costumer:
-                if old_qty:
-                    costumer.balance -= instance.get_total_value
-    if order_type in ['d', 'b']:
-        product.qty += instance.qty - old_qty if old_qty else instance.qty
-        costumer.balance += old_qty*instance.final_price - instance.get_total_value if old_qty else -instance.get_total_value
-    product.save()
-    if costumer:
-        costumer.save()
-    '''
 
 
 def payment_method_default():
