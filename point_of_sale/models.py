@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db.models import F, Sum, Q
@@ -284,10 +284,11 @@ class RetailOrder(DefaultOrderModel):
         return new_order
 
 
-@receiver(post_delete, sender=RetailOrder)
+@receiver(pre_delete, sender=RetailOrder)
 def update_on_delete_retail_order(sender, instance, *args, **kwargs):
     payments_order = instance.payorders.all()
     for order in instance.order_items.all():
+        order.update_warehouse('REMOVE', order.qty)
         order.delete()
     for profile in instance.order_profiles.all():
         profile.delete()
@@ -478,7 +479,7 @@ class RetailOrderProfile(models.Model):
     cellphone = models.CharField(max_length=10)
     phone = models.CharField(max_length=10, blank=True)
     notes = models.TextField()
-    order_type = models.CharField(max_length=1, choices=ADDRESS_TYPES,)
+    order_type = models.CharField(max_length=50, choices=ADDRESS_TYPES,)
     order_related = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_profiles')
 
     class Meta:

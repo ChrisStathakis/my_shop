@@ -34,9 +34,9 @@
                             <div class="col-xs-6">
                                 <address>
                                 <strong>Billed To:</strong><br>
-                                    {{ instance.billing_profile.first_name }} {{ instance.billing_profile.last_name }}<br>
-                                    {{ instance.shipping_profile.address_line_1 }}<br>
-                                    {{ instance.shipping_profile.city }}, {{ instance.shipping_profile.postal_code }}<br>
+                                    {{ billing_profile.first_name }} {{ billing_profile.last_name }}<br>
+                                    {{ shipping_profile.address_line_1 }}<br>
+                                    {{ shipping_profile.city }}, {{ instance.shipping_profile.postal_code }}<br>
                                     Greece
                                 </address>
                             </div>

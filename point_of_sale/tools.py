@@ -16,6 +16,7 @@ def update_warehouse(instance, transcation_type, qty):
             get_total_value = instance.total_value
             get_total_cost = instance.total_cost_value
             product.qty += instance.qty
+            print('remove qty', product.qty, instance.qty)
             product.save()
             if PRODUCT_ATTRITUBE_TRANSCATION and instance.size:
                 instance.size.qty += instance.qty

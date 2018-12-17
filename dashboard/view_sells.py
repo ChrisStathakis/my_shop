@@ -13,7 +13,7 @@ from django.conf import settings
 from products.models import *
 from products.forms import *
 from carts.models import Cart, Coupons
-
+from point_of_sale.forms import RetailOrderProfileForm
 
 from carts.forms import CouponForm
 from point_of_sale.models import *
@@ -139,7 +139,12 @@ def eshop_order_edit(request, pk):
 @staff_member_required()
 def edit_billing_profile_view(request, pk):
     instance, created = RetailOrderProfile.objects.get_or_create(order_related__id=pk, order_type='billing')
-    form = ''
+    form = RetailOrderProfileForm(instance=instance)
+    if request.POST:
+        form = RetailOrderProfileForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk': pk}))
     context = locals()
     return render(request, 'dashboard/form_view.html', context)
 
@@ -149,15 +154,15 @@ def add_edit_order_item(request, dk, pk, qty):
     order = get_object_or_404(RetailOrder, id=dk)
     product = get_object_or_404(Product, id=pk)
     new_order_item, created = RetailOrderItem.objects.get_or_create(title=product, order=order)
-    new_order_item.update_warehouse('REMOVE', 0)
-    new_qty = new_order_item.qty + qty
-    new_order_item.qty = new_qty
+    if not created:
+        new_qty = new_order_item.qty + qty
+        new_order_item.qty = new_qty
     new_order_item.save()
-    new_order_item.update_warehouse('ADD', new_qty)
+    new_order_item.update_warehouse('ADD', qty)
     if created:
         new_order_item.cost = product.price_buy
         new_order_item.value = product.price
-        new_order_item.qty = new_qty
+        new_order_item.qty = qty
         new_order_item.discount_value = product.price_discount
         new_order_item.save()
     new_order_item.update_order()
@@ -202,27 +207,28 @@ class CreateOrderItemWithSizePage(CreateView):
 def edit_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
     old_instance = get_object_or_404(RetailOrderItem, id=dk)
-    form_order = EshopOrderItemForm(request.POST or None, instance=instance)
+    form = EshopOrderItemForm(request.POST or None, instance=instance)
+    page_title, back_url = f'{instance.title}', reverse('dashboard:eshop_order_edit', kwargs={'pk': instance.order.id})
     if instance.size:
         form_order = EshopOrderItemWithSizeForm(request.POST or None, instance=instance) 
-    if form_order.is_valid():
-        old_instance.update_warehouse('REMOVE', qty=0)
-        form_order.save()
+    if form.is_valid():
+        old_instance.update_warehouse('REMOVE', old_instance.qty)
+        form.save()
         instance.refresh_from_db()
         instance.update_warehouse('ADD', qty=instance.qty)
         instance.update_order()
         return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(instance.order.id,)))
     context = locals()
-    return render(request, 'dashboard/order_section/edit_order_item.html', context)
+    return render(request, 'dashboard/form_view.html', context)
 
 
 @staff_member_required
 def delete_order_item(request, dk):
     instance = get_object_or_404(RetailOrderItem, id=dk)
-    instance.update_warehouse('REMOVE', qty=0)
+    instance.update_warehouse('REMOVE', instance.qty)
     order = instance.order
     instance.delete()
-    order.save()
+    instance.update_order()
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', args=(order.id,)))
 
 
@@ -236,6 +242,7 @@ def delete_eshop_order(request, pk):
 @staff_member_required
 def print_invoice(request, pk):
     instance = get_object_or_404(RetailOrder, id=pk)
+    billing_profile = RetailOrderProfile.objects.get_or_create(order_related=instance, order_type='billing')
     instance.printed = True
     instance.save()
     return render(request, 'dashboard/print_invoice.html', {'instance': instance})
@@ -248,6 +255,7 @@ def order_change_status_fast(request, pk, dk):
     instance.status = new_status
     instance.save()
     return HttpResponseRedirect(reverse('dashboard:eshop_order_edit', kwargs={'pk': pk}))
+
 
 def warehouse_found(request, pk):
     instance = get_object_or_404(RetailOrderItem, id=pk)
