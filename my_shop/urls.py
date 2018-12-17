@@ -9,6 +9,7 @@ admin.site.site_header = 'Awesome Inc. Administration'
 admin.site.site_title = 'Awesome Inc. Administration'
 
 urlpatterns = [
+    url(r'^accounts/',include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('api/', include('site_settings.api_urls')),
 

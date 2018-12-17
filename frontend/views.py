@@ -307,6 +307,17 @@ def checkout_page(request):
     gifts = CartGiftItem.objects.filter(cart_related=cart) if cart else None
     login_form = LoginForm(request.POST or None)
     form = CheckoutForm()
+    if user.is_authenticated:
+        profile, created = CostumerAccount.objects.get_or_create(user=user)
+        if not created:
+            form = CheckoutForm(initial={'first_name': profile.first_name,
+                                         'email': user.email,
+                                         'last_name': profile.last_name,
+                                         'zip_code': profile.billing_zip_code,
+                                         'address': profile.billing_address,
+                                         'city': profile.billing_city,
+                                         'cellphone': profile.cellphone
+                                         })
 
     if 'login_button' in request.POST:
         username = request.POST.get('username')

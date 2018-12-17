@@ -1,4 +1,6 @@
 {% extends 'my_site/index.html' %}
+{% load socialaccount %}
+{% providers_media_js %}
 
 {% block content %}
 
@@ -9,6 +11,8 @@
             <div class="amado-pro-catagory clearfix">
                 <div class="row">
                     <div class="col-6">
+                        <a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook Connect</a>
+                        <a href="{% provider_login_url "facebook" method="oauth2" %}">Facebook OAuth2</a>
                         <form method="post" class="text-center border border-light p-5"> {% csrf_token %}
                             <p class="h4 mb-4">Log in</p>
                             <!-- Email -->
@@ -45,7 +49,7 @@
 
                             <!-- Social login -->
                             <p>or login in with:</p>
-
+                            <a href="{% provider_login_url 'facebook' method='js_sdk' %}">Login Button image</a>
                             <a type="button" class="light-blue-text mx-2">
                                 <i class="fa fa-facebook"></i>
                             </a>
@@ -119,6 +123,10 @@
 
                             <!-- Social login -->
                             <p>or login in with:</p>
+                            <a href="{% provider_login_url 'facebook' method='js_sdk' %}" class="btn btn-block btn-social btn-facebook" style="background-color:#3b5998;text-align:center">
+  <span class="fa fa-facebook"></span>
+               Sign in with Facebook
+ </a>
 
                             <a type="button" class="light-blue-text mx-2">
                                 <i class="fa fa-facebook"></i>

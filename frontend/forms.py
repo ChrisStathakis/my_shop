@@ -77,8 +77,8 @@ class CheckoutForm(forms.Form):
 
                             )
     notes = forms.CharField(widget=forms.Textarea(), required=False)
-    payment_method = forms.ModelChoiceField(required=True, queryset=PaymentMethod.objects.all())
-    shipping_method = forms.ModelChoiceField(required=True, queryset=Shipping.objects.all())
+    payment_method = forms.ModelChoiceField(required=True, queryset=PaymentMethod.objects.filter(site_active=True))
+    shipping_method = forms.ModelChoiceField(required=True, queryset=Shipping.objects.filter(active=True))
     agreed = forms.BooleanField(required=True)
 
     def __init__(self, *args, **kwargs):

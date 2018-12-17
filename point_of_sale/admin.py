@@ -3,18 +3,19 @@ from django.db.models import Count, Sum, Min, Max
 from django.db.models import DateField
 from django.db.models.functions import Trunc
 from .models import RetailOrderItem, RetailOrder, GiftRetailItem
+from import_export.admin import ImportExportModelAdmin
 # Register your models here.
 
 
 @admin.register(RetailOrder)
-class RetailOrderAdmin(admin.ModelAdmin):
+class RetailOrderAdmin(ImportExportModelAdmin):
     list_display = ['date_expired', 'title', 'order_type', 'tag_final_value']
     list_filter = ['is_paid', 'date_expired', 'order_type']
     list_per_page = 50
     fieldsets = (
         ('General', {
             'fields': (
-                ('is_paid', 'is_printed'),
+                ('is_paid'),
 
                       )
         }),
