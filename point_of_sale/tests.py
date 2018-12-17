@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from products.models import Product
 from .models import RetailOrder, RetailOrderItem, Cart, CartItem
 from django.conf import settings
@@ -94,10 +95,36 @@ class TestEshopOrder(TestCase):
     def setUp(self):
         self.product = Product.objects.create(title='hello', qty=10, price=10)
         self.cart = Cart.objects.create(id_session=generate_cart_id())
+        self.factory = RequestFactory()
 
     def test_cart(self):
-        cart_item = CartItem.objects.create(order_related=self.cart, product_related=self.product, qty=1)
+        request = self.factory.get('/')
+        cart_item = CartItem.objects.create(order_related=self.cart,
+                                            product_related=self.product,
+                                            qty=1,
+                                            price=self.product.final_price
+                                            )
         self.assertEqual(self.cart.final_value, 10.00)
+        self.order = RetailOrder.objects.create(cart_related=self.cart, title='eshop_order1')
+        self.order_item = RetailOrderItem.objects.create(order=self.order,
+                                                         title=self.product,
+                                                         qty=cart_item.qty,
+                                                         value=cart_item.final_value
+                                                         )
+        self.order_item.update_order()
+        self.order_item.update_warehouse('ADD', 1)
+        self.assertEqual(self.product.qty, 9)
+        self.assertEqual(self.order.final_value, 10.00)
+        self.order_item.qty = 3
+        self.order_item.save()
+        self.order_item.update_order()
+        self.order_item.update_warehouse('ADD', 2)
+        self.assertEqual(self.product.qty, 7)
+        self.assertEqual(self.order.final_value, 30.00)
+        self.order.delete()
+        self.assertEqual(self.product.qty, 10)
+
+    
 
 
 
