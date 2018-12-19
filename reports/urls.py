@@ -3,6 +3,7 @@ from django.urls import path
 from .views import *
 from .views_transcations import *
 from .ajax_calls.ajax_warehouse_calls import *
+from .ajax_calls.ajax_sells_calls import ajax_sells_analysis
 from .view_sells import OrderRetailReportView, HomepageSellView
 from .balance_sheet_views import balance_sheet, CachFlowReportView
 
@@ -59,6 +60,8 @@ urlpatterns = [
 
     # ajax_calls
     path('ajax/characteristics/analysis', ajax_size_analysis, name='ajax_size_analysis'),
+
+    path('ajax/retail-sells/sell-points/', ajax_sells_analysis, name='ajax_sells_analysis'),
 
     path('balance-sheet/', balance_sheet, name='balance_sheet'),
     path('cash-report/', CachFlowReportView.as_view(), name='cash_report_view')

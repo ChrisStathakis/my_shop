@@ -6,10 +6,6 @@ from django.db.models.functions import TruncMonth
 from .tools import initial_date
 
 
-
-
-
-
 def ajax_analyse_vendors(request):
     data = dict()
     date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
@@ -77,60 +73,7 @@ def ajax_warehouse_product_movement_vendor_analysis(request):
     return JsonResponse(data)
 
 
-def ajax_incomes_per_store(request):
-    data = dict()
-    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
-    queryset = RetailOrder.my_query.all_orders_by_date_filter(date_start, date_end)
-    queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick =\
-        retail_orders_filter(request, queryset)
-    get_stores = Store.objects.filter(id__in=store_name)
-    store_analysis_per_month = []
-    for store in get_stores:
-        print(store)
-        store_sales = queryset.filter(store_related=store)
-        sells_data_orders = store_sales.filter(order_type__in=['r', 'e'])
-        return_data_orders = store_sales.filter(order_type='b')
-        sells_data = sells_data_orders.annotate(month=TruncMonth('date_created')
-                                                ).values('month').annotate(total_incomes=Sum('final_price'),
-                                                                           total_cost=Sum('total_cost'),
-                                                                           ).order_by('month')
-        return_data = return_data_orders.annotate(month=TruncMonth('date_created')
-                                                  ).values('month').annotate(total_incomes=Sum('final_price'),
-                                                                           total_cost=Sum('total_cost')
-                                                                           ).order_by('month')
 
-        store_analysis_per_month.append([store, sells_data, return_data, 0])
-    # last year
-    last_year_start, last_year_end = date_start - relativedelta(years=1), date_end - relativedelta(years=1)
-    print(last_year_start, last_year_end)
-    last_queryset = RetailOrder.my_query.all_orders_by_date_filter(last_year_start, last_year_end)
-    print(last_queryset.count())
-    last_queryset, search_name, store_name, seller_name, order_type_name, status_name, is_paid_name, date_pick =\
-        retail_orders_filter(request, last_queryset)
-    get_stores = Store.objects.filter(id__in=store_name)
-    print(last_queryset.count())
-    last_store_analysis_per_month = []
-    for store in get_stores:
-        store_sales = last_queryset.filter(store_related=store)
-        sells_data_orders = store_sales.filter(order_type__in=['r', 'e'])
-        return_data_orders = store_sales.filter(order_type='b')
-        sells_data = sells_data_orders.annotate(month=TruncMonth('date_created')
-                                                ).values('month').annotate(total_incomes=Sum('final_price'),
-                                                                           total_cost=Sum('total_cost'),
-                                                                           ).order_by('month')
-        return_data = return_data_orders.annotate(month=TruncMonth('date_created')
-                                                  ).values('month').annotate(total_incomes=Sum('final_price'),
-                                                                           total_cost=Sum('total_cost')
-                                                                           ).order_by('month')
-
-        last_store_analysis_per_month.append([store, sells_data, return_data, 0])
-
-    context = locals()
-    data['store_analysis_per_month'] = render_to_string(request=request,
-                                                        template_name='report/ajax/ajax_incomes_per_store.html',
-                                                        context=context
-                                                        )
-    return JsonResponse(data)
 
 @staff_member_required
 def ajax_balance_sheet_warehouse_orders(request):

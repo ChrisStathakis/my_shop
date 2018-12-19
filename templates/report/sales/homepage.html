@@ -3,10 +3,28 @@
 {% block down_menu %}
 <div class="ui four item bottom fixed menu">
     <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Παραστατικά</a>
-    <a href="{% url 'reports:product_warning' %}" class="item">Προϊόντα</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Πωλητές</a>
     <a href="{% url 'reports:product_warning' %}" class="item">Πελάτες</a>
-    <a href="{% url 'reports:product_warning' %}" class="item">Καταστήματα</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Κίνηση Προϊόντων</a>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $('#sell_point_analysis').click(function() {
+        $('.ajax_container').html('<h2 class="ui header">Περιμένετε λίγο</h2>');
+        var btn = $(this);
+        var my_form = $('#filter_form').serialize();
+        $.ajax({
+           url: "{% url 'reports:ajax_sells_analysis' %}",
+           dataType: 'json',
+           data: my_form,
+           success: function(data){
+               $('.ajax_container').html(data.result)
+           }
+       })
+    })
+</script>
 {% endblock %}
 
 {% block content %}
@@ -31,17 +49,8 @@
                     <h4 class="ui header">Filters</h4>
                 </div>
                 <div class="content">
-                    <form class="ui form" method="get">
-                        <div class="two fields">
-                            <div class="field">
-                                {% if search_pro %} <input type="text" class="ui text" name="search_pro" value="{{ search_pro }}" placeholder="{{ search_pro }}"> {% else %} <input type="text" class="ui text" name="search_pro" placeholder="Αναζήτηση"> {% endif %}
-                            </div>
-                            <div class="field">
-                            {% if date_pick %} <input  name="date_pick" value="{{ date_pick }}" placeholder="{{ date_pick }}" >
-                            {% else %} <input  name="date_pick" placeholder="Ημερομηνία" > {% endif %}
-
-                            </div>
-                        </div>
+                    <form class="ui form" id='filter_form' method="get">
+                        {% include 'snippets/search_date_filter.html' %}
                         <div class="two fields">
                             <div class="field">
                                 <div class="grouped fields">
@@ -77,40 +86,49 @@
                             <div class="field">
                                 <label>Επέλεξε Είδος Παραστατικού</label>
                                 {% for order_type in order_types %}
-                                    {% if vendor.id|stringformat:"s" in vendor_name %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
-                                            <label>{{ order_type.1 }}</label>
-                                        </div>
-                                    {% else %}
-                                        <div class="ui slider checkbox">
-                                            <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
-                                            <label>{{ order_type.1 }}</label>
-                                        </div>
-                                    {% endif %}
+                                    <div class="ui slider checkbox">
+                                        <input value="{{ order_type.0 }}"
+                                               type="checkbox"
+                                               name="order_type_name"
+                                               {% if order_type.0|stringformat:"s" in vendor_name %} checked {% endif %}
+                                        >
+                                        <label>{{ order_type.1 }}</label>
+                                    </div>
                                 {% endfor %}
                             </div>
                             <div class="field">
                                 <label>Επέλεξε Κατάσταση</label>
                                 {% for status in order_status %}
-                                    {% if vendor.id|stringformat:"s" in vendor_name %}
-                                            <div class="ui slider checkbox">
-                                                <input value="{{ vendor.id }}" type="checkbox" name="vendor_name" checked>
-                                                <label>{{ status.1 }}</label>
-                                            </div>
-                                    {% else %}
-                                            <div class="ui slider checkbox">
-                                                <input value="{{ vendor.id }}" type="checkbox" name="vendor_name">
-                                                <label>{{ status.1 }}</label>
-                                            </div>
-                                    {% endif %}
+                                    <div class="ui slider checkbox">
+                                        <input value="{{ order_status.id }}"
+                                               type="checkbox"
+                                               name="order_status_name"
+                                               {% if order_status.id|stringformat:"s" in order_status %}checked {% endif %}
+                                        >
+                                        <label>{{ status.1 }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="two fields">
+                            <div class="field">
+                                <label>Σημείο Πώλησης</label>
+                                {% for store in sell_points %}
+                                    <div class="ui checkbox">
+                                        <input type="checkbox"
+                                               name="sell_point_name"
+                                               value="{{ store.id }}"
+                                               {% if store.id|stringformat:"s" in sell_point_name %} checked {% endif %}
+                                        >
+                                        <label>{{ store }}</label>
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
 
                         <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
                     </form>
-                    <a href="{% url 'reports:warehouse_orders' %}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
+                    <a href="{{ request.path }}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
                         <i class="trash icon"></i>
                         Καθαρισμός Φίλτρων
                     </a>
@@ -210,10 +228,10 @@
         <div class="two wide column"></div>
         <div class="twelve wide column">
             <div class="row">
-                <button class="ui blue button" id="analyse_vendor">Payment Analysis</button>
+                <button class="ui blue button" id="sell_point_analysis">Ανάλυση ανά Πωλητή</button>
                 <button class="ui blue button">Store Analysis</button>
-                {{ vendor_name }}, {{ date_pick }}
-                <div class="row" id="data-show">
+                
+                <div class="row ajax_container">
 
                 </div>
             </div>
@@ -252,7 +270,7 @@
                                 <td>{{ order }}</td>
                                 <td><a href="">{{ order.costumer_account }}</a></td>
                                 <td>{{ order.get_order_type_display }}</td>
-                                <td>{{ order.user_account }} </td>
+                                <td>{{ order.seller_account }} </td>
                                 <td>{{ order.payment_method }}</td>
                                 <td>{{ order.get_status_display }}</td>
                                 <td>{{ order.tag_final_value }}</td>

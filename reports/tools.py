@@ -108,9 +108,8 @@ def initial_date(request, months=3):
 
 # thats the corect after the update
 def filter_date(request):
-    date_start, date_end = datetime.datetime.now().replace(day=1, month=1), datetime.datetime.now().replace(day=31,
-                                                                                                            month=12
-                                                                                                            )
+    date_start, date_end = datetime.datetime.now().replace(day=1, month=1),\
+                           datetime.datetime.now().replace(day=31, month=12)
     date_pick = request.GET.get('date_pick', None)
     date_range = None
     try:

@@ -210,6 +210,7 @@ class RetailOrder(DefaultOrderModel):
         printed_name = request.GET.get('printed_name', None)
         status_name = request.GET.getlist('status_name', None)
         payment_name = request.GET.getlist('payment_name', None)
+        sell_point_name = request.GET.getlist('sell_point_name', None)
         queryset = queryset.filter(printed=False) if printed_name else queryset
         queryset = queryset.filter(payment_method__id__in=payment_name) if payment_name else queryset
         queryset = queryset.filter(status__in=status_name) if status_name else queryset
@@ -223,7 +224,8 @@ class RetailOrder(DefaultOrderModel):
                                    Q(first_name__icontains=search_name) |
                                    Q(last_name__icontains=search_name)
                                    ).distinct() if search_name else queryset
-        
+
+        queryset = queryset.filter(seller_account__id__in=sell_point_name) if sell_point_name else queryset
         return queryset
     
     @staticmethod

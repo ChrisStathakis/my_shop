@@ -1,0 +1,20 @@
+<table class='ui table'>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Όνομα</th>
+            <th>Αξία<th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ele in queryset %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ ele.seller_account__username }}</td>
+                <td>{{ ele.total_value }} {{ currency }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan=3>No data</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

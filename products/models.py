@@ -297,6 +297,7 @@ class Product(DefaultBasicModel):
         qty_name = request.GET.get('qty_exists_name')
         qty_up_name = request.GET.get('qty_up_name')
         qty_down_name = request.GET.get('qty_down_name')
+
     
         queryset = queryset.filter(active=True, site_active=True) if active_name == '1' else queryset.filter(active=False, site_active=False) if active_name == '2' else queryset  
         queryset = queryset.filter(size=True) if size_data_name else queryset
@@ -310,6 +311,7 @@ class Product(DefaultBasicModel):
         queryset = queryset.filter(category_site__id__in=site_cate_name) if site_cate_name else queryset
         queryset = queryset.filter(color__id__in=color_name) if color_name else queryset
         queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
+
         if size_name:
             queryset = queryset.filter(size=True)
             sizes_selected = SizeAttribute.objects.filter(title__id__in=size_name, product_related__in=queryset)
