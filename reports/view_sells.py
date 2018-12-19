@@ -15,7 +15,8 @@ CURRENCY = settings.CURRENCY
 class HomepageSellView(ListView):
     template_name = 'report/sales/homepage.html'
     model = RetailOrder
-
+    paginate_by = 50
+    
     def get_queryset(self):
         date_start, date_end, date_range = initial_date(self.request)
         queryset = RetailOrder.my_query.all_orders_by_date_filter(date_start, date_end)

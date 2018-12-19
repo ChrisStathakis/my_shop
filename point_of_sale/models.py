@@ -57,7 +57,7 @@ class RetailOrder(DefaultOrderModel):
     class Meta:
         verbose_name_plural = '1. Παραστατικά Πωλήσεων'
         verbose_name = 'Πώληση'
-        ordering = ['-timestamp']
+        ordering = ['-date_expired']
 
     def __str__(self):
         return self.title if self.title else 'order'
@@ -66,7 +66,7 @@ class RetailOrder(DefaultOrderModel):
         order_items = self.order_items.all()
         self.count_items = order_items.count() if order_items else 0
         # self.check_coupons()
-        self.update_order()
+        # self.update_order()
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
         self.paid_value = self.payorders.all().aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
