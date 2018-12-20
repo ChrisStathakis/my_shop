@@ -39,6 +39,7 @@ class BillListApiView(generics.ListCreateAPIView):
     filter_fields = ('is_paid', 'category')
 
 
+
 class BillDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BillDetailSerializer
     queryset = Bill.objects.all()
