@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'my_shop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'christos_db.sqlite3'),
     }
 }
 

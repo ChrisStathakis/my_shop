@@ -8,6 +8,7 @@ from point_of_sale.api.views import RetailOrderListApi, RetailRenderer
 admin.site.site_header = 'Awesome Inc. Administration'
 admin.site.site_title = 'Awesome Inc. Administration'
 
+
 urlpatterns = [
     url(r'^accounts/',include('allauth.urls')),
     path('admin/', admin.site.urls),

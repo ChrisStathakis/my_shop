@@ -381,10 +381,8 @@ class OrderItem(DefaultOrderItemModel):
             print('wtf')
             messages.warning(request, 'Something goes wrong!')
 
-
     def tag_total_clean_value(self):
         return f'{self.total_clean_value} {CURRENCY}'
-    
 
     def tag_total_final_value(self):
         return '%s %s' % (round(self.total_value_with_taxes), CURRENCY)

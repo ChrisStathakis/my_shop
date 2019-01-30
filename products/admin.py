@@ -14,6 +14,7 @@ class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
     readonly_fields = ['tag_final_price', ]
     save_as = True
     list_per_page = 50
+    search_fields = ['title']
     fieldsets = (
         ('General', {
             'fields': (('active', 'size'),

@@ -190,7 +190,6 @@ class OrderItemSizeForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
-     
 
 class StockForm(forms.ModelForm):
     year = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}))
@@ -203,3 +202,19 @@ class StockForm(forms.ModelForm):
         super(StockForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
+
+
+class OrderItemInlineForm(forms.BaseInlineFormSet):
+    model = OrderItem
+
+    def save_new(self, form, commit=True):
+        obj = super().save_new(form, commit=False)
+        print('new', obj)
+        if commit:
+            obj.save()
+        return obj
+
+    def save_existing(self, form, instance, commit=True):
+        obj = super().save_existing(form, instance)
+        print('edit', obj, form)
+        return obj

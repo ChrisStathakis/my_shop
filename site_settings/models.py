@@ -203,8 +203,14 @@ class DefaultOrderItemModel(models.Model):
 
 
 class PaymentOrders(DefaultOrderModel):
+    title = models.CharField(max_length=150, blank=True)
     is_expense = models.BooleanField(default=True)
     is_check = models.BooleanField(default=False)
+    payment_method = models.ForeignKey(PaymentMethod,
+                                       null=True,
+                                       blank=True,
+                                       on_delete=models.PROTECT,
+                                       verbose_name='Τρόπος Πληρωμής')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

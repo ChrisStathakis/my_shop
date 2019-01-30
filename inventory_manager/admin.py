@@ -1,9 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.admin import GenericTabularInline
-
+from django.db.models import Count
+from django.urls import resolve
 from import_export.admin import ImportExportModelAdmin
 from .models import Order, OrderItem, Category, Vendor, OrderItemSize, WarehouseOrderImage
+from .forms import OrderItemInlineForm
+from .filters import HaveDeptFilter
 from site_settings.admin_tools import admin_changelist_link
 from site_settings.models import PaymentOrders
 
@@ -30,8 +33,10 @@ class OrderPhotoInline(admin.TabularInline):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 1
+    extra = 3
     fields = ['product', 'value', 'qty', 'discount_value', 'unit', 'tag_final_value', 'total_clean_value']
+    autocomplete_fields = ['product']
+    search_fields = ['product__title']
 
     def get_formset(self, request, obj=None, **kwargs):
         self.parent_object = obj
@@ -59,6 +64,8 @@ class OrderAdmin(ImportExportModelAdmin):
     list_filter = ['vendor', 'is_paid']
     inlines = [OrderPhotoInline, OrderItemInline, PaymentOrderInline]
     actions = [update_vendor, ]
+    autocomplete_fields = ['vendor']
+    search_fields = ['vendor']
 
     fieldsets = (
         ('General', {
@@ -85,26 +92,36 @@ class OrderAdmin(ImportExportModelAdmin):
                 obj_list.extend(['taxes_modifier', 'payment_method', 'order_type', 'date_expired', 'discount'])
         return obj_list
 
-    def response_add(self, request, new_object):
-        obj = self.after_saving_model_and_related_inlines(new_object)
-        return super(OrderAdmin, self).response_add(request, obj)
-
-    def response_change(self, request, obj):
-        obj = self.after_saving_model_and_related_inlines(obj)
-        return super(OrderAdmin, self).response_change(request, obj)
-
-    def after_saving_model_and_related_inlines(self, obj):
-        obj.save()
-        return obj
 
 @admin.register(OrderItem)
 class OrderItemAdmin(ImportExportModelAdmin):
-    pass
+    list_display = ['__str__', 'qty', 'tag_final_value']
+    readonly_fields = ['tag_final_value']
+    autocomplete_fields = ['product']
+    search_fields = ['product']
 
 
 @admin.register(Vendor)
 class VendorAdmin(ImportExportModelAdmin):
-    pass
+    list_per_page = 20
+    list_display = ['title', 'tag_balance', 'order_count']
+    readonly_fields = ['tag_balance']
+    list_filter = [HaveDeptFilter, ]
+    search_fields = ['title', ]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            _order_count=Count('vendor_orders', distinct=True)
+        )
+        return queryset
+
+    def order_count(self, obj):
+        return obj._order_count
+    order_count.admin_order_field = '_order_count'
+
+    def have_dept(self, obj):
+        return obj.balance > 0
 
 
 @admin.register(Category)

@@ -9,7 +9,6 @@ def paid_action(modeladmin, queryset):
         ele.is_paid = True
         ele.save()
 
-
 paid_action.short_description = 'Αποπληρωμή'
 
 
@@ -67,7 +66,6 @@ class PayrollAdmin(admin.ModelAdmin):
         }),
     )
 
-   
     def save_model(self, request, obj, form, change):
         if not obj.user_account:
             obj.user_account = request.user
@@ -88,16 +86,19 @@ class BillCategoryAdmin(admin.ModelAdmin):
     readonly_fields = ['tag_balance', ]
     list_filter = ['active']
     fields = ['active', 'title', 'tag_balance']
+    search_fields = ['title']
 
 
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_expired'
+    search_fields = ['title', 'category__title']
     list_per_page = 50
     list_select_related = ['payment_method', 'category', 'user_account']
     list_display = ['date_expired', 'category', 'title', 'tag_final_value', 'payment_method', 'is_paid']
     list_filter = ['is_paid', 'category', 'date_expired', 'user_account']
     actions = [paid_action, ]
+    save_as = True
 
     fieldsets = (
         ('General', {

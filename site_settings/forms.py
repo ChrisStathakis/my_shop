@@ -33,3 +33,4 @@ class PaymentMethodForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
+
