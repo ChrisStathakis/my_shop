@@ -25,6 +25,37 @@
       "active": true,
       "site_active": false
     }
+  },
+  {
+    "model": "site_settings.shipping",
+    "pk": 1,
+    "fields": {
+      "title": "Παραλαβή Από το κατάστημα",
+      "active": true
+
+    }
+  },
+  {
+    "model": "site_settings.shipping",
+    "pk": 2,
+    "fields": {
+      "title": "Γενική Ταχυδρομική",
+      "active": true,
+      "additional_cost":5,
+      "limit_value":40
+
+    }
+  },
+  {
+    "model": "site_settings.shipping",
+    "pk": 3,
+    "fields": {
+      "title": "ACS",
+      "active": true,
+      "additional_cost":3,
+      "limit_value":25
+    }
   }
+
 
 ]

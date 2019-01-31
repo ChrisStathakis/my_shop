@@ -37,7 +37,7 @@ def validate_file(value):
 # Create your models here.
 
 from site_settings.constants import TAXES_CHOICES, CURRENCY, UNIT
-from site_settings.models import PaymentOrders, PaymentMethod
+from site_settings.models import PaymentMethod
 
 
 class Category(models.Model):
@@ -87,7 +87,6 @@ class Vendor(models.Model):
     remaining_deposit = models.DecimalField(default=0, decimal_places=2, max_digits=100,
                                             verbose_name='Υπόλοιπο προκαταβολών')
     balance = models.DecimalField(default=0, max_digits=100, decimal_places=2, verbose_name="Υπόλοιπο")
-    payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
         verbose_name_plural = '9. Προμηθευτές'
@@ -126,6 +125,7 @@ class Vendor(models.Model):
 
     def tag_balance(self):
         return ("{0:.2f}".format(round(self.balance, 2))) + ' %s' % (CURRENCY)
+    tag_balance.short_description = 'Υπόλοιπο'
 
     def tag_deposit(self):
         return "%s %s" % (self.remaining_deposit, CURRENCY)
@@ -165,7 +165,6 @@ class Order(DefaultOrderModel):
 
     objects = models.Manager()
     my_query = OrderManager()
-    payment_orders = GenericRelation(PaymentOrders)
 
     class Meta:
         verbose_name_plural = "1. Warehouse Invoice"
@@ -173,19 +172,6 @@ class Order(DefaultOrderModel):
 
     def __str__(self):
         return self.title
-
-    def deposit(self):
-        if self.is_paid:
-            diff = self.final_value - self.paid_value
-            if diff > 0:
-                PaymentOrders.objects.create(
-                    title=self.title,
-                    date_expired=self.date_expired,
-                    value=self.final_value,
-                    payment_method=self.payment_method,
-                    is_paid=True,
-                    is_expense=True
-                )
 
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
@@ -195,11 +181,8 @@ class Order(DefaultOrderModel):
             'total'])/100 if order_items else 0 
         self.total_discount = Decimal(self.total_discount) + Decimal(self.discount)
         self.total_price_after_discount = Decimal(self.value) - Decimal(self.total_discount)
-        self.total_taxes = (self.total_price_after_discount) * (
-        Decimal(self.get_taxes_modifier_display()) / 100)
+        self.total_taxes = self.total_price_after_discount * ( Decimal(self.get_taxes_modifier_display()) / 100)
         self.final_value = self.total_price_after_discount + self.total_taxes
-        self.paid_value = self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))[
-            'value__sum'] if self.payment_orders.filter(is_paid=True) else 0
         self.paid_value = self.paid_value if self.paid_value else 0
         if self.paid_value > 0:
             self.is_paid = True
@@ -311,6 +294,7 @@ class OrderItem(DefaultOrderItemModel):
     product = models.ForeignKey('products.Product', verbose_name='Προϊόν',
                                 on_delete=models.CASCADE,
                                 null=True,
+                                related_name='order_product'
                                 )
     unit = models.CharField(max_length=1, choices=UNIT, default='1', verbose_name='Μονάδα Μέτρησης')
     taxes = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3', verbose_name='ΦΠΑ')

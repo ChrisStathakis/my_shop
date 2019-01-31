@@ -11,7 +11,7 @@ from django.conf import settings
 
 from inventory_manager.models import *
 from site_settings.constants import *
-from site_settings.models import PaymentMethod, PaymentOrders, Store
+from site_settings.models import PaymentMethod, Store
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
 from .managers import BillCategoryManager, ExpenseCategoryManager, PersonManager, OccupationManager, GeneralManager
 
@@ -65,7 +65,6 @@ class Bill(DefaultOrderModel):
                                  related_name='bills',
                                  verbose_name='Λογαριασμός'
                                  )
-    payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = GeneralManager()
 
@@ -253,7 +252,6 @@ class PayrollInvoiceManager(models.Manager):
 class Payroll(DefaultOrderModel):
     person = models.ForeignKey(Person, verbose_name='Υπάλληλος', on_delete=models.PROTECT, related_name='person_invoices')
     category = models.CharField(max_length=1, choices=PAYROLL_CHOICES, default='1')
-    payment_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = GeneralManager()
 
@@ -407,7 +405,6 @@ class GenericExpense(DefaultOrderModel):
                                  on_delete=models.PROTECT,
                                  related_name='expenses'
                                  )
-    payments_orders = GenericRelation(PaymentOrders)
     objects = models.Manager()
     my_query = GeneralManager()
 
@@ -486,6 +483,7 @@ class GenericExpense(DefaultOrderModel):
 @receiver(post_delete, sender=GenericExpense)
 def update_expense_category(sender, instance, **kwargs):
     instance.category.update_balance()
+
 
 @receiver(pre_delete, sender=GenericExpense)
 def delete_generic_order_items(sender, instance, **kwargs):

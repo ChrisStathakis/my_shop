@@ -1,68 +1,24 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
-from django.urls import resolve
+from django.http import HttpResponse
+from django.urls import path
 from import_export.admin import ImportExportModelAdmin
+import csv
 from .models import Order, OrderItem, Category, Vendor, OrderItemSize, WarehouseOrderImage
-from .forms import OrderItemInlineForm
 from .filters import HaveDeptFilter
+from .inlines import OrderItemInline, OrderPhotoInline
+from .actions import update_vendor
 from site_settings.admin_tools import admin_changelist_link
-from site_settings.models import PaymentOrders
-
-
-def update_vendor(modeladmin, request, queryset):
-    for order in queryset:
-        items = order.order_items.all()
-        for item in items:
-            product = item.product
-            product.vendor = order.vendor
-            product.save()
-
-
-class PaymentOrderInline(GenericTabularInline):
-    model = PaymentOrders
-    extra = 1
-    fields = ['title', 'date_expired', 'payment_method', 'value', 'is_paid']
-
-
-class OrderPhotoInline(admin.TabularInline):
-    model = WarehouseOrderImage
-    extra = 1
-
-
-class OrderItemInline(admin.TabularInline):
-    model = OrderItem
-    extra = 3
-    fields = ['product', 'value', 'qty', 'discount_value', 'unit', 'tag_final_value', 'total_clean_value']
-    autocomplete_fields = ['product']
-    search_fields = ['product__title']
-
-    def get_formset(self, request, obj=None, **kwargs):
-        self.parent_object = obj
-        return super(OrderItemInline, self).get_formset(request, obj, **kwargs)
-
-    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-        field = super(OrderItemInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
-        if db_field.name == 'product':
-            if self.parent_object is not None:
-                field.queryset = field.queryset.filter(vendor=self.parent_object.vendor)
-            else:
-                field.queryset = field.queryset.none()
-        return field
-
-    def get_readonly_fields(self, request, obj=None):
-        my_list = ['tag_final_value', ]
-        return my_list
 
 
 @admin.register(Order)
 class OrderAdmin(ImportExportModelAdmin):
-    list_display = ['date_expired', 'title', 'vendor', 'is_paid', 'tag_final_value']
+    list_display = ['date_expired', 'title', 'order_type', 'vendor', 'is_paid', 'tag_final_value']
     list_select_related = ['vendor']
     list_per_page = 50
     list_filter = ['vendor', 'is_paid']
-    inlines = [OrderPhotoInline, OrderItemInline, PaymentOrderInline]
+    inlines = [OrderPhotoInline, OrderItemInline]
     actions = [update_vendor, ]
     autocomplete_fields = ['vendor']
     search_fields = ['vendor']
@@ -103,11 +59,13 @@ class OrderItemAdmin(ImportExportModelAdmin):
 
 @admin.register(Vendor)
 class VendorAdmin(ImportExportModelAdmin):
+    change_list_template = 'my_admin/vendor_list.html'
     list_per_page = 20
     list_display = ['title', 'tag_balance', 'order_count']
     readonly_fields = ['tag_balance']
     list_filter = [HaveDeptFilter, ]
     search_fields = ['title', ]
+    actions = ['export_as_csv', ]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -119,9 +77,23 @@ class VendorAdmin(ImportExportModelAdmin):
     def order_count(self, obj):
         return obj._order_count
     order_count.admin_order_field = '_order_count'
+    order_count.short_description = 'Σύνολο Παραστατικών'
 
     def have_dept(self, obj):
         return obj.balance > 0
+
+    def export_as_csv(self, request, queryset):
+        meta = self.model._meta
+        fields_names = [field.name for field in meta.fields]
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+        writer = csv.writer(response)
+        writer.writerow(fields_names)
+        for obj in queryset:
+            row = writer.writerow([getattr(obj, field) for field in fields_names])
+        return response
+
+    export_as_csv.short_description = 'Εξαγωγή ως CSV'
 
 
 @admin.register(Category)

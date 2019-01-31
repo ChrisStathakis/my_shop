@@ -21,7 +21,6 @@ from .models import RetailOrder, RetailOrderItem
 from .forms import SalesForm
 from products.models import Product, SizeAttribute
 
-from site_settings.forms import PaymentForm
 from site_settings.tools import initial_date
 
 # Retail Pos
@@ -80,7 +79,7 @@ def sales(request, pk):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': pk}))
-        form_paid = PaymentForm(request.POST)
+        form_paid = Product(request.POST)
         if form_paid.is_valid():
             form_paid.save()
             return HttpResponseRedirect(reverse('pos:sales', kwargs={'pk': pk}))

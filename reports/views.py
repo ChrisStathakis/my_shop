@@ -11,7 +11,6 @@ from products.models import *
 from point_of_sale.models import *
 from transcations.models import *
 from inventory_manager.models import Vendor, Order, OrderItem
-from site_settings.models import PaymentOrders
 from site_settings.constants import *
 from accounts.models import CostumerAccount
 from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoices, initial_data_invoices,
@@ -32,7 +31,7 @@ class HomepageReport(LoginRequiredMixin, TemplateView):
         context = super(HomepageReport, self).get_context_data(**kwargs)
         retail_orders = RetailOrder.objects.all().order_by('-timestamp')[:10]
         warehouse_orders = Order.objects.all().order_by('-date_expired')[:10]
-        paid_orders = PaymentOrders.objects.all()[:10]
+        paid_orders = Product.objects.all()[:10]
         context.update(locals())
         return context
 
@@ -295,7 +294,7 @@ class VendorDetailReportView(ListView):
     def get_context_data(self, **kwargs):
         content = super(VendorDetailReportView, self).get_context_data(**kwargs)
         object = self.object
-        payment_orders = PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
+        payment_orders = Product.objects.filter(content_type=ContentType.objects.get_for_model(Order),
                                                       object_id__in=self.object_list.values('id')
                                                       )
         content.update(locals())
@@ -305,16 +304,16 @@ class VendorDetailReportView(ListView):
 @method_decorator(staff_member_required, name='dispatch')
 class CheckOrderPage(ListView):
     template_name = 'report/warehouse/check_orders.html'
-    model = PaymentOrders
+    model = Product
     paginate_by = 30
 
     def get_queryset(self):
         date_start, date_end = filter_date(self.request)
-        queryset_o = PaymentOrders.objects.filter(is_check=True,
+        queryset_o = Product.objects.filter(is_check=True,
                                                   content_type=ContentType.objects.get_for_model(Order),
                                                   date_expired__range=[date_start, date_end]
                                                   )
-        queryset_1 = PaymentOrders.objects.filter(is_check=True,
+        queryset_1 = Product.objects.filter(is_check=True,
                                                   content_type=ContentType.objects.get_for_model(Vendor),
                                                   date_expired__range=[date_start, date_end]
                                                   )
@@ -352,7 +351,7 @@ def vendor_detail(request, pk):
     warehouse_orders = Order.objects.filter(vendor=instance, date_expired__range=[date_start, date_end])[:20]
     
     paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
-                           PaymentOrders.objects.filter(content_type=ContentType.objects.get_for_model(Order),
+                           Product.objects.filter(content_type=ContentType.objects.get_for_model(Order),
                                                         object_id__in=warehouse_orders.values('id'),
                                                         ) 
                           )

@@ -10,11 +10,9 @@ from site_settings.constants import CURRENCY
 
 from .tools import filter_date
 from itertools import chain
-from site_settings.models import PaymentOrders
 from operator import attrgetter
 
 from django.db import connection, reset_queries
-
 
 
 def create_month_analysis_from_database(queryset):
@@ -95,11 +93,11 @@ def balance_sheet(request):
     
 
 class CachFlowReportView(ListView):
-    model = PaymentOrders
+    model = Bill
     template_name = 'report/balance_sheet/cash_report_view.html'
 
     def get_queryset(self):
-        queryset = PaymentOrders.objects.filter(payment_method__id=1)
+        queryset = Bill.objects.filter(payment_method__id=1)
         return queryset
 
     def get_context_data(self, **kwargs):

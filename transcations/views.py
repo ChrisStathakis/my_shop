@@ -11,8 +11,6 @@ from .models import Person, Occupation, Bill, BillCategory, GenericExpenseCatego
 from .forms import BillForm, PayrollForm, PersonForm, OccupationForm, BillCategoryForm, GenericExpenseForm,\
     GenericExpenseCategoryForm
 
-from site_settings.forms import PaymentForm
-from site_settings.models import PaymentOrders
 from inventory_manager.models import Vendor
 from dateutil.relativedelta import relativedelta
 
@@ -327,12 +325,12 @@ class GenericExpenseCategoryDetailView(DetailView, UpdateView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class CheckOrderView(ListView):
-    model = PaymentOrders
+    model = BillCategory
     template_name = 'transcations/class_page_list.html'
     paginate_by = 100
 
     def get_queryset(self):
-        queryset = PaymentOrders.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Vendor))
+        queryset = BillCategory.objects.filter(is_check=True, content_type=ContentType.objects.get_for_model(Vendor))
         return queryset
 
     def get_context_data(self, **kwargs):

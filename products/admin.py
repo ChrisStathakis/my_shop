@@ -8,7 +8,7 @@ from site_settings.admin_mixins import DefaultFilterMixin
 
 @admin.register(Product)
 class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
-    list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price']
+    list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price', 'qty']
     list_filter = ['active', 'site_active', 'is_offer', 'category', 'vendor']
     list_select_related = ['category', 'vendor']
     readonly_fields = ['tag_final_price', ]

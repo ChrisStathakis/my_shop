@@ -18,7 +18,7 @@ from accounts.models import CostumerAccount
 from products.models import  Product, SizeAttribute, Gifts
 from site_settings.constants import CURRENCY, TAXES_CHOICES
 from site_settings.models import DefaultOrderModel, DefaultOrderItemModel
-from site_settings.models import PaymentMethod, PaymentOrders, Shipping, Country
+from site_settings.models import PaymentMethod, Shipping, Country
 from site_settings.constants import CURRENCY, ORDER_STATUS, ORDER_TYPES, ADDRESS_TYPES
 from carts.models import Cart, CartItem, Coupons, CartGiftItem
 
@@ -52,7 +52,6 @@ class RetailOrder(DefaultOrderModel):
     cart_related = models.OneToOneField(Cart, blank=True, null=True, on_delete=models.SET_NULL)
     coupons = models.ManyToManyField(Coupons, blank=True)
     order_related = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
-    payorders = GenericRelation(PaymentOrders)
 
     class Meta:
         verbose_name_plural = '1. Παραστατικά Πωλήσεων'
@@ -68,30 +67,12 @@ class RetailOrder(DefaultOrderModel):
         # self.check_coupons()
         # self.update_order()
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
-        self.paid_value = self.payorders.all().aggregate(Sum('value'))['value__sum'] if self.payorders else 0
         self.paid_value = self.paid_value if self.paid_value else 0
         if self.paid_value >= self.final_value: self.is_paid = True
 
         super(RetailOrder, self).save(*args, **kwargs)
         if self.costumer_account:
             self.costumer_account.save()
-        if self.order_type in ['b', 'd']:
-            self.payorders.all().update(is_expense=True)
-
-    def create_check(self):
-        value = self.get_remaining_value()
-        if value > 0:
-            new_check = PaymentOrders.objects.create(
-                payment_method=self.payment_method,
-                value=self.final_value - self.paid_value,
-                is_paid=True,
-                content_type=ContentType.objects.get_for_model(RetailOrder),
-                object_id=self.id,
-                date_expired=datetime.datetime.now(),
-                is_expense=False,
-            )
-            if self.order_type not in ['e', 'r']: new_check.is_expense = True
-            new_check.save()
 
     def update_order(self):
         items = self.order_items.all()

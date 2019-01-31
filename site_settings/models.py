@@ -46,17 +46,30 @@ class ShippingManager(models.Manager):
         
 
 class Shipping(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(unique=True, max_length=100)
-    additional_cost = models.DecimalField(max_digits=6, default=0, decimal_places=2, validators=[validate_positive_decimal, ])
-    limit_value = models.DecimalField(default=40, max_digits=6, decimal_places=2,
-                                              validators=[validate_positive_decimal, ])
+    active = models.BooleanField(default=True, verbose_name='Κατάσταση')
+    title = models.CharField(unique=True,
+                             max_length=100,
+                             verbose_name='Τίτλος'
+                             )
+    additional_cost = models.DecimalField(max_digits=6,
+                                          default=0,
+                                          decimal_places=2,
+                                          validators=[validate_positive_decimal, ],
+                                          verbose_name='Κόστος'
+                                          )
+    limit_value = models.DecimalField(default=40,
+                                      max_digits=6,
+                                      decimal_places=2,
+                                      validators=[validate_positive_decimal, ],
+                                      verbose_name= 'Όριο'
+                                      )
     country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
-    first_choice = models.BooleanField(default=False)
-    ordering_by = models.IntegerField(default=1)
+    first_choice = models.BooleanField(default=False, verbose_name='Πρώτη Επιλόγη')
+    ordering_by = models.IntegerField(default=1, verbose_name='Σειρα Προτεριότητας')
 
     class Meta:
         ordering = ['-ordering_by', ]
+        verbose_name_plural = 'Τρόποι Μεταφοράς'
 
     def __str__(self):
         return self.title
@@ -74,23 +87,29 @@ class Shipping(models.Model):
 
     def tag_additional_cost(self):
         return f'{self.additional_cost} {CURRENCY}'
+    tag_additional_cost.short_description = 'Επιπλέον Κόστος'
 
     def tag_limit_value(self):
         return f'{self.limit_value} {CURRENCY}'
+
+    tag_limit_value.short_description = 'Όριο'
 
     def tag_active(self):
         return 'Active' if self.active else 'No Active'
 
 
 class PaymentMethod(models.Model):
-    title = models.CharField(unique=True, max_length=100)
-    active = models.BooleanField(default=True)
-    site_active = models.BooleanField(default=False)
-    additional_cost = models.DecimalField(decimal_places=2, max_digits=10, default=0)
-    limit_value = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    active = models.BooleanField(default=True, verbose_name='Κατάσταση')
+    title = models.CharField(unique=True, max_length=100, verbose_name='Τίτλος')
+    site_active = models.BooleanField(default=False, verbose_name='Εμφάνιση στο site')
+    additional_cost = models.DecimalField(decimal_places=2, max_digits=10, default=0, verbose_name='Επιπλέον Κόστος')
+    limit_value = models.DecimalField(decimal_places=2, max_digits=10, default=0, verbose_name='Όριο')
     first_choice = models.BooleanField(default=False)
     objects = models.Manager()
     my_query = PaymentMethodManager()
+
+    class Meta:
+        verbose_name_plural = 'Τρόποι Πληρωμής'
 
     def __str__(self):
         return self.title
@@ -98,8 +117,12 @@ class PaymentMethod(models.Model):
     def tag_additional_cost(self):
         return '%s %s' % (self.additional_cost, CURRENCY)
 
+    tag_additional_cost.short_description = 'Επιπλέον Κόστος'
+
     def tag_limit_value(self):
         return '%s %s' % (self.limit_value, CURRENCY)
+
+    tag_limit_value.short_description = 'Όριο'
 
     def estimate_additional_cost(self, value):
         if value <= 0 or value >= self.limit_value:
@@ -122,6 +145,9 @@ class DefaultBasicModel(models.Model):
 class Store(models.Model):
     title = models.CharField(unique=True, max_length=100)
     active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = 'Κατάστημα'
 
     def __str__(self):
         return self.title
@@ -171,16 +197,6 @@ class DefaultOrderModel(models.Model):
     def tag_payment_method(self):
         return f'{self.payment_method} {CURRENCY}'
 
-    def create_order(self, value):
-        PaymentOrders.objects.create(title=f'{self.title}',
-                                     value=value,
-                                     payment_method=self.payment_method,
-                                     is_paid=True,
-                                     object_id=self.id,
-                                     content_type=ContentType.objects.get_for_model(self),
-                                     is_expense=True
-                                     )
-
 
 class DefaultOrderItemModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -193,6 +209,7 @@ class DefaultOrderItemModel(models.Model):
     class Meta:
         abstract = True
 
+
     def tag_final_value(self):
         return f'{self.final_value} {CURRENCY}'
     tag_final_value.short_description = 'Αξία'
@@ -201,59 +218,5 @@ class DefaultOrderItemModel(models.Model):
         return f'{self.value} {CURRENCY}'
     tag_value.short_description = 'Αρχική Αξία'
 
-
-class PaymentOrders(DefaultOrderModel):
-    title = models.CharField(max_length=150, blank=True)
-    is_expense = models.BooleanField(default=True)
-    is_check = models.BooleanField(default=False)
-    payment_method = models.ForeignKey(PaymentMethod,
-                                       null=True,
-                                       blank=True,
-                                       on_delete=models.PROTECT,
-                                       verbose_name='Τρόπος Πληρωμής')
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    def __str__(self):
-        if self.is_check:
-            return f'Check: {self.title}'
-        return f"Επιταγη {self.title}"
-
-    def save(self, *args, **kwargs):
-        self.final_value = self.value
-        super(PaymentOrders, self).save(*args, **kwargs)
-
-    def tag_final_value(self):
-        return f'{self.final_value} {CURRENCY}'
-    tag_final_value.short_description = 'Αξία'
-
-    def get_dashboard_url(self):
-        return reverse('inventory:check_order_detail', kwargs={'pk': self.id})
-
-    @staticmethod
-    def filters_data(request, queryset):
-        search_name = request.GET.get('search_name', None)
-        # vendor_name = request.GET.getlist('vendor_name', None)
-        paid_name = request.GET.getlist('paid_name', None)
-        check_name = request.GET.get('check_name', None)
-
-        queryset = queryset.filter(title__icontains=search_name) if search_name else queryset
-        queryset = queryset.filter(is_check=True) if check_name == 'check' else queryset.filter(is_check=False) \
-            if check_name == 'no_check' else queryset
-        queryset = queryset.filter(is_paid=True) if 'paid' in paid_name else queryset.filter(is_paid=False)\
-            if 'not_paid' in paid_name else queryset
-        return queryset
-
-
-@receiver(post_delete, sender=PaymentOrders)
-def update_on_delete(sender, instance, *args, **kwargs):
-    get_order = instance.content_object
-    try:
-        get_order.is_paid = False
-        get_order.paid_value = 0
-        get_order.save()
-    except:
-        t = ''
 
 

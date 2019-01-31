@@ -149,23 +149,20 @@ class Product(DefaultBasicModel):
         if self.price:
             self.final_price = self.price_discount if self.price_discount > 0 else self.price
         self.is_offer = True if self.price_discount > 0 else False
+        if WAREHOUSE_ORDERS_TRANSCATIONS:
+            self.qty = self.warehouse_calculations()
         super(Product, self).save(*args, **kwargs)
 
-    def update_product(self, transcation, qty):
-        if transcation == 'add':
-            self.qty += qty
-            self.save()
-        if transcation == 'remove':
-            self.qty -= qty
-            self.save()
-
-    def update_qty(self):
-        if WAREHOUSE_ORDERS_TRANSCATIONS:
-            pass
-        else:
-            items = self.related_products.all()
-            self.qty = items.aggregate(Sum('qty'))['qty__sum'] if items else self.qty
-            self.save()
+    def warehouse_calculations(self):
+        qty = 0
+        order_items = self.order_product.all()
+        qty_analysis = order_items.values('order__order_type').annotate(
+            total_qty=(Sum('qty'))
+        ).order_by('order__order_type')
+        for qty_data in qty_analysis:
+            qty = qty + qty_data['total_qty'] if qty_data['order__order_type'] in ['1', '3'] else qty
+            qty = qty - qty_data['total_qty'] if qty_data['order__order_type'] == '5' else qty
+        return qty
 
     def __str__(self):
         return '%s %s' % (self.title, self.color) if self.color else self.title

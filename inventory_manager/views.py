@@ -15,9 +15,8 @@ from django.contrib.contenttypes.models import ContentType
 from products.models import Product,  Color, Size, SizeAttribute
 from products.forms import VendorForm, CreateProductForm
 from .models import Order, OrderItem, Vendor, Category, WarehouseOrderImage
-from .models import PaymentOrders
+
 from .forms import OrderItemSizeForm, OrderItemForm, WarehouseOrderImageForm, StockForm
-from site_settings.forms import PaymentForm
 from site_settings.tools import dashboard_filters_name
 from inventory_manager.models import Order, OrderItem, Vendor, Stock, StockItem
 from inventory_manager.forms import OrderQuickForm, VendorQuickForm, WarehouseOrderForm, OrderItemForm, OrderItemSize
@@ -248,25 +247,11 @@ def ajax_search_products(request):
 
 @staff_member_required
 def order_payment_manager_edit_or_remove(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
-    form = PaymentForm(instance=instance, initial={'is_expense': True})
-    if request.POST:
-        form = PaymentForm(request.POST, instance=instance, initial={'is_expense': True})
-        if form.is_valid():
-            form.save()
-            instance.content_object.save()
-            return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': instance.object_id}))
-    page_title = f'Edit {instance.title} payment'
-    back_url = ''
     return render(request, 'inventory_manager/form.html', context=locals())
 
 
 @staff_member_required
 def order_delete_payment(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
-    order = instance.content_object
-    instance.delete()
-    order.save()
     return HttpResponseRedirect(reverse('inventory:warehouse_order_detail', kwargs={'dk': order.id}))
 
 
@@ -325,11 +310,11 @@ class VendorPageCreate(FormView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class WarehousePaymentPage(ListView):
-    model = PaymentOrders
+    model = Product
     template_name = 'inventory_manager/payment_list.html'
 
     def get_queryset(self):
-        queryset = PaymentOrders.objects.all()
+        queryset = Product.objects.all()
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -378,7 +363,7 @@ def warehouser_order_paid_detail(request, pk):
 
 @staff_member_required
 def warehouse_check_order_convert(request, dk, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
+    instance = get_object_or_404(Product, id=pk)
     order = get_object_or_404(Order, id=dk)
     if instance.value <= order.total_price:
         instance.object_id = dk
@@ -386,7 +371,7 @@ def warehouse_check_order_convert(request, dk, pk):
         instance.is_paid = True
         instance.save()
     else:
-        new_payment_order = PaymentOrders.objects.create(content_type=ContentType.objects.get_for_model(order),
+        new_payment_order = Product.objects.create(content_type=ContentType.objects.get_for_model(order),
                                                          object_id=dk,
                                                          title='%s' % order.code,
                                                          date_expired=instance.date_expired,
@@ -404,21 +389,12 @@ def warehouse_check_order_convert(request, dk, pk):
 
 @staff_member_required
 def warehouse_order_paid_delete(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
-    instance.delete()
-    messages.warning(request, 'The payment deleted!')
     return HttpResponseRedirect(reverse('inventory:ware_order_paid_detail', kwargs={'pk': instance.object_id}))
 
 
 @staff_member_required
 def warehouse_edit_paid_order(request, dk, pk):
-    instance = get_object_or_404(Order, id=dk)
-    payorder = get_object_or_404(PaymentOrders, id=pk)
-    form = PaymentForm(request.POST or None,
-                       instance=payorder,
-                       initial={'is_expense': True
-                                })
-    create = False
+
     if request.POST:
         if form.is_valid():
             form.save()
@@ -434,8 +410,8 @@ def warehouse_edit_paid_order(request, dk, pk):
 @method_decorator(staff_member_required, name='dispatch')
 class WarehousePaymentOrderCreate(CreateView):
     template_name = 'inventory_manager/form.html'
-    model = PaymentOrders
-    form_class = PaymentForm
+    model = Product
+    form_class = Product
 
     def get_initial(self):
         initial = super(WarehousePaymentOrderCreate, self).get_initial()
@@ -470,9 +446,9 @@ class WarehousePaymentOrderCreate(CreateView):
 
 @staff_member_required
 def edit_check_order(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
+    instance = get_object_or_404(Product, id=pk)
     back_url = reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id})
-    form = PaymentForm(request.POST or None, instance=instance, initial={'is_expense': True})
+    form = Product(request.POST or None, instance=instance, initial={'is_expense': True})
     if form.is_valid():
         form.save()
         messages.success(request, 'The Check order is edited')
@@ -485,7 +461,7 @@ def edit_check_order(request, pk):
 
 @staff_member_required
 def delete_check_order(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
+    instance = get_object_or_404(Product, id=pk)
     instance.delete()
     messages.warning(request, 'The Payment Order deleted!')
     return HttpResponseRedirect(reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id}))
@@ -493,21 +469,18 @@ def delete_check_order(request, pk):
 
 @staff_member_required
 def check_order_paid(request, pk):
-    instance = get_object_or_404(PaymentOrders, id=pk)
-    instance.is_paid = True
-    instance.save()
-    messages.success(request, 'The order is paid.')
+
     return HttpResponseRedirect(reverse('inventory:vendor_detail', kwargs={'pk': instance.object_id}))
 
 
 @method_decorator(staff_member_required, name='dispatch')
 class CheckOrdersView(ListView):
     template_name = 'inventory_manager/checkOrders.html'
-    model = PaymentOrders
+    model = Product
     paginate_by = 100
 
     def get_queryset(self):
-        queryset = PaymentOrders.objects.filter(is_check=True)
+        queryset = Product.objects.filter(is_check=True)
         vendors = Vendor.objects.all()
         vendors = Vendor.filter_data(self.request, vendors)
         vendors_ids = vendors.values_list('id', flat=True)
@@ -528,14 +501,14 @@ class CheckOrdersView(ListView):
 
 @method_decorator(staff_member_required, name='dispatch')
 class CheckOrderUpdateView(UpdateView):
-    model = PaymentOrders
+    model = Product
     template_name = 'inventory_manager/form.html'
-    form_class = PaymentForm
+    form_class = Product
     success_url = reverse_lazy('inventory:check_orders')
 
     def get_initial(self):
         initial = super(CheckOrderUpdateView, self).get_initial()
-        instance = get_object_or_404(PaymentOrders, id=self.kwargs['pk'])
+        instance = get_object_or_404(Product, id=self.kwargs['pk'])
         initial['object_id'] = instance.id
         initial['content_type'] = instance.content_type
         initial['is_expense'] = instance.is_expense

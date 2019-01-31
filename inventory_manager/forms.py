@@ -3,7 +3,7 @@ from django.db.models import Sum, F
 from django.forms import inlineformset_factory
 
 from products.models import *
-from site_settings.models import PaymentMethod, PaymentOrders
+from site_settings.models import PaymentMethod
 from inventory_manager.models import *
 from decimal import *
 
