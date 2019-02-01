@@ -99,6 +99,7 @@ class VendorAdmin(ImportExportModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     list_display = ['title',]
+    search_fields = ['title']
 
     @admin_changelist_link(
         'products',

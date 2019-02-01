@@ -1,15 +1,15 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
+from django.utils.text import slugify
 from .models import Product
 from frontend.models import CategorySite
 from .models import SizeAttribute
-import slugify
 
 
 @receiver(post_save, sender=Product)
 def create_product_slug(sender, instance, **kwargs):
     if not instance.slug:
-        new_slug = slugify.slugify(instance.title)
+        new_slug = slugify(instance.title, allow_unicode=True)
         qs_exists = Product.objects.filter(slug=new_slug)
         if qs_exists.exists():
             new_slug = f'{new_slug}-{instance.id}'
@@ -20,7 +20,7 @@ def create_product_slug(sender, instance, **kwargs):
 @receiver(post_save, sender=CategorySite)
 def create_category_slug(sender, instance, **kwargs):
     if not instance.slug:
-        new_slug = slugify.slugify(instance.title)
+        new_slug = slugify(instance.name, allow_unicode=True)
         qs_exists = Product.objects.filter(slug=new_slug)
         if qs_exists.exists():
             new_slug = f'{new_slug}-{instance.id}'

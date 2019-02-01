@@ -1,7 +1,7 @@
 from django.conf import settings
 
 
-MEDIA_URL = 'media'
+MEDIA_URL = settings.MEDIA_URL
 #MEDIA_URL = 'https://monastiraki.s3.amazonaws.com/media/'
 
 CURRENCY = settings.CURRENCY

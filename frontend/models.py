@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from site_settings.models import DefaultBasicModel
 from site_settings.constants import MEDIA_URL, CURRENCY
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 def validate_size(value):
@@ -40,14 +41,14 @@ class CategorySiteManager(models.Manager):
         return super(CategorySiteManager, self).filter(active=True, show_on_menu=True)
 
 
-class CategorySite(models.Model):
+class CategorySite(MPTTModel):
     active = models.BooleanField(default=True)
-    title = models.CharField(max_length=120)
+    name = models.CharField(max_length=120)
     image = models.ImageField(blank=True, null=True, upload_to=category_site_directory_path, help_text='610*410')
     content = models.TextField(blank=True, null=True)
     date_added = models.DateField(auto_now=True)
     meta_description = models.CharField(max_length=300, blank=True)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.SET_NULL)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     order = models.IntegerField(default=1)
     slug = models.SlugField(blank=True, null=True, allow_unicode=True)
     show_on_menu = models.BooleanField(default=False, verbose_name='Active on Navbar')
@@ -60,10 +61,10 @@ class CategorySite(models.Model):
         ordering = ['-order', ]
 
     def __str__(self):
-        full_path = [self.title]
+        full_path = [self.name]
         k = self.parent
         while k is not None:
-            full_path.append(k.title)
+            full_path.append(k.name)
             k = k.parent
         return ' -> '.join(full_path[::-1])
 
@@ -107,7 +108,7 @@ class Brands(models.Model):
     title = models.CharField(max_length=120, verbose_name='Ονομασία Brand')
     image = models.ImageField(blank=True, upload_to='brands/', verbose_name='Εικόνα')
     order_by = models.IntegerField(default=1,verbose_name='Σειρά Προτεριότητας')
-    meta_description =models.CharField(max_length=255, blank=True)
+    meta_description = models.CharField(max_length=255, blank=True)
     width = models.IntegerField(default=240)
     height = models.IntegerField(default=240)
     slug = models.SlugField(blank=True, null=True, allow_unicode=True)
@@ -119,12 +120,12 @@ class Brands(models.Model):
     def __str__(self):
         return self.title
 
-    def image_tag(self):
-        return mark_safe('<img scr="%s/%s" width="400px" height="400px" />'%(MEDIA_URL, self.image))
+    def tag_image(self):
+        return mark_safe(f'<img src="{self.image.url}" width="400px" height="400px" />')
 
     def image_tag_tiny(self):
         return mark_safe('<img scr="%s/%s" width="100px" height="100px" />'%(MEDIA_URL, self.image))
-    image_tag.short_description = 'Είκονα'
+    tag_image.short_description = 'Είκονα'
 
     def tag_active(self):
         return 'Active' if self.active else 'No active'

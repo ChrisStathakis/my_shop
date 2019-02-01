@@ -381,7 +381,7 @@ class ProductPhotos(models.Model):
         ordering = ['is_primary', ]
 
     def __str__(self):
-        return self.title
+        return self.product.title
 
     def image_status(self):
         return 'Primary Image' if self.is_primary else 'Secondary Image' if self.is_back else 'Image'
@@ -390,9 +390,9 @@ class ProductPhotos(models.Model):
         return mark_safe('<img width="150px" height="150px" src="%s%s" />' %(MEDIA_URL, self.image))
     image_tag.short_description = 'Εικονα'
 
-    def image_tag_tiny(self):
-        return mark_safe('<img width="150px" height="150px" src="%s%s" />' %(MEDIA_URL, self.image))
-    image_tag_tiny.short_description = 'Εικόνα'
+    def tag_image_tiny(self):
+        return mark_safe(f'<img width="150px" height="150px" src="{self.image.url}" />')
+    tag_image_tiny.short_description = 'Εικόνα'
 
     def tag_status(self):
         return 'First Picture' if self.is_primary else 'Back Picture' if self.is_back else 'Picture'
