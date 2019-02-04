@@ -97,8 +97,6 @@ class Vendor(models.Model):
         self.balance = orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0
         self.balance -= orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
         # self.balance -= self.payment_orders.filter(is_paid=True).aggregate(Sum('value'))['value__sum'] if self.payment_orders.filter(is_paid=True) else 0
-        self.remaining_deposit = self.payment_orders.filter(is_paid=False).aggregate(Sum('value'))[
-            'value__sum'] if self.payment_orders.filter(is_paid=False) else 0
         super(Vendor, self).save(*args, **kwargs)
 
     @staticmethod

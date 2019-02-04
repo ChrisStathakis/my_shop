@@ -12,23 +12,29 @@ from products.models import Product
 class RetailOrderInline(admin.TabularInline):
     model = RetailOrderItem
     fields = ['title', 'order', 'qty', 'is_find', 'tag_final_value']
-    readonly_fields = ['tag_final_value']
-    # autocomplete_fields = ['title']
+    autocomplete_fields = ['title']
+    readonly_fields = ['tag_final_value', ]
     extra = 3
 
     def get_formset(self, request, obj=None, **kwargs):
         self.parent_object = obj
         return super(RetailOrderInline, self).get_formset(request, obj, **kwargs)
 
+    '''
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         field = super(RetailOrderInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
         if db_field.name == 'title':
-            print('found me?',  Product.my_query.active_for_site())
             field.queryset = Product.my_query.active_for_site()
         return field
+    '''
+
+    def get_readonly_fields(self, request, obj):
+        print('read only!', self.readonly_fields, obj)
+        return self.readonly_fields
 
 
-    def get_a
+
+    
 
 @admin.register(RetailOrder)
 class RetailOrderAdmin(admin.ModelAdmin):
@@ -55,6 +61,7 @@ class RetailOrderAdmin(admin.ModelAdmin):
         }),
     )
 
+    
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['seller_account'].initial = request.user

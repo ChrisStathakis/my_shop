@@ -4,7 +4,7 @@ from import_export.admin import ImportExportModelAdmin
 from .models import Bill, BillCategory, Payroll, Person, Occupation, GenericExpense, GenericExpenseCategory
 
 
-def paid_action(modeladmin, queryset):
+def paid_action(modeladmin, request,  queryset):
     for ele in queryset:
         ele.is_paid = True
         ele.save()

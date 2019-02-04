@@ -31,3 +31,13 @@ class OrderItemInline(admin.TabularInline):
     def get_readonly_fields(self, request, obj=None):
         my_list = ['tag_final_value', ]
         return my_list
+
+    def save_model(self, request, obj, form, change):
+        print(form.data['title'])
+        super().save_model(request, obj, form, change)
+
+    def save_existing_objects(self, commit=True):
+        saved_instances = super().save_existing_objects(commit)
+        print('inline', saved_instances)
+        return saved_instances
+        

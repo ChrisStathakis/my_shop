@@ -151,6 +151,7 @@ class Product(DefaultBasicModel):
         self.is_offer = True if self.price_discount > 0 else False
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.qty = self.warehouse_calculations()
+            self.qty += self.retail_order_calculations()
         super(Product, self).save(*args, **kwargs)
 
     def warehouse_calculations(self):
@@ -163,6 +164,16 @@ class Product(DefaultBasicModel):
             qty = qty + qty_data['total_qty'] if qty_data['order__order_type'] in ['1', '3'] else qty
             qty = qty - qty_data['total_qty'] if qty_data['order__order_type'] == '5' else qty
         return qty
+
+    def retail_order_calculations(self):
+        qty = 0
+        order_items = self.retail_items.all()
+        qty_analysis = order_items.values('order__order_type').annotate(total_qty=(Sum('qty'))).order_by('order__order_type')
+        for qty_data in qty_analysis:
+            qty = qty - qty_data['total_qty'] if qty_data['order__order_type'] in ['r', 'e', 'wa'] else qty
+            qty = qty + qty_data['total_qty'] if qty_data['order__order_type'] in ['b', 'wr'] else qty
+        return qty
+    
 
     def __str__(self):
         return '%s %s' % (self.title, self.color) if self.color else self.title

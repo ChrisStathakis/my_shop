@@ -288,7 +288,7 @@ def update_on_delete_retail_order(sender, instance, *args, **kwargs):
 class RetailOrderItem(DefaultOrderItemModel):
     order = models.ForeignKey(RetailOrder, on_delete=models.CASCADE, related_name='order_items')
     cost = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    title = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='retail_items')
     #  warehouse_management
     is_find = models.BooleanField(default=False)
     is_return = models.BooleanField(default=False)
@@ -301,6 +301,7 @@ class RetailOrderItem(DefaultOrderItemModel):
     class Meta:
         verbose_name_plural = '2. Προϊόντα Πωληθέντα'
         ordering = ['-order__timestamp', ]
+        unique_together = ['title', 'order']
 
     def __str__(self):
         return self.title.title
@@ -310,6 +311,7 @@ class RetailOrderItem(DefaultOrderItemModel):
         self.total_value = self.final_value*self.qty
         self.total_cost_value = self.cost*self.qty
         super(RetailOrderItem, self).save(*args, **kwargs)
+        self.title.save()
 
     def update_warehouse(self, transcation_type, qty):
         update_warehouse(self, transcation_type, qty)
@@ -419,6 +421,10 @@ def create_destroy_title():
     else:
         return 'ΚΑΤ1'
 
+
+@receiver(post_delete, sender=RetailOrderItem)
+def update_warehouse(sender, instance, **kwargs):
+    instance.title.save()
 
 class GiftRetailItem(models.Model):
     product_related = models.ForeignKey(Product, on_delete=models.CASCADE)

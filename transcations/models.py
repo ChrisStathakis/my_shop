@@ -32,6 +32,14 @@ class BillCategory(models.Model):
     class Meta:
         verbose_name_plural = '4. Λογαριασμοί'
 
+    def save(self, *args, **kwargs):
+        bills = self.bills.all()
+        total_data = bills.aggregate(Sum('final_value'))['final_value__sum'] if bills else 0
+        paid_data = bills.filter(is_paid=True).aggregate(Sum('final_value'))['final_value__sum'] if bills.filter(is_paid=True) else 0
+        self.balance = total_data - paid_data
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return self.title
 
@@ -40,13 +48,6 @@ class BillCategory(models.Model):
 
     def get_report_url(self):
         return reverse('billings:report')
-
-    def update_balance(self):
-        queryset = self.bills.all()
-        value = queryset.aggregate(Sum('final_value'))['final_value__sum'] if queryset else 0
-        paid_value = queryset.aggregate(Sum('paid_value'))['paid_value__sum'] if queryset else 0
-        self.balance = value - paid_value
-        self.save()
 
     def tag_balance(self):
         return f'{self.balance} {CURRENCY}'
@@ -72,6 +73,11 @@ class Bill(DefaultOrderModel):
         verbose_name_plural = '1. Εντολη Πληρωμης Λογαριασμού'
         verbose_name = 'Λογαριασμός'
         ordering = ['-date_expired']
+
+    def save(self, *args, **kwargs):
+        self.final_value = self.value
+        super().save(*args, **kwargs)
+        self.category.save()
     
     def __str__(self):
         return f'{self.category} - {self.title}' if self.category else f'self.title'
@@ -81,25 +87,6 @@ class Bill(DefaultOrderModel):
 
     def tag_category(self):
         return f'{self.category.title}'
-
-    def deposit(self):
-        final_value = self.value
-        if self.is_paid:
-            diff = self.value - self.paid_value
-            paid_value = self.value
-            if diff > 0:
-                self.create_order(diff)
-        if not self.is_paid:
-            paid_value = 0
-            payment_orders = self.payment_orders.all()
-            if payment_orders:
-                for order in payment_orders: order.delete()
-        Bill.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
-
-    def save(self,  *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.deposit()
-        self.category.update_balance()
 
     def get_dashboard_url(self):
         return reverse('billings:edit_page', kwargs={'mymodel':'bill', 'pk': self.id, 'slug':'edit'})
@@ -119,10 +106,6 @@ class Bill(DefaultOrderModel):
     def update_category(self):
         self.category.update_balance()
 
-    def destroy_payments(self):
-        queryset = self.payment_orders.all()
-        for payment in queryset:
-            payment.delete()
 
     @staticmethod
     def filters_data(request, queryset):
@@ -145,13 +128,7 @@ class Bill(DefaultOrderModel):
 
 @receiver(post_delete, sender=Bill)
 def update_billing(sender, instance, **kwargs):
-    instance.category.update_balance()
-
-
-@receiver(pre_delete, sender=Bill)
-def update_on_delete_payrolls(sender, instance, *args, **kwargs):
-    get_orders = instance.payment_orders.all()
-    for order in get_orders: order.delete()
+    instance.category.save()
 
 
 class Occupation(models.Model):
