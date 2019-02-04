@@ -29,7 +29,7 @@ RETAIL_TRANSCATIONS, PRODUCT_ATTRITUBE_TRANSCATION  = settings.RETAIL_TRANSCATIO
 
 class RetailOrder(DefaultOrderModel):
     status = models.CharField(max_length=1, choices=ORDER_STATUS, default='1')
-    order_type = models.CharField(max_length=1, choices=ORDER_TYPES, default='r')
+    order_type = models.CharField(max_length=1, choices=ORDER_TYPES, default='r', verbose_name='Είδος Παραστατικού')
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0,
                                      verbose_name='Συνολικό Κόστος Παραγγελίας')
     costumer_account = models.ForeignKey(CostumerAccount,
@@ -37,12 +37,18 @@ class RetailOrder(DefaultOrderModel):
                                          null=True,
                                          verbose_name='Costumer',
                                          on_delete=models.SET_NULL)
-    seller_account = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, related_name='seller')
+    seller_account = models.ForeignKey(User,
+                                       blank=True,
+                                       null=True,
+                                       on_delete=models.SET_NULL,
+                                       related_name='seller',
+                                       verbose_name='Πωλητής'
+                                       )
     #  eshop info only
-    shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.SET_NULL)
-    shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
-    payment_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5)
-    day_sent = models.DateTimeField(blank=True, null=True)
+    shipping = models.ForeignKey(Shipping, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Τρόπος Μεταφοράς')
+    shipping_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='Μεταφορικά')
+    payment_cost = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='Κόστος Αντικαταβολής')
+    day_sent = models.DateTimeField(blank=True, null=True, verbose_name='Ημερομηνία Αποστολής')
     eshop_order_id = models.CharField(max_length=10, blank=True, null=True)
     eshop_session_id = models.CharField(max_length=50, blank=True, null=True)
 

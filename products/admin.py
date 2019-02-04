@@ -45,7 +45,7 @@ class SizeAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
-    list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price', 'qty']
+    list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price', 'qty', 'active']
     list_filter = ['active', 'site_active', 'is_offer', 'category', 'vendor']
     list_select_related = ['category', 'vendor']
     readonly_fields = ['tag_final_price', ]
@@ -87,7 +87,7 @@ class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
 
     def get_default_filters(self, request):
         return {
-            'active': True,
+            # 'active': True,
             'site_active': True
         }
 

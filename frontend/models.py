@@ -1,4 +1,6 @@
-from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.utils.text import slugify
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
@@ -144,6 +146,15 @@ class Brands(models.Model):
         return queryset
 
 
+@receiver(post_save, sender=Brands)
+def create_slug(sender, instance, **kwargs):
+    if not instance.slug:
+        new_slug = slugify(instance.title, allow_unicode=True)
+        qs_exists = Brands.objects.filter(slug=new_slug).exists()
+        instance.slug = f'{new_slug}-{instance.id}' if qs_exists else new_slug
+        instance.save()
+
+
 class FirstPage(models.Model):
     active = models.BooleanField(default=True)
     title = models.CharField(unique=True, max_length=150)
@@ -173,4 +184,3 @@ class Banner(models.Model):
     def tag_active(self):
         return 'Active' if self.active else 'No Active'
 
-     

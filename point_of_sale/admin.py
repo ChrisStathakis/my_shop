@@ -4,6 +4,8 @@ from django.db.models import DateField
 from django.db.models.functions import Trunc
 from .models import RetailOrderItem, RetailOrder, GiftRetailItem
 from import_export.admin import ImportExportModelAdmin
+
+from products.models import Product
 # Register your models here.
 
 
@@ -11,9 +13,22 @@ class RetailOrderInline(admin.TabularInline):
     model = RetailOrderItem
     fields = ['title', 'order', 'qty', 'is_find', 'tag_final_value']
     readonly_fields = ['tag_final_value']
-    autocomplete_fields = ['title']
+    # autocomplete_fields = ['title']
     extra = 3
 
+    def get_formset(self, request, obj=None, **kwargs):
+        self.parent_object = obj
+        return super(RetailOrderInline, self).get_formset(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super(RetailOrderInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == 'title':
+            print('found me?',  Product.my_query.active_for_site())
+            field.queryset = Product.my_query.active_for_site()
+        return field
+
+
+    def get_a
 
 @admin.register(RetailOrder)
 class RetailOrderAdmin(admin.ModelAdmin):
@@ -39,6 +54,14 @@ class RetailOrderAdmin(admin.ModelAdmin):
             )
         }),
     )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['seller_account'].initial = request.user
+        form.base_fields['payment_method'].initial = 1
+        id = RetailOrder.objects.last().id if RetailOrder.objects.exists() else 0
+        form.base_fields['title'].initial = f'Λιανική Πώληση {id+1}'
+        return form
 
     def get_readonly_fields(self, request, obj=None):
         my_list = ['tag_final_value', 'is_paid']

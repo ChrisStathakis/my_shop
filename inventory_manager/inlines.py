@@ -3,8 +3,6 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import Order, OrderItem, Category, Vendor, OrderItemSize, WarehouseOrderImage
 
 
-
-
 class OrderPhotoInline(admin.TabularInline):
     model = WarehouseOrderImage
     extra = 1
