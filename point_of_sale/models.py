@@ -70,6 +70,7 @@ class RetailOrder(DefaultOrderModel):
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
         self.count_items = order_items.count() if order_items else 0
+        self.update_order()
         # self.check_coupons()
         # self.update_order()
         self.final_value = self.shipping_cost + self.payment_cost + self.value - self.discount
@@ -304,14 +305,18 @@ class RetailOrderItem(DefaultOrderItemModel):
         unique_together = ['title', 'order']
 
     def __str__(self):
-        return self.title.title
+        return self.title.title if self.title else 'Something is wrong'
 
     def save(self, *args, **kwargs):
+        self.value = self.title.price if self.title else 0
+        self.discount_value = self.title.price_discount if self.title else 0
+        self.cost = self.title.price_buy if self.title else 0
         self.final_value = self.discount_value if self.discount_value > 0 else self.value
         self.total_value = self.final_value*self.qty
         self.total_cost_value = self.cost*self.qty
         super(RetailOrderItem, self).save(*args, **kwargs)
         self.title.save()
+        self.order.save()
 
     def update_warehouse(self, transcation_type, qty):
         update_warehouse(self, transcation_type, qty)

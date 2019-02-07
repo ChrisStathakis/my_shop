@@ -33,27 +33,26 @@ class RetailOrderInline(admin.TabularInline):
         return self.readonly_fields
 
 
-
-    
-
 @admin.register(RetailOrder)
 class RetailOrderAdmin(admin.ModelAdmin):
-    list_display = ['date_expired', 'title', 'order_type', 'tag_final_value']
-    list_filter = ['is_paid', 'date_expired', 'order_type']
+    save_as = True
     list_per_page = 50
+    list_display = ['date_expired', 'title', 'order_type','costumer_account',  'tag_final_value', 'is_paid', ]
+    list_filter = ['is_paid', 'date_expired', 'order_type']
+    list_select_related = ['costumer_account', ]
     inlines = [RetailOrderInline]
     fieldsets = (
         ('General', {
             'fields': (
                 ('is_paid', 'order_type', 'payment_method'),
                 ('title', 'seller_account'),
-                ('tag_final_value')
+                ('tag_final_value', 'date_expired')
 
                 )
         }),
         ('Eshop', {
             'fields': (
-                ('status', 'costumer_account',),
+                ('status', 'costumer_account', ),
                 ('shipping', 'shipping_cost', 'payment_cost'),
                 ('day_sent', 'eshop_order_id', 'eshop_session_id'),
                 ('cart_related', 'coupons')

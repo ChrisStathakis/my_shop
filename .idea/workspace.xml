@@ -6,12 +6,67 @@
   <component name="ChangeListManager">
     <list default="true" id="72c4f91b-add1-49b2-a03b-d6581d9e94b3" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/christos_db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/christos_db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory_manager/inlines.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory_manager/inlines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0003_address_country.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0004_auto_20181216_1020.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0005_auto_20181216_1020.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/carts/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carts/migrations/0002_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carts/migrations/0003_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/christos_db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/migrations/0002_auto_20190131_1332.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/migrations/0002_auto_20190201_0933.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gdpr/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/gdpr/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory_manager/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory_manager/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0002_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0003_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0004_auto_20181202_1845.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0005_auto_20181204_1745.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0006_auto_20181212_1428.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0007_auto_20190130_1339.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/migrations/0008_auto_20190131_0917.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inventory_manager/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/inventory_manager/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/point_of_sale/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0002_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0003_auto_20181202_1511.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0004_auto_20181202_1845.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0005_auto_20181204_1745.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0006_auto_20181212_1428.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0007_auto_20181215_1000.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0008_auto_20181216_1020.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0009_auto_20181216_1300.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0010_auto_20181216_1306.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0011_auto_20190130_1339.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_of_sale/migrations/0012_auto_20190131_0917.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/point_of_sale/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_of_sale/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/products/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/products/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/products/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/migrations/0002_auto_20181212_1428.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/migrations/0003_auto_20181212_1605.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/migrations/0004_auto_20181215_1000.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/migrations/0005_auto_20190131_1328.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/products/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/site_settings/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0002_auto_20181202_1845.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0003_auto_20181204_1745.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0004_auto_20181212_1428.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0005_auto_20190130_1345.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0006_auto_20190130_1358.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0007_auto_20190131_0917.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0008_auto_20190131_1328.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/site_settings/migrations/0008_auto_20190201_0932.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/transcations/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/migrations/0002_auto_20181202_1845.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/migrations/0003_auto_20181202_1854.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/migrations/0004_auto_20181204_1745.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transcations/migrations/0005_auto_20181212_1428.py" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/httpRequests/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,82 +92,38 @@
     <favorites_list name="my_shop" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5069204">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/products/models.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="603">
-                  <caret line="383" column="33" selection-start-line="383" selection-start-column="33" selection-end-line="383" selection-end-column="33" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="managers.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/products/managers.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="340">
-                  <caret line="20" column="23" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="23" />
-                  <folding>
-                    <element signature="e#0#28#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/products/admin.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="410">
-                  <caret line="47" column="94" selection-start-line="47" selection-start-column="94" selection-end-line="47" selection-end-column="94" />
-                  <folding>
-                    <element signature="e#0#32#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="admin.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/point_of_sale/admin.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="26">
-                  <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-                  <folding>
-                    <element signature="e#0#32#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="inlines.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/inventory_manager/inlines.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state>
-                  <caret line="2" column="90" lean-forward="true" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="26">
-                  <caret line="50" column="93" selection-start-line="50" selection-start-column="93" selection-end-line="50" selection-end-column="93" />
-                  <folding>
-                    <element signature="e#13219#17908#0" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reports/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="546">
+              <caret line="40" column="48" selection-start-line="40" selection-start-column="48" selection-end-line="40" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#86#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reports/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="44" selection-start-line="5" selection-start-column="44" selection-end-line="5" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="61" column="33" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -162,9 +173,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/point_of_sale/forms.py" />
-        <option value="$PROJECT_DIR$/templates/dashboard/order_section/edit_order_item.html" />
-        <option value="$PROJECT_DIR$/point_of_sale/tests.py" />
         <option value="$PROJECT_DIR$/dashboard/view_sells.py" />
         <option value="$PROJECT_DIR$/accounts/admin.py" />
         <option value="$PROJECT_DIR$/../warehouse.py" />
@@ -189,14 +197,12 @@
         <option value="$PROJECT_DIR$/inventory_manager/filters.py" />
         <option value="$PROJECT_DIR$/inventory_manager/actions.py" />
         <option value="$PROJECT_DIR$/inventory_manager/templates/my_admin/vendor_list.html" />
-        <option value="$PROJECT_DIR$/inventory_manager/models.py" />
         <option value="$PROJECT_DIR$/transcations/models.py" />
         <option value="$PROJECT_DIR$/inventory_manager/forms.py" />
         <option value="$PROJECT_DIR$/site_settings/forms.py" />
         <option value="$PROJECT_DIR$/inventory_manager/views.py" />
         <option value="$PROJECT_DIR$/transcations/views.py" />
         <option value="$PROJECT_DIR$/point_of_sale/views.py" />
-        <option value="$PROJECT_DIR$/reports/views.py" />
         <option value="$PROJECT_DIR$/reports/balance_sheet_views.py" />
         <option value="$PROJECT_DIR$/site_settings/fixtures/initial_data.json" />
         <option value="$PROJECT_DIR$/site_settings/models.py" />
@@ -206,13 +212,18 @@
         <option value="$PROJECT_DIR$/frontend/admin.py" />
         <option value="$PROJECT_DIR$/site_settings/constants.py" />
         <option value="$PROJECT_DIR$/products/inlines.py" />
-        <option value="$PROJECT_DIR$/products/models.py" />
-        <option value="$PROJECT_DIR$/inventory_manager/admin.py" />
         <option value="$PROJECT_DIR$/frontend/models.py" />
-        <option value="$PROJECT_DIR$/point_of_sale/models.py" />
         <option value="$PROJECT_DIR$/products/admin.py" />
         <option value="$PROJECT_DIR$/inventory_manager/inlines.py" />
+        <option value="$PROJECT_DIR$/products/models.py" />
+        <option value="$PROJECT_DIR$/point_of_sale/models.py" />
         <option value="$PROJECT_DIR$/point_of_sale/admin.py" />
+        <option value="$PROJECT_DIR$/inventory_manager/admin.py" />
+        <option value="$PROJECT_DIR$/inventory_manager/models.py" />
+        <option value="$PROJECT_DIR$/reports/models.py" />
+        <option value="$PROJECT_DIR$/templates/index.html" />
+        <option value="$PROJECT_DIR$/reports/forms.py" />
+        <option value="$PROJECT_DIR$/reports/views.py" />
       </list>
     </option>
   </component>
@@ -230,7 +241,7 @@
       <path value="$PROJECT_DIR$/site_settings/static/semantic-ui-daterangepicker-master/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="520" />
     <option name="width" value="640" />
     <option name="height" value="520" />
@@ -243,6 +254,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -253,13 +265,12 @@
             <path>
               <item name="my_shop" type="b2602c69:ProjectViewProjectNode" />
               <item name="my_shop" type="462c0819:PsiDirectoryNode" />
-              <item name="products" type="462c0819:PsiDirectoryNode" />
+              <item name="reports" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1080,23 +1091,22 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="520" width="640" height="520" extended-state="0" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Python Console" order="11" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.6888889" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.29807693" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.29649308" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.096875" />
       <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="5" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -1155,32 +1165,16 @@
           <url>file://$PROJECT_DIR$/transcations/admin.py</url>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/point_of_sale/models.py</url>
+          <line>29</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/accounts/api/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="34" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/site_settings/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/api/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/inventory_manager/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
@@ -1323,19 +1317,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1224">
-          <caret line="174" selection-start-line="174" selection-end-line="174" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#1585#2069#0" />
-            <element signature="e#2293#6142#0" />
-            <element signature="e#12578#12810#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/transcations/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4845">
@@ -1395,13 +1376,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reports/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="315" column="28" selection-start-line="315" selection-start-column="28" selection-end-line="315" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/site_settings/fixtures/initial_data.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -1441,20 +1415,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/site_settings/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="852">
-          <caret line="221" selection-start-line="221" selection-end-line="221" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/products/inlines.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="7" column="38" selection-start-line="7" selection-start-column="38" selection-end-line="7" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1462,10 +1426,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="529">
           <caret line="186" lean-forward="true" selection-start-line="186" selection-end-line="186" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-            <element signature="e#1351#3639#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1476,36 +1436,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
+    <entry file="file://$PROJECT_DIR$/products/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="50" column="93" selection-start-line="50" selection-start-column="93" selection-end-line="50" selection-end-column="93" />
-          <folding>
-            <element signature="e#13219#17908#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1207">
-          <caret line="101" column="27" selection-start-line="101" selection-start-column="27" selection-end-line="101" selection-end-column="27" />
+        <state relative-caret-position="580">
+          <caret line="47" column="94" selection-start-line="47" selection-start-column="94" selection-end-line="47" selection-end-column="94" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/inventory_manager/inlines.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="2" column="90" lean-forward="true" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/products/managers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
+        <state relative-caret-position="272">
           <caret line="20" column="23" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="23" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
@@ -1515,28 +1458,87 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/products/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="383" column="33" selection-start-line="383" selection-start-column="33" selection-end-line="383" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/products/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="47" column="94" selection-start-line="47" selection-start-column="94" selection-end-line="47" selection-end-column="94" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="257">
+          <caret line="144" column="43" selection-start-line="144" selection-start-column="43" selection-end-line="144" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/point_of_sale/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+        <state relative-caret-position="213">
+          <caret line="41" column="47" selection-start-line="41" selection-start-column="47" selection-end-line="41" selection-end-column="47" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/point_of_sale/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="72" column="27" selection-start-line="72" selection-start-column="27" selection-end-line="72" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inventory_manager/inlines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="2" column="90" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inventory_manager/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="15" column="41" selection-start-line="15" selection-start-column="41" selection-end-line="15" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/inventory_manager/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="161" column="121" selection-start-line="161" selection-start-column="121" selection-end-line="161" selection-end-column="121" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/site_settings/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="603">
+          <caret line="221" selection-start-line="221" selection-end-line="221" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="44" selection-start-line="5" selection-start-column="44" selection-end-line="5" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="40" column="48" selection-start-line="40" selection-start-column="48" selection-end-line="40" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="61" column="33" selection-start-line="61" selection-start-column="33" selection-end-line="61" selection-end-column="33" />
         </state>
       </provider>
     </entry>

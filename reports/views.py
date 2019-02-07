@@ -6,7 +6,7 @@ from django.db.models import Q, F
 from django.db.models import ExpressionWrapper, DecimalField
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.context_processors import csrf
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, FormView
 from products.models import *
 from point_of_sale.models import *
 from transcations.models import *
@@ -17,15 +17,16 @@ from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoic
                     initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months,
                     warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis, filter_date
                     )
-
+from .forms import DateCookiesChoose
 
 from itertools import chain
 from dateutil.relativedelta import relativedelta
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class HomepageReport(LoginRequiredMixin, TemplateView):
+class HomepageReport(LoginRequiredMixin, TemplateView, FormView):
     template_name = 'index.html'
+    form_class = DateCookiesChoose
 
     def get_context_data(self, **kwargs):
         context = super(HomepageReport, self).get_context_data(**kwargs)
@@ -34,6 +35,12 @@ class HomepageReport(LoginRequiredMixin, TemplateView):
         paid_orders = Product.objects.all()[:10]
         context.update(locals())
         return context
+
+    def form_valid(self, form):
+        date_start = form.cleaned_data['date_start']
+        date_end = form.cleaned_data['date_end']
+        print(date_start, date_end)
+        return super().form_valid(form)
 
 
 @method_decorator(staff_member_required, name='dispatch')

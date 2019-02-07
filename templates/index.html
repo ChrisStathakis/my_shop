@@ -38,14 +38,31 @@
 
 <div style="margin-top: 2%" class ="ui stackable grid">
     {% block content %}
-        <div class="six wide column"></div>
+        <div class="six wide column">
+        <h4>Επέλεξε Διάστημα</h4>
+        <form class="ui form" method="post">
+            <div class="fields">
+                <div class="field">
+                  <label>Αρχική Ημερομηνία</label>
+                  <input name="date_start" type="date" placeholder="Αρχική Ημερομηνία" required>
+                </div>
+                <div class="field">
+                  <label>Τελική Ημερομηνία</label>
+                  <input name="date_end" type="date" placeholder="Τελική Ημερομηνία" required>
+                </div>
+            </div>
+            <div class="ui submit button">Αποθήκευση</div>
+            <a href="" class="ui button red">Καθαρισμός</a>
+        </form>
+        </div>
         <div class="four wide column">
             <h2 style="text-align: center" class="ui header">
                 <i class="folder outline blue icon"></i>
                 <div class="blue content">
-                    Homepage
+                    Αρχική Σελίδα
                 </div>
             </h2>
+
         </div>
         <div class="six wide column"></div>
         <div style="margin-left: 2%" class="three column row">

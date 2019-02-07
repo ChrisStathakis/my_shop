@@ -40,12 +40,12 @@ class OrderAdmin(ImportExportModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         obj_list = ['timestamp', 'edited', 'tag_final_value',
                     'tag_value', 'tag_total_discount', 'tag_clean_value', 
-                    'tag_total_taxes', 'tag_final_value', 'is_paid', 'tag_remaining_value'
+                    'tag_total_taxes', 'tag_final_value', 'tag_remaining_value'
                     ]
         if obj:
             obj_list.append('vendor')
             if obj.is_paid:
-                obj_list.extend(['taxes_modifier', 'payment_method', 'order_type', 'date_expired', 'discount'])
+                obj_list.extend(['taxes_modifier', 'payment_method', 'order_type', 'discount'])
         return obj_list
 
 

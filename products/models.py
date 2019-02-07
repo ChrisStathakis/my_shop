@@ -149,9 +149,10 @@ class Product(DefaultBasicModel):
         if self.price:
             self.final_price = self.price_discount if self.price_discount > 0 else self.price
         self.is_offer = True if self.price_discount > 0 else False
-        if WAREHOUSE_ORDERS_TRANSCATIONS:
+        if WAREHOUSE_ORDERS_TRANSCATIONS and not self.is_service:
             self.qty = self.warehouse_calculations()
             self.qty += self.retail_order_calculations()
+        self.qty = 1 if self.is_service else self.qty
         super(Product, self).save(*args, **kwargs)
 
     def warehouse_calculations(self):

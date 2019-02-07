@@ -153,13 +153,13 @@ class OrderManager(models.Manager):
 
 
 class Order(DefaultOrderModel):
-    vendor = models.ForeignKey(Vendor, verbose_name="Vendor", on_delete=models.SET_NULL, null=True, related_name='vendor_orders')
+    vendor = models.ForeignKey(Vendor, verbose_name="Προμηθευτής", on_delete=models.SET_NULL, null=True, related_name='vendor_orders')
     total_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Συνολική Έκπτωση")
     total_price_after_discount = models.DecimalField(default=0, max_digits=15, decimal_places=2,
                                                      verbose_name="Καθαρή Έκπτωση")
     taxes_modifier = models.CharField(max_length=1, choices=TAXES_CHOICES, default='3')
     total_taxes = models.DecimalField(default=0, max_digits=15, decimal_places=2, verbose_name="Συνολικοί Φόροι")
-    order_type = models.CharField(default=1, max_length=1, choices=WAREHOUSE_ORDER_TYPE)
+    order_type = models.CharField(default=1, max_length=1, choices=WAREHOUSE_ORDER_TYPE, verbose_name='Είδος Παραστατικού')
 
     objects = models.Manager()
     my_query = OrderManager()
@@ -181,11 +181,7 @@ class Order(DefaultOrderModel):
         self.total_price_after_discount = Decimal(self.value) - Decimal(self.total_discount)
         self.total_taxes = self.total_price_after_discount * ( Decimal(self.get_taxes_modifier_display()) / 100)
         self.final_value = self.total_price_after_discount + self.total_taxes
-        self.paid_value = self.paid_value if self.paid_value else 0
-        if self.paid_value > 0:
-            self.is_paid = True
-        else:
-            self.is_paid = False
+        self.paid_value = self.final_value if self.is_paid else 0
         super(Order, self).save(*args, **kwargs)
         if WAREHOUSE_ORDERS_TRANSCATIONS:
             self.update_warehouse()
