@@ -1,6 +1,7 @@
 {% extends 'report/warehouse/vendors_list.html' %}
 
 {% block content %}
+
     <div class="three column row">
         <div class="column"></div>
         <div style="text-align: center" class="column">
@@ -22,6 +23,56 @@
             </ul>
         </div>
     </div>
+
+    <div class="row">
+        <div class="two wide column"></div>
+        <div class="twelve wide column">
+            <div class="ui styled fluid accordion">
+                <div class="title">
+                    <h4>Filters</h4>
+                </div>
+                <div class="content">
+                    <div style="margin-top: 5%" class="ui segment">
+                        <form id="filter_data" class="ui form" method="get">
+                            {% include 'snippets/search_date_filter.html' %}
+                            <div class="two field">
+                                <div class="field">
+                                    <label>Vendors</label>
+                                    {% for vendor in vendors %}
+                                        {% if vendor.id|stringformat:"s" in vendor_name %}
+                                            <div class="ui slider checkbox">
+                                                <input type="checkbox" checked name="vendor_name" value="{{ vendor.id }}">
+                                                <label>{{ vendor }}</label>
+                                            </div>
+                                        {% else %}
+                                            <div class="ui slider checkbox">
+                                                <input type="checkbox" name="vendor_name" value="{{ vendor.id }}">
+                                                <label>{{ vendor }}</label>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="field">
+                                    <div class="ui silder checkbox">
+                                        <input name="balance_name" type="checkbox" {% if balance_name %} checked {% endif %}>
+                                        <label>Have Balance</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <input style="width: 100%;margin-top: 3%;" class="ui green inverted button" type="submit">
+                        </form>
+                        <a href="{{ request.path }}" style="margin-top: 3%;margin-right: auto;margin-left: 0%;" class="ui red button">
+                            <i class="trash icon"></i>
+                            Clear filters
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="two wide column"></div>
+
+    </div>
+
     <div class="one wide column"></div>
     <div class="four wide column">
         <div class="ui segments">
@@ -36,31 +87,31 @@
                 <tbody>
                 <tr>
                     <td>
-                        <h4 class="blue header">Title</h4>
+                        <h4 class="blue header">Ονομασία</h4>
                     </td>
                     <td>{{ object.title }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="green header">Address</h4>
+                        <h4 class="green header">Διεύθυνση</h4>
                     </td>
                     <td>{{ object.address|default_if_none:'No data' }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="red header">City</h4>
+                        <h4 class="red header">Πόλη</h4>
                     </td>
                     <td> {{ object.city|default_if_none:'No data' }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Zipcode</h4>
+                        <h4 class="header">ΤΚ</h4>
                     </td>
                     <td>{{ order.zip_code|default_if_none:'No data' }}</td>
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Phones</h4>
+                        <h4 class="header">Τηέφωνα</h4>
                     </td>
                      <td>{{ object.tag_phones|default_if_none:'No data' }}</td>
                 </tr>
@@ -72,7 +123,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <h4 class="header">Emal</h4>
+                        <h4 class="header">Email</h4>
                     </td>
                     <td>{{ object.email|default_if_none:'No data' }}</td>
                 </tr>
@@ -84,14 +135,14 @@
                 </tr>
                 <tr>
                     <td class="negative" >
-                        <h4 class="header">Balance</h4>
+                        <h4 class="header">Υπόλοιπο</h4>
                     </td>
                         <td class="negative">{{ object.tag_balance }}</td>
                 </tr>
 
                 <tr>
                     <td>
-                        <h4 class="positive header">Deposit</h4>
+                        <h4 class="positive header">Προκαταβολές</h4>
                     </td>
                     <td class="positive">{{ object.tag_deposit }}</td>
                 </tr>
@@ -141,42 +192,13 @@
           </tbody>
         </table>
 
-        <table style="margin-top: 20%" class="ui red celled striped table">
-            <thead>
-            <tr>
-                <th colspan="6">
-                    Payment Orders
-                </th>
-            </tr>
-            <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Notes</th>
-                <th>Value</th>
-                <th>Payment Method</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in object.payment_orders.all %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ item.date_expired|date }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.tag_final_value }}</td>
-                    <td>{{ item.payment_method }}</td>
-                    <td {% if item.is_paid%} class='positive' {% endif %}>{{ item.tag_is_paid }}</td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="6">No data</td> </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+
     </div>
     <div class="one wide column"></div>
 
 
-    <div style="margin-bottom: 10%;" class="row"></div>
+    <div style="margin-bottom: 10%;" class="row">
+    </div>
 
 
 

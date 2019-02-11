@@ -89,19 +89,19 @@
     <div class="row">
         <div class="one wide column"></div>
         <div class="fourteen wide column">
-            <h2 class="ui header">Total Product - {{ product_count }}, Total Qty - {{ product_count_qty }}</h2>
+            <h2 class="ui header">Συνολικά Προϊόντα - {{ product_count }}</h2>
             <table class="ui small single line selectable table">
             <thead>
                 <tr>
                     <th>Id</th>
                     <th><a href="">Sku</a></th>
-                    <th colspan="2"><a href="">Product</a></th>
-                    <th><a href="">Price Buy</a></th>
-                    <th><a href="">Price / First Price</a></th>
+                    <th colspan="2"><a href="">Προϊόν</a></th>
+                    <th><a href="">Τιμή Αγοράς</a></th>
+                    <th><a href="">Τιμή Πώλησης</a></th>
                     <th>Brand</th>
-                    <th><a href="">Vendor</a></th>
-                    <th><a href="">Category<br>Category Site</a></th>
-                    <th><a href="">Qty</a></th>
+                    <th><a href="">Προμηθευτής</a></th>
+                    <th><a href="">Κατηγορία</a></th>
+                    <th><a href="">Υπόλοιπο</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -130,6 +130,7 @@
                     <th></th>
                     <th></th>
                     <th>{{ products_count }} Τεμ</th>
+                    <th>{{ product_count_qty }}</th>
                 </tr>
             </tfoot>
         </table>

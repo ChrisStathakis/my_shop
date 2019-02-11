@@ -8,7 +8,7 @@ import csv
 from .models import Order, OrderItem, Category, Vendor, OrderItemSize, WarehouseOrderImage
 from .filters import HaveDeptFilter
 from .inlines import OrderItemInline, OrderPhotoInline
-from .actions import update_vendor
+from .actions import update_vendor, pay_orders
 from site_settings.admin_tools import admin_changelist_link
 
 
@@ -19,7 +19,7 @@ class OrderAdmin(ImportExportModelAdmin):
     list_per_page = 50
     list_filter = ['vendor', 'is_paid']
     inlines = [OrderPhotoInline, OrderItemInline]
-    actions = [update_vendor, ]
+    actions = [update_vendor, pay_orders ]
     autocomplete_fields = ['vendor']
     search_fields = ['vendor']
 

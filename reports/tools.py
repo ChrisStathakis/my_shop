@@ -179,3 +179,5 @@ def balance_sheet_chart_analysis(start_year, day_now, orders, value):
         get_data.append((string_month, get_orders))
     get_data.reverse()
     return get_data
+
+

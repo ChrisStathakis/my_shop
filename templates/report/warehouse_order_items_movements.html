@@ -1,7 +1,5 @@
 {% extends 'report/warehouse/orders.html' %}
 
-
-
 {% block content %}
     <div class="row">
         <div class="six wide column"></div>
@@ -53,89 +51,30 @@
     <div class="row">
         <div class="ui one wide column"></div>
         <div class="ui eight wide column">
-            <canvas id="myChart1" width="400" height="150"></canvas>
-            <script>
-            var ctx = document.getElementById("myChart1").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Συνολικό Υπόλοιπο Προμηθευτών", "Αξία Τιμολογίων", "Πληρωμένη Αξία Τιμολογίων"],
-                    datasets: [{
-                        label: '# Euro',
-                        data: [{{ totals.0 }}, {{ totals.1 }}, {{ totals.2 }}],
-                        backgroundColor: [
-                            'blue',
-                            'red',
-                            'green',
-                            'rgba(255,99,132,1)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }
-                    ]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }
-            });
-            </script>
+            {% if category_analysis %}
+                <table class="ui blue table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Κατηγορία</th>
+                            <th>Ποσότητα</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in category_analysis %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td> {{ category.product__category__title }}</td>
+                                <td>{{ category.total_qty }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
         <div class="ui seven wide column">
-            <canvas id="myChart" width="400" height="150"></canvas>
-            <script>
-            var ctx = document.getElementById("myChart").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [
 
-                        {% for month in analysis_buy %}
-                        "{{ month.0 }}",
-                        {% endfor %}
-                        ],
-                    datasets: [
-                    {
-                        label: 'Αγορές Περιόδου',
-                        data: [
-
-                            {% for month in analysis_buy %}
-                            {{ month.1 }},
-                            {% endfor %}
-                        ],
-                        fill:false,
-                        borderColor: [
-                            '#ff6f69'
-                        ],
-                        borderWidth: 1
-                    }
-                    ]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }
-            });
-            </script>
         </div>
     </div>
 

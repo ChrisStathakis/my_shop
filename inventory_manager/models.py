@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -311,6 +310,7 @@ class OrderItem(DefaultOrderItemModel):
             queryset = self.attributes.all()
             self.qty = queryset.aggregate(Sum('qty'))['qty__sum'] if queryset else 0
         '''
+        self.value = self.value if self.value != 0 else self.product.price_buy
         self.final_value = Decimal(self.value) * (100 - self.discount_value) / 100
         self.total_clean_value = Decimal(self.final_value) * Decimal(self.qty)
         self.total_value_with_taxes = Decimal(self.total_clean_value) * Decimal((100 + self.get_taxes_display()) / 100)
@@ -384,7 +384,7 @@ class OrderItem(DefaultOrderItemModel):
         vendor_name = request.GET.getlist('vendor_name', None)
         queryset = queryset.filter(product__category__id__in=category_name) if category_name else queryset
         queryset = queryset.filter(product__brand__id__in=brand_name) if brand_name else queryset
-        queryset = queryset.filter(product_vendor__id__in=vendor_name) if vendor_name else queryset
+        queryset = queryset.filter(product__vendor__id__in=vendor_name) if vendor_name else queryset
         return queryset
 
 

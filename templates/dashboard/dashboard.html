@@ -28,45 +28,42 @@
                         <li>
                             <a href="{% url 'dashboard:products' %}">
                                 <i class="ti-panel"></i>
-								<p>Products</p>
+								<p>Προϊόντα</p>
                             </a>
                         </li>
                         <li class="dropdown">
                               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="ti-bell"></i>
-									<p>Products Settings</p>
+									<p>Επιλογές</p>
 									<b class="caret"></b>
                               </a>
                               <ul class="dropdown-menu">
-                                  <li><a href="{% url 'dashboard:categories' %}">Categories</a></li>
-                                  <li><a href="{% url 'dashboard:categories_site' %}">Site Categories</a></li>
+                                  <li><a href="{% url 'dashboard:categories' %}">Κατηγορίες Αποθήκης</a></li>
+                                  <li><a href="{% url 'dashboard:categories_site' %}">Κατηγορίες Site</a></li>
                                   <li><a href="{% url 'dashboard:brands' %}">Brands</a></li>
-                                  <li><a href="{% url 'dashboard:colors' %}">Color</a></li>
-                                  <li><a href="{% url 'dashboard:sizes' %}">Size</a></li>
+                                  <li><a href="{% url 'dashboard:colors' %}">Χρώμα</a></li>
+                                  <li><a href="{% url 'dashboard:sizes' %}">Μέγεθος</a></li>
                               </ul>
                         </li>
 						<li>
                             <a href="{% url 'dashboard:eshop_orders_page' %}">
 								<i class="ti-settings"></i>
-								<p>Orders</p>
+								<p>Πωλήσεις</p>
                             </a>
                         </li>
                         <li class="dropdown">
                               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="ti-bell"></i>
-                                
-									<p>Order Settings</p>
+									<p>Επιλογές Παραστατικά</p>
 									<b class="caret"></b>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="{% url 'dashboard:carts' %}">Carts</a> </li>
-                                <li><a href="{% url 'dashboard:shipping_view' %}">Shipping Method</a></li>
-                                <li><a href="{% url 'dashboard:payment_view' %}">Payment Method</a></li>
-                                
+                                <li><a href="{% url 'dashboard:carts' %}">Καλάθια</a> </li>
+                                <li><a href="{% url 'dashboard:shipping_view' %}">Τρόποι Μεταφόρας</a></li>
+                                <li><a href="{% url 'dashboard:payment_view' %}">Τρόποι Πληρωμής</a></li>
                               </ul>
                         </li>
                     </ul>
-
                 </div>
             </div>
         </nav>
@@ -87,7 +84,7 @@
                                     </div>
                                     <div class="col-xs-7">
                                         <div class="numbers">
-                                            <p>New Orders</p>
+                                            <p>Σημερινές Πωλήσεις</p>
                                             {{ new_orders }}
                                         </div>
                                     </div>
@@ -95,7 +92,7 @@
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <a href='{% url 'dashboard:eshop_orders_page' %}'><i class="ti-link"></i>Go to Orders</a>
+                                        <a href='{% url 'dashboard:eshop_orders_page' %}'><i class="ti-link"></i>Πωλήσεις</a>
                                     </div>
                                 </div>
                             </div>
@@ -112,7 +109,7 @@
                                     </div>
                                     <div class="col-xs-7">
                                         <div class="numbers">
-                                            <p>Revenue</p>
+                                            <p>Έσοδα</p>
                                             {{ revenues }} {{ currency }}
                                         </div>
                                     </div>
@@ -137,15 +134,15 @@
                                     </div>
                                     <div class="col-xs-7">
                                         <div class="numbers">
-                                            <p>Active Cart</p>
-                                            {{  carts.count }}
+                                            <p>Υπόλοιπο Λογαριασμών</p>
+                                                {{ bills }} {{ currency }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-timer"></i> <a href=''>Go to cart page</a>
+                                        <i class="ti-timer"></i> <a href='{% url "billings:bill_list" %}'>Λογαριασμοί</a>
                                     </div>
                                 </div>
                             </div>

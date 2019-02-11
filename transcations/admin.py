@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericTabularInline
-from import_export.admin import ImportExportModelAdmin
+from .inlines import PayrollInline
+
 from .models import Bill, BillCategory, Payroll, Person, Occupation, GenericExpense, GenericExpenseCategory
 
 
@@ -8,6 +8,7 @@ def paid_action(modeladmin, request,  queryset):
     for ele in queryset:
         ele.is_paid = True
         ele.save()
+
 
 paid_action.short_description = 'Αποπληρωμή'
 
@@ -25,9 +26,10 @@ class PersonAdmin(admin.ModelAdmin):
     list_select_related = ['store', 'occupation']
     list_filter = ['occupation', 'active', 'store']
     readonly_fields = ['tag_balance', 'timestamp', 'edited']
+    inlines = [PayrollInline, ]
     fieldsets = (
         ('General Info', {
-            'fields': ('active',
+            'fields': ('active', 'tag_balance',
                        ('title', 'date_added'),
                        ('timestamp', 'edited')
                        )
@@ -137,13 +139,16 @@ class GenericExpenseCategory(admin.ModelAdmin):
     list_display = ['title', 'tag_balance', 'active']
     list_filter = ['active']
     fields = ['active', 'title', 'tag_balance']
+    readonly_fields = ['tag_balance']
 
 
 @admin.register(GenericExpense)
 class GenericExpense(admin.ModelAdmin):
     list_per_page = 50
-    list_display = ['title', 'user_account']
-    readonly_fields = ['timestamp', 'edited', 'user_account']
+    search_fields = ['category__title', 'title']
+    list_filter = ['is_paid', 'category']
+    list_display = ['date_expired', 'category',  'title', 'tag_final_value', 'is_paid']
+    readonly_fields = ['timestamp', 'edited', 'user_account', 'tag_final_value']
     fieldsets = (
         ('General', {
             'fields': ('is_paid',
@@ -153,7 +158,7 @@ class GenericExpense(admin.ModelAdmin):
         }),
         ('Edit', {
             'fields': (
-                ('payment_method', 'value'),
+                ('payment_method', 'category', 'value'),
 
                     )
         }),

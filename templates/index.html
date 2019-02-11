@@ -27,34 +27,16 @@
 
 {% block down_menu %}
 <div class="ui  four item bottom fixed menu">
-    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">Homepage</a>
-    <a href="{% url 'reports:product_warning' %}" class="item">Warning Remaining</a>
-    <a href="" style="background-color: red" class="item">Incomes - Outcomes</a>
+    <a href="{% url 'reports:homepage' %}" style="background-color: green" class="item">'Αρχική Σελίδα</a>
+    <a href="{% url 'reports:billing_warning' %}" style="background-color: red" class="item">Λογαριασμοί που λήγουν</a>
+    <a href="{% url 'reports:product_warning' %}" class="item">Προϊόντα σε Έλειμα</a>
     <a class="item">Messaging(Not Yet)</a>
 </div>
 {% endblock %}
 
-
-
 <div style="margin-top: 2%" class ="ui stackable grid">
     {% block content %}
-        <div class="six wide column">
-        <h4>Επέλεξε Διάστημα</h4>
-        <form class="ui form" method="post">
-            <div class="fields">
-                <div class="field">
-                  <label>Αρχική Ημερομηνία</label>
-                  <input name="date_start" type="date" placeholder="Αρχική Ημερομηνία" required>
-                </div>
-                <div class="field">
-                  <label>Τελική Ημερομηνία</label>
-                  <input name="date_end" type="date" placeholder="Τελική Ημερομηνία" required>
-                </div>
-            </div>
-            <div class="ui submit button">Αποθήκευση</div>
-            <a href="" class="ui button red">Καθαρισμός</a>
-        </form>
-        </div>
+        <div class="six wide column"></div>
         <div class="four wide column">
             <h2 style="text-align: center" class="ui header">
                 <i class="folder outline blue icon"></i>
@@ -65,101 +47,124 @@
 
         </div>
         <div class="six wide column"></div>
-        <div style="margin-left: 2%" class="three column row">
-        <div class="column">
-            <h2 style="margin-left: 15%" class="ui icon header">
+
+        <div class="row">
+            <div class="six wide column"></div>
+            <div class="four wide column">
+                <h2 style="margin-left: 15%" class="ui icon header">
                 <i class="green checked cart icon"></i>
                 <div class="content">
-                    Last 30 Sells
+                   Έσοδα
                     <div class="sub header"></div>
                 </div>
             </h2>
-            <table class="ui celled table">
-                <thead>
-                    <tr>
-                        <th>Ημερομηνία</th>
-                        <th>Είδος</th>
-                        <th>Κατάστημα</th>
-                        <th>Ποσό</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in retail_orders %}
-                    <tr>
-                      <td>
-                        {{ order.timestamp|date }}
-                      </td>
-                      <td>{{ order }}</td>
-                      <td>{{ order.get_order_type_display }}</td>
-                      <td>{{ order.tag_final_value }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            </div>
+            <div class="six wide column"></div>
         </div>
-        <div class="column">
-            <h2 style="margin-left: 15%" class="ui icon header">
+
+        <div class="four column row">
+            <div class="center aligned column">
+                <div class="ui green statistic">
+                    <div class="value">
+                        {{ today_sells }}
+                    </div>
+                    <div class="label">
+                        Σημερινά Έσοδα
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui green statistic">
+                    <div class="value">
+                        {{ month_sells }}
+                    </div>
+                    <div class="label">
+                        Έσοδα Μήνα
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui green statistic">
+                    <div class="value">
+                        {{ year_sells }}
+                    </div>
+                    <div class="label">
+                        Έσοδα Χρονιάς
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui statistic">
+                    <div class="value">
+                        {{ avg_sells }}
+                    </div>
+                    <div class="label">
+                        Μέσο Έσοδο
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <br /><br />
+
+        <div class="row">
+            <div class="six wide column"></div>
+            <div class="four wide column">
+                <h2 style="margin-left: 15%" class="ui icon header">
                 <i class="red checked calendar icon"></i>
                 <div class="content">
-                    Last 30 Warehouse Invoice
+                    'Εξοδα
                     <div class="sub header"></div>
                 </div>
             </h2>
-            <table class="ui celled table">
-                <thead>
-                    <tr>
-                        <th>Ημερομηνία</th>
-                        <th>Κωδικός</th>
-                        <th>Προμηθευτής</th>
-                        <th>Ποσό</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in warehouse_orders %}
-                    <tr>
-                      <td>
-                        {{ order.date_expired|date }}
-                      </td>
-                      <td>{{ order }}</td>
-                      <td>{{ order.vendor }}</td>
-                      <td>{{ order.tag_final_value }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            </div>
+            <div class="six wide column"></div>
         </div>
-        <div class="column">
-            <h2 style="margin-left: 15%" class="ui icon header">
-                <i class="blue checked visa icon"></i>
-                <div class="content">
-                    Last 30 Payments
-                    <div class="sub header">{{ last_seven_days }}</div>
+
+        <div class="four column row">
+            <div class="center aligned column">
+                <div class="ui red statistic">
+                    <div class="value">
+                        {{ bills }}
+                    </div>
+                    <div class="label">
+                        Υπόλοιπα Λογαριασμών
+                    </div>
                 </div>
-            </h2>
-            <table class="ui celled table">
-                <thead>
-                    <tr>
-                        <th>Ημερομηνία</th>
-                        <th>Eίδος Πληρωμής</th>
-                        <th>Παραστατικό</th>
-                        <th>Ποσό</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in paid_orders %}
-                    <tr>
-                      <td>
-                        {{ order.date_expired|date }}
-                      </td>
-                      <td>{{ order.get_payment_type_display }}</td>
-                      <td>{{ order.content_object }}</td>
-                      <td>{{ order.tag_value }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            </div>
+            <div class="column">
+                <div class="ui red statistic">
+                    <div class="value">
+                        {{ vendors }}
+                    </div>
+                    <div class="label">
+                        Υπόλοιπα Προμηθευτων
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui red statistic">
+                    <div class="value">
+                        {{ payroll }}
+                    </div>
+                    <div class="label">
+                        Υπόλοιπo Μισθοδοσίας
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui red statistic">
+                    <div class="value">
+                        {{ expenses }}
+                    </div>
+                    <div class="label">
+                        Γενικά 'Εξοδα
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
+
 
     {% endblock %}
 </div>

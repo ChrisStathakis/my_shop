@@ -25,7 +25,7 @@ from products.forms_popup import ProductPhotoUploadForm
 from site_settings.constants import CURRENCY
 from inventory_manager.models import Vendor, Category, OrderItem
 from point_of_sale.models import RetailOrderItem
-from inventory_manager.forms import CategoryForm
+from transcations.models import Bill
 from frontend.models import CategorySite, Brands
 from datetime import datetime, timedelta
 
@@ -38,12 +38,15 @@ class DashBoard(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(DashBoard, self).get_context_data(**kwargs)
-        new_orders = RetailOrder.my_query.eshop_new_orders().count()
-        carts = Cart.my_query.active_carts().filter(timestamp__range=[datetime.now()-timedelta(days=2), datetime.now()])
+        today_orders = RetailOrder.my_query.sells_orders(date_start=datetime.now(), date_end=datetime.now())
+        revenues = today_orders.aggregate(Sum('final_value'))['final_value__sum'] if today_orders else 0
+        new_orders = today_orders.count()
+        bills = Bill.my_query.not_paid().aggregate(Sum('final_value'))['final_value__sum'] \
+            if Bill.my_query.not_paid().exists() else 0
         eshop_orders = RetailOrder.my_query.eshop_orders()[:10]
         sent_orders = RetailOrder.my_query.eshop_sent_orders()[:10]
         last_items = RetailOrderItem.objects.filter(order__in=eshop_orders)[:10] if eshop_orders else []
-        revenues = RetailOrder.my_query.paid_orders().aggregate(Sum('final_value'))['final_value__sum'] if RetailOrder.my_query.paid_orders() else 0
+
         
         currency = CURRENCY
         context.update(locals())

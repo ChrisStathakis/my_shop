@@ -1,9 +1,8 @@
-from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
+from django.shortcuts import render, HttpResponseRedirect, redirect, HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, F
-from django.db.models import ExpressionWrapper, DecimalField
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.context_processors import csrf
 from django.views.generic import ListView, DetailView, TemplateView, FormView
@@ -12,35 +11,54 @@ from point_of_sale.models import *
 from transcations.models import *
 from inventory_manager.models import Vendor, Order, OrderItem
 from site_settings.constants import *
-from accounts.models import CostumerAccount
 from .tools import (get_filters_data_payments, get_filters_data_warehouse_invoices, initial_data_invoices,
                     initial_data_from_database, warehouse_filters, estimate_date_start_end_and_months,
                     warehouse_vendors_analysis, get_filters_data, balance_sheet_chart_analysis, filter_date
                     )
 from .forms import DateCookiesChoose
-
 from itertools import chain
 from dateutil.relativedelta import relativedelta
+from datetime import date
 
 
 @method_decorator(staff_member_required, name='dispatch')
-class HomepageReport(LoginRequiredMixin, TemplateView, FormView):
+class HomepageReport(TemplateView):
     template_name = 'index.html'
     form_class = DateCookiesChoose
 
+    def get_success_url(self):
+        return reverse('reports:homepage')
+
     def get_context_data(self, **kwargs):
         context = super(HomepageReport, self).get_context_data(**kwargs)
+        sells_orders = RetailOrder.my_query.sells_orders(date_start=date(date.today().year, 1, 1),
+                                                  date_end=datetime.datetime.now())
+        today_sells = sells_orders.filter(date_expired=datetime.datetime.now()).aggregate(Sum('final_value'))['final_value__sum'] if sells_orders.filter(date_expired=datetime.datetime.now()).exists() else 0
+        today_sells = f'{today_sells} {CURRENCY}'
+        month_sells = sells_orders.filter(date_expired__range=[date(date.today().year, date.today().month, 1), datetime.datetime.now()]).aggregate(Sum('final_value'))['final_value__sum'] if sells_orders.filter(date_expired__range=[date(date.today().year, date.today().month, 1), datetime.datetime.now()]).exists() else 0
+        month_sells = f'{month_sells} {CURRENCY}'
+        year_sells = sells_orders.aggregate(Sum('final_value'))['final_value__sum'] if sells_orders.exists() else 0
+        avg_sells = year_sells / (datetime.datetime.now().date() - date(date.today().year, 1, 1)).days
+        year_sells, avg_sells = f'{year_sells} {CURRENCY}', f'{avg_sells} {CURRENCY}'
+
+        bills = Bill.my_query.not_paid().aggregate(Sum('final_value'))['final_value__sum'] if Bill.my_query.not_paid() else 0
+        bills = f'{bills} {CURRENCY}'
+
+        vendors = Vendor.objects.all().aggregate(Sum('balance'))['balance__sum'] if Vendor.objects.all().exists() else 0
+        vendors = f'{vendors} {CURRENCY}'
+
+        payroll = Payroll.my_query.not_paid().aggregate(Sum('final_value'))['final_value__sum'] if Payroll.my_query.not_paid() else 0
+        payroll = f'{payroll} {CURRENCY}'
+
+        expenses = GenericExpense.my_query.not_paid().aggregate(Sum('final_value'))['final_value__sum'] if  GenericExpense.my_query.not_paid().exists() else 0
+        expenses = f'{expenses} {CURRENCY}'
+
+
         retail_orders = RetailOrder.objects.all().order_by('-timestamp')[:10]
         warehouse_orders = Order.objects.all().order_by('-date_expired')[:10]
         paid_orders = Product.objects.all()[:10]
         context.update(locals())
         return context
-
-    def form_valid(self, form):
-        date_start = form.cleaned_data['date_start']
-        date_end = form.cleaned_data['date_end']
-        print(date_start, date_end)
-        return super().form_valid(form)
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -56,6 +74,25 @@ class HomepageProductWarning(ListView):
     def get_content_data(self, **kwargs):
         context = super(HomepageProductWarning, self).get_content_data(**kwargs)
         products_with_sizes = SizeAttribute.objects.filter(qty__lte=0, active=True)[:30]
+        context.update(locals())
+        return context
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class WarningBillingView(ListView):
+    model = Bill
+    template_name = 'report/homepage/warning_billing_view.html'
+
+    def get_queryset(self):
+        queryset = Bill.my_query.not_paid()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(WarningBillingView, self).get_context_data(**kwargs)
+        bill_analysis = self.object_list.values_list('category__title').annotate(
+            total_pay=Sum('final_value')
+        ).order_by('total_pay')
+        currency = CURRENCY
         context.update(locals())
         return context
 
@@ -295,15 +332,15 @@ class VendorDetailReportView(ListView):
 
     def get_queryset(self):
         self.object = get_object_or_404(Vendor, id=self.kwargs['pk'])
-        queryset = Order.objects.filter(vendor=self.object)
+        date_start, date_end = filter_date(self.request)
+        queryset = Order.my_query.filter_by_date(date_start, date_end)
+        queryset = queryset.filter(vendor=self.object)
+        queryset = Order.filter_data(self.request, queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
         content = super(VendorDetailReportView, self).get_context_data(**kwargs)
         object = self.object
-        payment_orders = Product.objects.filter(content_type=ContentType.objects.get_for_model(Order),
-                                                      object_id__in=self.object_list.values('id')
-                                                      )
         content.update(locals())
         return content
 
@@ -345,29 +382,6 @@ class CheckOrderPage(ListView):
         return context
 
 
-@staff_member_required
-def vendor_detail(request, pk):
-    instance = get_object_or_404(Vendor, id=pk)
-    # filters_data
-    date_start, date_end, date_range, months_list = estimate_date_start_end_and_months(request)
-    vendors, categories, categories_site, colors, sizes, brands = initial_data_from_database()
-    date_pick = request.GET.get('date_pick', None)
-
-    # data
-    products = Product.my_query.active().filter(vendor=instance)[:20]
-    warehouse_orders = Order.objects.filter(vendor=instance, date_expired__range=[date_start, date_end])[:20]
-    
-    paychecks = list(chain(instance.payment_orders.all().filter(date_expired__range=[date_start, date_end]),
-                           Product.objects.filter(content_type=ContentType.objects.get_for_model(Order),
-                                                        object_id__in=warehouse_orders.values('id'),
-                                                        ) 
-                          )
-                    )[:20]
-    order_item_sells = RetailOrderItem.objects.filter(title__in=products, order__date_expired__range=[date_start, date_end])[:20]
-    context = locals()
-    return render(request, 'report/details/vendors_id.html', context)
-
-
 @method_decorator(staff_member_required, name='dispatch')
 class OrderItemFlowView(ListView):
     template_name = 'report/warehouse_order_items_movements.html'
@@ -377,15 +391,21 @@ class OrderItemFlowView(ListView):
     def get_queryset(self):
         date_start, date_end = filter_date(self.request)
         queryset = OrderItem.objects.filter(order__date_expired__range=[date_start, date_end])
+        queryset = OrderItem.filters_data(self.request, queryset)
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super(OrderItemFlowView, self).get_context_data(**kwargs)
         date_start, date_end = filter_date(self.request)
         vendors = Vendor.objects.filter(active=True)
+        vendor_name = self.request.GET.get('vendor_name', None)
+        category_analysis = None
+        if vendor_name:
+            category_analysis = self.object_list.values('product__category__title').annotate(
+                total_qty=Sum('qty')
+            ).order_by('-total_qty')
         context.update(locals())
         return context
-
 
 
 @staff_member_required

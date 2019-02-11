@@ -30,10 +30,10 @@
 
                         <div class="card">
                             <div class="header">
-                                <h4 class="title text-center">Products</h4>
+                                <h4 class="title text-center">Προϊόντα</h4>
                                 <p class="category">
                                     <a href="{% url 'dashboard:product_create' %}"
-                                       class="btn btn-success">Create Product
+                                       class="btn btn-success">Δημιουργία Προϊόντος
                                     </a>
                                 </p>
                             </div>
@@ -43,14 +43,14 @@
                                         <tr>
                                             <th>#</th>
                                             <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Price</th>
-                                            <th>Color</th>
-                                            <th>Site Category</th>
+                                            <th>Τίτλος</th>
+                                            <th>Τιμή Πώλησης</th>
+                                            <th>Τιμή Αγορας</th>
+                                            <th>Κατηγορία</th>
                                             <th>Brand</th>
-                                            <th>Vendor</th>
-                                            <th>Qty</th>
-                                            <th>Active</th>
+                                            <th>Προμηθευτής</th>
+                                            <th>Ποσότητα</th>
+                                            <th>Κατάσταση</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -64,8 +64,8 @@
                                                 <td>{{ product.id }}</td>
                                                 <td><a href="{% url 'dashboard:product_detail' product.id %}">{{ product|truncatechars:'30' }}</a></td>
                                                 <td>{{ product.tag_final_price }}</td>
-                                                <td>{{ product.color.title|default_if_none:'No Color' }}</td>
-                                                <td>{{ product.tag_site_category|truncatechars:'30' }}</td>
+                                                <td>{{ product.tag_price_buy }}</td>
+                                                <td>{{ product.tag_category|truncatechars:'30' }}</td>
                                                 <td>{{ product.tag_brand|truncatechars:'30' }}</td>
                                                 <td>{{ product.tag_vendor|truncatechars:'30'}}</td>
                                                 <td>{{ product.tag_qty }}</td>

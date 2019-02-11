@@ -155,11 +155,11 @@ class Store(models.Model):
 
 class DefaultOrderModel(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name='Friendly ID')
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=150, verbose_name='Τίτλος')
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     user_account = models.ForeignKey(User, null=True, blank=True, on_delete=models.PROTECT)
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True, verbose_name='Σημειώσεις')
     payment_method = models.ForeignKey(PaymentMethod,
                                        null=True,
                                        on_delete=models.PROTECT,
@@ -171,7 +171,7 @@ class DefaultOrderModel(models.Model):
     final_value = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Τελική Αξίσ')
     discount = models.DecimalField(decimal_places=2, max_digits=20, default=0, verbose_name='Επιπλέον Έκπτωση')
     is_paid = models.BooleanField(default=False, verbose_name='Πληρωμένο?')
-    printed = models.BooleanField(default=False)
+    printed = models.BooleanField(default=False, verbose_name='Εκτυπωμένο')
     objects = models.Manager()
 
     class Meta:

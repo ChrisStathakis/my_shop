@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 class RetailQuerySet(models.QuerySet):
@@ -7,6 +8,9 @@ class RetailQuerySet(models.QuerySet):
         return self.filter(order_type__in=['r', 'e'],
                            date_expired__range=[date_start, date_end]
                            )
+
+    def today_sells(self):
+        return self.sells().filter(date_expired=datetime.now())
     
     def returns(self, date_start, date_end):
         return self.filter(order_type='b',
@@ -29,6 +33,7 @@ class RetailOrderManager(models.Manager):
 
     def get_queryset(self):
         return RetailQuerySet(self.model, using=self._db)
+
 
     def all_orders_by_date_filter(self, date_start, date_end):
         return super(RetailOrderManager, self).filter(date_expired__range=[date_start, date_end])

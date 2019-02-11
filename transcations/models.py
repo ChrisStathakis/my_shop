@@ -144,6 +144,11 @@ class Occupation(models.Model):
         verbose_name_plural = "5. Απασχόληση"
         verbose_name = 'Απασχόληση'
 
+    def save(self, *args, **kwargs):
+        self.balance = self.person_set.all().aggregate(Sum('balance'))['balance__sum'] \
+            if self.person_set.all().exists() else 0
+        super().save(*args, *kwargs)
+
     def tag_balance(self):
         return '%s %s' % (self.balance, CURRENCY)
 
@@ -173,7 +178,7 @@ class Person(models.Model):
     occupation = models.ForeignKey(Occupation, null=True, verbose_name='Απασχόληση', on_delete=models.PROTECT)
     store = models.ForeignKey(Store, blank=True, null=True, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=50, decimal_places=2, default=0, verbose_name='Υπόλοιπο')
-    vacation_days = models.IntegerField(default=0)
+    vacation_days = models.IntegerField(default=0, verbose_name='Συνολικές Μέρες Αδειας')
 
     objects = models.Manager()
     my_query = PersonManager()
@@ -182,13 +187,17 @@ class Person(models.Model):
         verbose_name_plural = "6. Υπάλληλος"
         verbose_name = 'Υπάλληλος'
 
+    def save(self, *args, **kwargs):
+        self.balance = self.update_balance()
+        super().save(*args, **kwargs)
+        self.occupation.save() if self.occupation else ''
+
     def update_balance(self):
         queryset = self.person_invoices.all()
         value = queryset.aggregate(Sum('final_value'))['final_value__sum'] if queryset else 0
         paid_value = queryset.aggregate(Sum('paid_value'))['paid_value__sum'] if queryset else 0
         diff = value - paid_value
-        self.balance = diff
-        self.save()
+        return diff
 
     def __str__(self):
         return self.title
@@ -237,36 +246,21 @@ class Payroll(DefaultOrderModel):
         verbose_name = 'Εντολή Πληρωμής'
         ordering = ['is_paid', '-date_expired', ]
 
+    def __str__(self):
+        return '%s %s' % (self.date_expired, self.person.title)
+
+    def save(self, *args, **kwargs):
+        self.final_value = self.value
+        self.paid_value = self.final_value if self.is_paid else 0
+        super(Payroll, self).save(*args, **kwargs)
+        self.person.save()
+
     def tag_model(self):
         return f'Payroll - {self.person.title}'
 
     def tag_person(self):
         return f'{self.person.title}'
 
-    def deposit(self):
-        final_value = self.value
-        if self.is_paid:
-            diff = self.value - self.paid_value
-            paid_value = self.value
-            if diff > 0:
-                self.create_order(diff)
-        if not self.is_paid:
-            paid_value = 0
-            payment_orders = self.payment_orders.all()
-            if payment_orders:
-                for order in payment_orders: order.delete()
-        Payroll.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
-
-        
-
-    def save(self, *args, **kwargs):
-        super(Payroll, self).save(*args, **kwargs)
-        self.deposit()
-        self.person.update_balance()
-
-    def __str__(self):
-        return '%s %s' % (self.date_expired, self.person.title)
-    
     def get_dashboard_url(self):
         return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'edit', 'mymodel':'payroll'})
 
@@ -344,7 +338,6 @@ class GenericExpenseCategory(models.Model):
     active = models.BooleanField(default=True)
     title = models.CharField(unique=True, max_length=150)
     balance = models.DecimalField(default=0, decimal_places=2, max_digits=20)
-
     objects = models.Manager()
     my_query = ExpenseCategoryManager()
 
@@ -355,12 +348,11 @@ class GenericExpenseCategory(models.Model):
     def __str__(self):
         return self.title
 
-    def update_balance(self):
-        queryset = self.expenses.all()
-        value = queryset.aggregate(Sum('final_value'))['final_value__sum'] if queryset else 0
-        paid_value = queryset.aggregate(Sum('paid_value'))['paid_value__sum'] if queryset else 0
-        self.balance = value - paid_value
-        self.save()
+    def save(self, *args, **kwargs):
+        orders = self.expenses.all()
+        self.balance = orders.aggregate(Sum('final_value'))['final_value__sum'] if orders else 0
+        self.balance -= orders.aggregate(Sum('paid_value'))['paid_value__sum'] if orders else 0
+        super(GenericExpenseCategory, self).save(*args, *kwargs)
 
     def tag_balance(self):
         return f'{self.balance} {CURRENCY}'
@@ -396,25 +388,11 @@ class GenericExpense(DefaultOrderModel):
     def __str__(self):
         return self.title
 
-
-    def deposit(self):
-        final_value = self.value
-        if self.is_paid:
-            diff = self.value - self.paid_value
-            paid_value = self.value
-            if diff > 0:
-                self.create_order(diff)
-        if not self.is_paid:
-            paid_value = 0
-            payment_orders = self.payment_orders.all()
-            if payment_orders:
-                for order in payment_orders: order.delete()
-        qs = GenericExpense.objects.filter(id=self.id).update(final_value=final_value, paid_value=paid_value)
-
     def save(self, *args, **kwargs):
+        self.final_value = self.value
+        self.paid_value = self.final_value if self.is_paid else 0
         super().save(*args, **kwargs)
-        self.deposit()
-        self.category.update_balance()
+        self.category.save()
 
     def get_dashboard_url(self):
         return reverse('billings:edit_page', kwargs={'pk': self.id, 'slug': 'edit', 'mymodel': 'expense'})

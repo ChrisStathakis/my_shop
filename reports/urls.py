@@ -13,6 +13,7 @@ app_name = 'reports'
 urlpatterns = [
     url(r'^$', HomepageReport.as_view(), name='homepage'),
     path('homepage/product-warning/', HomepageProductWarning.as_view(), name='product_warning'),
+    path('warning-billing-view/', WarningBillingView.as_view(), name='billing_warning'),
 
     # warehouse
     path('products/', ReportProducts.as_view(), name='products'),

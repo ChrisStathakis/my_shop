@@ -47,9 +47,10 @@ class SizeAdmin(admin.ModelAdmin):
 class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
     list_display = ['title', 'category_link', 'vendor_link', 'tag_final_price', 'qty', 'active']
     list_filter = ['active', 'site_active', 'is_offer', 'category', 'vendor']
+    filter_horizontal = ['related_products', ]
     list_select_related = ['category', 'vendor']
     readonly_fields = ['tag_final_price', ]
-    autocomplete_fields = ['vendor', 'category']
+    autocomplete_fields = ['vendor', 'category',]
     save_as = True
     list_per_page = 50
     search_fields = ['title']
@@ -72,6 +73,7 @@ class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
                 ('site_active', 'is_featured',),
                 ('brand', 'slug',),
                 ('sku', 'category_site', 'site_text'),
+                ('related_products', )
             )
         }),
 
@@ -90,6 +92,12 @@ class ProductAdmin(DefaultFilterMixin, ImportExportModelAdmin):
             # 'active': True,
             'site_active': True
         }
+
+    def save_model(self, request, obj, form, change):
+        if '_saveasnew' in request.POST:
+            obj.slug = None
+            return super(ProductAdmin, self).save_model(request, obj, form, change)
+        return super(ProductAdmin, self).save_model(request, obj, form, change)
 
 
 @admin.register(SizeAttribute)

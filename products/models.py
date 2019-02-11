@@ -137,7 +137,7 @@ class Product(DefaultBasicModel):
     final_price = models.DecimalField(default=0, decimal_places=2, max_digits=10, blank=True)
     #size and color
 
-    related_products = models.ManyToManyField('self', blank=True)
+    related_products = models.ManyToManyField('self', blank=True, verbose_name='Σχετικά Προϊόντα')
     different_color = models.ManyToManyField('self', blank=True)
     characteristics = models.ManyToManyField(ProductCharacteristics)
 
