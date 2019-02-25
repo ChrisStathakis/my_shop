@@ -19,12 +19,17 @@ class CreateProductForm(forms.ModelForm):
 class UpdateProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'is_featured', 'site_active', 'active',
-                  'size', 'color', 'category_site', 'brand',
-                  'price', 'price_discount', 'qty', 'sku', 
-                  'site_text', 'safe_stock',
-                  'order_code', 'barcode', 'category', 'vendor',
-                  'price_buy','measure_unit', 'is_service', 'notes',
+        fields = ['title', 'is_featured',
+                  'site_active', 'active',
+                  'size', 'is_service',
+                  'color', 'brand',
+                  'price', 'price_discount',
+                  'category', 'vendor',
+                  'price_buy', 'measure_unit',
+                  'order_code', 'sku',
+                  'qty', 'safe_stock',
+                  'barcode', 'category_site',
+                  'site_text', 'notes',
                   'slug'
                   ]
 

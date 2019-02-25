@@ -23,7 +23,7 @@ from products.forms import (SizeAttributeForm, UpdateProductForm, ProductPhotoFo
 from carts.models import Cart                            
 from products.forms_popup import ProductPhotoUploadForm
 from site_settings.constants import CURRENCY
-from inventory_manager.models import Vendor, Category, OrderItem
+from inventory_manager.models import Vendor, Category, OrderItem, Order
 from point_of_sale.models import RetailOrderItem
 from transcations.models import Bill
 from frontend.models import CategorySite, Brands
@@ -43,11 +43,9 @@ class DashBoard(TemplateView):
         new_orders = today_orders.count()
         bills = Bill.my_query.not_paid().aggregate(Sum('final_value'))['final_value__sum'] \
             if Bill.my_query.not_paid().exists() else 0
-        eshop_orders = RetailOrder.my_query.eshop_orders()[:10]
-        sent_orders = RetailOrder.my_query.eshop_sent_orders()[:10]
-        last_items = RetailOrderItem.objects.filter(order__in=eshop_orders)[:10] if eshop_orders else []
-
-        
+        last_orders = RetailOrder.objects.all()[:10]
+        last_items = RetailOrderItem.objects.filter(order__in=last_orders)[:10] if last_orders else []
+        warehouse_orders = Order.objects.all()[:10]
         currency = CURRENCY
         context.update(locals())
         return context
@@ -125,6 +123,27 @@ class ProductsList(ListView):
         return render(self.request, self.template_name)
 
 
+@method_decorator(staff_member_required, name='dispatch')
+class ProductCreate(CreateView):
+    template_name = 'dashboard/product_create.html'
+    form_class = CreateProductForm
+    new_object = None
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductCreate, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        object = form.save()
+        object.refresh_from_db()
+        self.new_object = object
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        self.new_object.refresh_from_db()
+        return reverse('dashboard:product_detail', kwargs={'pk': self.new_object.id})
+
+
 @staff_member_required
 def product_detail(request, pk):
     instance = get_object_or_404(Product, id=pk)
@@ -135,7 +154,6 @@ def product_detail(request, pk):
     form = UpdateProductForm(request.POST or None, instance=instance)
 
     if 'save_' in request.POST:
-        print('i am here nab!')
         if form.is_valid():
             form.save()
             messages.success(request, 'The products %s is saves!')
@@ -372,25 +390,7 @@ def create_copy_item(request, pk):
     return redirect(object.get_edit_url())
 
 
-@method_decorator(staff_member_required, name='dispatch')
-class ProductCreate(CreateView):
-    template_name = 'dashboard/product_create.html'
-    form_class = CreateProductForm
-    new_object = None
 
-    def get_context_data(self, **kwargs):
-        context = super(ProductCreate, self).get_context_data(**kwargs)
-        return context
-
-    def form_valid(self, form):
-        object = form.save()
-        object.refresh_from_db()
-        self.new_object = object
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        self.new_object.refresh_from_db()
-        return reverse('dashboard:product_detail', kwargs={'pk': self.new_object.id})
 
 
 @staff_member_required

@@ -131,8 +131,8 @@ class PaymentMethod(models.Model):
 
 
 class DefaultBasicModel(models.Model):
-    active = models.BooleanField(default=True)
-    title = models.CharField(max_length=255)
+    active = models.BooleanField(default=True, verbose_name='Κατάσταση')
+    title = models.CharField(max_length=255, verbose_name='Ονομασία')
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     user_account = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)

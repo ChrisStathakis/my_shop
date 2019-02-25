@@ -39,14 +39,14 @@
                         <h4 class="title">Actions</h4>
                     </div>
                     <div class="content">
-                        <a href="{% url 'dashboard:copy_product' instance.id %}" class="btn btn-success">Create Copy</a>
-                        <a href="" class="btn btn-warning">Delete</a>
+                        <a href="{% url 'dashboard:copy_product' instance.id %}" class="btn btn-success">Δημιουργία Αντιγράφου</a>
+                        <a href="" class="btn btn-warning">Διαγραφή</a>
                         <br><br>
-                        <button data-href="{% url 'dashboard:brand_popup' %}" class="btn btn-info" id="add_author" onclick="return addData(this);">Add Brand</button>
-                        <button data-href="{% url 'dashboard:category_popup' %}" class="btn btn-info" id="add_category" onclick="return addData(this);">Add Category</button>
-                        <button data-href="{% url 'dashboard:category_site_popup' %}" class="btn btn-info" id="add_category_site" onclick="return addData(this);">Add Category Site</button>
-                        <button data-href="{% url 'dashboard:color_popup' %}" class="btn btn-info" id="add_color" onclick="return addData(this);">Add Color</button>
-                        <button data-href="{% url 'dashboard:vendor_popup' %}" class="btn btn-info" id="add_vendor" onclick="return addData(this);">Add Vendor</button>
+                        <button data-href="{% url 'dashboard:brand_popup' %}" class="btn btn-info" id="add_author" onclick="return addData(this);">Δημιουργία Brand</button>
+                        <button data-href="{% url 'dashboard:category_popup' %}" class="btn btn-info" id="add_category" onclick="return addData(this);">Δημιουργία Κατηγορίας</button>
+                        <button data-href="{% url 'dashboard:category_site_popup' %}" class="btn btn-info" id="add_category_site" onclick="return addData(this);">Δημιουργία Κατηγορίας Site</button>
+                        <button data-href="{% url 'dashboard:color_popup' %}" class="btn btn-info" id="add_color" onclick="return addData(this);">Δημιουργία Χρώματος</button>
+                        <button data-href="{% url 'dashboard:vendor_popup' %}" class="btn btn-info" id="add_vendor" onclick="return addData(this);">Δημιουργία Προμηθευτή</button>
                     </div>
                 </div>
                 <div class="card card-user">

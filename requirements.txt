@@ -5,3 +5,4 @@ django-tinymce
 reportlab
 coreapi
 django-crispy-forms
+penpyxl==2.5.4
